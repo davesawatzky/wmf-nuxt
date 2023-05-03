@@ -1,0 +1,10 @@
+mutation PerformerUpdate($performerId: Int!, $performer: PerformerInput!) {
+  performerUpdate(performerID: $performerId, performerInput: $performer) {
+    performer {
+      id
+    }
+    userErrors {
+      message
+    }
+  }
+}

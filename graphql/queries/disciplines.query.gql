@@ -1,0 +1,6 @@
+query Disciplines {
+  disciplines {
+    id
+    name
+  }
+}

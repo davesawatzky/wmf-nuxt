@@ -1,0 +1,10 @@
+mutation SchoolGroupUpdate($schoolGroupId: Int!, $schoolGroup: SchoolGroupInput!) {
+  schoolGroupUpdate(schoolGroupID: $schoolGroupId, schoolGroupInput: $schoolGroup) {
+    schoolGroup {
+      id
+    }
+    userErrors {
+      message
+    }
+  }
+}

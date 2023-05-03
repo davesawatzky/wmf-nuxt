@@ -1,0 +1,10 @@
+mutation SchoolCreate($registrationId: Int!, $schoolInput: SchoolInput) {
+  schoolCreate(registrationID: $registrationId, schoolInput: $schoolInput) {
+    school {
+      id
+    }
+    userErrors {
+      message
+    }
+  }
+}

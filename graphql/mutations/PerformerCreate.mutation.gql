@@ -1,0 +1,10 @@
+mutation PerformerCreate($registrationId: Int!, $performer: PerformerInput!) {
+  performerCreate(performerInput: $performer, registrationID: $registrationId) {
+    performer {
+      id
+    }
+    userErrors {
+      message
+    }
+  }
+}

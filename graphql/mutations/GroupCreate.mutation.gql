@@ -1,0 +1,10 @@
+mutation GroupCreate($registrationId: Int!, $group: GroupInput!) {
+  groupCreate(groupInput: $group, registrationID: $registrationId) {
+    group {
+      id
+    }
+    userErrors {
+      message
+    }
+  }
+}

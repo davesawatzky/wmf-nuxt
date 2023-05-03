@@ -1,0 +1,25 @@
+query FestivalClassSearch($festivalClassSearch: FestivalClassSearchArgs!) {
+  festivalClassSearch(festivalClassSearch: $festivalClassSearch) {
+    id
+    classNumber
+    maxSelection
+    minSelection
+    requiredSelection
+    SGSLabel
+    price
+    subdiscipline {
+      name
+    }
+    level {
+      name
+    }
+    category {
+      name
+    }
+    trophies {
+      id
+      name
+      description
+    }
+  }
+}

@@ -1,0 +1,10 @@
+mutation SchoolGroupDelete($schoolGroupId: Int!) {
+  schoolGroupDelete(schoolGroupID: $schoolGroupId) {
+    schoolGroup {
+      id
+    }
+    userErrors {
+      message
+    }
+  }
+}

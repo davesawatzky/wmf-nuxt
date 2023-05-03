@@ -1,0 +1,12 @@
+mutation RegistrationCreate($performerType: SGSLabel!, $label: String!) {
+  registrationCreate(performerType: $performerType, label: $label) {
+    registration {
+      id
+      label
+      performerType
+    }
+    userErrors {
+      message
+    }
+  }
+}

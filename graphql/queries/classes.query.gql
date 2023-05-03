@@ -1,0 +1,8 @@
+query FestivalClasses($SGSLabel: SGSLabel) {
+  festivalClasses(SGSLabel: $SGSLabel) {
+    subdiscipline {
+      id
+      name
+    }
+  }
+}

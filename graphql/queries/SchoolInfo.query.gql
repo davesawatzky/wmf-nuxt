@@ -1,0 +1,15 @@
+query SchoolInfo($registrationId: Int!) {
+  registration(id: $registrationId) {
+    school {
+      id
+      name
+      division
+      streetNumber
+      streetName
+      city
+      province
+      postalCode
+      phone
+    }
+  }
+}

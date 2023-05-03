@@ -1,0 +1,17 @@
+query SchoolGroupInfo($registrationId: Int!) {
+  registration(id: $registrationId) {
+    school {
+      schoolGroups {
+        id
+        name
+        groupSize
+        chaperones
+        wheelchairs
+        earliestTime
+        latestTime
+        unavailable
+        conflictPerformers
+      }
+    }
+  }
+}

@@ -1,0 +1,10 @@
+mutation GroupDelete($groupId: Int!) {
+  groupDelete(groupID: $groupId) {
+    group {
+      id
+    }
+    userErrors {
+      message
+    }
+  }
+}

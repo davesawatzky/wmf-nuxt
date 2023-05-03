@@ -1,0 +1,6 @@
+query DisciplinesByType($SGSLabel: SGSLabel!) {
+  disciplines(SGSLabel: $SGSLabel) {
+    id
+    name
+  }
+}

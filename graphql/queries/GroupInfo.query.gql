@@ -1,0 +1,12 @@
+query GroupInfo($registrationId: Int!) {
+  registration(id: $registrationId) {
+    groups {
+      id
+      age
+      groupType
+      instruments
+      name
+      numberOfPerformers
+    }
+  }
+}

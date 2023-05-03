@@ -1,0 +1,6 @@
+query Instruments {
+  instruments {
+    id
+    name
+  }
+}

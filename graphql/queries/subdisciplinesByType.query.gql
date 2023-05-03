@@ -1,0 +1,10 @@
+query SubdisciplinesByType($categoryId: Int!, $disciplineId: Int!, $levelId: Int!, $SGSLabel: SGSLabel!) {
+  subdisciplines(categoryID: $categoryId, disciplineID: $disciplineId, levelID: $levelId, performerType: $SGSLabel) {
+    id
+    name
+    description
+    maxPerformers
+    minPerformers
+    SGSLabel
+  }
+}

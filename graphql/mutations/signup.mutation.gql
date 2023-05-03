@@ -1,0 +1,8 @@
+mutation SignUp($credentials: CredentialsSignup!) {
+  signup(credentials: $credentials) {
+    userErrors {
+      message
+    }
+    access_token
+  }
+}

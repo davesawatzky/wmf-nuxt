@@ -1,0 +1,10 @@
+mutation RegistrationDelete($registrationId: Int!) {
+  registrationDelete(registrationID: $registrationId) {
+    registration {
+      id
+    }
+    userErrors {
+      message
+    }
+  }
+}

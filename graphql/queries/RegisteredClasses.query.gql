@@ -1,0 +1,23 @@
+query RegisteredClasses($registrationId: Int!) {
+  registration(id: $registrationId) {
+    registeredClasses {
+      category
+      classNumber
+      discipline
+      id
+      level
+      numberOfSelections
+      price
+      subdiscipline
+      schoolGroupID
+      selections {
+        composer
+        duration
+        id
+        largerWork
+        movement
+        title
+      }
+    }
+  }
+}

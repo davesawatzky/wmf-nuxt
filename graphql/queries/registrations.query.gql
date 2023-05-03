@@ -1,0 +1,13 @@
+query Registrations($performerType: SGSLabel!, $userId: Int!) {
+  registrations(performerType: $performerType, userID: $userId) {
+    id
+    createdAt
+    label
+    performerType
+    submittedAt
+    payedAmt
+    totalAmt
+    transactionInfo
+    submission
+  }
+}

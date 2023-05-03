@@ -1,0 +1,10 @@
+mutation ClassDelete($registeredClassId: Int!) {
+  registeredClassDelete(registeredClassID: $registeredClassId) {
+    registeredClass {
+      id
+    }
+    userErrors {
+      message
+    }
+  }
+}

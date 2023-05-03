@@ -1,0 +1,10 @@
+mutation CommunityUpdate($communityId: Int!, $community: CommunityInput!) {
+  communityUpdate(communityID: $communityId, communityInput: $community) {
+    community {
+      id
+    }
+    userErrors {
+      message
+    }
+  }
+}

@@ -1,0 +1,36 @@
+query ClassByNumber($festivalClassNumber: String!) {
+  festivalClassByNumber(festivalClassNumber: $festivalClassNumber) {
+    id
+    classNumber
+    maxSelection
+    minSelection
+    requiredSelection
+    SGSLabel
+    price
+    category {
+      id
+      name
+      description
+      requiredComposer
+    }
+    level {
+      id
+      name
+      description
+    }
+    subdiscipline {
+      id
+      name
+      description
+      discipline {
+        id
+        name
+      }
+    }
+    trophies {
+      id
+      name
+      description
+    }
+  }
+}
