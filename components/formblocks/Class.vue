@@ -1,12 +1,12 @@
 <script lang="ts" setup>
-  import { useLazyQuery, useQuery } from '@vue/apollo-composable'
-  import DISCIPLINES_BY_TYPE_QUERY from '@/graphql/queries/DisciplinesByType.query.gql'
-  import SUBDISCIPLINES_BY_TYPE_QUERY from '@/graphql/queries/subdisciplinesByType.query.gql'
-  import LEVELS_QUERY from '@/graphql/queries/levels.query.gql'
-  import CATEGORIES_QUERY from '@/graphql/queries/categories.query.gql'
-  import CLASS_SEARCH_QUERY from '@/graphql/queries/classSearch.query.gql'
-  import INSTRUMENTS_QUERY from '@/graphql/queries/instruments.query.gql'
-
+  import {
+    CategoriesDocument,
+    DisciplinesByTypeDocument,
+    FestivalClassSearchDocument,
+    InstrumentsDocument,
+    LevelsDocument,
+    SubdisciplinesByTypeDocument,
+  } from '@/graphql/gql/graphql'
   import { useClasses } from '@/stores/userClasses'
   import { useAppStore } from '@/stores/appStore'
   import { usePerformers } from '@/stores/userPerformer'
@@ -32,8 +32,11 @@
     set: (value) => emits('update:modelValue', value),
   })
 
-  const { result: instrumentQuery, error: instrumentsError } = useQuery(INSTRUMENTS_QUERY)
+  const { result: instrumentQuery, error: instrumentsError } = useQuery(InstrumentsDocument)
   const instruments = computed(() => instrumentQuery.value.instruments ?? [])
+  if (instrumentsError) {
+    console.log(instrumentsError)
+  }
 
   watch(
     () => selectedClasses.value.classNumber,
@@ -41,38 +44,24 @@
       instrumentRequired.value = classesStore.MOZART_CLASSES.includes(classNumber)
     }
   )
+
   /**
    * Disciplines
    */
-  const { result: disc, error: discError } = useQuery(DISCIPLINES_BY_TYPE_QUERY, () => ({
+  const { result: disc, error: discError } = useQuery(DisciplinesByTypeDocument, () => ({
     SGSLabel: appStore.performerType,
   }))
-  const disciplines = computed(() => disc.value?.disciplinesByType ?? [])
-  const chosenDiscipline = computed({
-    get: () => {
-      return (
-        disciplines.value.find((item: any) => {
-          return item.name === selectedClasses.value.discipline
-        }) ?? {}
-      )
-    },
-    set: (newValue) => newValue,
-  })
-  function changeSubdisciplineDropdown() {
-    selectedClasses.value.subdiscipline = null
-    selectedClasses.value.level = null
-    selectedClasses.value.category = null
-    selectedClasses.value.numberOfSelections = null
-    selectedClasses.value.className = null
-    selectedClasses.value.classNumber = null
-    chosenSubdiscipline.value = { id: '', name: '' }
-    chosenGradeLevel.value = { id: '', name: '' }
-    chosenCategory.value = { id: '', name: '' }
-    className.value = ''
-    classSelection.value = null
-
-    subdiscLoad()
+  if (discError) {
+    console.log(discError)
   }
+  const disciplines = computed(() => disc.value?.disciplinesByType ?? [])
+  const chosenDiscipline = computed(() => {
+    return (
+      disciplines.value.find((item: any) => {
+        return item.name === selectedClasses.value.discipline
+      }) ?? {}
+    )
+  })
 
   /**
    * Subdisciplines
@@ -82,13 +71,16 @@
     load: subdiscLoad,
     error: subdiscError,
   } = useLazyQuery(
-    SUBDISCIPLINES_BY_TYPE_QUERY,
+    SubdisciplinesByTypeDocument,
     () => ({
       disciplineId: chosenDiscipline.value.id,
       SGSLabel: appStore.performerType,
     }),
     { fetchPolicy: 'network-only' }
   )
+  if (subdiscError) {
+    console.log(subdiscError)
+  }
   const subdisciplines = computed(() => subdisc.value?.subdisciplinesByType ?? [])
   const chosenSubdiscipline = computed({
     get: () => {
@@ -101,24 +93,6 @@
     set: (newValue) => newValue,
   })
 
-  // watch(chosenSubdiscipline, (newSubdiscipline) => {
-  // 	classesStore.registeredClasses[props.classIndex].price =
-  // 		newSubdiscipline.price
-  // })
-  function changeGradeLevelDropdown() {
-    selectedClasses.value.level = null
-    selectedClasses.value.category = null
-    selectedClasses.value.numberOfSelections = null
-    selectedClasses.value.className = null
-    selectedClasses.value.classNumber = null
-    chosenGradeLevel.value = { id: '', name: '' }
-    chosenCategory.value = { id: '', name: '' }
-    className.value = ''
-    classSelection.value = null
-
-    gradeLevelLoad()
-  }
-
   /**
    * Grades / Levels
    */
@@ -127,12 +101,15 @@
     load: gradeLevelLoad,
     error: levelError,
   } = useLazyQuery(
-    LEVELS_QUERY,
+    LevelsDocument,
     () => ({
       subdisciplineId: chosenSubdiscipline.value.id,
     }),
     { fetchPolicy: 'network-only' }
   )
+  if (levelError) {
+    console.log(levelError)
+  }
   const levels = computed(() => gradeLevel.value?.levels ?? [])
   const chosenGradeLevel = computed({
     get: () => {
@@ -144,17 +121,6 @@
     },
     set: (newValue) => newValue,
   })
-  function changeCategoryDropdown() {
-    selectedClasses.value.category = null
-    selectedClasses.value.numberOfSelections = null
-    selectedClasses.value.className = null
-    selectedClasses.value.classNumber = null
-    chosenCategory.value = { id: '', name: '' }
-    className.value = ''
-    classSelection.value = null
-
-    catLoad()
-  }
 
   /**
    * Categories
@@ -164,13 +130,16 @@
     load: catLoad,
     error: catError,
   } = useLazyQuery(
-    CATEGORIES_QUERY,
+    CategoriesDocument,
     () => ({
       subdisciplineId: chosenSubdiscipline.value.id,
       levelId: chosenGradeLevel.value.id,
     }),
     { fetchPolicy: 'network-only' }
   )
+  if (catError) {
+    console.log(catError)
+  }
   const categories = computed(() => cat.value?.categories ?? [])
   const chosenCategory = computed({
     get: () => {
@@ -182,13 +151,6 @@
     },
     set: (newValue) => newValue,
   })
-  function changeClass() {
-    selectedClasses.value.numberOfSelections = null
-    selectedClasses.value.className = null
-    selectedClasses.value.classNumber = null
-
-    classNumberLoad()
-  }
 
   /**
    * ClassName
@@ -213,7 +175,7 @@
     load: classNumberLoad,
     error: classError,
   } = useLazyQuery(
-    CLASS_SEARCH_QUERY,
+    FestivalClassSearchDocument,
     () => ({
       classSearchArgs: {
         subdisciplineID: chosenSubdiscipline.value.id,
@@ -223,6 +185,9 @@
     }),
     { fetchPolicy: 'network-only' }
   )
+  if (classError) {
+    console.log(classError)
+  }
   const classSelection = computed({
     get: () => {
       if (chosenSubdiscipline.value.id && chosenGradeLevel.value.id && chosenCategory.value.id)
@@ -230,10 +195,6 @@
       else return []
     },
     set: (newValue) => newValue,
-  })
-
-  watch(classSelection, (newClassSelection) => {
-    classesStore.registeredClasses[props.classIndex].price = newClassSelection.price
   })
 
   const notes = computed(() => {
@@ -267,6 +228,51 @@
     }
   })
 
+  watch(
+    () => selectedClasses.value.discipline,
+    () => {
+      selectedClasses.value.subdiscipline = null
+      chosenSubdiscipline.value = { id: '', name: '' }
+      subdiscLoad()
+    }
+  )
+
+  watch(
+    () => selectedClasses.value.subdiscipline,
+    () => {
+      selectedClasses.value.level = null
+      chosenGradeLevel.value = { id: '', name: '' }
+      if (selectedClasses.value.subdiscipline !== null) {
+        gradeLevelLoad()
+      }
+    }
+  )
+
+  watch(
+    () => selectedClasses.value.level,
+    () => {
+      selectedClasses.value.category = null
+      chosenCategory.value = { id: '', name: '' }
+      if (selectedClasses.value.level !== null) {
+        catLoad()
+      }
+    }
+  )
+
+  watch(
+    () => selectedClasses.value.category,
+    () => {
+      selectedClasses.value.numberOfSelections = null
+      selectedClasses.value.className = null
+      selectedClasses.value.number = null
+      className.value = ''
+      classSelection.value = null
+      if (selectedClasses.value.category !== null) {
+        classNumberLoad()
+      }
+    }
+  )
+
   /**
    * Updating number of selections
    */
@@ -294,6 +300,10 @@
     }
   )
 
+  watch(classSelection, (newClassSelection) => {
+    classesStore.registeredClasses[props.classIndex].price = newClassSelection.price
+  })
+
   onMounted(() => {
     subdiscLoad()
     gradeLevelLoad()
@@ -311,8 +321,7 @@
         id=""
         v-model="selectedClasses.discipline"
         label="Discipline"
-        :options="disciplines"
-        @change="changeSubdisciplineDropdown()" />
+        :options="disciplines" />
     </div>
     <div class="col-span-6 lg:col-span-3">
       <BaseSelect
@@ -320,8 +329,7 @@
         :class="selectedClasses.discipline ? '' : 'off'"
         label="Subdiscipline"
         :options="subdisciplines"
-        :disabled="!selectedClasses.discipline"
-        @change="changeGradeLevelDropdown()" />
+        :disabled="!selectedClasses.discipline" />
     </div>
     <div class="col-span-6 lg:col-span-3">
       <BaseSelect
@@ -329,8 +337,7 @@
         :class="selectedClasses.subdiscipline ? '' : 'off'"
         label="Grade/Level"
         :options="levels"
-        :disabled="!selectedClasses.subdiscipline"
-        @change="changeCategoryDropdown()" />
+        :disabled="!selectedClasses.subdiscipline" />
     </div>
     <div class="col-span-6 lg:col-span-4">
       <BaseSelect
@@ -338,8 +345,7 @@
         :class="selectedClasses.level ? '' : 'off'"
         label="Category"
         :options="categories"
-        :disabled="!selectedClasses.level"
-        @change="changeClass()" />
+        :disabled="!selectedClasses.level" />
     </div>
     <div class="col-span-6 md:col-span-2">
       <BaseSelect
@@ -353,7 +359,6 @@
       <label for="classNumber">Class Number</label>
       <input
         id="classNumber"
-        :v-model="selectedClasses.classNumber"
         class="off"
         :value="(selectedClasses.classNumber = classSelection.classNumber)"
         label="Class Number"
@@ -365,7 +370,6 @@
       <label for="className">Class Name</label>
       <input
         id="className"
-        :v-model="selectedClasses.className"
         class="off"
         :value="(selectedClasses.className = className)"
         label="Class Name"

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-  import { removeToken } from '@/composables/setTokens'
   import { useAppStore } from '@/stores/appStore'
   import { useRegistration } from '@/stores/userRegistration'
   import { usePerformers } from '@/stores/userPerformer'
@@ -15,6 +14,7 @@
   const classStore = useClasses()
   const groupStore = useGroup()
   const schoolStore = useSchool()
+  const { onLogout } = useApollo()
 
   function signout() {
     appStore.$reset()
@@ -24,7 +24,7 @@
     classStore.$reset()
     groupStore.$reset()
     schoolStore.$reset()
-    removeToken()
+    onLogout()
     navigateTo('Login')
   }
 </script>

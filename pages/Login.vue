@@ -7,7 +7,8 @@
 
   const error = ref('')
   const isLogin = ref(true)
-  const router = useRouter()
+
+  const { onLogin } = useApollo()
 
   const validationSchema = yup.object({
     firstName: yup.string().trim().label('First Name'),
@@ -43,8 +44,8 @@
     })
     doneSignin((result) => {
       if (result.data.signin.access_token) {
-        setToken(result.data.signin.access_token)
-        router.push('Registrations')
+        onLogin(result.data.signin.access_token)
+        navigateTo('/registrations')
       } else {
         error.value = 'Incorrect email or password.'
         resetFields()
@@ -67,8 +68,8 @@
     })
     doneSignup((result) => {
       if (result.data.signup.token) {
-        setToken(result.data.signup.token)
-        router.push('Registrations')
+        onLogin(result.data.signup.token)
+        navigateTo('/registrations')
       } else {
         error.value = 'Error occured'
         resetFields()
@@ -137,6 +138,7 @@
         name="email"
         type="email"
         label="Email"
+        status="error"
         @keyup.enter="isLogin ? signin() : signup()"
         @change="handleChange" />
       <BaseInput

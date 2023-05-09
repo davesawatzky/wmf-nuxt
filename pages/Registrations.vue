@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import { DateTime } from 'luxon'
+  // import { DateTime } from 'luxon'
   import { useRegistration } from '@/stores/userRegistration'
   import { useAppStore } from '@/stores/appStore'
   import { usePerformers } from '@/stores/userPerformer'
@@ -76,20 +76,19 @@
     classesStore.$reset()
   })
 
-  const router = useRouter()
+  // const { refetch: refetchRegistrations, onResult: doneRegistrationQuery } = useQuery(
+  //   RegistrationsDocument,
+  //   { performerType: null, userId: null },
+  //   () => ({
+  //     fetchPolicy: 'no-cache',
+  //   })
+  // )
 
-  const { refetch: refetchRegistrations, onResult: doneRegistrationQuery } = useQuery(
-    RegistrationsDocument,
-    null,
-    () => ({
-      fetchPolicy: 'no-cache',
-    })
-  )
   // const registrations = computed(() => result.value?.registrations ?? [])
-  doneRegistrationQuery((result) => {
-    const clone = Object.assign({}, result.data.registrations)
-    registrations.value = clone
-  })
+  // doneRegistrationQuery((result) => {
+  //   const clone = Object.assign({}, result.data.registrations)
+  //   registrations.value = clone
+  // })
 
   function openEditor(performerType: PerformerType): boolean {
     return eval(`${performerType.toLowerCase()}Open`)
@@ -145,7 +144,7 @@
     appStore.dataLoading = true
     classesStore.loadClasses(registrationId)
     appStore.dataLoading = false
-    router.push({ name: 'Form' })
+    navigateTo('/form')
   }
 
   /**
@@ -206,7 +205,7 @@
         appStore.dataLoading = false
     }
 
-    router.push({ name: 'Form' })
+    navigateTo('/form')
   }
 
   async function deleteRegistration(regId: number) {

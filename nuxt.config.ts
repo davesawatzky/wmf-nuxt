@@ -17,17 +17,22 @@ export default defineNuxtConfig({
     '@nuxtjs/apollo',
     '@pinia/nuxt',
     '@pinia-plugin-persistedstate/nuxt',
-    // '@nuxt/devtools',
+    '@nuxt/devtools',
     'nuxt-vitest',
     '@vee-validate/nuxt',
     '@vueuse/nuxt',
     '@nuxt/image-edge',
+    'nuxt-quasar-ui',
   ],
   apollo: {
     autoImports: true,
+    proxyCookies: true,
     clients: {
       default: {
         httpEndpoint: 'http://localhost:3000/graphql',
+        httpLinkOptions: {
+          credentials: 'include',
+        },
         authType: 'Bearer',
         authHeader: 'Authorization',
         tokenStorage: 'cookie',
@@ -51,4 +56,5 @@ export default defineNuxtConfig({
   eslint: {
     lintOnStart: false,
   },
+  quasar: {},
 })

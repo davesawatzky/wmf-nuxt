@@ -18,6 +18,7 @@
   "dependencies": {
     "@formkit/auto-animate": "^1.0.0-beta.6",
     "@pinia/nuxt": "^0.4.9",
+    "@quasar/extras": "^1.16.3",
     "@vee-validate/nuxt": "^4.8.6",
     "@vee-validate/yup": "^4.8.6",
     "@vue/apollo-composable": "^4.0.0-beta.4",
@@ -27,6 +28,7 @@
     "luxon": "^3.3.0",
     "maska": "^2.1.8",
     "pinia": "^2.0.35",
+    "quasar": "^2.12.0",
     "vee-validate": "^4.8.6",
     "yup": "^1.1.1",
     "yup-password": "^0.2.2",
@@ -57,6 +59,7 @@
     "eslint-config-prettier": "^8.8.0",
     "histoire": "^0.16.1",
     "nuxt": "^3.4.2",
+    "nuxt-quasar-ui": "^1.7.3",
     "nuxt-vitest": "^0.6.10",
     "postcss": "^8.4.23",
     "prettier": "^2.8.8",

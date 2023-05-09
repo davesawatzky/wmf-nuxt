@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { DateTime } from 'luxon'
-  import { random } from 'lodash'
+  import _ from 'lodash'
   import { useRegistration } from '@/stores/userRegistration'
   import { usePerformers } from '@/stores/userPerformer'
   import { useAppStore } from '@/stores/appStore'
@@ -32,7 +32,7 @@
 
   async function submitRegistration() {
     await saveRegistration()
-    confirmationNumber.value = `WMF-${registrationStore.registrationId}-${random(1000, 9999)}`
+    confirmationNumber.value = `WMF-${registrationStore.registrationId}-${_.random(1000, 9999)}`
     registrationStore.registrations[0].submittedAt = date
     registrationStore.registrations[0].confirmation = confirmationNumber.value
     await registrationStore.updateRegistration()
