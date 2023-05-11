@@ -3,6 +3,12 @@ import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 export default defineNuxtConfig({
+  runtimeConfig: {
+    baseUrl: process.env.BASE_URL_SERVER,
+    public: {
+      baseUrl: process.env.BASE_URL_CLIENT,
+    },
+  },
   alias: {
     '@': resolve(__dirname, './'),
     images: fileURLToPath(new URL('./public/images', import.meta.url)),
@@ -30,14 +36,19 @@ export default defineNuxtConfig({
     clients: {
       default: {
         httpEndpoint: 'http://localhost:3000/graphql',
+        // tokenName: 'access_token',
+        authHeader: 'Authorization',
+        authType: 'Bearer',
+        connectToDevTools: true,
         httpLinkOptions: {
           credentials: 'include',
         },
-        authType: 'Bearer',
-        authHeader: 'Authorization',
-        tokenStorage: 'cookie',
-        tokenName: 'diatonicToken',
-        connectToDevTools: true,
+        // cookieAttributes: {
+        //   sameSite: 'none',
+        //   domain: 'localhost:3000',
+        //   path: '/graphql',
+        //   maxAge: 1000 * 60 * 1, // 1 hour
+        // },
       },
     },
   },
@@ -45,9 +56,6 @@ export default defineNuxtConfig({
     autoImports: ['defineStore'],
   },
   piniaPersistedstate: {
-    cookieOptions: {
-      sameSite: 'strict',
-    },
     storage: 'sessionStorage',
   },
   veeValidate: {

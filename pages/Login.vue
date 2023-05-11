@@ -37,14 +37,16 @@
   /**
    * Sign in and retrieve Token after authenticating
    */
-  const { mutate: signinMutation, onDone: doneSignin } = useMutation(SignInDocument)
+  const { mutate: signinMutation, onDone: doneSignin } =
+    useMutation(SignInDocument)
   const signin = handleSubmit((values) => {
     signinMutation({
       credentials: { email: values.email, password: values.password },
     })
     doneSignin((result) => {
-      if (result.data.signin.access_token) {
-        onLogin(result.data.signin.access_token)
+      if (result.data.signin.diatonicToken) {
+        // The following code won't work with cookie set as httpOnly
+        // onLogin(result.data.signin.diatonicToken, 'default', false)
         navigateTo('/registrations')
       } else {
         error.value = 'Incorrect email or password.'
@@ -56,7 +58,8 @@
   /**
    * Register new account and receive Token
    */
-  const { mutate: signupMutation, onDone: doneSignup } = useMutation(SignUpDocument)
+  const { mutate: signupMutation, onDone: doneSignup } =
+    useMutation(SignUpDocument)
   const signup = handleSubmit((values) => {
     signupMutation({
       credentials: {
@@ -97,8 +100,9 @@
     <div class="w-full sm:w-2/3 lg:w-1/2 mx-auto">
       <h2 class="text-center">Winnipeg Music Festival Registration</h2>
       <p class="text-left">
-        Begin registration by creating an account (account can be for an individual; a teacher for all their individual
-        students, or for all their choirs; a parent for their family etc.)
+        Begin registration by creating an account (account can be for an
+        individual; a teacher for all their individual students, or for all
+        their choirs; a parent for their family etc.)
       </p>
       <!-- <div
 				class="mx-auto text-center border-4 border-red-700 rounded-lg mt-4 p-4">

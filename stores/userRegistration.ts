@@ -1,5 +1,5 @@
-import { provideApolloClient } from '@vue/apollo-composable'
-import apolloClient from '@/utilities/apolloClient'
+// import { provideApolloClient } from '@vue/apollo-composable'
+// import apolloClient from '@/utilities/apolloClient'
 import {
   RegistrationCreateDocument,
   RegistrationDeleteDocument,
@@ -32,7 +32,7 @@ interface Registration {
   __typename?: string
 }
 
-provideApolloClient(apolloClient)
+// provideApolloClient(apolloClient)
 
 export const useRegistration = defineStore(
   'registrations',
@@ -53,8 +53,15 @@ export const useRegistration = defineStore(
       }
     }
 
-    async function createRegistration(performerType: Registration['performerType'], label: string) {
-      const { mutate: registrationCreate, onDone: doneNewReg, onError } = useMutation(RegistrationCreateDocument)
+    async function createRegistration(
+      performerType: Registration['performerType'],
+      label: string
+    ) {
+      const {
+        mutate: registrationCreate,
+        onDone: doneNewReg,
+        onError,
+      } = useMutation(RegistrationCreateDocument)
       await registrationCreate({ performerType, label })
       doneNewReg((result) => {
         addToStore(<Registration>result.data.registrationCreate.registration)
@@ -66,9 +73,12 @@ export const useRegistration = defineStore(
     }
 
     async function updateRegistration() {
-      const { mutate: registrationUpdate, onError } = useMutation(RegistrationUpdateDocument, {
-        fetchPolicy: 'network-only',
-      })
+      const { mutate: registrationUpdate, onError } = useMutation(
+        RegistrationUpdateDocument,
+        {
+          fetchPolicy: 'network-only',
+        }
+      )
       const clone = Object.assign({}, registrations.value[0])
       delete clone.id
       delete clone.__typename
@@ -83,7 +93,9 @@ export const useRegistration = defineStore(
     }
 
     async function deleteRegistration(registrationId: number) {
-      const { mutate: registrationDelete } = useMutation(RegistrationDeleteDocument)
+      const { mutate: registrationDelete } = useMutation(
+        RegistrationDeleteDocument
+      )
       await registrationDelete({ registrationDeleteId: registrationId })
     }
 

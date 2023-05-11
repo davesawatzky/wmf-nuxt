@@ -40,8 +40,8 @@ const documents = {
     "mutation TeacherCreate($registrationId: Int!, $teacher: TeacherInput!) {\n  teacherCreate(registrationID: $registrationId, teacherInput: $teacher) {\n    teacher {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.TeacherCreateDocument,
     "mutation TeacherDelete($teacherId: Int!) {\n  teacherDelete(teacherID: $teacherId) {\n    teacher {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.TeacherDeleteDocument,
     "mutation TeacherUpdate($teacherId: Int!, $teacher: TeacherInput!) {\n  teacherUpdate(teacherID: $teacherId, teacherInput: $teacher) {\n    teacher {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.TeacherUpdateDocument,
-    "mutation SignIn($credentials: CredentialsSignin!) {\n  signin(credentials: $credentials) {\n    userErrors {\n      message\n    }\n    access_token\n  }\n}": types.SignInDocument,
-    "mutation SignUp($credentials: CredentialsSignup!) {\n  signup(credentials: $credentials) {\n    userErrors {\n      message\n    }\n    access_token\n  }\n}": types.SignUpDocument,
+    "mutation SignIn($credentials: CredentialsSignin!) {\n  signin(credentials: $credentials) {\n    userErrors {\n      message\n    }\n    diatonicToken\n  }\n}": types.SignInDocument,
+    "mutation SignUp($credentials: CredentialsSignup!) {\n  signup(credentials: $credentials) {\n    userErrors {\n      message\n    }\n    diatonicToken\n  }\n}": types.SignUpDocument,
     "query CommunityInfo($registrationId: Int!) {\n  registration(id: $registrationId) {\n    communities {\n      id\n      name\n      groupSize\n      chaperones\n      wheelchairs\n      earliestTime\n      latestTime\n      unavailable\n      conflictPerformers\n    }\n  }\n}": types.CommunityInfoDocument,
     "query DisciplinesByType($SGSLabel: SGSLabel!) {\n  disciplines(SGSLabel: $SGSLabel) {\n    id\n    name\n  }\n}": types.DisciplinesByTypeDocument,
     "query GroupInfo($registrationId: Int!) {\n  registration(id: $registrationId) {\n    groups {\n      id\n      age\n      groupType\n      instruments\n      name\n      numberOfPerformers\n    }\n  }\n}": types.GroupInfoDocument,
@@ -57,7 +57,7 @@ const documents = {
     "query Disciplines {\n  disciplines {\n    id\n    name\n  }\n}": types.DisciplinesDocument,
     "query Instruments {\n  instruments {\n    id\n    name\n  }\n}": types.InstrumentsDocument,
     "query Levels($subdisciplineId: Int!, $categoryId: Int!) {\n  levels(categoryID: $categoryId, subdisciplineID: $subdisciplineId) {\n    id\n    name\n    description\n  }\n}": types.LevelsDocument,
-    "query Registrations($performerType: SGSLabel!, $userId: Int!) {\n  registrations(performerType: $performerType, userID: $userId) {\n    id\n    createdAt\n    label\n    performerType\n    submittedAt\n    payedAmt\n    totalAmt\n    transactionInfo\n    submission\n  }\n}": types.RegistrationsDocument,
+    "query Registrations($performerType: SGSLabel, $userId: Int!) {\n  registrations(performerType: $performerType, userID: $userId) {\n    id\n    createdAt\n    label\n    performerType\n    submittedAt\n    payedAmt\n    totalAmt\n    transactionInfo\n    submission\n  }\n}": types.RegistrationsDocument,
     "query SubDisciplines($categoryId: Int!, $disciplineId: Int!, $levelId: Int!, $SGSLabel: SGSLabel!) {\n  subdisciplines(\n    categoryID: $categoryId\n    disciplineID: $disciplineId\n    levelID: $levelId\n    performerType: $SGSLabel\n  ) {\n    id\n    name\n    description\n  }\n}": types.SubDisciplinesDocument,
     "query SubdisciplinesByType($categoryId: Int!, $disciplineId: Int!, $levelId: Int!, $SGSLabel: SGSLabel!) {\n  subdisciplines(\n    categoryID: $categoryId\n    disciplineID: $disciplineId\n    levelID: $levelId\n    performerType: $SGSLabel\n  ) {\n    id\n    name\n    description\n    maxPerformers\n    minPerformers\n    SGSLabel\n  }\n}": types.SubdisciplinesByTypeDocument,
 };
@@ -187,11 +187,11 @@ export function graphql(source: "mutation TeacherUpdate($teacherId: Int!, $teach
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "mutation SignIn($credentials: CredentialsSignin!) {\n  signin(credentials: $credentials) {\n    userErrors {\n      message\n    }\n    access_token\n  }\n}"): (typeof documents)["mutation SignIn($credentials: CredentialsSignin!) {\n  signin(credentials: $credentials) {\n    userErrors {\n      message\n    }\n    access_token\n  }\n}"];
+export function graphql(source: "mutation SignIn($credentials: CredentialsSignin!) {\n  signin(credentials: $credentials) {\n    userErrors {\n      message\n    }\n    diatonicToken\n  }\n}"): (typeof documents)["mutation SignIn($credentials: CredentialsSignin!) {\n  signin(credentials: $credentials) {\n    userErrors {\n      message\n    }\n    diatonicToken\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "mutation SignUp($credentials: CredentialsSignup!) {\n  signup(credentials: $credentials) {\n    userErrors {\n      message\n    }\n    access_token\n  }\n}"): (typeof documents)["mutation SignUp($credentials: CredentialsSignup!) {\n  signup(credentials: $credentials) {\n    userErrors {\n      message\n    }\n    access_token\n  }\n}"];
+export function graphql(source: "mutation SignUp($credentials: CredentialsSignup!) {\n  signup(credentials: $credentials) {\n    userErrors {\n      message\n    }\n    diatonicToken\n  }\n}"): (typeof documents)["mutation SignUp($credentials: CredentialsSignup!) {\n  signup(credentials: $credentials) {\n    userErrors {\n      message\n    }\n    diatonicToken\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -255,7 +255,7 @@ export function graphql(source: "query Levels($subdisciplineId: Int!, $categoryI
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "query Registrations($performerType: SGSLabel!, $userId: Int!) {\n  registrations(performerType: $performerType, userID: $userId) {\n    id\n    createdAt\n    label\n    performerType\n    submittedAt\n    payedAmt\n    totalAmt\n    transactionInfo\n    submission\n  }\n}"): (typeof documents)["query Registrations($performerType: SGSLabel!, $userId: Int!) {\n  registrations(performerType: $performerType, userID: $userId) {\n    id\n    createdAt\n    label\n    performerType\n    submittedAt\n    payedAmt\n    totalAmt\n    transactionInfo\n    submission\n  }\n}"];
+export function graphql(source: "query Registrations($performerType: SGSLabel, $userId: Int!) {\n  registrations(performerType: $performerType, userID: $userId) {\n    id\n    createdAt\n    label\n    performerType\n    submittedAt\n    payedAmt\n    totalAmt\n    transactionInfo\n    submission\n  }\n}"): (typeof documents)["query Registrations($performerType: SGSLabel, $userId: Int!) {\n  registrations(performerType: $performerType, userID: $userId) {\n    id\n    createdAt\n    label\n    performerType\n    submittedAt\n    payedAmt\n    totalAmt\n    transactionInfo\n    submission\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

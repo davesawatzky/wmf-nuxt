@@ -8,18 +8,21 @@
 
 <template>
   <header class="bg-sky-800 py-2 text-white">
-    <section class="px-3 mx-auto lg:max-w-5xl flex justify-between items-center">
+    <section
+      class="px-3 mx-auto lg:max-w-5xl flex justify-between items-center">
       <!-- Music Festival Logo -->
       <div class="flex">
         <img
           class="inline h-16"
-          src="@/assets/images/wmf-logo-banner.jpg"
+          src="/images/wmf-logo-banner.jpg"
           alt="Winnipeg Music Festival Logo" />
         <div class="ml-4 font-semibold">Winnipeg<br />Music<br />Festival</div>
       </div>
 
       <!-- Centered Title -->
-      <div class="font-bold text-2xl invisible md:visible">Festival Registration</div>
+      <div class="font-bold text-2xl invisible md:visible">
+        Festival Registration
+      </div>
 
       <!-- Toggle Button -->
       <div v-if="$route.name !== 'Login'">
@@ -67,7 +70,8 @@
               Registration Forms
             </router-link>
           </li>
-          <li class="px-3 py-4 mx-1 hover:bg-sky-500 hover:ring-2 rounded-md text-center">
+          <li
+            class="px-3 py-4 mx-1 hover:bg-sky-500 hover:ring-2 rounded-md text-center">
             <BaseLogout @click="toggleNav" />
           </li>
         </ul>

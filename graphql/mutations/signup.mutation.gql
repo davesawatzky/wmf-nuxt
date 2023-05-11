@@ -3,6 +3,6 @@ mutation SignUp($credentials: CredentialsSignup!) {
     userErrors {
       message
     }
-    access_token
+    diatonicToken
   }
 }

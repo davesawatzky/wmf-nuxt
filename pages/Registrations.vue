@@ -9,17 +9,23 @@
   import { useSchool } from '@/stores/userSchool'
   import { useSchoolGroup } from '@/stores/userSchoolGroup'
   import { useCommunity } from '@/stores/userCommunity'
-  import { communityOpen, groupOpen, schoolOpen, soloOpen } from '@/composables/openClosed'
-  import { RegistrationsDocument } from '~/graphql/gql/graphql'
+  import {
+    communityOpen,
+    groupOpen,
+    schoolOpen,
+    soloOpen,
+  } from '@/composables/openClosed'
+  import { RegistrationsDocument } from '@/graphql/gql/graphql'
+  import type { Registration } from '@/graphql/gql/graphql'
 
-  const soloPhoto = 'images/opera-singer-on-stage.png'
-  const soloPhotoBW = 'images/opera-singer-on-stage-BW.png'
-  const groupPhoto = 'images/strings.png'
-  const groupPhotoBW = 'images/strings-BW.png'
-  const schoolPhoto = 'images/orff-instruments.png'
-  const schoolPhotoBW = 'images/orff-instruments-BW.png'
-  const communityPhoto = 'images/community_choir.png'
-  const communityPhotoBW = 'images/community_choir-BW.png'
+  const soloPhoto = '/images/opera-singer-on-stage.png'
+  const soloPhotoBW = '/images/opera-singer-on-stage-BW.png'
+  const groupPhoto = '/images/strings.png'
+  const groupPhotoBW = '/images/strings-BW.png'
+  const schoolPhoto = '/images/orff-instruments.png'
+  const schoolPhotoBW = '/images/orff-instruments-BW.png'
+  const communityPhoto = '/images/community_choir.png'
+  const communityPhotoBW = '/images/community_choir-BW.png'
 
   enum EnumPerformerType {
     'SOLO',
@@ -29,18 +35,18 @@
   }
   type PerformerType = keyof typeof EnumPerformerType
 
-  interface Registration {
-    id: number
-    label: string
-    performerType: keyof typeof EnumPerformerType
-    submittedAt?: Date
-    totalAmt: number
-    payedAmt: number
-    transactionInfo: string
-    confirmation: string
-    createdAt: Date
-    __typename?: string
-  }
+  // interface Registration {
+  //   id: number
+  //   label: string
+  //   performerType: keyof typeof EnumPerformerType
+  //   submittedAt?: Date
+  //   totalAmt: number
+  //   payedAmt: number
+  //   transactionInfo: string
+  //   confirmation: string
+  //   createdAt: Date
+  //   __typename?: string
+  // }
 
   const registrationStore = useRegistration()
   const appStore = useAppStore()
@@ -52,7 +58,6 @@
   const communityStore = useCommunity()
   const classesStore = useClasses()
   const registrationId = ref(0)
-  const registrations = ref({} as Registration[])
 
   const sm = useMediaQuery('(min-width: 640px)')
   const md = useMediaQuery('(min-width: 768px)')
@@ -76,19 +81,17 @@
     classesStore.$reset()
   })
 
-  // const { refetch: refetchRegistrations, onResult: doneRegistrationQuery } = useQuery(
-  //   RegistrationsDocument,
-  //   { performerType: null, userId: null },
-  //   () => ({
-  //     fetchPolicy: 'no-cache',
-  //   })
-  // )
+  const {
+    result,
+    refetch: refetchRegistrations,
+    onResult: doneRegistrationQuery,
+  } = useQuery(RegistrationsDocument, null, () => ({
+    fetchPolicy: 'no-cache',
+  }))
 
-  // const registrations = computed(() => result.value?.registrations ?? [])
-  // doneRegistrationQuery((result) => {
-  //   const clone = Object.assign({}, result.data.registrations)
-  //   registrations.value = clone
-  // })
+  const registrations = computed<Registration[]>(
+    () => result.value?.registrations ?? []
+  )
 
   function openEditor(performerType: PerformerType): boolean {
     return eval(`${performerType.toLowerCase()}Open`)
@@ -101,7 +104,11 @@
    * @param performerType SOLO, GROUP, SCHOOL, or COMMUNITY
    * @param index Array Index of retrieved registrations
    */
-  function loadRegistration(registrationId: number, performerType: PerformerType, index: number) {
+  function loadRegistration(
+    registrationId: number,
+    performerType: PerformerType,
+    index: number
+  ) {
     registrationStore.registrationId = registrationId
     registrationStore.addToStore(registrations.value[index])
     switch (performerType) {
@@ -225,18 +232,22 @@
         <h3 class="pb-3">Registering for the Winnipeg Music Festival</h3>
         <ul class="list-disc pl-5">
           <li>
-            Begin registration by creating an account (account can be for an individual; a teacher for all their
-            individual students, or for all their choirs; a parent for their family etc.)
+            Begin registration by creating an account (account can be for an
+            individual; a teacher for all their individual students, or for all
+            their choirs; a parent for their family etc.)
           </li>
           <li>
-            Only one teacher/discipline allowed per form. Performers with multiple disciplines and/or teachers require
-            separate forms.
+            Only one teacher/discipline allowed per form. Performers with
+            multiple disciplines and/or teachers require separate forms.
           </li>
           <li>
-            Applications can be saved and completed/edited later before submission. Once submitted, applications can no
-            longer be edited.
+            Applications can be saved and completed/edited later before
+            submission. Once submitted, applications can no longer be edited.
           </li>
-          <li>You can view submitted entries by clicking on the 'eye' link to the left of the table.</li>
+          <li>
+            You can view submitted entries by clicking on the 'eye' link to the
+            left of the table.
+          </li>
           <li>A copy can be printed for your records.</li>
         </ul>
       </div>
@@ -290,15 +301,26 @@
             <BaseButton
               class="text-sky-600 text-xl md:ml-4 ml-3"
               @click="
-                registration.confirmation || openEditor(registration.performerType)
-                  ? loadRegistration(registration.id, registration.performerType, index)
+                registration.confirmation ||
+                openEditor(registration.performerType)
+                  ? loadRegistration(
+                      registration.id,
+                      registration.performerType,
+                      index
+                    )
                   : ''
               ">
               <font-awesome-icon
-                v-if="!registration.confirmation && openEditor(registration.performerType)"
+                v-if="
+                  !registration.confirmation &&
+                  openEditor(registration.performerType)
+                "
                 icon="fa-solid fa-file-pen" />
               <font-awesome-icon
-                v-else-if="!registration.confirmation && !openEditor(registration.performerType)"
+                v-else-if="
+                  !registration.confirmation &&
+                  !openEditor(registration.performerType)
+                "
                 icon="fa-solid fa-ban" />
               <font-awesome-icon
                 v-else
