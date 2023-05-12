@@ -36,7 +36,7 @@ export default defineNuxtConfig({
     clients: {
       default: {
         httpEndpoint: 'http://localhost:3000/graphql',
-        // tokenName: 'access_token',
+        tokenName: 'diatonicToken',
         authHeader: 'Authorization',
         authType: 'Bearer',
         connectToDevTools: true,
