@@ -1,5 +1,5 @@
-import { provideApolloClient } from '@vue/apollo-composable'
-import apolloClient from '@/utilities/apolloClient'
+// import { provideApolloClient } from '@vue/apollo-composable'
+// import apolloClient from '@/utilities/apolloClient'
 import { GroupCreateDocument, GroupDeleteDocument, GroupInfoDocument, GroupUpdateDocument } from '~/graphql/gql/graphql'
 
 interface Group {
@@ -11,7 +11,7 @@ interface Group {
   instruments: string
 }
 
-provideApolloClient(apolloClient)
+// provideApolloClient(apolloClient)
 
 export const useGroup = defineStore(
   'group',

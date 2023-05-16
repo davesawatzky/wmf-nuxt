@@ -1,5 +1,5 @@
-import { provideApolloClient } from '@vue/apollo-composable'
-import apolloClient from '@/utilities/apolloClient'
+// import { provideApolloClient } from '@vue/apollo-composable'
+// import apolloClient from '@/utilities/apolloClient'
 import {
   SchoolGroupCreateDocument,
   SchoolGroupDeleteDocument,
@@ -20,7 +20,7 @@ interface SchoolGroupInfo {
   __typename?: string
 }
 
-provideApolloClient(apolloClient)
+// provideApolloClient(apolloClient)
 
 export const useSchoolGroup = defineStore(
   'schoolGroup',

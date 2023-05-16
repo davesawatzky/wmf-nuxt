@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import * as yup from 'yup'
+import * as yup from 'yup'
   import YupPassword from 'yup-password'
   import { SignInDocument, SignUpDocument } from '@/graphql/gql/graphql'
 
@@ -8,21 +8,23 @@
   const error = ref('')
   const isLogin = ref(true)
 
-  const { onLogin } = useApollo()
-
-  const validationSchema = yup.object({
-    firstName: yup.string().trim().label('First Name'),
-    lastName: yup.string().trim().label('Last Name'),
-    email: yup.string().trim().email().required().label('Email'),
-    password: yup.string().trim().password().required().label('Password'),
-    password2: yup
-      .string()
-      .trim()
-      .password()
-      .label('Password 2')
-      .oneOf([yup.ref('password')]),
+  const { handleSubmit } = useForm({
+    validationSchema: toTypedSchema(
+      yup.object({
+      firstName: yup.string().trim().label('First Name').required(),
+      lastName: yup.string().trim().label('Last Name').required(),
+      email: yup.string().trim().email().required().label('Email'),
+      password: yup.string().trim().password().required().label('Password'),
+      password2: yup
+        .string()
+        .trim()
+        .password()
+        .label('Password 2')
+        .oneOf([yup.ref('password')]),
+      })
+    ),
   })
-  const { setFieldValue, handleSubmit } = useForm({
+  const { setFieldValue } = useForm({
     validationSchema,
   })
   const { value: firstName } = useField('firstName')
@@ -30,6 +32,7 @@
   const { value: email } = useField('email')
   const { value: password } = useField('password')
   const { value: password2 } = useField('password2')
+  
   function handleChange(event: any) {
     setFieldValue('email', event.target.value)
   }
@@ -45,8 +48,6 @@
     })
     doneSignin((result) => {
       if (result.data.signin.diatonicToken) {
-        // The following code won't work with cookie set as httpOnly
-        // onLogin(result.data.signin.diatonicToken, 'default', false)
         navigateTo('/registrations')
       } else {
         error.value = 'Incorrect email or password.'
@@ -70,8 +71,7 @@
       },
     })
     doneSignup((result) => {
-      if (result.data.signup.token) {
-        onLogin(result.data.signup.token)
+      if (result.data.signup.diatonicToken) {
         navigateTo('/registrations')
       } else {
         error.value = 'Error occured'

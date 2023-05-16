@@ -33,6 +33,7 @@ export default defineNuxtConfig({
   apollo: {
     autoImports: true,
     proxyCookies: true,
+    tokenStorage: 'cookie',
     clients: {
       default: {
         httpEndpoint: 'http://localhost:3000/graphql',

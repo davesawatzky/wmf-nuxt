@@ -1,5 +1,3 @@
-import { provideApolloClient } from '@vue/apollo-composable'
-import apolloClient from '@/utilities/apolloClient'
 import {
   CommunityCreateDocument,
   CommunityDeleteDocument,
@@ -19,8 +17,6 @@ interface CommunityInfo {
   conflictPerformers: string
   __typename?: string
 }
-
-provideApolloClient(apolloClient)
 
 export const useCommunity = defineStore(
   'community',
