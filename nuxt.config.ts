@@ -3,33 +3,10 @@ import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 export default defineNuxtConfig({
-  runtimeConfig: {
-    baseUrl: process.env.BASE_URL_SERVER,
-    public: {
-      baseUrl: process.env.BASE_URL_CLIENT,
-    },
-  },
   alias: {
     '@': resolve(__dirname, './'),
     images: fileURLToPath(new URL('./public/images', import.meta.url)),
   },
-  typescript: {
-    strict: true,
-    typeCheck: true,
-  },
-  modules: [
-    '@nuxtjs/tailwindcss',
-    '@nuxtjs/eslint-module',
-    '@nuxtjs/apollo',
-    '@pinia/nuxt',
-    '@pinia-plugin-persistedstate/nuxt',
-    '@nuxt/devtools',
-    'nuxt-vitest',
-    '@vee-validate/nuxt',
-    '@vueuse/nuxt',
-    '@nuxt/image-edge',
-    'nuxt-quasar-ui',
-  ],
   apollo: {
     autoImports: true,
     proxyCookies: true,
@@ -53,17 +30,56 @@ export default defineNuxtConfig({
       },
     },
   },
+  eslint: {
+    lintOnStart: false,
+  },
+  experimental: {
+    typedPages: true,
+  },
+  modules: [
+    '@nuxtjs/tailwindcss',
+    '@nuxtjs/eslint-module',
+    '@nuxtjs/apollo',
+    '@pinia/nuxt',
+    '@pinia-plugin-persistedstate/nuxt',
+    '@nuxt/devtools',
+    'nuxt-vitest',
+    '@vee-validate/nuxt',
+    '@vueuse/nuxt',
+    '@nuxt/image-edge',
+    'nuxt-quasar-ui',
+  ],
   pinia: {
     autoImports: ['defineStore'],
   },
   piniaPersistedstate: {
     storage: 'sessionStorage',
   },
+  quasar: {},
+  runtimeConfig: {
+    baseUrl: process.env.BASE_URL_SERVER,
+    public: {
+      baseUrl: process.env.BASE_URL_CLIENT,
+    },
+  },
+  typescript: {
+    strict: true,
+    typeCheck: true,
+    // tsConfig: {
+    //   compilerOptions: {
+    //     moduleResolution: 'bundler'
+    //   }
+    // }
+  },
   veeValidate: {
     autoImports: true,
   },
-  eslint: {
-    lintOnStart: false,
+  vite: {
+    vue: {
+      script: {
+        defineModel: true,
+        propsDestructure: true
+      }
+    }
   },
-  quasar: {},
 })

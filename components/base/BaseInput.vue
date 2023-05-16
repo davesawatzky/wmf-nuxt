@@ -31,7 +31,7 @@
     initialValue: props.modelValue,
   })
   const validationListeners = computed(() => {
-    // If the field is valid or have not been validated yet
+    // If the field is valid or has not been validated yet
     // lazy
     if (!errorMessage.value) {
       return {

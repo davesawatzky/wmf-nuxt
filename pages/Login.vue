@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import * as yup from 'yup'
+  import * as yup from 'yup'
   import YupPassword from 'yup-password'
   import { SignInDocument, SignUpDocument } from '@/graphql/gql/graphql'
 
@@ -8,31 +8,23 @@ import * as yup from 'yup'
   const error = ref('')
   const isLogin = ref(true)
 
-  const { handleSubmit } = useForm({
+  const { setFieldValue, values, handleSubmit } = useForm({
     validationSchema: toTypedSchema(
       yup.object({
-      firstName: yup.string().trim().label('First Name').required(),
-      lastName: yup.string().trim().label('Last Name').required(),
-      email: yup.string().trim().email().required().label('Email'),
-      password: yup.string().trim().password().required().label('Password'),
-      password2: yup
-        .string()
-        .trim()
-        .password()
-        .label('Password 2')
-        .oneOf([yup.ref('password')]),
+        firstName: yup.string().trim().label('First Name').required(),
+        lastName: yup.string().trim().label('Last Name').required(),
+        email: yup.string().trim().email().required().label('Email'),
+        password: yup.string().trim().password().required().label('Password'),
+        password2: yup
+          .string()
+          .trim()
+          .password()
+          .label('Password 2')
+          .oneOf([yup.ref('password')]),
       })
     ),
   })
-  const { setFieldValue } = useForm({
-    validationSchema,
-  })
-  const { value: firstName } = useField('firstName')
-  const { value: lastName } = useField('lastName')
-  const { value: email } = useField('email')
-  const { value: password } = useField('password')
-  const { value: password2 } = useField('password2')
-  
+
   function handleChange(event: any) {
     setFieldValue('email', event.target.value)
   }
@@ -85,12 +77,12 @@ import * as yup from 'yup'
    */
   function resetFields() {
     setTimeout(() => {
-      // firstName.value = ''
-      // lastName.value = ''
+      values.firstName = ''
+      values.lastName = ''
       error.value = ''
-      // email.value = ''
-      // password.value = ''
-      // password2.value = ''
+      values.email = ''
+      values.password = ''
+      values.password2 = ''
     }, 2500)
   }
 </script>
@@ -121,12 +113,12 @@ import * as yup from 'yup'
       <div v-if="!isLogin">
         <h3 class="loginheading">Sign up</h3>
         <BaseInput
-          v-model="firstName"
+          v-model="values.firstName"
           name="firstName"
           type="text"
           label="First Name" />
         <BaseInput
-          v-model="lastName"
+          v-model="values.lastName"
           name="lastName"
           type="text"
           label="Last Name" />
@@ -137,7 +129,7 @@ import * as yup from 'yup'
         Sign in
       </h3>
       <BaseInput
-        v-model="email"
+        v-model="values.email"
         autofocus
         name="email"
         type="email"
@@ -146,14 +138,14 @@ import * as yup from 'yup'
         @keyup.enter="isLogin ? signin() : signup()"
         @change="handleChange" />
       <BaseInput
-        v-model="password"
+        v-model="values.password"
         name="password"
         type="password"
         label="Password"
         @keyup.enter="isLogin ? signin() : signup()" />
       <BaseInput
         v-if="!isLogin"
-        v-model="password2"
+        v-model="values.password2"
         name="password2"
         type="password"
         label="Re-enter Password"
