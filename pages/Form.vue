@@ -19,6 +19,7 @@
   import { useRegistration } from '@/stores/userRegistration'
   import { useSchool } from '@/stores/userSchool'
   import { useTeacher } from '@/stores/userTeacher'
+  import { PerformerType } from '~/graphql/gql/graphql'
 
   interface DynamicComponent {
     [key: string]: Component
@@ -74,7 +75,7 @@
   async function saveRegistration() {
     switch (appStore.performerType) {
       case 'SOLO':
-        appStore.performerType = 'SOLO'
+        appStore.performerType = PerformerType.SOLO
         appStore.dataLoading = true
         await registrationStore.updateRegistration()
         await performerStore.updatePerformer(0, performerStore.performer[0].id!)
@@ -83,7 +84,7 @@
         appStore.dataLoading = false
         break
       case 'GROUP':
-        appStore.performerType = 'GROUP'
+        appStore.performerType = PerformerType.GROUP
         appStore.dataLoading = true
         await registrationStore.updateRegistration()
         await groupStore.updateGroup()
@@ -93,7 +94,7 @@
         appStore.dataLoading = false
         break
       case 'SCHOOL':
-        appStore.performerType = 'SCHOOL'
+        appStore.performerType = PerformerType.SCHOOL
         appStore.dataLoading = true
         await registrationStore.updateRegistration()
         await schoolStore.updateSchool()
@@ -103,10 +104,13 @@
         appStore.dataLoading = false
         break
       case 'COMMUNITY':
-        appStore.performerType = 'COMMUNITY'
+        appStore.performerType = PerformerType.COMMUNITY
         appStore.dataLoading = true
         await registrationStore.updateRegistration()
-        await communityStore.updateCommunity(0, communityStore.communityInfo[0].id!)
+        await communityStore.updateCommunity(
+          0,
+          communityStore.communityInfo[0].id!
+        )
         await teacherStore.updateTeacher()
         await classesStore.updateAllClasses()
         appStore.dataLoading = false
@@ -131,12 +135,16 @@
           v-for="(_, tab) in tabs"
           :key="tab"
           class="btn-blue py-1 px-2 mr-1 rounded-t-lg text-sm md:text-base"
-          :class="[{ active: currentTab === tab }, currentTab === tab ? 'bg-sky-600' : '']"
+          :class="[
+            { active: currentTab === tab },
+            currentTab === tab ? 'bg-sky-600' : '',
+          ]"
           @click="currentTab = String(tab)">
           {{ tab }}
         </button>
       </div>
-      <div class="border border-spacing-1 shadow-md rounded-b-lg rounded-tr-lg border-sky-500 p-2 mb-6">
+      <div
+        class="border border-spacing-1 shadow-md rounded-b-lg rounded-tr-lg border-sky-500 p-2 mb-6">
         <KeepAlive>
           <component :is="tabs[currentTab]" />
         </KeepAlive>

@@ -1,20 +1,21 @@
 <script setup lang="ts">
   // 	@input ="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
 
-  const props = defineProps({
-    label: {
-      type: String,
-      default: '',
-    },
-    name: {
-      type: String,
-      required: true,
-      default: '',
-    },
-    modelValue: {
-      type: [String, Number],
-      default: '',
-    },
+  interface Props {
+    type?: string
+    label?: string
+    name: string
+    placeholder?: string
+    status?: string
+    modelValue?: string | number
+  }
+
+  const props = withDefaults(defineProps<Props>(), {
+    type: 'text',
+    label: '',
+    placeholder: '',
+    status: '',
+    modelValue: '',
   })
 
   defineEmits(['update:modelValue'])
@@ -41,7 +42,6 @@
         input: (e: string | number) => handleChange(e, false),
       }
     }
-
     return {
       blur: handleChange,
       change: handleChange,
@@ -59,7 +59,10 @@
     >
   </div>
   <input
+    :type="props.type"
     :id="uuid"
+    :name="name"
+    :placeholder="placeholder"
     v-bind="{ ...$attrs }"
     :value="inputValue"
     :aria-describedby="errorMessage ? `${uuid}-error` : ''"

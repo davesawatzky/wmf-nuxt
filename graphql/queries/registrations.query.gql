@@ -1,4 +1,4 @@
-query Registrations($performerType: SGSLabel, $userId: Int!) {
+query Registrations($performerType: PerformerType, $userId: Int!) {
   registrations(performerType: $performerType, userID: $userId) {
     id
     createdAt
@@ -8,6 +8,6 @@ query Registrations($performerType: SGSLabel, $userId: Int!) {
     payedAmt
     totalAmt
     transactionInfo
-    submission
+    confirmation
   }
 }

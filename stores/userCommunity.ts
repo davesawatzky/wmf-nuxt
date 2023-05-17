@@ -4,30 +4,18 @@ import {
   CommunityInfoDocument,
   CommunityUpdateDocument,
 } from '~/graphql/gql/graphql'
-
-interface CommunityInfo {
-  id?: number
-  name: string
-  groupSize: number
-  chaperones: number
-  wheelchairs: number
-  earliestTime: string
-  latestTime: string
-  unavailable: string
-  conflictPerformers: string
-  __typename?: string
-}
+import type { Community } from '~/graphql/gql/graphql'
 
 export const useCommunity = defineStore(
   'community',
   () => {
-    const communityInfo = ref([] as CommunityInfo[])
+    const communityInfo = ref([] as Community[])
 
     function $reset() {
-      communityInfo.value = <CommunityInfo[]>[]
+      communityInfo.value = <Community[]>[]
     }
 
-    function addToStore(communityData: CommunityInfo | null) {
+    function addToStore(communityData: Community | null) {
       communityInfo.value.push({
         id: 0,
         name: '',
@@ -42,7 +30,10 @@ export const useCommunity = defineStore(
       })
 
       if (communityData) {
-        Object.assign(communityInfo.value[communityInfo.value.length - 1], communityData)
+        Object.assign(
+          communityInfo.value[communityInfo.value.length - 1],
+          communityData
+        )
       }
     }
 
@@ -53,14 +44,18 @@ export const useCommunity = defineStore(
         onError,
       } = useMutation(CommunityCreateDocument, { fetchPolicy: 'no-cache' })
       addToStore(null)
-      const clone = Object.assign({}, communityInfo.value[communityInfo.value.length - 1])
+      const clone = Object.assign(
+        {},
+        communityInfo.value[communityInfo.value.length - 1]
+      )
       delete clone.id
       await communityCreate({
         registrationId,
         community: clone,
       })
       doneCommunityCreate((result) => {
-        communityInfo.value[communityInfo.value.length - 1].id = result.data.communityCreate.community.id
+        communityInfo.value[communityInfo.value.length - 1].id =
+          result.data.communityCreate.community.id
       })
       onError((error) => {
         console.log(error)
@@ -73,10 +68,14 @@ export const useCommunity = defineStore(
         load: loadCommunities,
         onResult: resultLoadCommunity,
         onError,
-      } = useLazyQuery(CommunityInfoDocument, { registrationId }, { fetchPolicy: 'no-cache' })
+      } = useLazyQuery(
+        CommunityInfoDocument,
+        { registrationId },
+        { fetchPolicy: 'no-cache' }
+      )
       resultLoadCommunity((result) => {
         for (let i = 0; i < result.data.registration.communities.length; i++) {
-          addToStore(<CommunityInfo>result.data.registration.communities[i])
+          addToStore(<Community>result.data.registration.communities[i])
         }
       })
       onError((error) => {
@@ -88,10 +87,16 @@ export const useCommunity = defineStore(
       }
     }
 
-    async function updateCommunity(communityIndex: number, communityId: number) {
-      const { mutate: communityUpdate, onError } = useMutation(CommunityUpdateDocument, {
-        fetchPolicy: 'no-cache',
-      })
+    async function updateCommunity(
+      communityIndex: number,
+      communityId: number
+    ) {
+      const { mutate: communityUpdate, onError } = useMutation(
+        CommunityUpdateDocument,
+        {
+          fetchPolicy: 'no-cache',
+        }
+      )
       const clone = Object.assign({}, communityInfo.value[communityIndex])
       delete clone.id
       await communityUpdate({
@@ -106,13 +111,17 @@ export const useCommunity = defineStore(
     async function updateAllCommunities() {
       let communityIndex = 0
       for (const eachCommunity of communityInfo.value) {
-        await updateCommunity(communityIndex, eachCommunity.id!)
+        await updateCommunity(communityIndex, eachCommunity.id)
         communityIndex++
       }
     }
 
     async function deleteCommunity(communityId: number) {
-      const { mutate: communityDelete, onDone: doneCommunityDelete, onError } = useMutation(CommunityDeleteDocument)
+      const {
+        mutate: communityDelete,
+        onDone: doneCommunityDelete,
+        onError,
+      } = useMutation(CommunityDeleteDocument)
       await communityDelete({ communityId })
       doneCommunityDelete(() => {
         const index = communityInfo.value.map((e) => e.id).indexOf(communityId)

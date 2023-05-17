@@ -1,39 +1,18 @@
-// import { provideApolloClient } from '@vue/apollo-composable'
-// import apolloClient from '@/utilities/apolloClient'
-import { GroupCreateDocument, GroupDeleteDocument, GroupInfoDocument, GroupUpdateDocument } from '~/graphql/gql/graphql'
-
-interface Group {
-  id?: number
-  name: string
-  groupType: string
-  numberOfPerformers: number
-  age: number
-  instruments: string
-}
-
-// provideApolloClient(apolloClient)
+import {
+  GroupCreateDocument,
+  GroupDeleteDocument,
+  GroupInfoDocument,
+  GroupUpdateDocument,
+} from '~/graphql/gql/graphql'
+import type { Group } from '~/graphql/gql/graphql'
 
 export const useGroup = defineStore(
   'group',
   () => {
-    const groupInfo = ref({
-      id: 0,
-      name: '',
-      groupType: '', // Vocal, Instrumental
-      numberOfPerformers: 1,
-      age: 10,
-      instruments: '',
-    } as Group)
+    const groupInfo = ref(<Group>{})
 
     function $reset() {
-      groupInfo.value = {
-        id: 0,
-        name: '',
-        groupType: '',
-        numberOfPerformers: 1,
-        age: 10,
-        instruments: '',
-      }
+      groupInfo.value = <Group>{}
     }
 
     function addToStore(group: Group) {
@@ -41,7 +20,11 @@ export const useGroup = defineStore(
     }
 
     async function createGroup(registrationId: number) {
-      const { mutate: groupCreate, onDone: doneGroupCreate, onError } = useMutation(GroupCreateDocument)
+      const {
+        mutate: groupCreate,
+        onDone: doneGroupCreate,
+        onError,
+      } = useMutation(GroupCreateDocument)
       const clone = Object.assign({}, groupInfo.value)
       delete clone.id
       await groupCreate({ registrationId, group: clone })
@@ -59,7 +42,11 @@ export const useGroup = defineStore(
         load: loadGroup,
         onResult: resultLoadGroup,
         onError,
-      } = useLazyQuery(GroupInfoDocument, { registrationId }, { fetchPolicy: 'no-cache' })
+      } = useLazyQuery(
+        GroupInfoDocument,
+        { registrationId },
+        { fetchPolicy: 'no-cache' }
+      )
       resultLoadGroup((result) => {
         addToStore(<Group>result.data.registration.groups[0])
       })

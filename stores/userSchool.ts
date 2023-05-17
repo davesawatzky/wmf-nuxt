@@ -1,62 +1,30 @@
-// import { provideApolloClient } from '@vue/apollo-composable'
-// import apolloClient from '@/utilities/apolloClient'
 import {
   SchoolCreateDocument,
   SchoolDeleteDocument,
   SchoolInfoDocument,
   SchoolUpdateDocument,
 } from '~/graphql/gql/graphql'
-
-interface SchoolInfo {
-  id?: number
-  name: string
-  division: string
-  streetNumber: string
-  streetName: string
-  city: string
-  province: string
-  postalCode: string
-  phone: string
-  __typename?: string
-}
-
-// provideApolloClient(apolloClient)
+import type { School } from '~/graphql/gql/graphql'
 
 export const useSchool = defineStore(
   'school',
   () => {
-    const schoolInfo = ref({
-      id: undefined,
-      name: '',
-      division: '',
-      streetNumber: '',
-      streetName: '',
-      city: 'Winnipeg',
-      province: 'MB',
-      postalCode: '',
-      phone: '',
-    } as SchoolInfo)
+    const schoolInfo = ref(<School>{})
 
     function $reset() {
-      schoolInfo.value = <SchoolInfo>{
-        id: undefined,
-        name: '',
-        division: '',
-        streetNumber: '',
-        streetName: '',
-        city: 'Winnipeg',
-        province: 'MB',
-        postalCode: '',
-        phone: '',
-      }
+      schoolInfo.value = <School>{}
     }
 
-    function addToStore(school: SchoolInfo) {
+    function addToStore(school: School) {
       Object.assign(schoolInfo.value, school)
     }
 
     async function createSchool(registrationId: number) {
-      const { mutate: schoolCreate, onDone: doneSchoolCreate, onError } = useMutation(SchoolCreateDocument)
+      const {
+        mutate: schoolCreate,
+        onDone: doneSchoolCreate,
+        onError,
+      } = useMutation(SchoolCreateDocument)
       const clone = Object.assign({}, schoolInfo.value)
       delete clone.id
       await schoolCreate({
@@ -77,9 +45,13 @@ export const useSchool = defineStore(
         load: loadSchool,
         onResult: resultLoadSchool,
         onError,
-      } = useLazyQuery(SchoolInfoDocument, { registrationId }, { fetchPolicy: 'network-only' })
+      } = useLazyQuery(
+        SchoolInfoDocument,
+        { registrationId },
+        { fetchPolicy: 'network-only' }
+      )
       resultLoadSchool((result) => {
-        addToStore(<SchoolInfo>result.data.registration.school)
+        addToStore(<School>result.data.registration.school)
       })
       onError((error) => {
         console.log(error)
@@ -91,9 +63,12 @@ export const useSchool = defineStore(
     }
 
     async function updateSchool() {
-      const { mutate: schoolUpdate, onError } = useMutation(SchoolUpdateDocument, {
-        fetchPolicy: 'network-only',
-      })
+      const { mutate: schoolUpdate, onError } = useMutation(
+        SchoolUpdateDocument,
+        {
+          fetchPolicy: 'network-only',
+        }
+      )
       const clone = Object.assign({}, schoolInfo.value)
       delete clone.id
       delete clone.__typename
@@ -107,7 +82,8 @@ export const useSchool = defineStore(
     }
 
     async function deleteSchool(schoolId: number) {
-      const { mutate: schoolDelete, onError } = useMutation(SchoolDeleteDocument)
+      const { mutate: schoolDelete, onError } =
+        useMutation(SchoolDeleteDocument)
       await schoolDelete({ schoolId })
       onError((error) => {
         console.log(error)

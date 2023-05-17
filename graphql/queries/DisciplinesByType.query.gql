@@ -1,5 +1,5 @@
-query DisciplinesByType($SGSLabel: SGSLabel!) {
-  disciplines(SGSLabel: $SGSLabel) {
+query DisciplinesByType($performerType: PerformerType!) {
+  disciplines(performerType: $performerType) {
     id
     name
   }

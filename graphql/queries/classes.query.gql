@@ -1,5 +1,5 @@
-query FestivalClasses($SGSLabel: SGSLabel) {
-  festivalClasses(SGSLabel: $SGSLabel) {
+query FestivalClasses($performerType: PerformerType) {
+  festivalClasses(performerType: $performerType) {
     subdiscipline {
       id
       name

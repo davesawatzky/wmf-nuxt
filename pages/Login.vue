@@ -11,8 +11,8 @@
   const { setFieldValue, values, handleSubmit } = useForm({
     validationSchema: toTypedSchema(
       yup.object({
-        firstName: yup.string().trim().label('First Name').required(),
-        lastName: yup.string().trim().label('Last Name').required(),
+        firstName: yup.string().trim().label('First Name'),
+        lastName: yup.string().trim().label('Last Name'),
         email: yup.string().trim().email().required().label('Email'),
         password: yup.string().trim().password().required().label('Password'),
         password2: yup

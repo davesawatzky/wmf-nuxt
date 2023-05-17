@@ -5,7 +5,7 @@ query ClassByNumber($festivalClassNumber: String!) {
     maxSelection
     minSelection
     requiredSelection
-    SGSLabel
+    performerType
     price
     category {
       id

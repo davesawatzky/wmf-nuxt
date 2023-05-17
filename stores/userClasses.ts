@@ -10,32 +10,12 @@ import {
   SelectionUpdateDocument,
 } from '~/graphql/gql/graphql'
 
-import type { RegisteredClass, RegisteredClassInput, Selection, SelectionInput } from '~/graphql/gql/graphql'
-
-// export interface Selections {
-//   id?: number
-//   title: string
-//   largerWork: string
-//   movement: string
-//   composer: string
-//   duration: string
-//   __typename?: string
-// }
-
-// export interface RegisteredClass {
-//   id?: number
-//   classNumber: string
-//   className?: string
-//   discipline: string
-//   subdiscipline: string
-//   level: string
-//   category: string
-//   numberOfSelections: number
-//   price: number
-//   schoolGroupID: number | null
-//   __typename?: string
-//   selections?: Selections[]
-// }
+import type {
+  RegisteredClass,
+  RegisteredClassInput,
+  Selection,
+  SelectionInput,
+} from '~/graphql/gql/graphql'
 
 export const useClasses = defineStore(
   'registeredClasses',
@@ -52,22 +32,19 @@ export const useClasses = defineStore(
      * class entry existing classes
      */
     function addClassToStore(registeredClass: RegisteredClass | null) {
-      registeredClasses.value.push({
-        id: 0,
-        classNumber: '',
-        discipline: '',
-        subdiscipline: '',
-        level: '',
-        category: '',
-        numberOfSelections: 0,
-        price: 0,
-        schoolGroupID: null,
+      registeredClasses.value.push(<RegisteredClass>{
+        id: registeredClass?.id || 0,
+        classNumber: registeredClass?.classNumber || '',
+        discipline: registeredClass?.discipline || '',
+        subdiscipline: registeredClass?.subdiscipline || '',
+        level: registeredClass?.level || '',
+        category: registeredClass?.category || '',
+        numberOfSelections: registeredClass?.numberOfSelections || 1,
+        price: registeredClass?.price || 0,
+        schoolGroupID: registeredClass?.schoolGroupID || null,
         __typename: 'RegisteredClass',
-        selections: [],
+        selections: registeredClass?.selections || <Selection[]>[],
       })
-      if (registeredClass) {
-        Object.assign(registeredClasses.value[registeredClasses.value.length - 1], registeredClass)
-      }
     }
 
     /**
@@ -76,22 +53,19 @@ export const useClasses = defineStore(
      *
      * @param index Index of specific class in array
      */
-    function addSelectionToStore(classSelection: Selection | null, classIndex: number) {
+    function addSelectionToStore(
+      classSelection: Selection | null,
+      classIndex: number
+    ) {
       registeredClasses.value[classIndex].selections!.push({
-        id: 0,
-        title: '',
-        largerWork: '',
-        movement: '',
-        composer: '',
-        duration: '0:00',
+        id: classSelection?.id || 0,
+        title: classSelection?.title || null,
+        largerWork: classSelection?.largerWork || null,
+        movement: classSelection?.movement || null,
+        composer: classSelection?.composer || null,
+        duration: classSelection?.duration || '0:00',
         __typename: 'Selection',
       })
-      if (classSelection) {
-        Object.assign(
-          registeredClasses.value[classIndex].selections![registeredClasses.value[classIndex].selections!.length - 1],
-          classSelection
-        )
-      }
     }
 
     async function createClass(registrationId: number) {
@@ -102,13 +76,17 @@ export const useClasses = defineStore(
       } = useMutation(ClassCreateDocument, { fetchPolicy: 'no-cache' })
       addClassToStore(null)
       const classLastIndex = registeredClasses.value.length - 1
-      const clone = Object.assign({}, <RegisteredClassInput>registeredClasses.value[classLastIndex])
+      const clone = Object.assign(
+        {},
+        <RegisteredClassInput>registeredClasses.value[classLastIndex]
+      )
       // delete clone.id
       // delete clone.selections
       await classCreate({ registrationId, registeredClassInput: clone })
       doneClassCreate((result) => {
         const lastIndex = registeredClasses.value.length - 1
-        const returnedId: number = result.data.registeredClassCreate.registeredClass.id
+        const returnedId: number =
+          result.data.registeredClassCreate.registeredClass.id
         registeredClasses.value[lastIndex].id = returnedId
       })
       errorClassCreate((error) => {
@@ -122,13 +100,22 @@ export const useClasses = defineStore(
         load: loadClasses,
         onResult: resultLoadClasses,
         onError: classError,
-      } = useLazyQuery(RegisteredClassesDocument, { registrationId }, { fetchPolicy: 'no-cache' })
+      } = useLazyQuery(
+        RegisteredClassesDocument,
+        { registrationId },
+        { fetchPolicy: 'no-cache' }
+      )
       resultLoadClasses((result) => {
-        if (!result.data.registration.registeredClasses || result.data.registration.registeredClasses.length === 0) {
+        if (
+          !result.data.registration.registeredClasses ||
+          result.data.registration.registeredClasses.length === 0
+        ) {
           createClass(registrationId).catch((error) => console.log(error))
           return
         }
-        registeredClasses.value = structuredClone(result.data.registration.registeredClasses)
+        registeredClasses.value = structuredClone(
+          result.data.registration.registeredClasses
+        )
         checkForExistingSelections()
       })
       classError((error) => {
@@ -144,30 +131,49 @@ export const useClasses = defineStore(
       let classIndex = 0
       // TODO: must change forEach code.  This is a bug!
       // foreach skips empty values
-      registeredClasses.value.forEach((item) => {
-        if (item.selections.length === 0 || item.selections.length !== item.numberOfSelections) {
-          if (item.selections.length === 0) {
-            for (let i = 0; i < item.numberOfSelections; i++) {
-              createSelection(classIndex).catch((error) => console.log(error))
-            }
-          } else if (item.selections!.length > 0 && item.selections!.length < item.numberOfSelections) {
-            for (let i = 1; i < 2; i++) {
-              createSelection(classIndex).catch((error) => console.log(error))
-            }
-          } else if (item.selections!.length > item.numberOfSelections) {
-            for (let i = item.selections!.length; i > item.numberOfSelections; i--) {
-              deleteSelection(classIndex, i).catch((error) => console.log(error))
+      if (registeredClasses.value.selections.length > 0)
+        for (const item of registeredClasses.value) {
+          if (
+            item.selections.length === 0 ||
+            item.selections.length !== item.numberOfSelections
+          ) {
+            if (item.selections.length === 0) {
+              for (let i = 0; i < item.numberOfSelections; i++) {
+                createSelection(classIndex).catch((error) => console.log(error))
+              }
+            } else if (
+              item.selections!.length > 0 &&
+              item.selections!.length < item.numberOfSelections
+            ) {
+              for (let i = 1; i < 2; i++) {
+                createSelection(classIndex).catch((error) => console.log(error))
+              }
+            } else if (item.selections!.length > item.numberOfSelections) {
+              for (
+                let i = item.selections!.length;
+                i > item.numberOfSelections;
+                i--
+              ) {
+                deleteSelection(classIndex, i).catch((error) =>
+                  console.log(error)
+                )
+              }
             }
           }
+          classIndex++
         }
-        classIndex++
-      })
     }
 
     async function updateClass(classIndex: number) {
-      const { mutate: classUpdate, onError } = useMutation(ClassUpdateDocument, { fetchPolicy: 'no-cache' })
+      const { mutate: classUpdate, onError } = useMutation(
+        ClassUpdateDocument,
+        { fetchPolicy: 'no-cache' }
+      )
       const classId = registeredClasses.value[classIndex].id
-      const clone = Object.assign({}, <RegisteredClassInput>registeredClasses.value[classIndex])
+      const clone = Object.assign(
+        {},
+        <RegisteredClassInput>registeredClasses.value[classIndex]
+      )
       // delete clone.id
       // delete clone.selections
       // delete clone.__typename
@@ -190,7 +196,11 @@ export const useClasses = defineStore(
     }
 
     async function deleteClass(classIndex: number, registeredClassId: number) {
-      const { mutate: classDelete, onDone: doneClassDelete, onError } = useMutation(ClassDeleteDocument)
+      const {
+        mutate: classDelete,
+        onDone: doneClassDelete,
+        onError,
+      } = useMutation(ClassDeleteDocument)
       await classDelete({ registeredClassId })
       doneClassDelete(() => {
         registeredClasses.value.splice(classIndex, 1)
@@ -208,26 +218,43 @@ export const useClasses = defineStore(
       } = useMutation(SelectionCreateDocument, { fetchPolicy: 'no-cache' })
       addSelectionToStore(null, classIndex)
       const classId: number = registeredClasses.value[classIndex].id
-      const selectionsLastIndex = registeredClasses.value[classIndex].selections!.length - 1
+      const selectionsLastIndex =
+        registeredClasses.value[classIndex].selections!.length - 1
       const clone = Object.assign(
         {},
-        <SelectionInput>registeredClasses.value[classIndex].selections![selectionsLastIndex]
+        <SelectionInput>(
+          registeredClasses.value[classIndex].selections![selectionsLastIndex]
+        )
       )
       // delete clone.id
       await selectionCreate({ registeredClassId: classId, selection: clone })
       doneSelectionCreate((result) => {
-        const lastIndex = registeredClasses.value[classIndex].selections!.length - 1
+        const lastIndex =
+          registeredClasses.value[classIndex].selections!.length - 1
         const returnedId: number = result.data.selectionCreate.selection.id
-        registeredClasses.value[classIndex].selections![lastIndex].id = returnedId
+        registeredClasses.value[classIndex].selections![lastIndex].id =
+          returnedId
       })
       errorSelectionCreate((error) => {
         console.log(error)
       })
     }
 
-    async function updateSelection(classIndex: number, selectionIndex: number, selectionId: number) {
-      const { mutate: selectionUpdate, onError } = useMutation(SelectionUpdateDocument, { fetchPolicy: 'no-cache' })
-      const clone = Object.assign({}, <SelectionInput>registeredClasses.value[classIndex].selections![selectionIndex])
+    async function updateSelection(
+      classIndex: number,
+      selectionIndex: number,
+      selectionId: number
+    ) {
+      const { mutate: selectionUpdate, onError } = useMutation(
+        SelectionUpdateDocument,
+        { fetchPolicy: 'no-cache' }
+      )
+      const clone = Object.assign(
+        {},
+        <SelectionInput>(
+          registeredClasses.value[classIndex].selections![selectionIndex]
+        )
+      )
       // delete clone.id
       // delete clone.__typename
       await selectionUpdate({ selectionId, selection: clone })
@@ -245,11 +272,19 @@ export const useClasses = defineStore(
     }
 
     async function deleteSelection(classIndex: number, selectionIndex: number) {
-      const { mutate: selectionDelete, onDone: doneSelectionDelete, onError } = useMutation(SelectionDeleteDocument)
-      const selectionNum = registeredClasses.value[classIndex].selections![selectionIndex].id
+      const {
+        mutate: selectionDelete,
+        onDone: doneSelectionDelete,
+        onError,
+      } = useMutation(SelectionDeleteDocument)
+      const selectionNum =
+        registeredClasses.value[classIndex].selections![selectionIndex].id
       await selectionDelete({ selectionId: selectionNum })
       doneSelectionDelete(() => {
-        registeredClasses.value[classIndex].selections?.splice(selectionIndex, 1)
+        registeredClasses.value[classIndex].selections?.splice(
+          selectionIndex,
+          1
+        )
       })
       onError((error) => {
         console.log(error)

@@ -5,7 +5,7 @@ query FestivalClassSearch($festivalClassSearch: FestivalClassSearchArgs!) {
     maxSelection
     minSelection
     requiredSelection
-    SGSLabel
+    performerType
     price
     subdiscipline {
       name

@@ -32,7 +32,8 @@
     set: (value) => emits('update:modelValue', value),
   })
 
-  const { result: instrumentQuery, error: instrumentsError } = useQuery(InstrumentsDocument)
+  const { result: instrumentQuery, error: instrumentsError } =
+    useQuery(InstrumentsDocument)
   const instruments = computed(() => instrumentQuery.value.instruments ?? [])
   if (instrumentsError) {
     console.log(instrumentsError)
@@ -41,16 +42,20 @@
   watch(
     () => selectedClasses.value.classNumber,
     (classNumber: string) => {
-      instrumentRequired.value = classesStore.MOZART_CLASSES.includes(classNumber)
+      instrumentRequired.value =
+        classesStore.MOZART_CLASSES.includes(classNumber)
     }
   )
 
   /**
    * Disciplines
    */
-  const { result: disc, error: discError } = useQuery(DisciplinesByTypeDocument, () => ({
-    SGSLabel: appStore.performerType,
-  }))
+  const { result: disc, error: discError } = useQuery(
+    DisciplinesByTypeDocument,
+    () => ({
+      performerType: appStore.performerType,
+    })
+  )
   if (discError) {
     console.log(discError)
   }
@@ -74,14 +79,16 @@
     SubdisciplinesByTypeDocument,
     () => ({
       disciplineId: chosenDiscipline.value.id,
-      SGSLabel: appStore.performerType,
+      performerType: appStore.performerType,
     }),
     { fetchPolicy: 'network-only' }
   )
   if (subdiscError) {
     console.log(subdiscError)
   }
-  const subdisciplines = computed(() => subdisc.value?.subdisciplinesByType ?? [])
+  const subdisciplines = computed(
+    () => subdisc.value?.subdisciplinesByType ?? []
+  )
   const chosenSubdiscipline = computed({
     get: () => {
       return (
@@ -157,7 +164,11 @@
    */
   const className = computed({
     get: () => {
-      if (selectedClasses.value.subdiscipline && selectedClasses.value.level && selectedClasses.value.category) {
+      if (
+        selectedClasses.value.subdiscipline &&
+        selectedClasses.value.level &&
+        selectedClasses.value.category
+      ) {
         return `${selectedClasses.value.subdiscipline} - ${selectedClasses.value.level} - ${selectedClasses.value.category}`
       } else {
         return ''
@@ -190,7 +201,11 @@
   }
   const classSelection = computed({
     get: () => {
-      if (chosenSubdiscipline.value.id && chosenGradeLevel.value.id && chosenCategory.value.id)
+      if (
+        chosenSubdiscipline.value.id &&
+        chosenGradeLevel.value.id &&
+        chosenCategory.value.id
+      )
         return classSearch?.value?.classSearch[0] ?? []
       else return []
     },
@@ -222,7 +237,8 @@
       return [{ id: minWorks.value, name: minWorks.value }]
     } else {
       const selectionOptions = []
-      for (let i = minWorks.value; i <= maxWorks.value; i++) selectionOptions.push({ id: i, name: i })
+      for (let i = minWorks.value; i <= maxWorks.value; i++)
+        selectionOptions.push({ id: i, name: i })
 
       return selectionOptions
     }
@@ -279,7 +295,8 @@
   watch(
     () => selectedClasses.value.numberOfSelections,
     async (newNumber) => {
-      let oldNumber = classesStore.registeredClasses[props.classIndex].selections!.length
+      let oldNumber =
+        classesStore.registeredClasses[props.classIndex].selections!.length
       switch (oldNumber < newNumber) {
         case true:
           while (oldNumber < newNumber) {
@@ -301,7 +318,8 @@
   )
 
   watch(classSelection, (newClassSelection) => {
-    classesStore.registeredClasses[props.classIndex].price = newClassSelection.price
+    classesStore.registeredClasses[props.classIndex].price =
+      newClassSelection.price
   })
 
   onMounted(() => {

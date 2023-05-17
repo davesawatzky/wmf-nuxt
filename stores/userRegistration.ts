@@ -1,10 +1,9 @@
-// import { provideApolloClient } from '@vue/apollo-composable'
-// import apolloClient from '@/utilities/apolloClient'
 import {
   RegistrationCreateDocument,
   RegistrationDeleteDocument,
   RegistrationUpdateDocument,
 } from '~/graphql/gql/graphql'
+import type { PerformerType, Registration } from '~/graphql/gql/graphql'
 
 /**
  * Items get added to the Registration store when they're
@@ -12,27 +11,6 @@ import {
  * The application only works on individual forms, therefore
  * only one registration should be in the store at any one time.
  */
-
-enum EnumPerformerType {
-  'SOLO',
-  'GROUP',
-  'SCHOOL',
-  'COMMUNITY',
-}
-interface Registration {
-  id?: number
-  label: string
-  performerType: keyof typeof EnumPerformerType
-  submittedAt?: Date
-  totalAmt: number
-  payedAmt: number
-  transactionInfo: string
-  confirmation: string
-  createdAt?: Date
-  __typename?: string
-}
-
-// provideApolloClient(apolloClient)
 
 export const useRegistration = defineStore(
   'registrations',
@@ -42,7 +20,7 @@ export const useRegistration = defineStore(
 
     function $reset() {
       registrationId.value = 0
-      registrations.value = <Registration[]>[]
+      registrations.value = []
     }
 
     function addToStore(data: Registration) {
@@ -54,16 +32,14 @@ export const useRegistration = defineStore(
     }
 
     async function createRegistration(
-      performerType: Registration['performerType'],
+      performerType: PerformerType,
       label: string
     ) {
-      const {
-        mutate: registrationCreate,
-        onDone: doneNewReg,
-        onError,
-      } = useMutation(RegistrationCreateDocument)
-      await registrationCreate({ performerType, label })
-      doneNewReg((result) => {
+      const { mutate, onDone, onError } = useMutation(
+        RegistrationCreateDocument
+      )
+      await mutate({ performerType, label })
+      onDone((result) => {
         addToStore(<Registration>result.data.registrationCreate.registration)
         registrationId.value = result.data.registrationCreate.registration.id
       })

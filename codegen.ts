@@ -14,6 +14,9 @@ const config: CodegenConfig = {
       plugins: [],
     },
   },
+  config: {
+    namingConvention: 'keep',
+  },
 }
 
 export default config

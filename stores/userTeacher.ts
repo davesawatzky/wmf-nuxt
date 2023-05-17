@@ -7,50 +7,30 @@ import {
 } from '~/graphql/gql/graphql'
 import type { Teacher, TeacherInput } from '~/graphql/gql/graphql'
 
-// interface TeacherInfo {
-//   id?: number
-//   prefix: string
-//   lastName: string
-//   firstName: string
-//   apartment?: string
-//   streetNumber: string
-//   streetName: string
-//   city: string
-//   province: string
-//   postalCode: string
-//   phone: string
-//   email: string
-//   __typename: string
-// }
-
 export const useTeacher = defineStore(
   'teacher',
   () => {
     // registrationId: '',
-    const teacherInfo = ref(<Teacher>{
-      city: 'Winnipeg',
-      province: 'MB',
-      __typename: 'Teacher',
-    })
+    const teacherInfo = ref(<Teacher>{})
+
+    function $reset() {
+      teacherInfo.value = <Teacher>{}
+    }
 
     const fullName = computed(() => {
       return teacherInfo.value.firstName && ' ' && teacherInfo.value.lastName
     })
-
-    function $reset() {
-      teacherInfo.value = <Teacher>{
-        city: 'Winnipeg',
-        province: 'MB',
-        __typename: 'Teacher',
-      }
-    }
 
     function addToStore(teacher: Teacher) {
       teacherInfo.value = teacher
     }
 
     async function createTeacher(registrationId: number) {
-      const { mutate: teacherCreate, onDone: doneTeacherCreate, onError } = useMutation(TeacherCreateDocument)
+      const {
+        mutate: teacherCreate,
+        onDone: doneTeacherCreate,
+        onError,
+      } = useMutation(TeacherCreateDocument)
       const clone = Object.assign({}, teacherInfo.value)
       delete clone.id
       await teacherCreate({
@@ -71,7 +51,11 @@ export const useTeacher = defineStore(
         load: loadTeachers,
         onError: teacherError,
         onResult: resultLoadTeachers,
-      } = useLazyQuery(TeacherInfoDocument, { registrationId }, { fetchPolicy: 'network-only' })
+      } = useLazyQuery(
+        TeacherInfoDocument,
+        { registrationId },
+        { fetchPolicy: 'network-only' }
+      )
       resultLoadTeachers((result) => {
         addToStore(<Teacher>result.data.registration.teacher)
       })
@@ -104,10 +88,13 @@ export const useTeacher = defineStore(
     // }
 
     async function updateTeacher() {
-      const { mutate: teacherUpdate, onError } = useMutation(TeacherUpdateDocument, {
-        fetchPolicy: 'network-only',
-      })
-      // TODO:check if the typescript typing actually removes the id from teachingInfo
+      const { mutate: teacherUpdate, onError } = useMutation(
+        TeacherUpdateDocument,
+        {
+          fetchPolicy: 'network-only',
+        }
+      )
+      // TODO:check if the typescript typing actually removes the id from teacherInfo
       // const clone = Object.assign({}, <TeacherInput>teacherInfo.value)
       // delete clone.id
       await teacherUpdate({
@@ -120,7 +107,9 @@ export const useTeacher = defineStore(
     }
 
     async function deleteTeacher(teacherId: number) {
-      const { mutate: teacherDelete, onError } = useMutation(TeacherDeleteDocument)
+      const { mutate: teacherDelete, onError } = useMutation(
+        TeacherDeleteDocument
+      )
       await teacherDelete({ teacherId })
       onError((error) => {
         console.log(error)

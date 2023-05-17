@@ -1,37 +1,21 @@
-// import { provideApolloClient } from '@vue/apollo-composable'
-// import apolloClient from '@/utilities/apolloClient'
 import {
   SchoolGroupCreateDocument,
   SchoolGroupDeleteDocument,
   SchoolGroupInfoDocument,
   SchoolGroupUpdateDocument,
 } from '~/graphql/gql/graphql'
-
-interface SchoolGroupInfo {
-  id?: number
-  name: string
-  groupSize: number
-  chaperones: number
-  wheelchairs: number
-  earliestTime: string
-  latestTime: string
-  unavailable: string
-  conflictPerformers: string
-  __typename?: string
-}
-
-// provideApolloClient(apolloClient)
+import type { SchoolGroup } from '~/graphql/gql/graphql'
 
 export const useSchoolGroup = defineStore(
   'schoolGroup',
   () => {
-    const schoolGroupInfo = ref([] as SchoolGroupInfo[])
+    const schoolGroupInfo = ref([] as SchoolGroup[])
 
     function $reset() {
-      schoolGroupInfo.value = <SchoolGroupInfo[]>[]
+      schoolGroupInfo.value = <SchoolGroup[]>[]
     }
 
-    function addToStore(schoolGroupData: SchoolGroupInfo | null) {
+    function addToStore(schoolGroupData: SchoolGroup | null) {
       schoolGroupInfo.value.push({
         id: 0,
         name: '',
@@ -42,11 +26,14 @@ export const useSchoolGroup = defineStore(
         latestTime: '',
         unavailable: '',
         conflictPerformers: '',
-        __typename: '',
+        __typename: 'SchoolGroup',
       })
 
       if (schoolGroupData) {
-        Object.assign(schoolGroupInfo.value[schoolGroupInfo.value.length - 1], schoolGroupData)
+        Object.assign(
+          schoolGroupInfo.value[schoolGroupInfo.value.length - 1],
+          schoolGroupData
+        )
       }
     }
 
@@ -59,14 +46,18 @@ export const useSchoolGroup = defineStore(
         fetchPolicy: 'no-cache',
       })
       addToStore(null)
-      const clone = Object.assign({}, schoolGroupInfo.value[schoolGroupInfo.value.length - 1])
+      const clone = Object.assign(
+        {},
+        schoolGroupInfo.value[schoolGroupInfo.value.length - 1]
+      )
       delete clone.id
       await schoolGroupCreate({
         schoolId,
         schoolGroup: clone,
       })
       doneSchoolGroupCreate((result) => {
-        schoolGroupInfo.value[schoolGroupInfo.value.length - 1].id = result.data.registration.school.school_group.id
+        schoolGroupInfo.value[schoolGroupInfo.value.length - 1].id =
+          result.data.registration.school.school_group.id
       })
       onError((error) => {
         console.log(error)
@@ -79,9 +70,15 @@ export const useSchoolGroup = defineStore(
         load: loadSchoolGroups,
         onResult: resultLoadSchoolGroup,
         onError,
-      } = useLazyQuery(SchoolGroupInfoDocument, { registrationId }, { fetchPolicy: 'no-cache' })
+      } = useLazyQuery(
+        SchoolGroupInfoDocument,
+        { registrationId },
+        { fetchPolicy: 'no-cache' }
+      )
       resultLoadSchoolGroup((result) => {
-        const clone = structuredClone(<SchoolGroupInfo[]>result.data.registration.school.school_group.id)
+        const clone = structuredClone(
+          <SchoolGroup[]>result.data.registration.school.school_group.id
+        )
         for (let i = 0; i < clone.length; i++) {
           addToStore(clone[i])
         }
@@ -95,10 +92,16 @@ export const useSchoolGroup = defineStore(
       }
     }
 
-    async function updateSchoolGroup(schoolGroupIndex: number, schoolGroupId: number) {
-      const { mutate: schoolGroupUpdate, onError } = useMutation(SchoolGroupUpdateDocument, {
-        fetchPolicy: 'no-cache',
-      })
+    async function updateSchoolGroup(
+      schoolGroupIndex: number,
+      schoolGroupId: number
+    ) {
+      const { mutate: schoolGroupUpdate, onError } = useMutation(
+        SchoolGroupUpdateDocument,
+        {
+          fetchPolicy: 'no-cache',
+        }
+      )
       const clone = Object.assign({}, schoolGroupInfo.value[schoolGroupIndex])
       delete clone.id
       await schoolGroupUpdate({
@@ -113,7 +116,7 @@ export const useSchoolGroup = defineStore(
     async function updateAllSchoolGroups() {
       let schoolGroupIndex = 0
       for (const eachSchoolGroup of schoolGroupInfo.value) {
-        await updateSchoolGroup(schoolGroupIndex, eachSchoolGroup.id!)
+        await updateSchoolGroup(schoolGroupIndex, eachSchoolGroup.id)
         schoolGroupIndex++
       }
     }
@@ -126,7 +129,9 @@ export const useSchoolGroup = defineStore(
       } = useMutation(SchoolGroupDeleteDocument)
       await schoolGroupDelete({ schoolGroupId })
       doneSchoolGroupDelete(() => {
-        const index = schoolGroupInfo.value.map((e) => e.id).indexOf(schoolGroupId)
+        const index = schoolGroupInfo.value
+          .map((e) => e.id)
+          .indexOf(schoolGroupId)
         schoolGroupInfo.value.splice(index, 1)
       })
       onError((error) => {

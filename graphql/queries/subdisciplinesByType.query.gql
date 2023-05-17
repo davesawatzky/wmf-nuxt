@@ -1,10 +1,20 @@
-query SubdisciplinesByType($categoryId: Int!, $disciplineId: Int!, $levelId: Int!, $SGSLabel: SGSLabel!) {
-  subdisciplines(categoryID: $categoryId, disciplineID: $disciplineId, levelID: $levelId, performerType: $SGSLabel) {
+query SubdisciplinesByType(
+  $categoryId: Int!
+  $disciplineId: Int!
+  $levelId: Int!
+  $performerType: PerformerType!
+) {
+  subdisciplines(
+    categoryID: $categoryId
+    disciplineID: $disciplineId
+    levelID: $levelId
+    performerType: $performerType
+  ) {
     id
     name
     description
     maxPerformers
     minPerformers
-    SGSLabel
+    performerType
   }
 }

@@ -10,6 +10,7 @@
   import { useCommunity } from '@/stores/userCommunity'
   import { useSchool } from '@/stores/userSchool'
   import SummaryTable from '@/components/summaryblocks/SummaryTable.vue'
+  import { PerformerType } from '~/graphql/gql/graphql'
 
   const registrationStore = useRegistration()
   const performerStore = usePerformers()
@@ -32,7 +33,9 @@
 
   async function submitRegistration() {
     await saveRegistration()
-    confirmationNumber.value = `WMF-${registrationStore.registrationId}-${_.random(1000, 9999)}`
+    confirmationNumber.value = `WMF-${
+      registrationStore.registrationId
+    }-${_.random(1000, 9999)}`
     registrationStore.registrations[0].submittedAt = date
     registrationStore.registrations[0].confirmation = confirmationNumber.value
     await registrationStore.updateRegistration()
@@ -42,7 +45,7 @@
   async function saveRegistration() {
     switch (appStore.performerType) {
       case 'SOLO':
-        appStore.performerType = 'SOLO'
+        appStore.performerType = PerformerType.SOLO
         appStore.dataLoading = true
         await registrationStore.updateRegistration()
         await performerStore.updatePerformer(0, performerStore.performer[0].id!)
@@ -51,7 +54,7 @@
         appStore.dataLoading = false
         break
       case 'GROUP':
-        appStore.performerType = 'GROUP'
+        appStore.performerType = PerformerType.GROUP
         appStore.dataLoading = true
         await registrationStore.updateRegistration()
         await groupStore.updateGroup()
@@ -61,7 +64,7 @@
         appStore.dataLoading = false
         break
       case 'SCHOOL':
-        appStore.performerType = 'SCHOOL'
+        appStore.performerType = PerformerType.SCHOOL
         appStore.dataLoading = true
         await registrationStore.updateRegistration()
         await schoolStore.updateSchool()
@@ -71,10 +74,13 @@
         appStore.dataLoading = false
         break
       case 'COMMUNITY':
-        appStore.performerType = 'COMMUNITY'
+        appStore.performerType = PerformerType.COMMUNITY
         appStore.dataLoading = true
         await registrationStore.updateRegistration()
-        await communityStore.updateCommunity(0, communityStore.communityInfo[0].id!)
+        await communityStore.updateCommunity(
+          0,
+          communityStore.communityInfo[0].id!
+        )
         await teacherStore.updateTeacher()
         await classesStore.updateAllClasses()
         appStore.dataLoading = false
@@ -89,32 +95,42 @@
     <SummaryTable />
 
     <p>
-      The Festival reserves the right to redirect entries to a more appropriate class. These redirections will be listed
-      in the studio registration confirmation mailing sent to teachers.
+      The Festival reserves the right to redirect entries to a more appropriate
+      class. These redirections will be listed in the studio registration
+      confirmation mailing sent to teachers.
     </p>
     <p>
-      If you have not done so already, please print the summary page for your own records. You may return to this site
-      in the future to view the summary of your submission. In case of any discrepencies between the information in this
-      registration form and the official syllabus, the official syllabus will always be considered correct.
+      If you have not done so already, please print the summary page for your
+      own records. You may return to this site in the future to view the summary
+      of your submission. In case of any discrepencies between the information
+      in this registration form and the official syllabus, the official syllabus
+      will always be considered correct.
     </p>
     <p>
-      Once submitted, a confirmation number will be displayed on the screen. Please take note of this for your records.
-      This number may be requested with any communication regarding your application. No changes will be permitted once
-      the entry has been submitted. Incomplete entries will not be accepted.
+      Once submitted, a confirmation number will be displayed on the screen.
+      Please take note of this for your records. This number may be requested
+      with any communication regarding your application. No changes will be
+      permitted once the entry has been submitted. Incomplete entries will not
+      be accepted.
     </p>
     <p>
-      Notification, including date, time and location of each class will be forwarded to the participant's teacher prior
-      to the publication of the program. Teachers are responsible to advise their students of this information and to
-      notify the office of any errors. Participants and teachers are to notify the Festival office of any change of
-      personal information following submission of entry form. Participants who wish to withdraw must notify the
-      Festival office in writing as early as possible.
+      Notification, including date, time and location of each class will be
+      forwarded to the participant's teacher prior to the publication of the
+      program. Teachers are responsible to advise their students of this
+      information and to notify the office of any errors. Participants and
+      teachers are to notify the Festival office of any change of personal
+      information following submission of entry form. Participants who wish to
+      withdraw must notify the Festival office in writing as early as possible.
     </p>
     <p>
-      Payment may be made by cheque or e-transfer to the Winnipeg Music Festival (<a href="mailto:wmf@mts.net"
-        ><strong>wmf@mts.net</strong></a
-      >). Please include the confirmation number as a memo when submitting payment. Entry fees are non-refundable.
+      Payment may be made by cheque or e-transfer to the Winnipeg Music Festival
+      (<a href="mailto:wmf@mts.net"><strong>wmf@mts.net</strong></a
+      >). Please include the confirmation number as a memo when submitting
+      payment. Entry fees are non-refundable.
     </p>
-    <h4 class="pt-6 text-center">We look forward to having you participate in the this year's</h4>
+    <h4 class="pt-6 text-center">
+      We look forward to having you participate in the this year's
+    </h4>
     <h3 class="pb-6 text-center">Winnipeg Music Festival</h3>
     <div class="text-center">
       <BaseButton

@@ -1,17 +1,11 @@
 import { defineStore } from 'pinia'
-
-enum EnumPerformerType {
-  'SOLO',
-  'GROUP',
-  'SCHOOL',
-  'COMMUNITY',
-}
+import { PerformerType } from '~/graphql/gql/graphql'
 
 export const useAppStore = defineStore(
   'appStore',
   () => {
     const editExisting = ref(false) // edits an existing registration from the db
-    const performerType = ref<keyof typeof EnumPerformerType>('SOLO') // default performerType - just in case.
+    const performerType = ref<PerformerType>(PerformerType.SOLO) // default performerType - just in case.
     const registrationExists = ref(false) // registration exists in the db
     const performerContactLoaded = ref(false) // performer contact already exists and is loaded
     const groupInfoLoaded = ref(false)
@@ -25,7 +19,7 @@ export const useAppStore = defineStore(
 
     function $reset() {
       editExisting.value = false
-      performerType.value = 'SOLO'
+      performerType.value = PerformerType.SOLO
       registrationExists.value = false
       performerContactLoaded.value = false
       groupInfoLoaded.value = false
