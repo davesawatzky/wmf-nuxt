@@ -5,32 +5,16 @@ import {
   PerformerInfoDocument,
   PerformerUpdateDocument,
 } from '~/graphql/gql/graphql'
-
 import type { Performer } from '~/graphql/gql/graphql'
-
-// interface PerformerInfo {
-//   id?: number
-//   lastName: string
-//   firstName: string
-//   apartment: string
-//   streetNumber: string
-//   streetName: string
-//   city: string
-//   province: string
-//   postalCode: string
-//   phone: string
-//   email: string
-//   age: number
-//   instrument: string
-//   level: string
-//   otherClasses: string
-//   __typename?: string
-// }
 
 export const usePerformers = defineStore(
   'performers',
   () => {
     const performer = ref([] as Performer[])
+
+    function $reset() {
+      performer.value = <Performer[]>[]
+    }
 
     const numberOfPerformers = computed(() => {
       return performer.value.length
@@ -41,10 +25,6 @@ export const usePerformers = defineStore(
       })
       return name
     })
-
-    function $reset() {
-      performer.value = <Performer[]>[]
-    }
 
     function addToStore(performerContactInfo: Performer | null) {
       performer.value.push({
@@ -66,21 +46,32 @@ export const usePerformers = defineStore(
         __typename: 'Performer',
       })
       if (performerContactInfo) {
-        Object.assign(performer.value[performer.value.length - 1], performerContactInfo)
+        Object.assign(
+          performer.value[performer.value.length - 1],
+          performerContactInfo
+        )
       }
     }
 
     async function createPerformer(registrationId: number) {
-      const { mutate: performerCreate, onDone: donePerformerCreate, onError } = useMutation(PerformerCreateDocument)
+      const {
+        mutate: performerCreate,
+        onDone: donePerformerCreate,
+        onError,
+      } = useMutation(PerformerCreateDocument)
       addToStore(null)
-      const clone = Object.assign({}, performer.value[performer.value.length - 1])
+      const clone = Object.assign(
+        {},
+        performer.value[performer.value.length - 1]
+      )
       delete clone.id
       await performerCreate({
         registrationId,
         performer: clone,
       })
       donePerformerCreate((result) => {
-        performer.value[performer.value.length - 1].id = result.data.performerCreate.performer.id
+        performer.value[performer.value.length - 1].id =
+          result.data.performerCreate.performer.id
       })
       onError((error) => {
         console.log(error)
@@ -115,7 +106,11 @@ export const usePerformers = defineStore(
         load: loadPerformer,
         onResult: resultLoadPerformers,
         onError: performerError,
-      } = useLazyQuery(PerformerInfoDocument, { registrationId }, { fetchPolicy: 'no-cache' })
+      } = useLazyQuery(
+        PerformerInfoDocument,
+        { registrationId },
+        { fetchPolicy: 'no-cache' }
+      )
       resultLoadPerformers((result) => {
         const performers: Performer[] = result.data.registration.performers
         for (let i = 0; i < performers.length; i++) {
@@ -131,10 +126,16 @@ export const usePerformers = defineStore(
       }
     }
 
-    async function updatePerformer(performerIndex: number, performerId: number) {
-      const { mutate: performerUpdate, onError } = useMutation(PerformerUpdateDocument, {
-        fetchPolicy: 'no-cache',
-      })
+    async function updatePerformer(
+      performerIndex: number,
+      performerId: number
+    ) {
+      const { mutate: performerUpdate, onError } = useMutation(
+        PerformerUpdateDocument,
+        {
+          fetchPolicy: 'no-cache',
+        }
+      )
       const clone = Object.assign({}, performer.value[performerIndex])
       delete clone.id
       await performerUpdate({ performerId, performer: clone })
@@ -152,7 +153,11 @@ export const usePerformers = defineStore(
     }
 
     async function deletePerformer(performerId: number) {
-      const { mutate: performerDelete, onDone: donePerformerDelete, onError } = useMutation(PerformerDeleteDocument)
+      const {
+        mutate: performerDelete,
+        onDone: donePerformerDelete,
+        onError,
+      } = useMutation(PerformerDeleteDocument)
       await performerDelete({ performerId })
       donePerformerDelete(() => {
         const index = performer.value.map((e) => e.id).indexOf(performerId)

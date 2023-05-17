@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  // import { DateTime } from 'luxon'
+  import { DateTime } from 'luxon'
   import { useRegistration } from '@/stores/userRegistration'
   import { useAppStore } from '@/stores/appStore'
   import { usePerformers } from '@/stores/userPerformer'
@@ -15,7 +15,7 @@
     schoolOpen,
     soloOpen,
   } from '@/composables/openClosed'
-  import { RegistrationsDocument } from '@/graphql/gql/graphql'
+  import { PerformerType, RegistrationsDocument } from '@/graphql/gql/graphql'
   import type { Registration } from '@/graphql/gql/graphql'
 
   const soloPhoto = '/images/opera-singer-on-stage.png'
@@ -26,27 +26,6 @@
   const schoolPhotoBW = '/images/orff-instruments-BW.png'
   const communityPhoto = '/images/community_choir.png'
   const communityPhotoBW = '/images/community_choir-BW.png'
-
-  enum EnumPerformerType {
-    'SOLO',
-    'GROUP',
-    'SCHOOL',
-    'COMMUNITY',
-  }
-  type PerformerType = keyof typeof EnumPerformerType
-
-  // interface Registration {
-  //   id: number
-  //   label: string
-  //   performerType: keyof typeof EnumPerformerType
-  //   submittedAt?: Date
-  //   totalAmt: number
-  //   payedAmt: number
-  //   transactionInfo: string
-  //   confirmation: string
-  //   createdAt: Date
-  //   __typename?: string
-  // }
 
   const registrationStore = useRegistration()
   const appStore = useAppStore()
@@ -81,19 +60,20 @@
     classesStore.$reset()
   })
 
-  const {
-    result,
-    refetch: refetchRegistrations,
-    onResult: doneRegistrationQuery,
-  } = useQuery(RegistrationsDocument, null, () => ({
-    fetchPolicy: 'no-cache',
-  }))
+  const { result, refetch: refetchRegistrations } = useQuery(
+    RegistrationsDocument,
+    null,
+    () => ({
+      fetchPolicy: 'no-cache',
+    })
+  )
 
   const registrations = computed<Registration[]>(
     () => result.value?.registrations ?? []
   )
 
   function openEditor(performerType: PerformerType): boolean {
+    // eslint-disable-next-line no-eval
     return eval(`${performerType.toLowerCase()}Open`)
   }
 
@@ -113,7 +93,7 @@
     registrationStore.addToStore(registrations.value[index])
     switch (performerType) {
       case 'SOLO':
-        appStore.performerType = 'SOLO'
+        appStore.performerType = PerformerType.SOLO
         appStore.dataLoading = true
         performerStore.loadPerformers(registrationId)
         teacherStore.loadTeacher(registrationId).loadTeachers()
@@ -121,7 +101,7 @@
         appStore.dataLoading = false
         break
       case 'GROUP':
-        appStore.performerType = 'GROUP'
+        appStore.performerType = PerformerType.GROUP
         appStore.dataLoading = true
         groupStore.loadGroup(registrationId)
         teacherStore.loadTeacher(registrationId)
@@ -130,7 +110,7 @@
         appStore.dataLoading = false
         break
       case 'SCHOOL':
-        appStore.performerType = 'SCHOOL'
+        appStore.performerType = PerformerType.SCHOOL
         appStore.dataLoading = true
         schoolStore.loadSchool(registrationId)
         schoolGroupStore.loadSchoolGroups(registrationId)
@@ -139,7 +119,7 @@
         appStore.dataLoading = false
         break
       case 'COMMUNITY':
-        appStore.performerType = 'COMMUNITY'
+        appStore.performerType = PerformerType.COMMUNITY
         appStore.dataLoading = true
         communityStore.loadCommunities(registrationId)
         teacherStore.loadTeacher(registrationId)
@@ -175,7 +155,7 @@
 
     switch (performerType) {
       case 'SOLO':
-        appStore.performerType = 'SOLO'
+        appStore.performerType = PerformerType.SOLO
         appStore.dataLoading = true
         await performerStore.createPerformer(registrationId.value)
         await teacherStore.createTeacher(registrationId.value)
@@ -184,7 +164,7 @@
 
         break
       case 'GROUP':
-        appStore.performerType = 'GROUP'
+        appStore.performerType = PerformerType.GROUP
         appStore.dataLoading = true
         await groupStore.createGroup(registrationId.value)
         await teacherStore.createTeacher(registrationId.value)
@@ -194,7 +174,7 @@
 
         break
       case 'SCHOOL':
-        appStore.performerType = 'SCHOOL'
+        appStore.performerType = PerformerType.SCHOOL
         appStore.dataLoading = true
         await schoolStore.createSchool(registrationId.value)
         await schoolGroupStore.createSchoolGroup(schoolStore.schoolInfo.id!)
@@ -204,7 +184,7 @@
 
         break
       case 'COMMUNITY':
-        appStore.performerType = 'COMMUNITY'
+        appStore.performerType = PerformerType.COMMUNITY
         appStore.dataLoading = true
         await communityStore.createCommunity(registrationId.value)
         await teacherStore.createTeacher(registrationId.value)
@@ -255,23 +235,25 @@
         <BaseCard
           :label="soloOpen ? 'Solo' : 'Solo - Closed'"
           :photo="soloOpen ? soloPhoto : soloPhotoBW"
-          alt-text="Opera Singer on stage"
-          @click="soloOpen ? newRegistration('SOLO') : ''" />
+          alt-text="New Solo Registration"
+          @click="soloOpen ? newRegistration(PerformerType.SOLO) : ''" />
         <BaseCard
           :label="groupOpen ? 'Group' : 'Group - Closed'"
           :photo="groupOpen ? groupPhoto : groupPhotoBW"
-          alt-text="String Instruments"
-          @click="groupOpen ? newRegistration('GROUP') : ''" />
+          alt-text="New Group Registration"
+          @click="groupOpen ? newRegistration(PerformerType.GROUP) : ''" />
         <BaseCard
           :label="schoolOpen ? 'School' : 'School - Closed'"
           :photo="schoolOpen ? schoolPhoto : schoolPhotoBW"
-          alt-text="Orff Instruments"
-          @click="schoolOpen ? newRegistration('SCHOOL') : ''" />
+          alt-text="New School Registration"
+          @click="schoolOpen ? newRegistration(PerformerType.SCHOOL) : ''" />
         <BaseCard
           :label="communityOpen ? 'Community' : 'Community - Closed'"
           :photo="communityOpen ? communityPhoto : communityPhotoBW"
-          alt-text="Community Choir"
-          @click="communityOpen ? newRegistration('COMMUNITY') : ''" />
+          alt-text="New Community Registration"
+          @click="
+            communityOpen ? newRegistration(PerformerType.COMMUNITY) : ''
+          " />
       </div>
     </div>
     <br />
