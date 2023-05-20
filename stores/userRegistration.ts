@@ -25,6 +25,7 @@ export const useRegistration = defineStore(
 
     function addToStore(data: Registration) {
       if (registrations.value.length > 0) {
+        // Can only have one registration open at a time
         registrations.value.splice(0, 1, data)
       } else {
         registrations.value.push(data)

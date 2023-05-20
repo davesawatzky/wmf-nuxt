@@ -5,7 +5,7 @@ import {
   PerformerInfoDocument,
   PerformerUpdateDocument,
 } from '~/graphql/gql/graphql'
-import type { Performer } from '~/graphql/gql/graphql'
+import type { Performer, PerformerInput } from '~/graphql/gql/graphql'
 
 export const usePerformers = defineStore(
   'performers',
@@ -19,6 +19,7 @@ export const usePerformers = defineStore(
     const numberOfPerformers = computed(() => {
       return performer.value.length
     })
+
     const fullName = computed(() => {
       const name = performer.value.map((item) => {
         return item.firstName && ' ' && item.lastName
@@ -26,52 +27,23 @@ export const usePerformers = defineStore(
       return name
     })
 
-    function addToStore(performerContactInfo: Performer | null) {
-      performer.value.push({
-        id: 0,
-        lastName: '',
-        firstName: '',
-        age: 10,
-        apartment: '',
-        streetNumber: '',
-        streetName: '',
-        city: 'Winnipeg',
-        province: 'MB',
-        postalCode: '',
-        phone: '',
-        email: '',
-        instrument: '',
-        level: '',
-        otherClasses: '',
-        __typename: 'Performer',
-      })
-      if (performerContactInfo) {
-        Object.assign(
-          performer.value[performer.value.length - 1],
-          performerContactInfo
-        )
-      }
+    function addToStore(data: Performer) {
+      performer.value.push(data)
     }
 
     async function createPerformer(registrationId: number) {
-      const {
-        mutate: performerCreate,
-        onDone: donePerformerCreate,
-        onError,
-      } = useMutation(PerformerCreateDocument)
-      addToStore(null)
-      const clone = Object.assign(
-        {},
-        performer.value[performer.value.length - 1]
-      )
-      delete clone.id
-      await performerCreate({
+      console.log('RegID-----: ', registrationId)
+
+      const { mutate, onDone, onError } = useMutation(PerformerCreateDocument)
+      await mutate({
         registrationId,
-        performer: clone,
+        performer: <PerformerInput>{
+          city: 'Winnipeg',
+          province: 'MB',
+        },
       })
-      donePerformerCreate((result) => {
-        performer.value[performer.value.length - 1].id =
-          result.data.performerCreate.performer.id
+      onDone((result) => {
+        addToStore(<Performer>result.data.performerCreate.performer)
       })
       onError((error) => {
         console.log(error)
