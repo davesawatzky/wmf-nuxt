@@ -27,26 +27,46 @@ export const usePerformers = defineStore(
       return name
     })
 
-    function addToStore(data: Performer) {
-      performer.value.push(data)
+    function addToStore(performerId: Performer['id']) {
+      performer.value.push(<Performer>{
+        id: performerId,
+        firstName: '',
+        lastName: '',
+        age: null,
+        level: '',
+        instrument: '',
+        otherClasses: '',
+        apartment: '',
+        streetNumber: '',
+        streetName: '',
+        city: 'Winnipeg',
+        province: 'MB',
+        postalCode: '',
+        email: '',
+        phone: '',
+        __typename: 'Performer',
+      })
     }
 
     async function createPerformer(registrationId: number) {
-      console.log('RegID-----: ', registrationId)
-
-      const { mutate, onDone, onError } = useMutation(PerformerCreateDocument)
-      await mutate({
-        registrationId,
-        performer: <PerformerInput>{
-          city: 'Winnipeg',
-          province: 'MB',
-        },
-      })
-      onDone((result) => {
-        addToStore(<Performer>result.data.performerCreate.performer)
-      })
-      onError((error) => {
-        console.log(error)
+      return await new Promise((resolve, reject) => {
+        console.log('RegID-----: ', registrationId)
+        const { mutate, onDone, onError } = useMutation(PerformerCreateDocument)
+        mutate({
+          registrationId,
+          performer: <PerformerInput>{
+            city: 'Winnipeg',
+            province: 'MB',
+          },
+        }).catch((error) => console.log(error))
+        onDone((result) => {
+          const performerId: number = result.data.performerCreate.performer.id
+          addToStore(performerId)
+          resolve('Success')
+        })
+        onError((error) => {
+          reject(console.log(error))
+        })
       })
     }
 

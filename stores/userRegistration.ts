@@ -16,36 +16,51 @@ export const useRegistration = defineStore(
   'registrations',
   () => {
     const registrationId = ref(0)
-    const registrations = ref([] as Registration[])
+    const registration = ref(<Registration>{})
 
     function $reset() {
       registrationId.value = 0
-      registrations.value = []
+      registration.value = <Registration>{}
     }
 
-    function addToStore(data: Registration) {
-      if (registrations.value.length > 0) {
-        // Can only have one registration open at a time
-        registrations.value.splice(0, 1, data)
-      } else {
-        registrations.value.push(data)
-      }
+    function addToStore(reg: Registration) {
+      registrationId.value = reg.id
+      registration.value.id = reg.id
+      registration.value.performerType = reg.performerType
+      registration.value.label = reg.label
+      registration.value.confirmation = ''
+      registration.value.createdAt = reg.createdAt
+      registration.value.submittedAt = ''
+      registration.value.transactionInfo = ''
+      registration.value.payedAmt = 0
+      registration.value.totalAmt = 0
+      registration.value.updatedAt = reg.updatedAt
+      registration.value.user = reg.user
+      registration.value.__typename = 'Registration'
     }
 
     async function createRegistration(
       performerType: PerformerType,
       label: string
     ) {
-      const { mutate, onDone, onError } = useMutation(
-        RegistrationCreateDocument
-      )
-      await mutate({ performerType, label })
-      onDone((result) => {
-        addToStore(<Registration>result.data.registrationCreate.registration)
-        registrationId.value = result.data.registrationCreate.registration.id
-      })
-      onError((error) => {
-        console.log(error)
+      return await new Promise((resolve, reject) => {
+        const {
+          mutate: registrationCreate,
+          onDone,
+          onError,
+        } = useMutation(RegistrationCreateDocument)
+        registrationCreate({ performerType, label }).catch((error) =>
+          console.log(error)
+        )
+        onDone((result) => {
+          const registration: Registration =
+            result.data.registrationCreate.registration
+          addToStore(registration)
+          resolve('Success')
+        })
+        onError((error) => {
+          reject(console.log(error))
+        })
       })
     }
 
@@ -56,7 +71,7 @@ export const useRegistration = defineStore(
           fetchPolicy: 'network-only',
         }
       )
-      const clone = Object.assign({}, registrations.value[0])
+      const clone = Object.assign({}, registration.value[0])
       delete clone.id
       delete clone.__typename
       delete clone.createdAt
@@ -78,7 +93,7 @@ export const useRegistration = defineStore(
 
     return {
       registrationId,
-      registrations,
+      registration,
       $reset,
       addToStore,
       createRegistration,

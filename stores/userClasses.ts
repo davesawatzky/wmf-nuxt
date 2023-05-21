@@ -31,20 +31,24 @@ export const useClasses = defineStore(
      * Add empty class variables to store. Used when requiring a new
      * class entry existing classes
      */
-    function addClassToStore(registeredClass: RegisteredClass | null) {
-      registeredClasses.value.push(<RegisteredClass>{
-        id: registeredClass?.id || 0,
-        classNumber: registeredClass?.classNumber || '',
-        discipline: registeredClass?.discipline || '',
-        subdiscipline: registeredClass?.subdiscipline || '',
-        level: registeredClass?.level || '',
-        category: registeredClass?.category || '',
-        numberOfSelections: registeredClass?.numberOfSelections || 1,
-        price: registeredClass?.price || 0,
-        schoolGroupID: registeredClass?.schoolGroupID || null,
-        __typename: 'RegisteredClass',
-        selections: registeredClass?.selections || <Selection[]>[],
-      })
+    function addClassToStore(classId: RegisteredClass['id']) {
+      try {
+        registeredClasses.value.push(<RegisteredClass>{
+          id: classId,
+          classNumber: '',
+          discipline: '',
+          subdiscipline: '',
+          level: '',
+          category: '',
+          numberOfSelections: 1,
+          price: 0,
+          schoolGroupID: null,
+          selections: <Selection[]>[],
+          __typename: 'RegisteredClass',
+        })
+      } catch (err) {
+        console.log(err)
+      }
     }
 
     /**
@@ -54,43 +58,45 @@ export const useClasses = defineStore(
      * @param index Index of specific class in array
      */
     function addSelectionToStore(
-      classSelection: Selection | null,
-      classIndex: number
+      selectionId: Selection['id'],
+      classId: number
     ) {
-      registeredClasses.value[classIndex].selections!.push({
-        id: classSelection?.id || 0,
-        title: classSelection?.title || null,
-        largerWork: classSelection?.largerWork || null,
-        movement: classSelection?.movement || null,
-        composer: classSelection?.composer || null,
-        duration: classSelection?.duration || '0:00',
-        __typename: 'Selection',
-      })
+      try {
+        const classIndex = registeredClasses.value.findIndex(
+          (item) => item.id === classId
+        )
+        registeredClasses.value[classIndex].selections?.push({
+          id: selectionId,
+          title: '',
+          largerWork: '',
+          movement: '',
+          composer: '',
+          duration: '0:00',
+          __typename: 'Selection',
+        })
+      } catch (err) {
+        console.log(err)
+      }
     }
 
     async function createClass(registrationId: number) {
-      const {
-        mutate: classCreate,
-        onDone: doneClassCreate,
-        onError: errorClassCreate,
-      } = useMutation(ClassCreateDocument, { fetchPolicy: 'no-cache' })
-      addClassToStore(null)
-      const classLastIndex = registeredClasses.value.length - 1
-      const clone = Object.assign(
-        {},
-        <RegisteredClassInput>registeredClasses.value[classLastIndex]
-      )
-      // delete clone.id
-      // delete clone.selections
-      await classCreate({ registrationId, registeredClassInput: clone })
-      doneClassCreate((result) => {
-        const lastIndex = registeredClasses.value.length - 1
-        const returnedId: number =
-          result.data.registeredClassCreate.registeredClass.id
-        registeredClasses.value[lastIndex].id = returnedId
-      })
-      errorClassCreate((error) => {
-        console.log(error)
+      return await new Promise((resolve, reject) => {
+        const {
+          mutate: classCreate,
+          onDone,
+          onError,
+        } = useMutation(ClassCreateDocument, { fetchPolicy: 'no-cache' })
+        classCreate({ registrationId }).catch((error) => console.log(error))
+        onDone((result) => {
+          const classId: number =
+            result.data.registeredClassCreate.registeredClass.id
+          addClassToStore(classId)
+          createSelection(classId).catch((err) => console.log(err))
+          resolve('Success')
+        })
+        onError((error) => {
+          reject(console.log(error))
+        })
       })
     }
 
@@ -198,11 +204,11 @@ export const useClasses = defineStore(
     async function deleteClass(classIndex: number, registeredClassId: number) {
       const {
         mutate: classDelete,
-        onDone: doneClassDelete,
+        onDone,
         onError,
       } = useMutation(ClassDeleteDocument)
       await classDelete({ registeredClassId })
-      doneClassDelete(() => {
+      onDone(() => {
         registeredClasses.value.splice(classIndex, 1)
       })
       onError((error) => {
@@ -210,33 +216,24 @@ export const useClasses = defineStore(
       })
     }
 
-    async function createSelection(classIndex: number) {
-      const {
-        mutate: selectionCreate,
-        onDone: doneSelectionCreate,
-        onError: errorSelectionCreate,
-      } = useMutation(SelectionCreateDocument, { fetchPolicy: 'no-cache' })
-      addSelectionToStore(null, classIndex)
-      const classId: number = registeredClasses.value[classIndex].id
-      const selectionsLastIndex =
-        registeredClasses.value[classIndex].selections!.length - 1
-      const clone = Object.assign(
-        {},
-        <SelectionInput>(
-          registeredClasses.value[classIndex].selections![selectionsLastIndex]
+    async function createSelection(classId: number) {
+      return await new Promise((resolve, reject) => {
+        const {
+          mutate: selectionCreate,
+          onDone,
+          onError,
+        } = useMutation(SelectionCreateDocument, { fetchPolicy: 'no-cache' })
+        selectionCreate({ registeredClassId: classId }).catch((error) =>
+          console.log(error)
         )
-      )
-      // delete clone.id
-      await selectionCreate({ registeredClassId: classId, selection: clone })
-      doneSelectionCreate((result) => {
-        const lastIndex =
-          registeredClasses.value[classIndex].selections!.length - 1
-        const returnedId: number = result.data.selectionCreate.selection.id
-        registeredClasses.value[classIndex].selections![lastIndex].id =
-          returnedId
-      })
-      errorSelectionCreate((error) => {
-        console.log(error)
+        onDone((result) => {
+          const selectionId: number = result.data.selectionCreate.selection.id
+          addSelectionToStore(selectionId, classId)
+          resolve('Success')
+        })
+        onError((error) => {
+          reject(console.log(error))
+        })
       })
     }
 

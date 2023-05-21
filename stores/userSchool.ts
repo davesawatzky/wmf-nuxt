@@ -9,33 +9,47 @@ import type { School } from '~/graphql/gql/graphql'
 export const useSchool = defineStore(
   'school',
   () => {
-    const schoolInfo = ref(<School>{})
+    const school = ref(<School>{})
 
     function $reset() {
-      schoolInfo.value = <School>{}
+      school.value = <School>{}
     }
 
-    function addToStore(school: School) {
-      Object.assign(schoolInfo.value, school)
+    function addToStore(schoolId: School['id']) {
+      school.value.id = schoolId
+      school.value.division = ''
+      school.value.name = ''
+      school.value.streetNumber = ''
+      school.value.streetName = ''
+      school.value.city = 'Winnipeg'
+      school.value.province = 'MB'
+      school.value.postalCode = ''
+      school.value.phone = ''
+      school.value.__typename = 'School'
     }
 
     async function createSchool(registrationId: number) {
-      const {
-        mutate: schoolCreate,
-        onDone: doneSchoolCreate,
-        onError,
-      } = useMutation(SchoolCreateDocument)
-      const clone = Object.assign({}, schoolInfo.value)
-      delete clone.id
-      await schoolCreate({
-        registrationId,
-        schoolInput: clone,
-      })
-      doneSchoolCreate((result) => {
-        schoolInfo.value.id = result.data.schoolCreate.school.id
-      })
-      onError((error) => {
-        console.log(error)
+      return await new Promise((resolve, reject) => {
+        const {
+          mutate: schoolCreate,
+          onDone,
+          onError,
+        } = useMutation(SchoolCreateDocument)
+        schoolCreate({
+          registrationId,
+          schoolInput: <School>{
+            city: 'Winnipeg',
+            province: 'MB',
+          },
+        }).catch((error) => console.log(error))
+        onDone((result) => {
+          const schoolId: number = result.data.schoolCreate.school.index
+          addToStore(schoolId)
+          resolve('Success')
+        })
+        onError((error) => {
+          reject(console.log(error))
+        })
       })
     }
 
@@ -69,11 +83,11 @@ export const useSchool = defineStore(
           fetchPolicy: 'network-only',
         }
       )
-      const clone = Object.assign({}, schoolInfo.value)
+      const clone = Object.assign({}, school.value)
       delete clone.id
       delete clone.__typename
       await schoolUpdate({
-        schoolId: schoolInfo.value.id,
+        schoolId: school.value.id,
         school: clone,
       })
       onError((error) => {
@@ -96,7 +110,7 @@ export const useSchool = defineStore(
       updateSchool,
       loadSchool,
       createSchool,
-      schoolInfo,
+      school,
       addToStore,
     }
   },

@@ -1,5 +1,5 @@
-mutation SelectionCreate($registeredClassId: Int!, $selection: SelectionInput!) {
-  selectionCreate(registeredClassID: $registeredClassId, selectionInput: $selection) {
+mutation SelectionCreate($registeredClassId: Int!) {
+  selectionCreate(registeredClassID: $registeredClassId) {
     selection {
       id
     }

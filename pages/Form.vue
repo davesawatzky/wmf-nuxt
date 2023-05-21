@@ -122,14 +122,14 @@
 <template>
   <div>
     <BaseInput
-      v-model="registrationStore.registrations[0].label"
+      v-model="registrationStore.registration.label"
       class="text-3xl mb-6 h-12 p-6"
       label="Registration Label"
       name="registrationLabel"
-      :disabled="registrationStore.registrations[0].confirmation"
+      :disabled="registrationStore.registration.confirmation"
       type="text" />
 
-    <div v-if="!registrationStore.registrations[0].confirmation">
+    <div v-if="!registrationStore.registration.confirmation">
       <div class="text-left">
         <button
           v-for="(_, tab) in tabs"
@@ -156,7 +156,7 @@
       <Summary />
     </div>
     <button
-      v-if="!registrationStore.registrations[0].confirmation"
+      v-if="!registrationStore.registration.confirmation"
       class="btn btn-blue"
       @click="saveRegistration()">
       Save

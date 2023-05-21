@@ -7,7 +7,7 @@
     name: string
     placeholder?: string
     status?: string
-    modelValue?: string | number
+    modelValue: string | number
   }
 
   const props = withDefaults(defineProps<Props>(), {

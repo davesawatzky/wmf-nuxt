@@ -13,7 +13,7 @@ import type { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-
  * Therefore it is highly recommended to use the babel or swc plugin for production.
  */
 const documents = {
-    "mutation ClassCreate($registrationId: Int!, $registeredClassInput: RegisteredClassInput!) {\n  registeredClassCreate(\n    registeredClassInput: $registeredClassInput\n    registrationID: $registrationId\n  ) {\n    registeredClass {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.ClassCreateDocument,
+    "mutation ClassCreate($registrationId: Int!) {\n  registeredClassCreate(registrationID: $registrationId) {\n    registeredClass {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.ClassCreateDocument,
     "mutation ClassDelete($registeredClassId: Int!) {\n  registeredClassDelete(registeredClassID: $registeredClassId) {\n    registeredClass {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.ClassDeleteDocument,
     "mutation ClassUpdate($registeredClassId: Int!, $registeredClass: RegisteredClassInput!) {\n  registeredClassUpdate(\n    registeredClassID: $registeredClassId\n    registeredClassInput: $registeredClass\n  ) {\n    registeredClass {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.ClassUpdateDocument,
     "mutation CommunityCreate($registrationId: Int!, $community: CommunityInput!) {\n  communityCreate(communityInput: $community, registrationID: $registrationId) {\n    community {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.CommunityCreateDocument,
@@ -34,7 +34,7 @@ const documents = {
     "mutation SchoolGroupDelete($schoolGroupId: Int!) {\n  schoolGroupDelete(schoolGroupID: $schoolGroupId) {\n    schoolGroup {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.SchoolGroupDeleteDocument,
     "mutation SchoolGroupUpdate($schoolGroupId: Int!, $schoolGroup: SchoolGroupInput!) {\n  schoolGroupUpdate(schoolGroupID: $schoolGroupId, schoolGroupInput: $schoolGroup) {\n    schoolGroup {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.SchoolGroupUpdateDocument,
     "mutation SchoolUpdate($schoolId: Int!, $school: SchoolInput!) {\n  schoolUpdate(schoolID: $schoolId, schoolInput: $school) {\n    school {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.SchoolUpdateDocument,
-    "mutation SelectionCreate($registeredClassId: Int!, $selection: SelectionInput!) {\n  selectionCreate(\n    registeredClassID: $registeredClassId\n    selectionInput: $selection\n  ) {\n    selection {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.SelectionCreateDocument,
+    "mutation SelectionCreate($registeredClassId: Int!) {\n  selectionCreate(registeredClassID: $registeredClassId) {\n    selection {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.SelectionCreateDocument,
     "mutation SelectionDelete($selectionId: Int!) {\n  selectionDelete(selectionID: $selectionId) {\n    selection {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.SelectionDeleteDocument,
     "mutation SelectionUpdate($selectionId: Int!, $selection: SelectionInput!) {\n  selectionUpdate(selectionID: $selectionId, selectionInput: $selection) {\n    selection {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.SelectionUpdateDocument,
     "mutation TeacherCreate($registrationId: Int!, $teacher: TeacherInput!) {\n  teacherCreate(registrationID: $registrationId, teacherInput: $teacher) {\n    teacher {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.TeacherCreateDocument,
@@ -79,7 +79,7 @@ export function graphql(source: string): unknown;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "mutation ClassCreate($registrationId: Int!, $registeredClassInput: RegisteredClassInput!) {\n  registeredClassCreate(\n    registeredClassInput: $registeredClassInput\n    registrationID: $registrationId\n  ) {\n    registeredClass {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}"): (typeof documents)["mutation ClassCreate($registrationId: Int!, $registeredClassInput: RegisteredClassInput!) {\n  registeredClassCreate(\n    registeredClassInput: $registeredClassInput\n    registrationID: $registrationId\n  ) {\n    registeredClass {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}"];
+export function graphql(source: "mutation ClassCreate($registrationId: Int!) {\n  registeredClassCreate(registrationID: $registrationId) {\n    registeredClass {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}"): (typeof documents)["mutation ClassCreate($registrationId: Int!) {\n  registeredClassCreate(registrationID: $registrationId) {\n    registeredClass {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -163,7 +163,7 @@ export function graphql(source: "mutation SchoolUpdate($schoolId: Int!, $school:
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "mutation SelectionCreate($registeredClassId: Int!, $selection: SelectionInput!) {\n  selectionCreate(\n    registeredClassID: $registeredClassId\n    selectionInput: $selection\n  ) {\n    selection {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}"): (typeof documents)["mutation SelectionCreate($registeredClassId: Int!, $selection: SelectionInput!) {\n  selectionCreate(\n    registeredClassID: $registeredClassId\n    selectionInput: $selection\n  ) {\n    selection {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}"];
+export function graphql(source: "mutation SelectionCreate($registeredClassId: Int!) {\n  selectionCreate(registeredClassID: $registeredClassId) {\n    selection {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}"): (typeof documents)["mutation SelectionCreate($registeredClassId: Int!) {\n  selectionCreate(registeredClassID: $registeredClassId) {\n    selection {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

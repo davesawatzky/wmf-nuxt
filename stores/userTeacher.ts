@@ -10,38 +10,54 @@ import type { Teacher, TeacherInput } from '~/graphql/gql/graphql'
 export const useTeacher = defineStore(
   'teacher',
   () => {
-    // registrationId: '',
-    const teacherInfo = ref(<Teacher>{})
+    const teacher = ref(<Teacher>{})
 
     function $reset() {
-      teacherInfo.value = <Teacher>{}
+      teacher.value = <Teacher>{}
     }
 
     const fullName = computed(() => {
-      return teacherInfo.value.firstName && ' ' && teacherInfo.value.lastName
+      return teacher.value.firstName && ' ' && teacher.value.lastName
     })
 
-    function addToStore(teacher: Teacher) {
-      teacherInfo.value = teacher
+    function addToStore(teacherId: Teacher['id']) {
+      teacher.value.id = teacherId
+      teacher.value.prefix = ''
+      teacher.value.firstName = ''
+      teacher.value.lastName = ''
+      teacher.value.apartment = ''
+      teacher.value.streetNumber = ''
+      teacher.value.streetName = ''
+      teacher.value.city = 'Winnipeg'
+      teacher.value.province = 'MB'
+      teacher.value.postalCode = ''
+      teacher.value.email = ''
+      teacher.value.phone = ''
+      teacher.value.__typename = 'Teacher'
     }
 
     async function createTeacher(registrationId: number) {
-      const {
-        mutate: teacherCreate,
-        onDone: doneTeacherCreate,
-        onError,
-      } = useMutation(TeacherCreateDocument)
-      const clone = Object.assign({}, teacherInfo.value)
-      delete clone.id
-      await teacherCreate({
-        registrationId,
-        teacher: clone,
-      })
-      doneTeacherCreate((result) => {
-        teacherInfo.value.id = result.data.teacherCreate.teacher.id
-      })
-      onError((error) => {
-        console.log(error)
+      return await new Promise((resolve, reject) => {
+        const {
+          mutate: teacherCreate,
+          onDone,
+          onError,
+        } = useMutation(TeacherCreateDocument)
+        teacherCreate({
+          registrationId,
+          teacher: <TeacherInput>{
+            city: 'Winnipeg',
+            province: 'MB',
+          },
+        }).catch((error) => console.log(error))
+        onDone((result) => {
+          const teacherId: number = result.data.teacherCreate.teacher.id
+          addToStore(teacherId)
+          resolve('Success')
+        })
+        onError((error) => {
+          reject(console.log(error))
+        })
       })
     }
 
@@ -98,8 +114,8 @@ export const useTeacher = defineStore(
       // const clone = Object.assign({}, <TeacherInput>teacherInfo.value)
       // delete clone.id
       await teacherUpdate({
-        teacherId: teacherInfo.value.id,
-        teacher: <TeacherInput>teacherInfo.value,
+        teacherId: teacher.value.id,
+        teacher: <TeacherInput>teacher.value,
       })
       onError((error) => {
         console.log(error)
@@ -116,7 +132,7 @@ export const useTeacher = defineStore(
       })
     }
     return {
-      teacherInfo,
+      teacher,
       $reset,
       deleteTeacher,
       updateTeacher,
