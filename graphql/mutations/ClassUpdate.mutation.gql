@@ -1,5 +1,11 @@
-mutation ClassUpdate($registeredClassId: Int!, $registeredClass: RegisteredClassInput!) {
-  registeredClassUpdate(registeredClassID: $registeredClassId, registeredClassInput: $registeredClass) {
+mutation ClassUpdate(
+  $registeredClassId: Int!
+  $registeredClass: RegisteredClassInput!
+) {
+  registeredClassUpdate(
+    registeredClassID: $registeredClassId
+    registeredClassInput: $registeredClass
+  ) {
     registeredClass {
       id
     }

@@ -47,7 +47,7 @@ export default defineNuxtConfig({
     '@vee-validate/nuxt',
     '@vueuse/nuxt',
     '@nuxt/image-edge',
-    'nuxt-quasar-ui',
+    'nuxt-icon',
   ],
   pinia: {
     autoImports: ['defineStore'],
@@ -55,7 +55,6 @@ export default defineNuxtConfig({
   piniaPersistedstate: {
     storage: 'sessionStorage',
   },
-  quasar: {},
   runtimeConfig: {
     baseUrl: process.env.BASE_URL_SERVER,
     public: {
@@ -78,8 +77,8 @@ export default defineNuxtConfig({
     vue: {
       script: {
         defineModel: true,
-        propsDestructure: true
-      }
-    }
+        propsDestructure: true,
+      },
+    },
   },
 })

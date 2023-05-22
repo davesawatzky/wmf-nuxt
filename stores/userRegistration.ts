@@ -27,23 +27,20 @@ export const useRegistration = defineStore(
       registrationId.value = reg.id
       registration.value.id = reg.id
       registration.value.performerType = reg.performerType
-      registration.value.label = reg.label
-      registration.value.confirmation = ''
-      registration.value.createdAt = reg.createdAt
-      registration.value.submittedAt = ''
-      registration.value.transactionInfo = ''
-      registration.value.payedAmt = 0
-      registration.value.totalAmt = 0
-      registration.value.updatedAt = reg.updatedAt
+      registration.value.label = reg.label || ''
+      registration.value.confirmation = reg.confirmation || ''
+      registration.value.createdAt = reg.createdAt || ''
+      registration.value.submittedAt = reg.submittedAt || ''
+      registration.value.transactionInfo = reg.transactionInfo || ''
+      registration.value.payedAmt = reg.payedAmt || 0
+      registration.value.totalAmt = reg.totalAmt || 0
+      registration.value.updatedAt = reg.updatedAt || ''
       registration.value.user = reg.user
       registration.value.__typename = 'Registration'
     }
 
-    async function createRegistration(
-      performerType: PerformerType,
-      label: string
-    ) {
-      return await new Promise((resolve, reject) => {
+    function createRegistration(performerType: PerformerType, label: string) {
+      return new Promise((resolve, reject) => {
         const {
           mutate: registrationCreate,
           onDone,

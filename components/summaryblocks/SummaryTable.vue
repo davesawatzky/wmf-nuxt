@@ -7,7 +7,8 @@
 
   const total = computed(() => {
     let cost = 0
-    for (const registeredClass of classesStore.registeredClasses) cost += registeredClass.price
+    for (const registeredClass of classesStore.registeredClasses)
+      cost += registeredClass.price
 
     return +cost
   })

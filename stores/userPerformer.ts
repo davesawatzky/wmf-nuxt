@@ -27,29 +27,29 @@ export const usePerformers = defineStore(
       return name
     })
 
-    function addToStore(performerId: Performer['id']) {
+    function addToStore(perform: Performer) {
       performer.value.push(<Performer>{
-        id: performerId,
-        firstName: '',
-        lastName: '',
-        age: null,
-        level: '',
-        instrument: '',
-        otherClasses: '',
-        apartment: '',
-        streetNumber: '',
-        streetName: '',
-        city: 'Winnipeg',
-        province: 'MB',
-        postalCode: '',
-        email: '',
-        phone: '',
-        __typename: 'Performer',
+        id: perform.id,
+        firstName: perform.firstName || '',
+        lastName: perform.lastName || '',
+        age: perform.age || null,
+        level: perform.level || '',
+        instrument: perform.instrument || '',
+        otherClasses: perform.otherClasses || '',
+        apartment: perform.apartment || '',
+        streetNumber: perform.streetNumber || '',
+        streetName: perform.streetName || '',
+        city: perform.city || 'Winnipeg',
+        province: perform.province || 'MB',
+        postalCode: perform.postalCode || '',
+        email: perform.email || '',
+        phone: perform.phone || '',
+        __typename: perform.__typename || 'Performer',
       })
     }
 
-    async function createPerformer(registrationId: number) {
-      return await new Promise((resolve, reject) => {
+    function createPerformer(registrationId: number) {
+      return new Promise((resolve, reject) => {
         console.log('RegID-----: ', registrationId)
         const { mutate, onDone, onError } = useMutation(PerformerCreateDocument)
         mutate({
@@ -60,8 +60,8 @@ export const usePerformers = defineStore(
           },
         }).catch((error) => console.log(error))
         onDone((result) => {
-          const performerId: number = result.data.performerCreate.performer.id
-          addToStore(performerId)
+          const performer: Performer = result.data.performerCreate.performer
+          addToStore(performer)
           resolve('Success')
         })
         onError((error) => {
@@ -70,52 +70,33 @@ export const usePerformers = defineStore(
       })
     }
 
-    // async function loadPerformers(registrationId: number) {
-    //   return await new Promise((resolve, reject) => {
-    //     const { onResult: resultLoadPerformers, onError } = useQuery(
-    //       PERFORMER_INFO_QUERY,
-    //       { registrationId },
-    //       { fetchPolicy: 'no-cache' }
-    //     )
-    //     resultLoadPerformers((result) => {
-    //       const clone = structuredClone(result.data.registration.performers)
-
-    //       for (let i = 0; i < clone.length; i++) {
-    //         delete clone[i].__typename
-    //         addToStore(clone[i])
-    //       }
-    //       resolve(true)
-    //     })
-    //     onError((error) => {
-    //       reject(error)
-    //     })
-    //   })
-    // }
-
     function loadPerformers(registrationId: number) {
-      const {
-        result: resultPerformers,
-        load: loadPerformer,
-        onResult: resultLoadPerformers,
-        onError: performerError,
-      } = useLazyQuery(
-        PerformerInfoDocument,
-        { registrationId },
-        { fetchPolicy: 'no-cache' }
-      )
-      resultLoadPerformers((result) => {
-        const performers: Performer[] = result.data.registration.performers
-        for (let i = 0; i < performers.length; i++) {
-          addToStore(performers[i])
+      return new Promise((resolve, reject) => {
+        const {
+          result: resultPerformers,
+          load: loadPerformer,
+          onResult,
+          onError,
+        } = useLazyQuery(
+          PerformerInfoDocument,
+          { registrationId },
+          { fetchPolicy: 'no-cache' }
+        )
+        onResult((result) => {
+          const performers: Performer[] = result.data.registration.performers
+          for (let i = 0; i < performers.length; i++) {
+            addToStore(performers[i])
+          }
+          resolve('Success')
+        })
+        onError((error) => {
+          reject(console.log(error))
+        })
+        return {
+          resultPerformers,
+          loadPerformer,
         }
       })
-      performerError((error) => {
-        console.log(error)
-      })
-      return {
-        resultPerformers,
-        loadPerformer,
-      }
     }
 
     async function updatePerformer(

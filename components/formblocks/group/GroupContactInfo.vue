@@ -68,7 +68,10 @@
 
           <BaseInput
             v-model="groupStore.groupInfo.numberOfPerformers"
-            :value="(groupStore.groupInfo.numberOfPerformers = performerStore.numberOfPerformers)"
+            :value="
+              (groupStore.groupInfo.numberOfPerformers =
+                performerStore.numberOfPerformers)
+            "
             disabled
             class="off"
             aria-disabled
@@ -76,7 +79,8 @@
             label="Number of Performers"
             type="number" />
         </div>
-        <div class="col-span-6 md:col-span-3 border border-spacing-1 border-sky-500 shadow-md rounded-lg px-6 pt-6">
+        <div
+          class="col-span-6 md:col-span-3 border border-spacing-1 border-sky-500 shadow-md rounded-lg px-6 pt-6">
           <h3>Group Type</h3>
           <div>
             <BaseRadioGroup
@@ -105,7 +109,9 @@
         </div>
         <div class="pt-4">
           <BaseButton
-            v-if="personIndex + 1 === performerStore.performer.length ? true : false"
+            v-if="
+              personIndex + 1 === performerStore.performer.length ? true : false
+            "
             class="btn btn-blue mb-6"
             @click="addPerformer">
             Add Performer

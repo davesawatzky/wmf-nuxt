@@ -1,5 +1,5 @@
-query Registrations($performerType: PerformerType, $userId: Int!) {
-  registrations(performerType: $performerType, userID: $userId) {
+query Registrations($performerType: PerformerType) {
+  registrations(performerType: $performerType) {
     id
     createdAt
     label

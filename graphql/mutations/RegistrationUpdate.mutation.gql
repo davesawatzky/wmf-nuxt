@@ -1,5 +1,11 @@
-mutation RegistrationUpdate($registrationId: Int!, $registration: RegistrationInput!) {
-  registrationUpdate(registrationID: $registrationId, registration: $registration) {
+mutation RegistrationUpdate(
+  $registrationId: Int!
+  $registration: RegistrationInput!
+) {
+  registrationUpdate(
+    registrationID: $registrationId
+    registration: $registration
+  ) {
     registration {
       id
     }

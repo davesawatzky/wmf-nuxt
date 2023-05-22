@@ -14,11 +14,21 @@
     await communityStore.createCommunity(registrationStore.registrationId)
   }
   async function removeSchoolGroup(index: number) {
-    await communityStore.deleteCommunity(communityStore.communityInfo[index].id!)
+    await communityStore.deleteCommunity(
+      communityStore.communityInfo[index].id!
+    )
   }
   const validationSchema = yup.object({
-    schoolName: yup.string().trim().nullable().required('Enter the name of the school'),
-    schoolDivision: yup.string().trim().nullable().required('Enter the name of the school divison'),
+    schoolName: yup
+      .string()
+      .trim()
+      .nullable()
+      .required('Enter the name of the school'),
+    schoolDivision: yup
+      .string()
+      .trim()
+      .nullable()
+      .required('Enter the name of the school divison'),
   })
 
   useForm({ validationSchema })
@@ -70,7 +80,11 @@
         </div>
         <div class="pt-4">
           <BaseButton
-            v-if="communityIndex + 1 === communityStore.communityInfo.length ? true : false"
+            v-if="
+              communityIndex + 1 === communityStore.communityInfo.length
+                ? true
+                : false
+            "
             class="btn btn-blue mb-6"
             @click="addSchoolGroup">
             Add School Group

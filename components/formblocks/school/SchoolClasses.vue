@@ -16,7 +16,8 @@
 
   const schoolGroups = computed(() => {
     const newArray = []
-    for (const group of communityStore.communityInfo) newArray.push({ id: group.id, name: group.name })
+    for (const group of communityStore.communityInfo)
+      newArray.push({ id: group.id, name: group.name })
 
     return newArray
   })
@@ -35,14 +36,19 @@
         <label for="schoolGroupSelect">Select a school group</label>
         <select
           id="schoolGroupSelect"
-          v-model.number="classesStore.registeredClasses[classIndex].schoolGroupID"
+          v-model.number="
+            classesStore.registeredClasses[classIndex].schoolGroupID
+          "
           class="mb-6"
           name="schoolGroup">
           <option
             v-for="group in schoolGroups"
             :key="group.id"
             :value="group.id"
-            :selected="classesStore.registeredClasses[classIndex].schoolGroupID === group.id">
+            :selected="
+              classesStore.registeredClasses[classIndex].schoolGroupID ===
+              group.id
+            ">
             {{ group.name }}
           </option>
         </select>
@@ -52,7 +58,11 @@
       </div>
       <div class="pt-4">
         <BaseButton
-          v-if="classIndex + 1 === classesStore.registeredClasses.length ? true : false"
+          v-if="
+            classIndex + 1 === classesStore.registeredClasses.length
+              ? true
+              : false
+          "
           class="btn btn-blue"
           @click="addClass(registrationStore.registrationId)">
           Add Class
@@ -61,7 +71,12 @@
           v-if="classesStore.registeredClasses.length > 1 ? true : false"
           id="index"
           class="btn btn-red"
-          @click="removeClass(classIndex, classesStore.registeredClasses[classIndex].id!)">
+          @click="
+            removeClass(
+              classIndex,
+              classesStore.registeredClasses[classIndex].id!
+            )
+          ">
           Remove Class
         </BaseButton>
         <br /><br />

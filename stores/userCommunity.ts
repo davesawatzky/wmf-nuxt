@@ -9,56 +9,43 @@ import type { Community } from '~/graphql/gql/graphql'
 export const useCommunity = defineStore(
   'community',
   () => {
-    const communityInfo = ref([] as Community[])
+    const community = ref([] as Community[])
 
     function $reset() {
-      communityInfo.value = <Community[]>[]
+      community.value = <Community[]>[]
     }
 
-    function addToStore(communityData: Community | null) {
-      communityInfo.value.push({
-        id: 0,
-        name: '',
-        groupSize: 10,
-        chaperones: 0,
-        wheelchairs: 0,
-        earliestTime: '',
-        latestTime: '',
-        unavailable: '',
-        conflictPerformers: '',
-        __typename: 'Community',
+    function addToStore(comm: Community) {
+      community.value.push({
+        id: comm.id,
+        name: comm.name || '',
+        groupSize: comm.groupSize || null,
+        chaperones: comm.chaperones || null,
+        wheelchairs: comm.wheelchairs || null,
+        earliestTime: comm.earliestTime || '',
+        latestTime: comm.latestTime || '',
+        unavailable: comm.unavailable || '',
+        conflictPerformers: comm.conflictPerformers || '',
+        __typename: comm.__typename || 'Community',
       })
-
-      if (communityData) {
-        Object.assign(
-          communityInfo.value[communityInfo.value.length - 1],
-          communityData
-        )
-      }
     }
 
-    async function createCommunity(registrationId: number) {
-      const {
-        mutate: communityCreate,
-        onDone: doneCommunityCreate,
-        onError,
-      } = useMutation(CommunityCreateDocument, { fetchPolicy: 'no-cache' })
-      addToStore(null)
-      const clone = Object.assign(
-        {},
-        communityInfo.value[communityInfo.value.length - 1]
-      )
-      delete clone.id
-      await communityCreate({
-        registrationId,
-        community: clone,
-      })
-      doneCommunityCreate((result) => {
-        communityInfo.value[communityInfo.value.length - 1].id =
-          result.data.communityCreate.community.id
-      })
-      onError((error) => {
-        console.log(error)
+    function createCommunity(registrationId: number) {
+      return new Promise((resolve, reject) => {
+        const {
+          mutate: communityCreate,
+          onDone,
+          onError,
+        } = useMutation(CommunityCreateDocument, { fetchPolicy: 'no-cache' })
+        communityCreate({ registrationId }).catch((error) => console.log(error))
+        onDone((result) => {
+          const community: Community = result.data.communityCreate.community
+          addToStore(community)
+          resolve('Success')
+        })
+        onError((error) => {
+          reject(console.log(error))
+        })
       })
     }
 
@@ -97,7 +84,7 @@ export const useCommunity = defineStore(
           fetchPolicy: 'no-cache',
         }
       )
-      const clone = Object.assign({}, communityInfo.value[communityIndex])
+      const clone = Object.assign({}, community.value[communityIndex])
       delete clone.id
       await communityUpdate({
         communityId,
@@ -110,7 +97,7 @@ export const useCommunity = defineStore(
 
     async function updateAllCommunities() {
       let communityIndex = 0
-      for (const eachCommunity of communityInfo.value) {
+      for (const eachCommunity of community.value) {
         await updateCommunity(communityIndex, eachCommunity.id)
         communityIndex++
       }
@@ -124,8 +111,8 @@ export const useCommunity = defineStore(
       } = useMutation(CommunityDeleteDocument)
       await communityDelete({ communityId })
       doneCommunityDelete(() => {
-        const index = communityInfo.value.map((e) => e.id).indexOf(communityId)
-        communityInfo.value.splice(index, 1)
+        const index = community.value.map((e) => e.id).indexOf(communityId)
+        community.value.splice(index, 1)
       })
       onError((error) => {
         console.log(error)
@@ -135,7 +122,7 @@ export const useCommunity = defineStore(
       $reset,
       deleteCommunity,
       updateCommunity,
-      communityInfo,
+      community,
       updateAllCommunities,
       addToStore,
       createCommunity,

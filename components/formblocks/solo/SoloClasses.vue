@@ -29,7 +29,11 @@
         </div>
         <div class="pt-4">
           <BaseButton
-            v-if="classIndex + 1 === classesStore.registeredClasses.length ? true : false"
+            v-if="
+              classIndex + 1 === classesStore.registeredClasses.length
+                ? true
+                : false
+            "
             class="btn btn-blue mb-6"
             @click="addClass(registrationStore.registrationId)">
             Add Class
@@ -38,7 +42,12 @@
             v-if="classesStore.registeredClasses.length > 1 ? true : false"
             id="index"
             class="btn btn-red mb-6"
-            @click="removeClass(classIndex, classesStore.registeredClasses[classIndex].id!)">
+            @click="
+              removeClass(
+                classIndex,
+                classesStore.registeredClasses[classIndex].id!
+              )
+            ">
             Remove Class
           </BaseButton>
           <br /><br />

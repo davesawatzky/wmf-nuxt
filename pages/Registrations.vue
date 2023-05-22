@@ -60,13 +60,14 @@
     classesStore.$reset()
   })
 
-  const { result, refetch: refetchRegistrations } = useQuery(
-    RegistrationsDocument,
-    null,
-    () => ({
-      fetchPolicy: 'no-cache',
-    })
-  )
+  const {
+    result,
+    refetch: refetchRegistrations,
+    onError,
+  } = useQuery(RegistrationsDocument, null, () => ({
+    fetchPolicy: 'no-cache',
+  }))
+  onError((error) => console.log(error))
 
   const registrations = computed<Registration[]>(
     () => result.value?.registrations ?? []
@@ -177,7 +178,7 @@
         appStore.performerType = PerformerType.SCHOOL
         appStore.dataLoading = true
         await schoolStore.createSchool(registrationId.value)
-        await schoolGroupStore.createSchoolGroup(schoolStore.schoolInfo.id!)
+        await schoolGroupStore.createSchoolGroup(schoolStore.school.id!)
         await teacherStore.createTeacher(registrationId.value)
         await classesStore.createClass(registrationId.value)
         appStore.dataLoading = false
@@ -292,21 +293,21 @@
                     )
                   : ''
               ">
-              <font-awesome-icon
+              <Icon
                 v-if="
                   !registration.confirmation &&
                   openEditor(registration.performerType)
                 "
-                icon="fa-solid fa-file-pen" />
-              <font-awesome-icon
+                name="fa-solid:pen" />
+              <Icon
                 v-else-if="
                   !registration.confirmation &&
                   !openEditor(registration.performerType)
                 "
-                icon="fa-solid fa-ban" />
-              <font-awesome-icon
+                name="fa-solid:ban" />
+              <Icon
                 v-else
-                icon="fa-solid fa-eye" />
+                name="fa-solid:eye" />
             </BaseButton>
           </td>
           <td
@@ -335,7 +336,7 @@
               v-if="!registration.confirmation"
               class="text-red-600 text-xl md:ml-4 ml-3 my-3"
               @click="deleteRegistration(registration.id)">
-              <font-awesome-icon icon="fa-regular fa-trash-can" />
+              <Icon name="fa-solid:trash-alt" />
             </BaseButton>
           </td>
         </tr>

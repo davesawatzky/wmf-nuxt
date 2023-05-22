@@ -20,24 +20,24 @@ export const useTeacher = defineStore(
       return teacher.value.firstName && ' ' && teacher.value.lastName
     })
 
-    function addToStore(teacherId: Teacher['id']) {
-      teacher.value.id = teacherId
-      teacher.value.prefix = ''
-      teacher.value.firstName = ''
-      teacher.value.lastName = ''
-      teacher.value.apartment = ''
-      teacher.value.streetNumber = ''
-      teacher.value.streetName = ''
-      teacher.value.city = 'Winnipeg'
-      teacher.value.province = 'MB'
-      teacher.value.postalCode = ''
-      teacher.value.email = ''
-      teacher.value.phone = ''
-      teacher.value.__typename = 'Teacher'
+    function addToStore(teach: Teacher) {
+      teacher.value.id = teach.id
+      teacher.value.prefix = teach.prefix || ''
+      teacher.value.firstName = teach.firstName || ''
+      teacher.value.lastName = teach.lastName || ''
+      teacher.value.apartment = teach.apartment || ''
+      teacher.value.streetNumber = teach.streetNumber || ''
+      teacher.value.streetName = teach.streetName || ''
+      teacher.value.city = teach.city || 'Winnipeg'
+      teacher.value.province = teach.province || 'MB'
+      teacher.value.postalCode = teach.postalCode || ''
+      teacher.value.email = teach.email || ''
+      teacher.value.phone = teach.phone || ''
+      teacher.value.__typename = teach.__typename || 'Teacher'
     }
 
-    async function createTeacher(registrationId: number) {
-      return await new Promise((resolve, reject) => {
+    function createTeacher(registrationId: number) {
+      return new Promise((resolve, reject) => {
         const {
           mutate: teacherCreate,
           onDone,
@@ -51,8 +51,8 @@ export const useTeacher = defineStore(
           },
         }).catch((error) => console.log(error))
         onDone((result) => {
-          const teacherId: number = result.data.teacherCreate.teacher.id
-          addToStore(teacherId)
+          const teacher: Teacher = result.data.teacherCreate.teacher
+          addToStore(teacher)
           resolve('Success')
         })
         onError((error) => {

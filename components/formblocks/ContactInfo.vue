@@ -42,18 +42,46 @@
   const validationSchema = yup.object({
     firstName: yup.string().trim().required('First name is required'),
     lastName: yup.string().trim().required('Last name is required'),
-    age: yup.number().positive().integer().max(100).nullable().required('Indicate age'),
-    apartment: yup.string().notRequired().trim().nullable().max(5, '5 characters maximum'),
-    streetNumber: yup.string().trim().max(5, '5 characters maximum').required('Enter a valid street number'),
+    age: yup
+      .number()
+      .positive()
+      .integer()
+      .max(100)
+      .nullable()
+      .required('Indicate age'),
+    apartment: yup
+      .string()
+      .notRequired()
+      .trim()
+      .nullable()
+      .max(5, '5 characters maximum'),
+    streetNumber: yup
+      .string()
+      .trim()
+      .max(5, '5 characters maximum')
+      .required('Enter a valid street number'),
     streetName: yup.string().trim().required('Enter a valid street name'),
-    city: yup.string().trim().max(15, 'Too many characters').required('Enter a city name'),
+    city: yup
+      .string()
+      .trim()
+      .max(15, 'Too many characters')
+      .required('Enter a city name'),
     province: yup.string().length(2),
     postalCode: yup
       .string()
-      .matches(/^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i, 'Enter a valid postal code')
+      .matches(
+        /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i,
+        'Enter a valid postal code'
+      )
       .required('Enter a valid postal code'),
-    phone: yup.string().phone('CA', 'Please enter a valid phone number').required('A phone number is required'),
-    email: yup.string().email('Must be a valid email address').required('Email address is required'),
+    phone: yup
+      .string()
+      .phone('CA', 'Please enter a valid phone number')
+      .required('A phone number is required'),
+    email: yup
+      .string()
+      .email('Must be a valid email address')
+      .required('Email address is required'),
   })
 
   useForm({

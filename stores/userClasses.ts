@@ -79,8 +79,8 @@ export const useClasses = defineStore(
       }
     }
 
-    async function createClass(registrationId: number) {
-      return await new Promise((resolve, reject) => {
+    function createClass(registrationId: number) {
+      return new Promise((resolve, reject) => {
         const {
           mutate: classCreate,
           onDone,

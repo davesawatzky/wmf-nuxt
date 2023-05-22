@@ -107,10 +107,7 @@
         appStore.performerType = PerformerType.COMMUNITY
         appStore.dataLoading = true
         await registrationStore.updateRegistration()
-        await communityStore.updateCommunity(
-          0,
-          communityStore.communityInfo[0].id!
-        )
+        await communityStore.updateCommunity(0, communityStore.community[0].id!)
         await teacherStore.updateTeacher()
         await classesStore.updateAllClasses()
         appStore.dataLoading = false
@@ -122,7 +119,7 @@
 <template>
   <div>
     <BaseInput
-      v-model="registrationStore.registration.label"
+      v-model:string="registrationStore.registration.label"
       class="text-3xl mb-6 h-12 p-6"
       label="Registration Label"
       name="registrationLabel"

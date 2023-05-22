@@ -21,7 +21,8 @@
       :src="photo"
       :alt="altText"
       class="mx-auto p-2" />
-    <div class="bg-sky-600 text-white p-3 text-lg font-bold sm:text-2xl sm:p-4 rounded-b-lg">
+    <div
+      class="bg-sky-600 text-white p-3 text-lg font-bold sm:text-2xl sm:p-4 rounded-b-lg">
       {{ label }}
     </div>
   </div>

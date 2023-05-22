@@ -8,9 +8,21 @@
 
   const validationSchema = yup.object({
     name: yup.string().trim().required('Enter a name for the community group'),
-    groupSize: yup.number().integer().nullable().required('Give the size of the group'),
-    numberOfChaperones: yup.number().integer().nullable().required('Indicate the number of chaperones'),
-    numberOfWheelchairs: yup.number().integer().nullable().required('Indicate the number of wheelchairs'),
+    groupSize: yup
+      .number()
+      .integer()
+      .nullable()
+      .required('Give the size of the group'),
+    numberOfChaperones: yup
+      .number()
+      .integer()
+      .nullable()
+      .required('Indicate the number of chaperones'),
+    numberOfWheelchairs: yup
+      .number()
+      .integer()
+      .nullable()
+      .required('Indicate the number of wheelchairs'),
     conflictPerformers: yup.string().trim().nullable(),
   })
 
@@ -67,8 +79,9 @@
       <div class="grid grid-rows-1 grid-cols-12 gap-x-3 gap-y-2 items-start">
         <div class="col-span-12">
           <p>
-            If there are any performers in the group participating in other festival classes, list the performers' names
-            so that we can do our best to avoid scheduling conflicts:
+            If there are any performers in the group participating in other
+            festival classes, list the performers' names so that we can do our
+            best to avoid scheduling conflicts:
           </p>
           <BaseTextarea
             v-model="communityStore.communityInfo[0].conflictPerformers"

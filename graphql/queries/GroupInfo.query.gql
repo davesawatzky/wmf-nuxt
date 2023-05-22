@@ -1,6 +1,6 @@
 query GroupInfo($registrationId: Int!) {
   registration(id: $registrationId) {
-    groups {
+    group {
       id
       age
       groupType

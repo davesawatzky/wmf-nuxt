@@ -15,21 +15,21 @@ export const useSchool = defineStore(
       school.value = <School>{}
     }
 
-    function addToStore(schoolId: School['id']) {
-      school.value.id = schoolId
-      school.value.division = ''
-      school.value.name = ''
-      school.value.streetNumber = ''
-      school.value.streetName = ''
-      school.value.city = 'Winnipeg'
-      school.value.province = 'MB'
-      school.value.postalCode = ''
-      school.value.phone = ''
-      school.value.__typename = 'School'
+    function addToStore(schl: School) {
+      school.value.id = schl.id
+      school.value.division = schl.division || ''
+      school.value.name = schl.name || ''
+      school.value.streetNumber = schl.streetNumber || ''
+      school.value.streetName = schl.streetName || ''
+      school.value.city = schl.city || 'Winnipeg'
+      school.value.province = schl.province || 'MB'
+      school.value.postalCode = schl.postalCode || ''
+      school.value.phone = schl.phone || ''
+      school.value.__typename = schl.__typename || 'School'
     }
 
-    async function createSchool(registrationId: number) {
-      return await new Promise((resolve, reject) => {
+    function createSchool(registrationId: number) {
+      return new Promise((resolve, reject) => {
         const {
           mutate: schoolCreate,
           onDone,
@@ -43,8 +43,8 @@ export const useSchool = defineStore(
           },
         }).catch((error) => console.log(error))
         onDone((result) => {
-          const schoolId: number = result.data.schoolCreate.school.index
-          addToStore(schoolId)
+          const school: School = result.data.schoolCreate.school
+          addToStore(school)
           resolve('Success')
         })
         onError((error) => {

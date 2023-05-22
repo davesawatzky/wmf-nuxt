@@ -9,62 +9,72 @@ import type { Group } from '~/graphql/gql/graphql'
 export const useGroup = defineStore(
   'group',
   () => {
-    const groupInfo = ref(<Group>{})
+    const group = ref(<Group>{})
 
     function $reset() {
-      groupInfo.value = <Group>{}
+      group.value = <Group>{}
     }
 
-    function addToStore(group: Group) {
-      Object.assign(groupInfo.value, group)
+    function addToStore(grp: Group) {
+      group.value.id = grp.id
+      group.value.groupType = grp.groupType || ''
+      group.value.name = grp.name || ''
+      group.value.numberOfPerformers = grp.numberOfPerformers || null
+      group.value.instruments = grp.instruments || ''
+      group.value.age = grp.age || null
+      group.value.__typename = grp.__typename || 'Group'
     }
 
-    async function createGroup(registrationId: number) {
-      const {
-        mutate: groupCreate,
-        onDone: doneGroupCreate,
-        onError,
-      } = useMutation(GroupCreateDocument)
-      const clone = Object.assign({}, groupInfo.value)
-      delete clone.id
-      await groupCreate({ registrationId, group: clone })
-      doneGroupCreate((result) => {
-        groupInfo.value.id = result.data.groupCreate.group.id
-      })
-      onError((error) => {
-        console.log(error)
+    function createGroup(registrationId: number) {
+      return new Promise((resolve, reject) => {
+        const {
+          mutate: groupCreate,
+          onDone,
+          onError,
+        } = useMutation(GroupCreateDocument)
+        groupCreate({ registrationId }).catch((error) => console.log(error))
+        onDone((result) => {
+          const group: Group = result.data.groupCreate.group
+          addToStore(group)
+          resolve('Success')
+        })
+        onError((error) => {
+          reject(console.log(error))
+        })
       })
     }
 
     function loadGroup(registrationId: number) {
-      const {
-        result: resultGroup,
-        load: loadGroup,
-        onResult: resultLoadGroup,
-        onError,
-      } = useLazyQuery(
-        GroupInfoDocument,
-        { registrationId },
-        { fetchPolicy: 'no-cache' }
-      )
-      resultLoadGroup((result) => {
-        addToStore(<Group>result.data.registration.groups[0])
+      return new Promise((resolve, reject) => {
+        const {
+          result: resultGroup,
+          load: loadGroup,
+          onResult: resultLoadGroup,
+          onError,
+        } = useLazyQuery(
+          GroupInfoDocument,
+          { registrationId },
+          { fetchPolicy: 'no-cache' }
+        )
+        resultLoadGroup((result) => {
+          addToStore(<Group>result.data.registration.groups)
+        })
+        onError((error) => {
+          reject(console.log(error))
+        })
+        return {
+          resultGroup,
+          loadGroup,
+        }
       })
-      onError((error) => {
-        console.log(error)
-      })
-      return {
-        resultGroup,
-        loadGroup,
-      }
     }
 
     async function updateGroup() {
       const { mutate: groupUpdate, onError } = useMutation(GroupUpdateDocument)
-      const clone = Object.assign({}, groupInfo.value)
+      const clone = Object.assign({}, group.value)
       delete clone.id
       await groupUpdate({
-        groupId: groupInfo.value.id,
+        groupId: group.value.id,
         group: clone,
       })
       onError((error) => {
@@ -80,7 +90,7 @@ export const useGroup = defineStore(
       })
     }
     return {
-      groupInfo,
+      group,
       $reset,
       addToStore,
       createGroup,
