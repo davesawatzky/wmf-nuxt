@@ -35,7 +35,7 @@
     "@antfu/eslint-config": "^0.38.6",
     "@graphql-codegen/cli": "3.3.1",
     "@graphql-codegen/client-preset": "3.0.1",
-    "@graphql-eslint/eslint-plugin": "^3.18.0",
+    "@graphql-eslint/eslint-plugin": "^3.19.0",
     "@histoire/plugin-nuxt": "^0.16.1",
     "@histoire/plugin-vue": "^0.16.1",
     "@nuxt/devtools": "^0.4.6",

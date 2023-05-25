@@ -2,8 +2,8 @@ query FestivalClassSearch($festivalClassSearch: FestivalClassSearchArgs!) {
   festivalClassSearch(festivalClassSearch: $festivalClassSearch) {
     id
     classNumber
-    maxSelection
-    minSelection
+    maxSelections
+    minSelections
     requiredSelection
     performerType
     price

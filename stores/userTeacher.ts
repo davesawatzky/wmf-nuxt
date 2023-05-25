@@ -84,25 +84,6 @@ export const useTeacher = defineStore(
       }
     }
 
-    // async function loadTeacher(registrationId: number) {
-    //   return await new Promise((resolve, reject) => {
-    //     const { onError, onResult: resultLoadTeacher } = useQuery(
-    //       TeacherInfoDocument,
-    //       { registrationId },
-    //       { fetchPolicy: 'network-only' }
-    //     )
-    //     resultLoadTeacher((result) => {
-    //       const clone = Object.assign({}, result.data.registration.teacher)
-    //       delete clone.__typename
-    //       addToStore(clone)
-    //       resolve(result)
-    //     })
-    //     onError((error) => {
-    //       reject(error)
-    //     })
-    //   })
-    // }
-
     async function updateTeacher() {
       const { mutate: teacherUpdate, onError } = useMutation(
         TeacherUpdateDocument,
@@ -110,9 +91,6 @@ export const useTeacher = defineStore(
           fetchPolicy: 'network-only',
         }
       )
-      // TODO:check if the typescript typing actually removes the id from teacherInfo
-      // const clone = Object.assign({}, <TeacherInput>teacherInfo.value)
-      // delete clone.id
       await teacherUpdate({
         teacherId: teacher.value.id,
         teacher: <TeacherInput>teacher.value,
@@ -122,13 +100,21 @@ export const useTeacher = defineStore(
       })
     }
 
-    async function deleteTeacher(teacherId: number) {
-      const { mutate: teacherDelete, onError } = useMutation(
-        TeacherDeleteDocument
-      )
-      await teacherDelete({ teacherId })
-      onError((error) => {
-        console.log(error)
+    function deleteTeacher(teacherId: number) {
+      return new Promise((resolve, reject) => {
+        const {
+          mutate: teacherDelete,
+          onDone,
+          onError,
+        } = useMutation(TeacherDeleteDocument)
+        teacherDelete({ teacherId }).catch((error) => console.log(error))
+        onDone(() => {
+          $reset()
+          resolve('Success')
+        })
+        onError((error) => {
+          reject(console.log(error))
+        })
       })
     }
     return {

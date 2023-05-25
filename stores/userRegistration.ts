@@ -81,11 +81,23 @@ export const useRegistration = defineStore(
       })
     }
 
-    async function deleteRegistration(registrationId: number) {
-      const { mutate: registrationDelete } = useMutation(
-        RegistrationDeleteDocument
-      )
-      await registrationDelete({ registrationDeleteId: registrationId })
+    function deleteRegistration(registrationId: number) {
+      return new Promise((resolve, reject) => {
+        const {
+          mutate: registrationDelete,
+          onDone,
+          onError,
+        } = useMutation(RegistrationDeleteDocument)
+        registrationDelete({ registrationId }).catch((error) =>
+          console.log(error)
+        )
+        onDone(() => {
+          resolve('Success')
+        })
+        onError((error) => {
+          reject(console.log(error))
+        })
+      })
     }
 
     return {

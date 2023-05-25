@@ -22,7 +22,7 @@
         <h2 class="pb-4">Teacher Information</h2>
         <div>
           <contact-info
-            v-model="teacherStore.teacherInfo"
+            v-model="teacherStore.teacher"
             teacher />
         </div>
       </div>

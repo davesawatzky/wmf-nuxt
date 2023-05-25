@@ -9,25 +9,23 @@ import type { Community } from '~/graphql/gql/graphql'
 export const useCommunity = defineStore(
   'community',
   () => {
-    const community = ref([] as Community[])
+    const community = ref(<Community>{})
 
     function $reset() {
-      community.value = <Community[]>[]
+      community.value = <Community>{}
     }
 
     function addToStore(comm: Community) {
-      community.value.push({
-        id: comm.id,
-        name: comm.name || '',
-        groupSize: comm.groupSize || null,
-        chaperones: comm.chaperones || null,
-        wheelchairs: comm.wheelchairs || null,
-        earliestTime: comm.earliestTime || '',
-        latestTime: comm.latestTime || '',
-        unavailable: comm.unavailable || '',
-        conflictPerformers: comm.conflictPerformers || '',
-        __typename: comm.__typename || 'Community',
-      })
+      community.value.id = comm.id
+      community.value.name = comm.name || ''
+      community.value.groupSize = comm.groupSize || null
+      community.value.chaperones = comm.chaperones || null
+      community.value.wheelchairs = comm.wheelchairs || null
+      community.value.earliestTime = comm.earliestTime || ''
+      community.value.latestTime = comm.latestTime || ''
+      community.value.unavailable = comm.unavailable || ''
+      community.value.conflictPerformers = comm.conflictPerformers || ''
+      community.value.__typename = comm.__typename || 'Community'
     }
 
     function createCommunity(registrationId: number) {
@@ -50,80 +48,86 @@ export const useCommunity = defineStore(
     }
 
     function loadCommunities(registrationId: number) {
-      const {
-        result: resultCommunities,
-        load: loadCommunities,
-        onResult: resultLoadCommunity,
-        onError,
-      } = useLazyQuery(
-        CommunityInfoDocument,
-        { registrationId },
-        { fetchPolicy: 'no-cache' }
-      )
-      resultLoadCommunity((result) => {
-        for (let i = 0; i < result.data.registration.communities.length; i++) {
-          addToStore(<Community>result.data.registration.communities[i])
+      return new Promise((resolve, reject) => {
+        const {
+          result: resultCommunities,
+          load,
+          onResult,
+          onError,
+        } = useLazyQuery(
+          CommunityInfoDocument,
+          { registrationId },
+          { fetchPolicy: 'no-cache' }
+        )
+        load()
+        onResult((result) => {
+          addToStore(<Community>result.data.registration.communities)
+          resolve('Success')
+        })
+        onError((error) => {
+          reject(console.log(error))
+        })
+        return {
+          resultCommunities,
+          loadCommunities,
         }
       })
-      onError((error) => {
-        console.log(error)
-      })
-      return {
-        resultCommunities,
-        loadCommunities,
-      }
     }
 
-    async function updateCommunity(
-      communityIndex: number,
-      communityId: number
-    ) {
-      const { mutate: communityUpdate, onError } = useMutation(
-        CommunityUpdateDocument,
-        {
+    function updateCommunity() {
+      return new Promise((resolve, reject) => {
+        const {
+          mutate: communityUpdate,
+          onDone,
+          onError,
+        } = useMutation(CommunityUpdateDocument, {
           fetchPolicy: 'no-cache',
-        }
-      )
-      const clone = Object.assign({}, community.value[communityIndex])
-      delete clone.id
-      await communityUpdate({
-        communityId,
-        community: clone,
-      })
-      onError((error) => {
-        console.log(error)
+        })
+        communityUpdate({
+          communityId: community.value.id,
+          community: community.value,
+        }).catch((error) => console.log(error))
+        onDone(() => {
+          resolve('Success')
+        })
+        onError((error) => {
+          reject(console.log(error))
+        })
       })
     }
 
-    async function updateAllCommunities() {
-      let communityIndex = 0
-      for (const eachCommunity of community.value) {
-        await updateCommunity(communityIndex, eachCommunity.id)
-        communityIndex++
-      }
+    // async function updateAllCommunities() {
+    //   let communityIndex = 0
+    //   for (const eachCommunity of community.value) {
+    //     await updateCommunity(communityIndex, eachCommunity.id)
+    //     communityIndex++
+    //   }
+    // }
+
+    function deleteCommunity(communityId: number) {
+      return new Promise((resolve, reject) => {
+        const {
+          mutate: communityDelete,
+          onDone,
+          onError,
+        } = useMutation(CommunityDeleteDocument)
+        communityDelete({ communityId }).catch((error) => console.log(error))
+        onDone(() => {
+          $reset()
+          resolve('Success')
+        })
+        onError((error) => {
+          reject(console.log(error))
+        })
+      })
     }
 
-    async function deleteCommunity(communityId: number) {
-      const {
-        mutate: communityDelete,
-        onDone: doneCommunityDelete,
-        onError,
-      } = useMutation(CommunityDeleteDocument)
-      await communityDelete({ communityId })
-      doneCommunityDelete(() => {
-        const index = community.value.map((e) => e.id).indexOf(communityId)
-        community.value.splice(index, 1)
-      })
-      onError((error) => {
-        console.log(error)
-      })
-    }
     return {
       $reset,
       deleteCommunity,
       updateCommunity,
       community,
-      updateAllCommunities,
+      // updateAllCommunities,
       addToStore,
       createCommunity,
       loadCommunities,

@@ -125,19 +125,22 @@ export const usePerformers = defineStore(
       }
     }
 
-    async function deletePerformer(performerId: number) {
-      const {
-        mutate: performerDelete,
-        onDone: donePerformerDelete,
-        onError,
-      } = useMutation(PerformerDeleteDocument)
-      await performerDelete({ performerId })
-      donePerformerDelete(() => {
-        const index = performer.value.map((e) => e.id).indexOf(performerId)
-        performer.value.splice(index, 1)
-      })
-      onError((error) => {
-        console.log(error)
+    function deletePerformer(performerId: number) {
+      return new Promise((resolve, reject) => {
+        const {
+          mutate: performerDelete,
+          onDone,
+          onError,
+        } = useMutation(PerformerDeleteDocument)
+        performerDelete({ performerId }).catch((error) => console.log(error))
+        onDone(() => {
+          const index = performer.value.findIndex((e) => e.id === performerId)
+          performer.value.splice(index, 1)
+          resolve('Success')
+        })
+        onError((error) => {
+          reject(console.log(error))
+        })
       })
     }
 

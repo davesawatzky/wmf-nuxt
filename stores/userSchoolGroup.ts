@@ -109,19 +109,26 @@ export const useSchoolGroup = defineStore(
       }
     }
 
-    async function deleteSchoolGroup(schoolGroupId: number) {
-      const {
-        mutate: schoolGroupDelete,
-        onDone: doneSchoolGroupDelete,
-        onError,
-      } = useMutation(SchoolGroupDeleteDocument)
-      await schoolGroupDelete({ schoolGroupId })
-      doneSchoolGroupDelete(() => {
-        const index = schoolGroup.value.map((e) => e.id).indexOf(schoolGroupId)
-        schoolGroup.value.splice(index, 1)
-      })
-      onError((error) => {
-        console.log(error)
+    function deleteSchoolGroup(schoolGroupId: number) {
+      return new Promise((resolve, reject) => {
+        const {
+          mutate: schoolGroupDelete,
+          onDone,
+          onError,
+        } = useMutation(SchoolGroupDeleteDocument)
+        schoolGroupDelete({ schoolGroupId }).catch((error) =>
+          console.log(error)
+        )
+        onDone(() => {
+          const index = schoolGroup.value.findIndex(
+            (e) => e.id === schoolGroupId
+          )
+          schoolGroup.value.splice(index, 1)
+          resolve('Success')
+        })
+        onError((error) => {
+          reject(console.log(error))
+        })
       })
     }
 

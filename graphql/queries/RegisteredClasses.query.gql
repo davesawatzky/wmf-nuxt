@@ -6,6 +6,8 @@ query RegisteredClasses($registrationId: Int!) {
       discipline
       id
       level
+      minSelections
+      maxSelections
       numberOfSelections
       price
       subdiscipline

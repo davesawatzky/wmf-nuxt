@@ -2,8 +2,8 @@ query ClassByNumber($festivalClassNumber: String!) {
   festivalClassByNumber(festivalClassNumber: $festivalClassNumber) {
     id
     classNumber
-    maxSelection
-    minSelection
+    maxSelections
+    minSelections
     requiredSelection
     performerType
     price

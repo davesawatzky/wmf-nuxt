@@ -95,12 +95,21 @@ export const useSchool = defineStore(
       })
     }
 
-    async function deleteSchool(schoolId: number) {
-      const { mutate: schoolDelete, onError } =
-        useMutation(SchoolDeleteDocument)
-      await schoolDelete({ schoolId })
-      onError((error) => {
-        console.log(error)
+    function deleteSchool(schoolId: number) {
+      return new Promise((resolve, reject) => {
+        const {
+          mutate: schoolDelete,
+          onDone,
+          onError,
+        } = useMutation(SchoolDeleteDocument)
+        schoolDelete({ schoolId }).catch((error) => console.log(error))
+        onDone(() => {
+          $reset()
+          resolve('Success')
+        })
+        onError((error) => {
+          reject(console.log(error))
+        })
       })
     }
 

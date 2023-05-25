@@ -58,6 +58,7 @@ export const useGroup = defineStore(
         )
         resultLoadGroup((result) => {
           addToStore(<Group>result.data.registration.groups)
+          resolve('Success')
         })
         onError((error) => {
           reject(console.log(error))
@@ -82,13 +83,24 @@ export const useGroup = defineStore(
       })
     }
 
-    async function deleteGroup(groupId: number) {
-      const { mutate: groupDelete, onError } = useMutation(GroupDeleteDocument)
-      await groupDelete({ groupId })
-      onError((error) => {
-        console.log(error)
+    function deleteGroup(groupId: number) {
+      return new Promise((resolve, reject) => {
+        const {
+          mutate: groupDelete,
+          onDone,
+          onError,
+        } = useMutation(GroupDeleteDocument)
+        groupDelete({ groupId }).catch((error) => console.log(error))
+        onDone(() => {
+          $reset()
+          resolve('Success')
+        })
+        onError((error) => {
+          reject(console.log(error))
+        })
       })
     }
+
     return {
       group,
       $reset,

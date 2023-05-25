@@ -35,6 +35,7 @@ export default defineNuxtConfig({
   },
   experimental: {
     typedPages: true,
+    watcher: 'chokidar',
   },
   modules: [
     '@nuxtjs/tailwindcss',

@@ -40,28 +40,28 @@
       <div class="grid grid-cols-12 gap-x-3 gap-y-2">
         <div class="col-span-12">
           <BaseInput
-            v-model="communityStore.communityInfo[0].name"
+            v-model="communityStore.community.name"
             name="name"
             type="text"
             label="Community Group Name" />
         </div>
         <div class="col-span-12 sm:col-span-4">
           <BaseInput
-            v-model.number="communityStore.communityInfo[0].groupSize"
+            v-model.number="communityStore.community.groupSize"
             name="groupSize"
             type="number"
             label="Group Size" />
         </div>
         <div class="col-span-12 sm:col-span-4">
           <BaseInput
-            v-model.number="communityStore.communityInfo[0].chaperones"
+            v-model.number="communityStore.community.chaperones"
             name="numberOfChaperones"
             type="number"
             label="Number of chaperones" />
         </div>
         <div class="col-span-12 sm:col-span-4">
           <BaseInput
-            v-model.number="communityStore.communityInfo[0].wheelchairs"
+            v-model.number="communityStore.community.wheelchairs"
             name="numberOfWheelchairs"
             type="number"
             label="Number of wheelchairs" />
@@ -72,7 +72,7 @@
       <h2 class="pb-4">Conductor/Contact Information</h2>
       <div>
         <contact-info
-          v-model="teacherStore.teacherInfo"
+          v-model="teacherStore.teacher"
           teacher />
       </div>
 
@@ -84,7 +84,7 @@
             best to avoid scheduling conflicts:
           </p>
           <BaseTextarea
-            v-model="communityStore.communityInfo[0].conflictPerformers"
+            v-model="communityStore.community.conflictPerformers"
             name="conflictPerformers"
             label="Performers participating in other classes."
             rows="5" />

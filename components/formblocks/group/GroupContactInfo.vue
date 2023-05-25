@@ -61,15 +61,15 @@
       <div class="grid grid-cols-6 gap-5">
         <div class="col-span-6 md:col-span-3">
           <BaseInput
-            v-model="groupStore.groupInfo.name"
+            v-model="groupStore.group.name"
             name="groupname"
             label="Group Name"
             type="text" />
 
           <BaseInput
-            v-model="groupStore.groupInfo.numberOfPerformers"
+            v-model="groupStore.group.numberOfPerformers"
             :value="
-              (groupStore.groupInfo.numberOfPerformers =
+              (groupStore.group.numberOfPerformers =
                 performerStore.numberOfPerformers)
             "
             disabled
@@ -84,7 +84,7 @@
           <h3>Group Type</h3>
           <div>
             <BaseRadioGroup
-              v-model="groupStore.groupInfo.groupType"
+              v-model="groupStore.group.groupType"
               name="groupType"
               :options="typeOptions" />
           </div>
@@ -94,7 +94,7 @@
       <div class="py-8">
         <h2 class="pb-4">Teacher Information</h2>
         <ContactInfo
-          v-model="teacherStore.teacherInfo"
+          v-model="teacherStore.teacher"
           teacher />
       </div>
       <h2>Performer Information</h2>

@@ -16,7 +16,7 @@
 
   const schoolGroups = computed(() => {
     const newArray = []
-    for (const group of communityStore.communityInfo)
+    for (const group of communityStore.community)
       newArray.push({ id: group.id, name: group.name })
 
     return newArray
