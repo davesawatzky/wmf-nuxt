@@ -10,45 +10,58 @@ import type { Performer, PerformerInput } from '~/graphql/gql/graphql'
 export const usePerformers = defineStore(
   'performers',
   () => {
-    const performer = ref([] as Performer[])
+    const performers = ref([] as Performer[])
 
     function $reset() {
-      performer.value = <Performer[]>[]
+      performers.value = <Performer[]>[]
     }
 
     const numberOfPerformers = computed(() => {
-      return performer.value.length
+      return performers.value.length
     })
 
+    /**
+     * Returns first name plus last name
+     */
     const fullName = computed(() => {
-      const name = performer.value.map((item) => {
+      const name = performers.value.map((item) => {
         return item.firstName && ' ' && item.lastName
       })
       return name
     })
 
-    function addToStore(perform: Performer) {
-      performer.value.push(<Performer>{
-        id: perform.id,
-        firstName: perform.firstName || '',
-        lastName: perform.lastName || '',
-        age: perform.age || null,
-        level: perform.level || '',
-        instrument: perform.instrument || '',
-        otherClasses: perform.otherClasses || '',
-        apartment: perform.apartment || '',
-        streetNumber: perform.streetNumber || '',
-        streetName: perform.streetName || '',
-        city: perform.city || 'Winnipeg',
-        province: perform.province || 'MB',
-        postalCode: perform.postalCode || '',
-        email: perform.email || '',
-        phone: perform.phone || '',
-        __typename: perform.__typename || 'Performer',
+    /**
+     * Add one or more performer objects to the store as an array
+     * Multiple performers may be included in group registrations
+     * @param perform at minimum, must include valid id property value
+     */
+    function addToStore(performer: Performer): void {
+      performers.value.push(<Performer>{
+        id: performer.id,
+        firstName: performer.firstName || '',
+        lastName: performer.lastName || '',
+        age: performer.age || null,
+        level: performer.level || '',
+        instrument: performer.instrument || '',
+        otherClasses: performer.otherClasses || '',
+        apartment: performer.apartment || '',
+        streetNumber: performer.streetNumber || '',
+        streetName: performer.streetName || '',
+        city: performer.city || 'Winnipeg',
+        province: performer.province || 'MB',
+        postalCode: performer.postalCode || '',
+        email: performer.email || '',
+        phone: performer.phone || '',
+        __typename: performer.__typename || 'Performer',
       })
     }
 
-    function createPerformer(registrationId: number) {
+    /**
+     * Adds new Performer to db and store
+     * @param registrationId ID of Registration Form
+     * @returns Promise
+     */
+    function createPerformer(registrationId: number): Promise<unknown> {
       return new Promise((resolve, reject) => {
         console.log('RegID-----: ', registrationId)
         const { mutate, onDone, onError } = useMutation(PerformerCreateDocument)
@@ -70,7 +83,12 @@ export const usePerformers = defineStore(
       })
     }
 
-    function loadPerformers(registrationId: number) {
+    /**
+     * Loads all performers from a registration form into store in an array
+     * @param registrationId ID of Registration form
+     * @returns Promise
+     */
+    function loadPerformers(registrationId: number): Promise<unknown> {
       return new Promise((resolve, reject) => {
         const {
           result: resultPerformers,
@@ -99,33 +117,50 @@ export const usePerformers = defineStore(
       })
     }
 
-    async function updatePerformer(
-      performerIndex: number,
-      performerId: number
-    ) {
-      const { mutate: performerUpdate, onError } = useMutation(
-        PerformerUpdateDocument,
-        {
+    /**
+     * Updates an individual performer from store to db
+     * @param performerId ID of performer to update
+     * @returns
+     */
+    function updatePerformer(performerId: number): Promise<unknown> {
+      return new Promise((resolve, reject) => {
+        const {
+          mutate: performerUpdate,
+          onDone,
+          onError,
+        } = useMutation(PerformerUpdateDocument, {
           fetchPolicy: 'no-cache',
-        }
-      )
-      const clone = Object.assign({}, performer.value[performerIndex])
-      delete clone.id
-      await performerUpdate({ performerId, performer: clone })
-      onError((error) => {
-        console.log(error)
+        })
+        const person = performers.value.find((item) => item.id === performerId)
+        performerUpdate({
+          performerId,
+          performer: <PerformerInput>person,
+        }).catch((error) => console.log(error))
+        onDone(() => {
+          resolve('Success')
+        })
+        onError((error) => {
+          reject(console.log(error))
+        })
       })
     }
 
-    async function updateAllPerformers() {
-      let performerIndex = 0
-      for (const eachPerformer of performer.value) {
-        await updatePerformer(performerIndex, eachPerformer.id)
-        performerIndex++
+    /**
+     * Runs the updatePerformer function for all performers
+     */
+    async function updateAllPerformers(): Promise<void> {
+      for (let i = 0; i < performers.value.length; i++) {
+        await updatePerformer(performers.value[i].id)
       }
     }
 
-    function deletePerformer(performerId: number) {
+    /**
+     * Removes a performer from the store and the db
+     *
+     * @param performerId ID of the individual performer in the Array
+     * @returns
+     */
+    function deletePerformer(performerId: number): Promise<unknown> {
       return new Promise((resolve, reject) => {
         const {
           mutate: performerDelete,
@@ -134,8 +169,8 @@ export const usePerformers = defineStore(
         } = useMutation(PerformerDeleteDocument)
         performerDelete({ performerId }).catch((error) => console.log(error))
         onDone(() => {
-          const index = performer.value.findIndex((e) => e.id === performerId)
-          performer.value.splice(index, 1)
+          const index = performers.value.findIndex((e) => e.id === performerId)
+          performers.value.splice(index, 1)
           resolve('Success')
         })
         onError((error) => {
@@ -145,7 +180,7 @@ export const usePerformers = defineStore(
     }
 
     return {
-      performer,
+      performers,
       $reset,
       numberOfPerformers,
       fullName,

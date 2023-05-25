@@ -1,6 +1,6 @@
 query CommunityInfo($registrationId: Int!) {
   registration(id: $registrationId) {
-    communities {
+    community {
       id
       name
       groupSize

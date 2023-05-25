@@ -4,7 +4,7 @@ import {
   GroupInfoDocument,
   GroupUpdateDocument,
 } from '~/graphql/gql/graphql'
-import type { Group } from '~/graphql/gql/graphql'
+import type { Group, GroupInput } from '~/graphql/gql/graphql'
 
 export const useGroup = defineStore(
   'group',
@@ -15,7 +15,11 @@ export const useGroup = defineStore(
       group.value = <Group>{}
     }
 
-    function addToStore(grp: Group) {
+    /**
+     * Adds empty Group properties or Group object to the store
+     * @param grp Group object, must include id property value
+     */
+    function addToStore(grp: Group): void {
       group.value.id = grp.id
       group.value.groupType = grp.groupType || ''
       group.value.name = grp.name || ''
@@ -25,7 +29,12 @@ export const useGroup = defineStore(
       group.value.__typename = grp.__typename || 'Group'
     }
 
-    function createGroup(registrationId: number) {
+    /**
+     * Creates a new Group object on the db and adds it to the store
+     * @param registrationId ID of the Registration Form
+     * @returns Promise
+     */
+    function createGroup(registrationId: number): Promise<unknown> {
       return new Promise((resolve, reject) => {
         const {
           mutate: groupCreate,
@@ -44,7 +53,12 @@ export const useGroup = defineStore(
       })
     }
 
-    function loadGroup(registrationId: number) {
+    /**
+     * Loads Group record from db into store
+     * @param registrationId ID of the Registration Form
+     * @returns Promise
+     */
+    function loadGroup(registrationId: number): Promise<unknown> {
       return new Promise((resolve, reject) => {
         const {
           result: resultGroup,
@@ -57,7 +71,7 @@ export const useGroup = defineStore(
           { fetchPolicy: 'no-cache' }
         )
         resultLoadGroup((result) => {
-          addToStore(<Group>result.data.registration.groups)
+          addToStore(<Group>result.data.registration.group)
           resolve('Success')
         })
         onError((error) => {
@@ -70,20 +84,36 @@ export const useGroup = defineStore(
       })
     }
 
-    async function updateGroup() {
-      const { mutate: groupUpdate, onError } = useMutation(GroupUpdateDocument)
-      const clone = Object.assign({}, group.value)
-      delete clone.id
-      await groupUpdate({
-        groupId: group.value.id,
-        group: clone,
-      })
-      onError((error) => {
-        console.log(error)
+    /**
+     * Updates the Group object from the store to the db
+     * @returns Promise
+     */
+    function updateGroup(): Promise<unknown> {
+      return new Promise((resolve, reject) => {
+        const {
+          mutate: groupUpdate,
+          onDone,
+          onError,
+        } = useMutation(GroupUpdateDocument)
+        groupUpdate({
+          groupId: group.value.id,
+          group: <GroupInput>group.value,
+        }).catch((error) => console.log(error))
+        onDone(() => {
+          resolve('Success')
+        })
+        onError((error) => {
+          reject(console.log(error))
+        })
       })
     }
 
-    function deleteGroup(groupId: number) {
+    /**
+     * Delete Group record form the store and db
+     * @param groupId ID of the Group record
+     * @returns Promise
+     */
+    function deleteGroup(groupId: number): Promise<unknown> {
       return new Promise((resolve, reject) => {
         const {
           mutate: groupDelete,

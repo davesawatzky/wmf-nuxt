@@ -59,8 +59,8 @@
     >
   </div>
   <input
-    :type="props.type"
     :id="uuid"
+    :type="props.type"
     :name="name"
     :placeholder="placeholder"
     v-bind="{ ...$attrs }"

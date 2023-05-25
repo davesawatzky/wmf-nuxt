@@ -3,7 +3,11 @@ import {
   RegistrationDeleteDocument,
   RegistrationUpdateDocument,
 } from '~/graphql/gql/graphql'
-import type { PerformerType, Registration } from '~/graphql/gql/graphql'
+import type {
+  PerformerType,
+  Registration,
+  RegistrationInput,
+} from '~/graphql/gql/graphql'
 
 /**
  * Items get added to the Registration store when they're
@@ -11,19 +15,25 @@ import type { PerformerType, Registration } from '~/graphql/gql/graphql'
  * The application only works on individual forms, therefore
  * only one registration should be in the store at any one time.
  */
-
 export const useRegistration = defineStore(
   'registrations',
   () => {
     const registrationId = ref(0)
     const registration = ref(<Registration>{})
 
+    /**
+     * Resets the registration store
+     */
     function $reset() {
       registrationId.value = 0
       registration.value = <Registration>{}
     }
 
-    function addToStore(reg: Registration) {
+    /**
+     * Adds Registration Object to the store.  Can only be one.
+     * @param reg Registration Object, must have valid id property value
+     */
+    function addToStore(reg: Registration): void {
       registrationId.value = reg.id
       registration.value.id = reg.id
       registration.value.performerType = reg.performerType
@@ -39,7 +49,16 @@ export const useRegistration = defineStore(
       registration.value.__typename = 'Registration'
     }
 
-    function createRegistration(performerType: PerformerType, label: string) {
+    /**
+     * Creates a new registration form in the store and db
+     * @param performerType Type of registration according to performer type
+     * @param label Specific label for the registration
+     * @returns
+     */
+    function createRegistration(
+      performerType: PerformerType,
+      label: string
+    ): Promise<unknown> {
       return new Promise((resolve, reject) => {
         const {
           mutate: registrationCreate,
@@ -61,27 +80,38 @@ export const useRegistration = defineStore(
       })
     }
 
-    async function updateRegistration() {
-      const { mutate: registrationUpdate, onError } = useMutation(
-        RegistrationUpdateDocument,
-        {
+    /**
+     * Updates Registration form information from store to db.
+     * @returns Promise
+     */
+    function updateRegistration(): Promise<unknown> {
+      return new Promise((resolve, reject) => {
+        const {
+          mutate: registrationUpdate,
+          onDone,
+          onError,
+        } = useMutation(RegistrationUpdateDocument, {
           fetchPolicy: 'network-only',
-        }
-      )
-      const clone = Object.assign({}, registration.value[0])
-      delete clone.id
-      delete clone.__typename
-      delete clone.createdAt
-      await registrationUpdate({
-        registrationId: registrationId.value,
-        registration: clone,
-      })
-      onError((error) => {
-        console.log(error)
+        })
+        registrationUpdate({
+          registrationId: registrationId.value,
+          registration: <RegistrationInput>registration.value,
+        }).catch((error) => console.log(error))
+        onDone(() => {
+          resolve('Success')
+        })
+        onError((error) => {
+          reject(console.log(error))
+        })
       })
     }
 
-    function deleteRegistration(registrationId: number) {
+    /**
+     * Removes registration from db
+     * @param registrationId ID of Registration Form
+     * @returns
+     */
+    function deleteRegistration(registrationId: number): Promise<unknown> {
       return new Promise((resolve, reject) => {
         const {
           mutate: registrationDelete,
@@ -92,6 +122,7 @@ export const useRegistration = defineStore(
           console.log(error)
         )
         onDone(() => {
+          $reset()
           resolve('Success')
         })
         onError((error) => {

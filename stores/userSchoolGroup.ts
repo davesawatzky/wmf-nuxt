@@ -4,7 +4,7 @@ import {
   SchoolGroupInfoDocument,
   SchoolGroupUpdateDocument,
 } from '~/graphql/gql/graphql'
-import type { SchoolGroup } from '~/graphql/gql/graphql'
+import type { SchoolGroup, SchoolGroupInput } from '~/graphql/gql/graphql'
 
 export const useSchoolGroup = defineStore(
   'schoolGroup',
@@ -15,7 +15,11 @@ export const useSchoolGroup = defineStore(
       schoolGroup.value = <SchoolGroup[]>[]
     }
 
-    function addToStore(schoolGrp: SchoolGroup) {
+    /**
+     * Adds School Group store array
+     * @param schoolGrp School Group Object must have valid id property value
+     */
+    function addToStore(schoolGrp: SchoolGroup): void {
       schoolGroup.value.push({
         id: schoolGrp.id,
         name: schoolGrp.name || '',
@@ -30,7 +34,12 @@ export const useSchoolGroup = defineStore(
       })
     }
 
-    function createSchoolGroup(schoolId: number) {
+    /**
+     * Creates a school group record on the db and store
+     * @param schoolId ID of School
+     * @returns Promise
+     */
+    function createSchoolGroup(schoolId: number): Promise<unknown> {
       return new Promise((resolve, reject) => {
         const {
           mutate: schoolGroupCreate,
@@ -52,64 +61,87 @@ export const useSchoolGroup = defineStore(
       })
     }
 
-    function loadSchoolGroups(registrationId: number) {
-      const {
-        result: resultSchoolGroups,
-        load: loadSchoolGroups,
-        onResult: resultLoadSchoolGroup,
-        onError,
-      } = useLazyQuery(
-        SchoolGroupInfoDocument,
-        { registrationId },
-        { fetchPolicy: 'no-cache' }
-      )
-      resultLoadSchoolGroup((result) => {
-        const clone = structuredClone(
-          <SchoolGroup[]>result.data.registration.school.school_group.id
+    /**
+     * Loads SchoolGroups from db into store.
+     * @param registrationId ID of Registration Form
+     * @returns
+     */
+    function loadSchoolGroups(registrationId: number): Promise<unknown> {
+      return new Promise((resolve, reject) => {
+        const {
+          result: resultSchoolGroups,
+          load: loadSchoolGroups,
+          onResult,
+          onError,
+        } = useLazyQuery(
+          SchoolGroupInfoDocument,
+          { registrationId },
+          { fetchPolicy: 'no-cache' }
         )
-        for (let i = 0; i < clone.length; i++) {
-          addToStore(clone[i])
+        onResult((result) => {
+          const schoolGroups = <SchoolGroup[]>(
+            result.data.registration.school.school_group
+          )
+          for (let i = 0; i < schoolGroups.length; i++) {
+            addToStore(schoolGroups[i])
+          }
+          resolve('Success')
+        })
+        onError((error) => {
+          reject(console.log(error))
+        })
+        return {
+          resultSchoolGroups,
+          loadSchoolGroups,
         }
       })
-      onError((error) => {
-        console.log(error)
-      })
-      return {
-        resultSchoolGroups,
-        loadSchoolGroups,
-      }
     }
 
-    async function updateSchoolGroup(
-      schoolGroupIndex: number,
-      schoolGroupId: number
-    ) {
-      const { mutate: schoolGroupUpdate, onError } = useMutation(
-        SchoolGroupUpdateDocument,
-        {
+    /**
+     * Updates individual school group information from store to db
+     * @param schoolGroupId ID of registered School Group
+     * @returns Promise
+     */
+    function updateSchoolGroup(schoolGroupId: number): Promise<unknown> {
+      return new Promise((resolve, reject) => {
+        const {
+          mutate: schoolGroupUpdate,
+          onDone,
+          onError,
+        } = useMutation(SchoolGroupUpdateDocument, {
           fetchPolicy: 'no-cache',
-        }
-      )
-      const clone = Object.assign({}, schoolGroup.value[schoolGroupIndex])
-      delete clone.id
-      await schoolGroupUpdate({
-        schoolGroupId,
-        schoolGroup: clone,
-      })
-      onError((error) => {
-        console.log(error)
+        })
+        const schoolGrp = schoolGroup.value.find(
+          (item) => item.id === schoolGroupId
+        )
+        schoolGroupUpdate({
+          schoolGroupId,
+          schoolGroup: <SchoolGroupInput>schoolGrp,
+        }).catch((error) => console.log(error))
+        onDone(() => {
+          resolve('Success')
+        })
+        onError((error) => {
+          reject(console.log(error))
+        })
       })
     }
 
-    async function updateAllSchoolGroups() {
-      let schoolGroupIndex = 0
-      for (const eachSchoolGroup of schoolGroup.value) {
-        await updateSchoolGroup(schoolGroupIndex, eachSchoolGroup.id)
-        schoolGroupIndex++
+    /**
+     * Updates all School Group info to the db
+     */
+    async function updateAllSchoolGroups(): Promise<void> {
+      for (let i = 0; i < schoolGroup.value.length; i++) {
+        await updateSchoolGroup(schoolGroup.value[i].id)
       }
     }
 
-    function deleteSchoolGroup(schoolGroupId: number) {
+    /**
+     * Removes selected school group from the db and the school registration form
+     * @param schoolGroupId ID of School Group
+     * @returns Promise
+     */
+    function deleteSchoolGroup(schoolGroupId: number): Promise<unknown> {
       return new Promise((resolve, reject) => {
         const {
           mutate: schoolGroupDelete,

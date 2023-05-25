@@ -4,7 +4,7 @@ import {
   CommunityInfoDocument,
   CommunityUpdateDocument,
 } from '~/graphql/gql/graphql'
-import type { Community } from '~/graphql/gql/graphql'
+import type { Community, CommunityInput } from '~/graphql/gql/graphql'
 
 export const useCommunity = defineStore(
   'community',
@@ -14,7 +14,11 @@ export const useCommunity = defineStore(
     function $reset() {
       community.value = <Community>{}
     }
-
+    /**
+     * Adds empty Community properties or a Community object into the store
+     *
+     * @param comm Community object must include an id property value
+     */
     function addToStore(comm: Community) {
       community.value.id = comm.id
       community.value.name = comm.name || ''
@@ -28,6 +32,11 @@ export const useCommunity = defineStore(
       community.value.__typename = comm.__typename || 'Community'
     }
 
+    /**
+     * Creates a new community object in the store and db.
+     * @param registrationId ID of the Registration form
+     * @returns Promise and saves the new id number
+     */
     function createCommunity(registrationId: number) {
       return new Promise((resolve, reject) => {
         const {
@@ -47,10 +56,15 @@ export const useCommunity = defineStore(
       })
     }
 
-    function loadCommunities(registrationId: number) {
+    /**
+     * Loads the Community information from the db and saves it in the store
+     * @param registrationId ID of the Registration form
+     * @returns Promise
+     */
+    function loadCommunity(registrationId: number) {
       return new Promise((resolve, reject) => {
         const {
-          result: resultCommunities,
+          result: resultCommunity,
           load,
           onResult,
           onError,
@@ -61,19 +75,23 @@ export const useCommunity = defineStore(
         )
         load()
         onResult((result) => {
-          addToStore(<Community>result.data.registration.communities)
+          addToStore(<Community>result.data.registration.community)
           resolve('Success')
         })
         onError((error) => {
           reject(console.log(error))
         })
         return {
-          resultCommunities,
-          loadCommunities,
+          resultCommunity,
+          load,
         }
       })
     }
 
+    /**
+     * Updates Community information from store to the db
+     * @returns Promise
+     */
     function updateCommunity() {
       return new Promise((resolve, reject) => {
         const {
@@ -85,7 +103,7 @@ export const useCommunity = defineStore(
         })
         communityUpdate({
           communityId: community.value.id,
-          community: community.value,
+          community: <CommunityInput>community.value,
         }).catch((error) => console.log(error))
         onDone(() => {
           resolve('Success')
@@ -104,6 +122,11 @@ export const useCommunity = defineStore(
     //   }
     // }
 
+    /**
+     * Removes the Community from the store and the db
+     * @param communityId ID of the Community Record
+     * @returns
+     */
     function deleteCommunity(communityId: number) {
       return new Promise((resolve, reject) => {
         const {
@@ -130,7 +153,7 @@ export const useCommunity = defineStore(
       // updateAllCommunities,
       addToStore,
       createCommunity,
-      loadCommunities,
+      loadCommunity,
     }
   },
   {

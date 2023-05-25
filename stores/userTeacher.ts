@@ -16,11 +16,18 @@ export const useTeacher = defineStore(
       teacher.value = <Teacher>{}
     }
 
+    /**
+     * First name plus last name
+     */
     const fullName = computed(() => {
       return teacher.value.firstName && ' ' && teacher.value.lastName
     })
 
-    function addToStore(teach: Teacher) {
+    /**
+     * Adds Teacher object to store from db
+     * @param teach Teacher Object must have valid id property value
+     */
+    function addToStore(teach: Teacher): void {
       teacher.value.id = teach.id
       teacher.value.prefix = teach.prefix || ''
       teacher.value.firstName = teach.firstName || ''
@@ -36,7 +43,12 @@ export const useTeacher = defineStore(
       teacher.value.__typename = teach.__typename || 'Teacher'
     }
 
-    function createTeacher(registrationId: number) {
+    /**
+     * Creates a new Teacher record on the db and in the store.
+     * @param registrationId ID of Registration form
+     * @returns
+     */
+    function createTeacher(registrationId: number): Promise<unknown> {
       return new Promise((resolve, reject) => {
         const {
           mutate: teacherCreate,
@@ -61,46 +73,69 @@ export const useTeacher = defineStore(
       })
     }
 
-    function loadTeacher(registrationId: number) {
-      const {
-        result: resultTeachers,
-        load: loadTeachers,
-        onError: teacherError,
-        onResult: resultLoadTeachers,
-      } = useLazyQuery(
-        TeacherInfoDocument,
-        { registrationId },
-        { fetchPolicy: 'network-only' }
-      )
-      resultLoadTeachers((result) => {
-        addToStore(<Teacher>result.data.registration.teacher)
-      })
-      teacherError((error) => {
-        console.log(error)
-      })
-      return {
-        resultTeachers,
-        loadTeachers,
-      }
-    }
-
-    async function updateTeacher() {
-      const { mutate: teacherUpdate, onError } = useMutation(
-        TeacherUpdateDocument,
-        {
-          fetchPolicy: 'network-only',
+    /**
+     * Loads Teacher information from db into store.
+     * @param registrationId ID of Registration Form
+     * @returns
+     */
+    function loadTeacher(registrationId: number): Promise<unknown> {
+      return new Promise((resolve, reject) => {
+        const {
+          result: resultTeachers,
+          load: loadTeachers,
+          onError,
+          onResult,
+        } = useLazyQuery(
+          TeacherInfoDocument,
+          { registrationId },
+          { fetchPolicy: 'network-only' }
+        )
+        onResult((result) => {
+          addToStore(<Teacher>result.data.registration.teacher)
+          resolve('Success')
+        })
+        onError((error) => {
+          reject(console.log(error))
+        })
+        return {
+          resultTeachers,
+          loadTeachers,
         }
-      )
-      await teacherUpdate({
-        teacherId: teacher.value.id,
-        teacher: <TeacherInput>teacher.value,
-      })
-      onError((error) => {
-        console.log(error)
       })
     }
 
-    function deleteTeacher(teacherId: number) {
+    /**
+     * Updates the Teacher record from the store to the db.
+     * @returns Promise
+     */
+    function updateTeacher(): Promise<unknown> {
+      return new Promise((resolve, reject) => {
+        const {
+          mutate: teacherUpdate,
+          onDone,
+          onError,
+        } = useMutation(TeacherUpdateDocument, {
+          fetchPolicy: 'network-only',
+        })
+        teacherUpdate({
+          teacherId: teacher.value.id,
+          teacher: <TeacherInput>teacher.value,
+        }).catch((error) => console.log(error))
+        onDone(() => {
+          resolve('Success')
+        })
+        onError((error) => {
+          reject(console.log(error))
+        })
+      })
+    }
+
+    /**
+     * Removes a Teacher record from the db.
+     * @param teacherId ID of Teacher record
+     * @returns
+     */
+    function deleteTeacher(teacherId: number): Promise<unknown> {
       return new Promise((resolve, reject) => {
         const {
           mutate: teacherDelete,

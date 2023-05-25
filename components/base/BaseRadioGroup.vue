@@ -26,13 +26,13 @@
 
   defineEmits(['update:modelValue'])
 
-  const name = toRef(props, 'name')
+  const nameRef = toRef(props, 'name')
 
   const {
     value: optionValue,
     errorMessage,
     handleChange,
-  } = useField(name, undefined, {
+  } = useField(nameRef, undefined, {
     initialValue: props.modelValue,
   })
 </script>
@@ -50,7 +50,7 @@
       :description="option.description"
       :value="option.value"
       :model-value="optionValue"
-      :name="name"
+      :name="nameRef"
       @change="handleChange" />
   </component>
   <BaseErrorMessage :name="name">

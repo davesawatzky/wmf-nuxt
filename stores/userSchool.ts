@@ -4,7 +4,7 @@ import {
   SchoolInfoDocument,
   SchoolUpdateDocument,
 } from '~/graphql/gql/graphql'
-import type { School } from '~/graphql/gql/graphql'
+import type { School, SchoolInput } from '~/graphql/gql/graphql'
 
 export const useSchool = defineStore(
   'school',
@@ -15,6 +15,10 @@ export const useSchool = defineStore(
       school.value = <School>{}
     }
 
+    /**
+     * Adds School Object to the store. Only one
+     * @param schl School object must have valid id property value
+     */
     function addToStore(schl: School) {
       school.value.id = schl.id
       school.value.division = schl.division || ''
@@ -28,6 +32,11 @@ export const useSchool = defineStore(
       school.value.__typename = schl.__typename || 'School'
     }
 
+    /**
+     * Creates new School in db and adds it to the store
+     * @param registrationId ID of Registration Form
+     * @returns Promise
+     */
     function createSchool(registrationId: number) {
       return new Promise((resolve, reject) => {
         const {
@@ -53,48 +62,68 @@ export const useSchool = defineStore(
       })
     }
 
+    /**
+     * Loads School information from db and adds it to the store.
+     * @param registrationId ID of Registration Form
+     * @returns
+     */
     function loadSchool(registrationId: number) {
-      const {
-        result: resultSchool,
-        load: loadSchool,
-        onResult: resultLoadSchool,
-        onError,
-      } = useLazyQuery(
-        SchoolInfoDocument,
-        { registrationId },
-        { fetchPolicy: 'network-only' }
-      )
-      resultLoadSchool((result) => {
-        addToStore(<School>result.data.registration.school)
-      })
-      onError((error) => {
-        console.log(error)
-      })
-      return {
-        resultSchool,
-        loadSchool,
-      }
-    }
-
-    async function updateSchool() {
-      const { mutate: schoolUpdate, onError } = useMutation(
-        SchoolUpdateDocument,
-        {
-          fetchPolicy: 'network-only',
+      return new Promise((resolve, reject) => {
+        const {
+          result: resultSchool,
+          load: loadSchool,
+          onResult,
+          onError,
+        } = useLazyQuery(
+          SchoolInfoDocument,
+          { registrationId },
+          { fetchPolicy: 'network-only' }
+        )
+        onResult((result) => {
+          addToStore(<School>result.data.registration.school)
+          resolve('Success')
+        })
+        onError((error) => {
+          reject(console.log(error))
+        })
+        return {
+          resultSchool,
+          loadSchool,
         }
-      )
-      const clone = Object.assign({}, school.value)
-      delete clone.id
-      delete clone.__typename
-      await schoolUpdate({
-        schoolId: school.value.id,
-        school: clone,
-      })
-      onError((error) => {
-        console.log(error)
       })
     }
 
+    /**
+     * Updates School record in db from store.
+     * @returns Promise
+     */
+    function updateSchool() {
+      return new Promise((resolve, reject) => {
+        const {
+          mutate: schoolUpdate,
+          onDone,
+          onError,
+        } = useMutation(SchoolUpdateDocument, {
+          fetchPolicy: 'network-only',
+        })
+        schoolUpdate({
+          schoolId: school.value.id,
+          school: <SchoolInput>school.value,
+        }).catch((error) => console.log(error))
+        onDone(() => {
+          resolve('Success')
+        })
+        onError((error) => {
+          reject(console.log(error))
+        })
+      })
+    }
+
+    /**
+     * Removes the School record from the db.
+     * @param schoolId ID of the School record
+     * @returns
+     */
     function deleteSchool(schoolId: number) {
       return new Promise((resolve, reject) => {
         const {
