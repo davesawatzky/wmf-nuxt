@@ -399,7 +399,7 @@
       class="col-span-12">
       <BaseSelect
         id="instrument"
-        v-model="performerStore.performer[0].instrument"
+        v-model="performerStore.performers[0].instrument"
         :options="instruments"
         label="Instrument" />
     </div>

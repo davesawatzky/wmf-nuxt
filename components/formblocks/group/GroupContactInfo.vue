@@ -10,11 +10,11 @@
   const groupStore = useGroup()
   const performerStore = usePerformers()
 
-  async function addPerformer() {
-    await performerStore.createPerformer(registrationStore.registrationId)
+  async function addPerformer(registrationId: number) {
+    await performerStore.createPerformer(registrationId)
   }
-  async function removePerformer(index: number) {
-    await performerStore.deletePerformer(performerStore.performer[index].id!)
+  async function removePerformer(performerId: number) {
+    await performerStore.deletePerformer(performerId)
   }
 
   const typeOptions = [
@@ -99,28 +99,25 @@
       </div>
       <h2>Performer Information</h2>
       <div
-        v-for="(person, personIndex) in performerStore.performer"
-        :key="personIndex">
+        v-for="(performer, index) in performerStore.performers"
+        :key="performer.id">
         <div class="py-4">
-          <h4 class="pb-4">Performer #{{ personIndex + 1 }}</h4>
+          <h4 class="pb-4">Performer #{{ index + 1 }}</h4>
           <ContactInfo
-            v-model="performerStore.performer[personIndex]"
+            v-model="performerStore.performers[index]"
             groupperformer />
         </div>
         <div class="pt-4">
           <BaseButton
-            v-if="
-              personIndex + 1 === performerStore.performer.length ? true : false
-            "
+            v-if="index + 1 === performerStore.performers.length ? true : false"
             class="btn btn-blue mb-6"
-            @click="addPerformer">
+            @click="addPerformer(registrationStore.registrationId)">
             Add Performer
           </BaseButton>
           <BaseButton
-            v-if="performerStore.performer.length > 1 ? true : false"
-            id="index"
+            v-if="performerStore.performers.length > 1 ? true : false"
             class="btn btn-red mb-6"
-            @click="removePerformer(personIndex)">
+            @click="removePerformer(performer.id)">
             Remove Performer
           </BaseButton>
           <br /><br />

@@ -9,6 +9,7 @@
   import { useGroup } from '@/stores/userGroup'
   import { useCommunity } from '@/stores/userCommunity'
   import { useSchool } from '@/stores/userSchool'
+  import { useSchoolGroup } from '@/stores/userSchoolGroup'
   import SummaryTable from '@/components/summaryblocks/SummaryTable.vue'
   import { PerformerType } from '~/graphql/gql/graphql'
 
@@ -20,6 +21,7 @@
   const appStore = useAppStore()
   const communityStore = useCommunity()
   const schoolStore = useSchool()
+  const schoolGroupStore = useSchoolGroup()
 
   const confirmationNumber = ref('')
   const submissionComplete = ref(false)
@@ -36,8 +38,8 @@
     confirmationNumber.value = `WMF-${
       registrationStore.registrationId
     }-${_.random(1000, 9999)}`
-    registrationStore.registrations[0].submittedAt = date
-    registrationStore.registrations[0].confirmation = confirmationNumber.value
+    registrationStore.registration.submittedAt = date
+    registrationStore.registration.confirmation = confirmationNumber.value
     await registrationStore.updateRegistration()
     submissionComplete.value = true
   }
@@ -48,7 +50,7 @@
         appStore.performerType = PerformerType.SOLO
         appStore.dataLoading = true
         await registrationStore.updateRegistration()
-        await performerStore.updatePerformer(0, performerStore.performer[0].id!)
+        await performerStore.updatePerformer(performerStore.performers[0].id)
         await teacherStore.updateTeacher()
         await classesStore.updateAllClasses()
         appStore.dataLoading = false
@@ -68,7 +70,7 @@
         appStore.dataLoading = true
         await registrationStore.updateRegistration()
         await schoolStore.updateSchool()
-        await communityStore.updateAllCommunities()
+        await schoolGroupStore.updateAllSchoolGroups()
         await teacherStore.updateTeacher()
         await classesStore.updateAllClasses()
         appStore.dataLoading = false
@@ -77,10 +79,7 @@
         appStore.performerType = PerformerType.COMMUNITY
         appStore.dataLoading = true
         await registrationStore.updateRegistration()
-        await communityStore.updateCommunity(
-          0,
-          communityStore.communityInfo[0].id!
-        )
+        await communityStore.updateCommunity()
         await teacherStore.updateTeacher()
         await classesStore.updateAllClasses()
         appStore.dataLoading = false

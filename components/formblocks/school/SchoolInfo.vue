@@ -2,19 +2,17 @@
   import * as yup from 'yup'
   import { useSchool } from '@/stores/userSchool'
   import { useTeacher } from '@/stores/userTeacher'
-  import { useCommunity } from '@/stores/userCommunity'
-  import { useRegistration } from '@/stores/userRegistration'
+  import { useSchoolGroup } from '@/stores/userSchoolGroup'
 
   const teacherStore = useTeacher()
   const schoolStore = useSchool()
-  const communityStore = useCommunity()
-  const registrationStore = useRegistration()
+  const schoolGroupStore = useSchoolGroup()
 
-  async function addSchoolGroup() {
-    await communityStore.createCommunity(registrationStore.registrationId)
+  async function addSchoolGroup(schoolId: number) {
+    await schoolGroupStore.createSchoolGroup(schoolId)
   }
-  async function removeSchoolGroup(index: number) {
-    await communityStore.deleteCommunity(communityStore.community[index].id!)
+  async function removeSchoolGroup(schoolGroupId: number) {
+    await schoolGroupStore.deleteSchoolGroup(schoolGroupId)
   }
   const validationSchema = yup.object({
     schoolName: yup
@@ -70,28 +68,27 @@
     <h2>School Group Information</h2>
     <div v-auto-animate>
       <div
-        v-for="(community, communityIndex) in communityStore.community"
-        :key="communityIndex">
+        v-for="(schoolGrp, groupIndex) in schoolGroupStore.schoolGroup"
+        :key="schoolGrp.id">
         <div class="py-4">
-          <h4 class="pb-4">School Group #{{ communityIndex + 1 }}</h4>
-          <SchoolGroup v-model="communityStore.community[communityIndex]" />
+          <h4 class="pb-4">School Group #{{ groupIndex + 1 }}</h4>
+          <SchoolGroup v-model="schoolGroupStore.schoolGroup[groupIndex]" />
         </div>
         <div class="pt-4">
           <BaseButton
             v-if="
-              communityIndex + 1 === communityStore.community.length
+              groupIndex + 1 === schoolGroupStore.schoolGroup.length
                 ? true
                 : false
             "
             class="btn btn-blue mb-6"
-            @click="addSchoolGroup">
+            @click="addSchoolGroup(schoolStore.school.id)">
             Add School Group
           </BaseButton>
           <BaseButton
-            v-if="communityStore.community.length > 1 ? true : false"
-            id="index"
+            v-if="schoolGroupStore.schoolGroup.length > 1 ? true : false"
             class="btn btn-red mb-6"
-            @click="removeSchoolGroup(communityIndex)">
+            @click="removeSchoolGroup(schoolGrp.id)">
             Remove School Group
           </BaseButton>
           <br /><br />

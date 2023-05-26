@@ -18,6 +18,7 @@
   import { usePerformers } from '@/stores/userPerformer'
   import { useRegistration } from '@/stores/userRegistration'
   import { useSchool } from '@/stores/userSchool'
+  import { useSchoolGroup } from '@/stores/userSchoolGroup'
   import { useTeacher } from '@/stores/userTeacher'
   import { PerformerType } from '~/graphql/gql/graphql'
 
@@ -32,6 +33,7 @@
   const classesStore = useClasses()
   const appStore = useAppStore()
   const schoolStore = useSchool()
+  const schoolGroupStore = useSchoolGroup()
   const teacherStore = useTeacher()
 
   const currentTab = ref('')
@@ -78,7 +80,7 @@
         appStore.performerType = PerformerType.SOLO
         appStore.dataLoading = true
         await registrationStore.updateRegistration()
-        await performerStore.updatePerformer(0, performerStore.performer[0].id!)
+        await performerStore.updatePerformer(performerStore.performers[0].id!)
         await teacherStore.updateTeacher()
         await classesStore.updateAllClasses()
         appStore.dataLoading = false
@@ -98,7 +100,7 @@
         appStore.dataLoading = true
         await registrationStore.updateRegistration()
         await schoolStore.updateSchool()
-        await communityStore.updateAllCommunities()
+        await schoolGroupStore.updateAllSchoolGroups()
         await teacherStore.updateTeacher()
         await classesStore.updateAllClasses()
         appStore.dataLoading = false
@@ -107,7 +109,7 @@
         appStore.performerType = PerformerType.COMMUNITY
         appStore.dataLoading = true
         await registrationStore.updateRegistration()
-        await communityStore.updateCommunity(0, communityStore.community[0].id!)
+        await communityStore.updateCommunity()
         await teacherStore.updateTeacher()
         await classesStore.updateAllClasses()
         appStore.dataLoading = false

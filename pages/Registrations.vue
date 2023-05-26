@@ -85,7 +85,7 @@
    * @param performerType SOLO, GROUP, SCHOOL, or COMMUNITY
    * @param index Array Index of retrieved registrations
    */
-  function loadRegistration(
+  async function loadRegistration(
     registrationId: number,
     performerType: PerformerType,
     index: number
@@ -96,41 +96,41 @@
       case 'SOLO':
         appStore.performerType = PerformerType.SOLO
         appStore.dataLoading = true
-        performerStore.loadPerformers(registrationId)
-        teacherStore.loadTeacher(registrationId).loadTeachers()
-        classesStore.loadClasses(registrationId)
+        await performerStore.loadPerformers(registrationId)
+        await teacherStore.loadTeacher(registrationId)
+        await classesStore.loadClasses(registrationId)
         appStore.dataLoading = false
         break
       case 'GROUP':
         appStore.performerType = PerformerType.GROUP
         appStore.dataLoading = true
-        groupStore.loadGroup(registrationId)
-        teacherStore.loadTeacher(registrationId)
-        performerStore.loadPerformers(registrationId)
-        classesStore.loadClasses(registrationId)
+        await groupStore.loadGroup(registrationId)
+        await teacherStore.loadTeacher(registrationId)
+        await performerStore.loadPerformers(registrationId)
+        await classesStore.loadClasses(registrationId)
         appStore.dataLoading = false
         break
       case 'SCHOOL':
         appStore.performerType = PerformerType.SCHOOL
         appStore.dataLoading = true
-        schoolStore.loadSchool(registrationId)
-        schoolGroupStore.loadSchoolGroups(registrationId)
-        teacherStore.loadTeacher(registrationId)
-        classesStore.loadClasses(registrationId)
+        await schoolStore.loadSchool(registrationId)
+        await schoolGroupStore.loadSchoolGroups(registrationId)
+        await teacherStore.loadTeacher(registrationId)
+        await classesStore.loadClasses(registrationId)
         appStore.dataLoading = false
         break
       case 'COMMUNITY':
         appStore.performerType = PerformerType.COMMUNITY
         appStore.dataLoading = true
-        communityStore.loadCommunities(registrationId)
-        teacherStore.loadTeacher(registrationId)
-        classesStore.loadClasses(registrationId)
+        await communityStore.loadCommunity(registrationId)
+        await teacherStore.loadTeacher(registrationId)
+        await classesStore.loadClasses(registrationId)
         appStore.dataLoading = false
         break
     }
 
     appStore.dataLoading = true
-    classesStore.loadClasses(registrationId)
+    await classesStore.loadClasses(registrationId)
     appStore.dataLoading = false
     navigateTo('/form')
   }
@@ -199,7 +199,7 @@
   async function deleteRegistration(regId: number) {
     appStore.dataLoading = true
     await registrationStore.deleteRegistration(regId)
-    refetchRegistrations()
+    await refetchRegistrations()
     appStore.dataLoading = false
   }
 </script>

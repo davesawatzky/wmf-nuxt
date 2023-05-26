@@ -23,14 +23,14 @@
 
   const uuid = UniqueID().getID()
 
-  const name = toRef(props, 'name')
+  const nameRef = toRef(props, 'name')
 
   const {
     value: inputValue,
     errorMessage,
     handleBlur,
     handleChange,
-  } = useField(name, undefined, { initialValue: props.modelValue })
+  } = useField(nameRef, undefined, { initialValue: props.modelValue })
 </script>
 
 <template>

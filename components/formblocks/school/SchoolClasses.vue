@@ -1,23 +1,23 @@
 <script setup lang="ts">
   import { useClasses } from '@/stores/userClasses'
   import { useRegistration } from '@/stores/userRegistration'
-  import { useCommunity } from '@/stores/userCommunity'
+  import { useSchoolGroup } from '@/stores/userSchoolGroup'
 
   const classesStore = useClasses()
   const registrationStore = useRegistration()
-  const communityStore = useCommunity()
+  const schoolGroupStore = useSchoolGroup()
 
   function addClass(registrationId: number) {
     classesStore.createClass(registrationId)
   }
-  function removeClass(classIndex: number, classId: number) {
-    classesStore.deleteClass(classIndex, classId)
+  function removeClass(classId: number) {
+    classesStore.deleteClass(classId)
   }
 
   const schoolGroups = computed(() => {
     const newArray = []
-    for (const group of communityStore.community)
-      newArray.push({ id: group.id, name: group.name })
+    for (const schlGroup of schoolGroupStore.schoolGroup)
+      newArray.push({ id: schlGroup.id, name: schlGroup.name })
 
     return newArray
   })
@@ -30,7 +30,7 @@
     <h2 class="pb-4">School Class Information</h2>
     <div
       v-for="(selectedClass, classIndex) in classesStore.registeredClasses"
-      :key="classIndex">
+      :key="selectedClass.id">
       <div class="pb-8">
         <h3 class="pb-4">Class {{ classIndex + 1 }}</h3>
         <label for="schoolGroupSelect">Select a school group</label>
@@ -42,14 +42,14 @@
           class="mb-6"
           name="schoolGroup">
           <option
-            v-for="group in schoolGroups"
-            :key="group.id"
-            :value="group.id"
+            v-for="schoolGrp in schoolGroups"
+            :key="schoolGrp.id"
+            :value="schoolGrp.id"
             :selected="
               classesStore.registeredClasses[classIndex].schoolGroupID ===
-              group.id
+              schoolGrp.id
             ">
-            {{ group.name }}
+            {{ schoolGrp.name }}
           </option>
         </select>
         <Class
@@ -71,12 +71,7 @@
           v-if="classesStore.registeredClasses.length > 1 ? true : false"
           id="index"
           class="btn btn-red"
-          @click="
-            removeClass(
-              classIndex,
-              classesStore.registeredClasses[classIndex].id!
-            )
-          ">
+          @click="removeClass(selectedClass.id)">
           Remove Class
         </BaseButton>
         <br /><br />

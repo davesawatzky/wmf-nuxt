@@ -1,5 +1,5 @@
-mutation SchoolGroupCreate($schoolId: Int!, $schoolGroup: SchoolGroupInput!) {
-  schoolGroupCreate(schoolGroupInput: $schoolGroup, schoolID: $schoolId) {
+mutation SchoolGroupCreate($schoolId: Int!) {
+  schoolGroupCreate(schoolID: $schoolId) {
     schoolGroup {
       id
     }

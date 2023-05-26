@@ -1,10 +1,10 @@
 mutation RegistrationUpdate(
   $registrationId: Int!
-  $registration: RegistrationInput!
+  $registrationInput: RegistrationInput!
 ) {
   registrationUpdate(
     registrationID: $registrationId
-    registration: $registration
+    registrationInput: $registrationInput
   ) {
     registration {
       id

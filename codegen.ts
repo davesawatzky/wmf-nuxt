@@ -17,6 +17,7 @@ const config: CodegenConfig = {
   config: {
     namingConvention: 'keep',
   },
+  verbose: true,
 }
 
 export default config

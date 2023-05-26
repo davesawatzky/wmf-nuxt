@@ -8,8 +8,8 @@
   function addClass(registrationId: number) {
     classesStore.createClass(registrationId)
   }
-  function removeClass(classIndex: number, classId: number) {
-    classesStore.deleteClass(classIndex, classId)
+  function removeClass(classId: number) {
+    classesStore.deleteClass(classId)
   }
 </script>
 
@@ -22,7 +22,7 @@
 
     <div
       v-for="(selectedClass, classIndex) in classesStore.registeredClasses"
-      :key="classIndex">
+      :key="selectedClass.id">
       <div class="pb-8">
         <h3 class="pb-4">Class {{ classIndex + 1 }}</h3>
         <Class
@@ -42,14 +42,8 @@
         </BaseButton>
         <BaseButton
           v-if="classesStore.registeredClasses.length > 1 ? true : false"
-          id="index"
           class="btn btn-red"
-          @click="
-            removeClass(
-              classIndex,
-              classesStore.registeredClasses[classIndex].id!
-            )
-          ">
+          @click="removeClass(selectedClass.id)">
           Remove Class
         </BaseButton>
         <br /><br />

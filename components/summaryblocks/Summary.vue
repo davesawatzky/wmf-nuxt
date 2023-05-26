@@ -4,6 +4,7 @@
   import { useTeacher } from '@/stores/userTeacher'
   import { useGroup } from '@/stores/userGroup'
   import { useSchool } from '@/stores/userSchool'
+  import { useSchoolGroup } from '@/stores/userSchoolGroup'
   import { useCommunity } from '@/stores/userCommunity'
   import { useClasses } from '@/stores/userClasses'
   import { useRegistration } from '@/stores/userRegistration'
@@ -13,6 +14,7 @@
   const teacherStore = useTeacher()
   const groupStore = useGroup()
   const schoolStore = useSchool()
+  const schoolGroupStore = useSchoolGroup()
   const communityStore = useCommunity()
   const classesStore = useClasses()
   const appStore = useAppStore()
@@ -21,13 +23,8 @@
   const router = useRouter()
 
   function schoolClassGroup(id: number) {
-    return communityStore.communityInfo.find((item) => item.id === id)
+    return schoolGroupStore.schoolGroup.find((item) => item.id === id)
   }
-
-  // async function prepareRegistration() {
-  // 	await saveRegistration()
-  // 	router.push('Submission')
-  // }
 
   // Trying to get validations to work
   const { handleSubmit } = useForm()
@@ -38,7 +35,7 @@
     console.log(results)
   }
 
-  const prepareRegistration = handleSubmit((values) => {
+  const submit = handleSubmit((values) => {
     alert(JSON.stringify(values, null, 2))
     router.push('Submission')
   }, onInvalidSubmit)
@@ -53,7 +50,7 @@
         appStore.performerType = PerformerType.SOLO
         appStore.dataLoading = true
         await registrationStore.updateRegistration()
-        await performerStore.updatePerformer(0, performerStore.performer[0].id!)
+        await performerStore.updatePerformer(performerStore.performers[0].id)
         await teacherStore.updateTeacher()
         await classesStore.updateAllClasses()
         appStore.dataLoading = false
@@ -73,7 +70,7 @@
         appStore.dataLoading = true
         await registrationStore.updateRegistration()
         await schoolStore.updateSchool()
-        await communityStore.updateAllCommunities()
+        await schoolGroupStore.updateAllSchoolGroups()
         await teacherStore.updateTeacher()
         await classesStore.updateAllClasses()
         appStore.dataLoading = false
@@ -82,15 +79,17 @@
         appStore.performerType = PerformerType.COMMUNITY
         appStore.dataLoading = true
         await registrationStore.updateRegistration()
-        await communityStore.updateCommunity(
-          0,
-          communityStore.communityInfo[0].id!
-        )
+        await communityStore.updateCommunity()
         await teacherStore.updateTeacher()
         await classesStore.updateAllClasses()
         appStore.dataLoading = false
         break
     }
+  }
+  async function prepareRegistration() {
+    await saveRegistration()
+    await submit()
+    router.push('Submission')
   }
 </script>
 
@@ -103,59 +102,61 @@
       <div v-if="appStore.performerType === 'COMMUNITY'">
         <h2 class="pt-8 pb-4">Community Group Information</h2>
 
+        <div>Community Group Name: {{ communityStore.community.name }}</div>
         <div>
-          Community Group Name: {{ communityStore.communityInfo[0].name }}
+          Community Group Size: {{ communityStore.community.groupSize }}
         </div>
-        <div>
-          Community Group Size: {{ communityStore.communityInfo[0].groupSize }}
+        <div v-if="communityStore.community.chaperones">
+          Number of Chaperones: {{ communityStore.community.chaperones }}
         </div>
-        <div v-if="communityStore.communityInfo[0].chaperones">
-          Number of Chaperones: {{ communityStore.communityInfo[0].chaperones }}
-        </div>
-        <div v-if="communityStore.communityInfo[0].wheelchairs">
+        <div v-if="communityStore.community.wheelchairs">
           Number of Wheelchairs:
-          {{ communityStore.communityInfo[0].wheelchairs }}
+          {{ communityStore.community.wheelchairs }}
         </div>
-        <div v-if="communityStore.communityInfo[0].conflictPerformers">
+        <div v-if="communityStore.community.conflictPerformers">
           Performers participating in other classes
-          {{ communityStore.communityInfo[0].conflictPerformers }}
+          {{ communityStore.community.conflictPerformers }}
         </div>
       </div>
 
       <!-- School Groups -->
       <div v-if="appStore.performerType === 'SCHOOL'">
         <h2 class="pt-8 pb-4">School Information</h2>
-        <div>School Name: {{ schoolStore.schoolInfo.name }}</div>
-        <div>School Division: {{ schoolStore.schoolInfo.division }}</div>
+        <div>School Name: {{ schoolStore.school.name }}</div>
+        <div>School Division: {{ schoolStore.school.division }}</div>
         <div>Address:</div>
-        {{ schoolStore.schoolInfo.streetNumber }}
-        {{ schoolStore.schoolInfo.streetName }}
+        {{ schoolStore.school.streetNumber }}
+        {{ schoolStore.school.streetName }}
         <div>
-          {{ schoolStore.schoolInfo.city }},
-          {{ schoolStore.schoolInfo.province }}
+          {{ schoolStore.school.city }},
+          {{ schoolStore.school.province }}
         </div>
-        <div>{{ schoolStore.schoolInfo.postalCode }}</div>
-        <div>Phone: {{ schoolStore.schoolInfo.phone }}</div>
+        <div>{{ schoolStore.school.postalCode }}</div>
+        <div>Phone: {{ schoolStore.school.phone }}</div>
         <h3 class="pt-6 pb-2">School Group(s)</h3>
         <div
-          v-for="(group, index) in communityStore.communityInfo"
-          :key="group.id">
-          <h4>Group {{ index + 1 }}:</h4>
-          <div>Name: {{ group.name }}</div>
-          <div>Size: {{ group.groupSize }}</div>
-          <div v-if="group.chaperones">Chaperones: {{ group.chaperones }}</div>
-          <div v-if="group.wheelchairs">
-            Wheelchairs: {{ group.wheelchairs }}
+          v-for="(schlGrp, schlGrpIndex) in schoolGroupStore.schoolGroup"
+          :key="schlGrp.id">
+          <h4>Group {{ schlGrpIndex + 1 }}:</h4>
+          <div>Name: {{ schlGrp.name }}</div>
+          <div>Size: {{ schlGrp.groupSize }}</div>
+          <div v-if="schlGrp.chaperones">
+            Chaperones: {{ schlGrp.chaperones }}
           </div>
-          <div v-if="group.earliestTime">
-            Earliest Time: {{ group.earliestTime }}
+          <div v-if="schlGrp.wheelchairs">
+            Wheelchairs: {{ schlGrp.wheelchairs }}
           </div>
-          <div v-if="group.latestTime">Latest Time: {{ group.latestTime }}</div>
-          <div v-if="group.unavailable">
-            Unavailable Times: {{ group.unavailable }}
+          <div v-if="schlGrp.earliestTime">
+            Earliest Time: {{ schlGrp.earliestTime }}
           </div>
-          <div v-if="group.conflictPerformers">
-            Multiple Class Participants: {{ group.conflictPerformers }}
+          <div v-if="schlGrp.latestTime">
+            Latest Time: {{ schlGrp.latestTime }}
+          </div>
+          <div v-if="schlGrp.unavailable">
+            Unavailable Times: {{ schlGrp.unavailable }}
+          </div>
+          <div v-if="schlGrp.conflictPerformers">
+            Multiple Class Participants: {{ schlGrp.conflictPerformers }}
           </div>
         </div>
       </div>
@@ -171,15 +172,18 @@
         <h5 v-if="appStore.performerType === 'SCHOOL'">
           {{ schoolClassGroup(registeredClass.schoolGroupID!)?.name }}
         </h5>
-        <!-- <div>Festival Class: {{ registeredClass.className }}</div> -->
+        <div>Festival Class: {{ registeredClass.classNumber }}</div>
+        <div>{{ registeredClass.discipline }}</div>
+        <div>{{ registeredClass.category }}</div>
+        <div>{{ registeredClass.level }}</div>
         <div>
           Number of Selections: {{ registeredClass.numberOfSelections }}
         </div>
         <div
-          v-for="(selection, index) in registeredClass.selections"
+          v-for="(selection, selectionIndex) in registeredClass.selections"
           :key="selection.id"
           class="ml-8">
-          <h5 class="py-2">Selection {{ index + 1 }}</h5>
+          <h5 class="py-2">Selection {{ selectionIndex + 1 }}</h5>
           <div>Title: {{ selection.title }}</div>
           <div>Composer: {{ selection.composer }}</div>
           <div v-if="selection.largerWork">
@@ -195,12 +199,12 @@
       <!-- Solo and Group Performers -->
       <div v-if="appStore.performerType === 'GROUP'">
         <h2 class="pt-8 pb-4">Group Information</h2>
-        <div>Name: {{ groupStore.groupInfo.name }}</div>
-        <div>Type of Group: {{ groupStore.groupInfo.groupType }}</div>
+        <div>Name: {{ groupStore.group.name }}</div>
+        <div>Type of Group: {{ groupStore.group.groupType }}</div>
         <div>
-          Number of Performers: {{ groupStore.groupInfo.numberOfPerformers }}
+          Number of Performers: {{ groupStore.group.numberOfPerformers }}
         </div>
-        <div>Age of the Group: {{ groupStore.groupInfo.age }}</div>
+        <div>Age of the Group: {{ groupStore.group.age }}</div>
       </div>
       <div
         v-if="
@@ -209,7 +213,7 @@
         ">
         <h2 class="pt-8 pb-4">Performer(s)</h2>
         <div
-          v-for="(performer, index) in performerStore.performer"
+          v-for="(performer, index) in performerStore.performers"
           :key="performer.id">
           <SummaryContactInfo
             :contact="performer"
@@ -221,14 +225,16 @@
       <div>
         <h2 class="pt-8 pb-4">Teacher</h2>
         <SummaryContactInfo
-          :contact="teacherStore.teacherInfo"
+          :contact="teacherStore.teacher"
           :full-name="teacherStore.fullName" />
       </div>
       <h3 class="pt-8 pb-4">Class Summary</h3>
       <SummaryTable />
     </div>
+
+    <!-- Submission -->
     <BaseButton
-      v-if="!registrationStore.registrations[0].confirmation"
+      v-if="!registrationStore.registration.confirmation"
       class="btn btn-blue"
       @click="prepareRegistration">
       Prepare to Submit

@@ -8,8 +8,8 @@
   function addClass(registrationId: number) {
     classesStore.createClass(registrationId)
   }
-  function removeClass(classIndex: number, classId: number) {
-    classesStore.deleteClass(classIndex, classId)
+  function removeClass(classId: number) {
+    classesStore.deleteClass(classId)
   }
 </script>
 
@@ -17,20 +17,18 @@
   <div v-auto-animate>
     <h2 class="pt-8">Group Class Information</h2>
     <div
-      v-for="(selectedClass, classIndex) in classesStore.registeredClasses"
-      :key="classIndex">
+      v-for="(selectedClass, index) in classesStore.registeredClasses"
+      :key="selectedClass.id">
       <div class="py-4">
-        <h3 class="pb-4">Class {{ classIndex + 1 }}</h3>
+        <h3 class="pb-4">Class {{ index + 1 }}</h3>
         <Class
-          v-model="classesStore.registeredClasses[classIndex]"
-          :class-index="classIndex" />
+          v-model="classesStore.registeredClasses[index]"
+          :class-index="index" />
       </div>
       <div class="pt-4 col-span-12">
         <BaseButton
           v-if="
-            classIndex + 1 === classesStore.registeredClasses.length
-              ? true
-              : false
+            index + 1 === classesStore.registeredClasses.length ? true : false
           "
           class="btn btn-blue mb-6"
           @click="addClass(registrationStore.registrationId)">
@@ -40,12 +38,7 @@
           v-if="classesStore.registeredClasses.length > 1 ? true : false"
           id="index"
           class="btn btn-red mb-6"
-          @click="
-            removeClass(
-              classIndex,
-              classesStore.registeredClasses[classIndex].id!
-            )
-          ">
+          @click="removeClass(selectedClass.id)">
           Remove Class
         </BaseButton>
         <br /><br />

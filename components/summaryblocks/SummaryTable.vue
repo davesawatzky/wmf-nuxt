@@ -7,12 +7,12 @@
 
   const total = computed(() => {
     let cost = 0
-    for (const registeredClass of classesStore.registeredClasses)
+    for (const registeredClass of classesStore.registeredClasses) {
       cost += registeredClass.price
-
+    }
     return +cost
   })
-  registrationStore.registrations[0].totalAmt = total.value ?? 0.0
+  registrationStore.registration.totalAmt = total.value ?? 0.0
 </script>
 
 <template>
@@ -55,7 +55,7 @@
         class="bg-white divide-y divide-sky-600 border-b border-sky-500 rounded-bl-lg rounded-br-lg">
         <tr
           v-for="registeredClass in classesStore.registeredClasses"
-          :key="registeredClass.classNumber"
+          :key="registeredClass.id"
           class="border-b border-r border-l border-sky-500 print:text-xs">
           <td class="p-8">
             {{ registeredClass.classNumber }}

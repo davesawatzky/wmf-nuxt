@@ -1,5 +1,5 @@
-mutation PerformerCreate($registrationId: Int!, $performer: PerformerInput!) {
-  performerCreate(performerInput: $performer, registrationID: $registrationId) {
+mutation PerformerCreate($registrationId: Int!) {
+  performerCreate(registrationID: $registrationId) {
     performer {
       id
     }
