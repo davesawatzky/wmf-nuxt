@@ -5,7 +5,7 @@
   const props = defineProps({
     modelValue: {
       type: Object,
-      default: () => ({}),
+      required: true,
     },
     teacher: {
       type: Boolean,

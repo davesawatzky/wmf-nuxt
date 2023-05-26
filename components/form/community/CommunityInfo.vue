@@ -71,7 +71,7 @@
     <div class="pt-8">
       <h2 class="pb-4">Conductor/Contact Information</h2>
       <div>
-        <contact-info
+        <FormContactInfo
           v-model="teacherStore.teacher"
           teacher />
       </div>

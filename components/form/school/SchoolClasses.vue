@@ -52,7 +52,7 @@
             {{ schoolGrp.name }}
           </option>
         </select>
-        <Class
+        <FormClass
           v-model="classesStore.registeredClasses[classIndex]"
           :class-index="classIndex" />
       </div>

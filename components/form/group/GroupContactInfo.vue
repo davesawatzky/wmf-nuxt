@@ -93,7 +93,7 @@
 
       <div class="py-8">
         <h2 class="pb-4">Teacher Information</h2>
-        <ContactInfo
+        <FormContactInfo
           v-model="teacherStore.teacher"
           teacher />
       </div>
@@ -103,7 +103,7 @@
         :key="performer.id">
         <div class="py-4">
           <h4 class="pb-4">Performer #{{ index + 1 }}</h4>
-          <ContactInfo
+          <FormContactInfo
             v-model="performerStore.performers[index]"
             groupperformer />
         </div>

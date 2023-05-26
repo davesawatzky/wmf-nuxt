@@ -52,13 +52,13 @@
             type="text" />
         </div>
       </div>
-      <contact-info
+      <FormContactInfo
         v-model="schoolStore.school"
         school />
       <div class="pt-8">
         <h2 class="pb-4">Teacher Information</h2>
         <div>
-          <contact-info
+          <FormContactInfo
             v-model="teacherStore.teacher"
             teacher
             schoolteacher />
@@ -72,7 +72,7 @@
         :key="schoolGrp.id">
         <div class="py-4">
           <h4 class="pb-4">School Group #{{ groupIndex + 1 }}</h4>
-          <SchoolGroup v-model="schoolGroupStore.schoolGroup[groupIndex]" />
+          <FormSchoolGroup v-model="schoolGroupStore.schoolGroup[groupIndex]" />
         </div>
         <div class="pt-4">
           <BaseButton

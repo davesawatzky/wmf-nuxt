@@ -23,7 +23,7 @@
         :key="selectedClass.id">
         <div class="py-4">
           <h3 class="pb-4">Class {{ classIndex + 1 }}</h3>
-          <Class
+          <FormClass
             v-model="classesStore.registeredClasses[classIndex]"
             :class-index="classIndex" />
         </div>

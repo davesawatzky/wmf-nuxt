@@ -12,7 +12,7 @@
       <div>
         <h2 class="pb-4">Performer Information</h2>
         <div v-if="performerStore.performers[0]">
-          <ContactInfo v-model="performerStore.performers[0]" />
+          <FormContactInfo v-model="performerStore.performers[0]" />
         </div>
         <div class="pt-4">
           <BaseTextarea :label="textAreaLabel" />
@@ -21,7 +21,7 @@
       <div class="pt-8">
         <h2 class="pb-4">Teacher Information</h2>
         <div>
-          <contact-info
+          <FormContactInfo
             v-model="teacherStore.teacher"
             teacher />
         </div>

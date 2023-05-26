@@ -453,7 +453,7 @@
         <h4>Please choose the number of selections above.</h4>
       </div>
       <div v-else>
-        <WorksSelection
+        <FormWorksSelection
           v-for="(selection, selectionIndex) in selectedClasses.selections"
           :key="selectionIndex"
           v-model="selectedClasses.selections[selectionIndex]"
