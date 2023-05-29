@@ -93,9 +93,11 @@ export const useRegistration = defineStore(
         } = useMutation(RegistrationUpdateDocument, {
           fetchPolicy: 'network-only',
         })
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { id, __typename, ...reg } = registration.value
         registrationUpdate({
           registrationId: registrationId.value,
-          registration: <RegistrationInput>registration.value,
+          registrationInput: <RegistrationInput>reg,
         }).catch((error) => console.log(error))
         onDone(() => {
           resolve('Success')

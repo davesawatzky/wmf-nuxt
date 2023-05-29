@@ -1,15 +1,8 @@
 query SubdisciplinesByType(
-  $categoryId: Int!
   $disciplineId: Int!
-  $levelId: Int!
   $performerType: PerformerType!
 ) {
-  subdisciplines(
-    categoryID: $categoryId
-    disciplineID: $disciplineId
-    levelID: $levelId
-    performerType: $performerType
-  ) {
+  subdisciplines(disciplineID: $disciplineId, performerType: $performerType) {
     id
     name
     description

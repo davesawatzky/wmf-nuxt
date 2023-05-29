@@ -32,12 +32,12 @@
     set: (value) => emits('update:modelValue', value),
   })
 
-  const { result: instrumentQuery, error: instrumentsError } =
+  const { result: instrumentQuery, onError: instrumentsError } =
     useQuery(InstrumentsDocument)
   const instruments = computed(() => instrumentQuery.value.instruments ?? [])
-  if (instrumentsError) {
-    console.log(instrumentsError)
-  }
+  instrumentsError((error) => {
+    console.log(error)
+  })
 
   watch(
     () => selectedClasses.value.classNumber,
@@ -50,16 +50,17 @@
   /**
    * Disciplines
    */
-  const { result: disc, error: discError } = useQuery(
+  const { result: disciplineQuery, onError: errorDisciplines } = useQuery(
     DisciplinesByTypeDocument,
     () => ({
       performerType: appStore.performerType,
-    })
+    }),
+    { fetchPolicy: 'network-only' }
   )
-  if (discError) {
-    console.log(discError)
-  }
-  const disciplines = computed(() => disc.value?.disciplinesByType ?? [])
+  errorDisciplines((error) => {
+    console.log(error)
+  })
+  const disciplines = computed(() => disciplineQuery.value?.disciplines ?? [])
   const chosenDiscipline = computed(() => {
     return (
       disciplines.value.find((item: any) => {
@@ -73,8 +74,9 @@
    */
   const {
     result: subdisc,
-    load: subdiscLoad,
-    error: subdiscError,
+    load: loadSubdisciplines,
+    refetch: refetchSubdisciplines,
+    onError: errorSubdisciplines,
   } = useLazyQuery(
     SubdisciplinesByTypeDocument,
     () => ({
@@ -83,12 +85,10 @@
     }),
     { fetchPolicy: 'network-only' }
   )
-  if (subdiscError) {
-    console.log(subdiscError)
-  }
-  const subdisciplines = computed(
-    () => subdisc.value?.subdisciplinesByType ?? []
-  )
+  errorSubdisciplines((error) => {
+    console.log(error)
+  })
+  const subdisciplines = computed(() => subdisc.value?.subdisciplines ?? [])
   const chosenSubdiscipline = computed({
     get: () => {
       return (
@@ -104,9 +104,10 @@
    * Grades / Levels
    */
   const {
-    result: gradeLevel,
-    load: gradeLevelLoad,
-    error: levelError,
+    result: gradeLevels,
+    load: loadLevels,
+    refetch: refetchLevels,
+    onError: errorLevel,
   } = useLazyQuery(
     LevelsDocument,
     () => ({
@@ -114,10 +115,8 @@
     }),
     { fetchPolicy: 'network-only' }
   )
-  if (levelError) {
-    console.log(levelError)
-  }
-  const levels = computed(() => gradeLevel.value?.levels ?? [])
+  errorLevel((error) => console.log(error))
+  const levels = computed(() => gradeLevels.value?.levels ?? [])
   const chosenGradeLevel = computed({
     get: () => {
       return (
@@ -134,8 +133,9 @@
    */
   const {
     result: cat,
-    load: catLoad,
-    error: catError,
+    load: loadCategories,
+    refetch: refetchCategories,
+    onError: errorCategories,
   } = useLazyQuery(
     CategoriesDocument,
     () => ({
@@ -144,9 +144,7 @@
     }),
     { fetchPolicy: 'network-only' }
   )
-  if (catError) {
-    console.log(catError)
-  }
+  errorCategories((error) => console.log(error))
   const categories = computed(() => cat.value?.categories ?? [])
   const chosenCategory = computed({
     get: () => {
@@ -180,15 +178,15 @@
   /**
    * Class Search for details incl. Number
    */
-
   const {
     result: classSearch,
-    load: classNumberLoad,
-    error: classError,
+    load: loadClassNumber,
+    refetch: refetchClassNumber,
+    onError: errorClass,
   } = useLazyQuery(
     FestivalClassSearchDocument,
     () => ({
-      classSearchArgs: {
+      festivalClassSearch: {
         subdisciplineID: chosenSubdiscipline.value.id,
         levelID: chosenGradeLevel.value.id,
         categoryID: chosenCategory.value.id,
@@ -196,18 +194,18 @@
     }),
     { fetchPolicy: 'network-only' }
   )
-  if (classError) {
-    console.log(classError)
-  }
+  errorClass((error) => console.log(error))
   const classSelection = computed({
     get: () => {
       if (
         chosenSubdiscipline.value.id &&
         chosenGradeLevel.value.id &&
         chosenCategory.value.id
-      )
-        return classSearch?.value?.classSearch[0] ?? []
-      else return []
+      ) {
+        return classSearch?.value?.festivalClassSearch[0] ?? []
+      } else {
+        return []
+      }
     },
     set: (newValue) => newValue,
   })
@@ -227,10 +225,10 @@
    * Number of Allowed Works
    */
   const minWorks = computed(() => {
-    return classSearch.value?.classSearch[0].minSelection ?? null
+    return classSearch.value?.festivalClassSearch[0].minSelection ?? null
   })
   const maxWorks = computed(() => {
-    return classSearch.value?.classSearch[0].maxSelection ?? null
+    return classSearch.value?.festivalClassSearch[0].maxSelection ?? null
   })
   const numberOfAllowedWorks = computed(() => {
     if (minWorks.value === maxWorks.value) {
@@ -249,7 +247,7 @@
     () => {
       selectedClasses.value.subdiscipline = null
       chosenSubdiscipline.value = { id: '', name: '' }
-      subdiscLoad()
+      loadSubdisciplines()
     }
   )
 
@@ -259,7 +257,7 @@
       selectedClasses.value.level = null
       chosenGradeLevel.value = { id: '', name: '' }
       if (selectedClasses.value.subdiscipline !== null) {
-        gradeLevelLoad()
+        loadLevels()
       }
     }
   )
@@ -270,7 +268,7 @@
       selectedClasses.value.category = null
       chosenCategory.value = { id: '', name: '' }
       if (selectedClasses.value.level !== null) {
-        catLoad()
+        loadCategories()
       }
     }
   )
@@ -284,7 +282,7 @@
       className.value = ''
       classSelection.value = null
       if (selectedClasses.value.category !== null) {
-        classNumberLoad()
+        loadClassNumber()
       }
     }
   )
@@ -292,41 +290,34 @@
   /**
    * Updating number of selections
    */
-  watch(
-    () => selectedClasses.value.numberOfSelections,
-    async (newNumber) => {
-      let oldNumber =
-        classesStore.registeredClasses[props.classIndex].selections!.length
-      switch (oldNumber < newNumber) {
-        case true:
-          while (oldNumber < newNumber) {
-            await classesStore
-              .createSelection(props.classIndex)
-              .catch((error) => console.log(`There was an error!${error}`))
-            oldNumber += 1
-          }
-          break
-        case false:
-          while (oldNumber > newNumber) {
-            await classesStore.deleteSelection(props.classIndex, oldNumber - 1)
-            oldNumber -= 1
-          }
-          break
-      }
-      await classesStore.updateClass(props.classIndex)
-    }
-  )
+  // watch(
+  //   () => selectedClasses.value.numberOfSelections,
+  //   async (newNumber) => {
+  //     let oldNumber =
+  //       classesStore.registeredClasses[props.classIndex].selections!.length
+  //     switch (oldNumber < newNumber) {
+  //       case true:
+  //         while (oldNumber < newNumber) {
+  //           await classesStore
+  //             .createSelection(props.classIndex)
+  //             .catch((error) => console.log(`There was an error!${error}`))
+  //           oldNumber += 1
+  //         }
+  //         break
+  //       case false:
+  //         while (oldNumber > newNumber) {
+  //           await classesStore.deleteSelection(props.classIndex, oldNumber - 1)
+  //           oldNumber -= 1
+  //         }
+  //         break
+  //     }
+  //     await classesStore.updateClass(props.classIndex)
+  //   }
+  // )
 
   watch(classSelection, (newClassSelection) => {
     classesStore.registeredClasses[props.classIndex].price =
       newClassSelection.price
-  })
-
-  onMounted(() => {
-    subdiscLoad()
-    gradeLevelLoad()
-    catLoad()
-    classNumberLoad()
   })
 </script>
 

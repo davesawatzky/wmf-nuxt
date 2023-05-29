@@ -95,9 +95,11 @@ export const useGroup = defineStore(
           onDone,
           onError,
         } = useMutation(GroupUpdateDocument)
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { id, __typename, ...grp } = group.value
         groupUpdate({
           groupId: group.value.id,
-          group: <GroupInput>group.value,
+          group: <GroupInput>grp,
         }).catch((error) => console.log(error))
         onDone(() => {
           resolve('Success')

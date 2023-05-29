@@ -106,9 +106,11 @@ export const useSchool = defineStore(
         } = useMutation(SchoolUpdateDocument, {
           fetchPolicy: 'network-only',
         })
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { id, __typename, ...schl } = school.value
         schoolUpdate({
           schoolId: school.value.id,
-          school: <SchoolInput>school.value,
+          school: <SchoolInput>schl,
         }).catch((error) => console.log(error))
         onDone(() => {
           resolve('Success')

@@ -101,9 +101,11 @@ export const useCommunity = defineStore(
         } = useMutation(CommunityUpdateDocument, {
           fetchPolicy: 'no-cache',
         })
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { id, __typename, ...comm } = community.value
         communityUpdate({
           communityId: community.value.id,
-          community: <CommunityInput>community.value,
+          community: <CommunityInput>comm,
         }).catch((error) => console.log(error))
         onDone(() => {
           resolve('Success')

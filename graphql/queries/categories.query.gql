@@ -1,4 +1,4 @@
-query Categories($levelId: Int!, $subdisciplineId: Int!) {
+query Categories($levelId: Int, $subdisciplineId: Int) {
   categories(levelID: $levelId, subdisciplineID: $subdisciplineId) {
     id
     name

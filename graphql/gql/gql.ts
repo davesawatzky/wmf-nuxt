@@ -50,16 +50,16 @@ const documents = {
     "query SchoolGroupInfo($registrationId: Int!) {\n  registration(id: $registrationId) {\n    school {\n      schoolGroups {\n        id\n        name\n        groupSize\n        chaperones\n        wheelchairs\n        earliestTime\n        latestTime\n        unavailable\n        conflictPerformers\n      }\n    }\n  }\n}": types.SchoolGroupInfoDocument,
     "query SchoolInfo($registrationId: Int!) {\n  registration(id: $registrationId) {\n    school {\n      id\n      name\n      division\n      streetNumber\n      streetName\n      city\n      province\n      postalCode\n      phone\n    }\n  }\n}": types.SchoolInfoDocument,
     "query TeacherInfo($registrationId: Int!) {\n  registration(id: $registrationId) {\n    teacher {\n      id\n      prefix\n      firstName\n      lastName\n      apartment\n      streetNumber\n      streetName\n      city\n      province\n      postalCode\n      phone\n      email\n    }\n  }\n}": types.TeacherInfoDocument,
-    "query Categories($levelId: Int!, $subdisciplineId: Int!) {\n  categories(levelID: $levelId, subdisciplineID: $subdisciplineId) {\n    id\n    name\n    description\n    requiredComposer\n  }\n}": types.CategoriesDocument,
+    "query Categories($levelId: Int, $subdisciplineId: Int) {\n  categories(levelID: $levelId, subdisciplineID: $subdisciplineId) {\n    id\n    name\n    description\n    requiredComposer\n  }\n}": types.CategoriesDocument,
     "query ClassByNumber($festivalClassNumber: String!) {\n  festivalClassByNumber(festivalClassNumber: $festivalClassNumber) {\n    id\n    classNumber\n    maxSelections\n    minSelections\n    requiredSelection\n    performerType\n    price\n    category {\n      id\n      name\n      description\n      requiredComposer\n    }\n    level {\n      id\n      name\n      description\n    }\n    subdiscipline {\n      id\n      name\n      description\n      discipline {\n        id\n        name\n      }\n    }\n    trophies {\n      id\n      name\n      description\n    }\n  }\n}": types.ClassByNumberDocument,
     "query FestivalClassSearch($festivalClassSearch: FestivalClassSearchArgs!) {\n  festivalClassSearch(festivalClassSearch: $festivalClassSearch) {\n    id\n    classNumber\n    maxSelections\n    minSelections\n    requiredSelection\n    performerType\n    price\n    subdiscipline {\n      name\n    }\n    level {\n      name\n    }\n    category {\n      name\n    }\n    trophies {\n      id\n      name\n      description\n    }\n  }\n}": types.FestivalClassSearchDocument,
     "query FestivalClasses($performerType: PerformerType) {\n  festivalClasses(performerType: $performerType) {\n    subdiscipline {\n      id\n      name\n    }\n  }\n}": types.FestivalClassesDocument,
     "query Disciplines {\n  disciplines {\n    id\n    name\n  }\n}": types.DisciplinesDocument,
     "query Instruments {\n  instruments {\n    id\n    name\n  }\n}": types.InstrumentsDocument,
-    "query Levels($subdisciplineId: Int!, $categoryId: Int!) {\n  levels(categoryID: $categoryId, subdisciplineID: $subdisciplineId) {\n    id\n    name\n    description\n  }\n}": types.LevelsDocument,
+    "query Levels($subdisciplineId: Int, $categoryId: Int) {\n  levels(categoryID: $categoryId, subdisciplineID: $subdisciplineId) {\n    id\n    name\n    description\n  }\n}": types.LevelsDocument,
     "query Registrations($performerType: PerformerType) {\n  registrations(performerType: $performerType) {\n    id\n    createdAt\n    label\n    performerType\n    submittedAt\n    payedAmt\n    totalAmt\n    transactionInfo\n    confirmation\n  }\n}": types.RegistrationsDocument,
-    "query SubDisciplines($categoryId: Int!, $disciplineId: Int!, $levelId: Int!, $performerType: PerformerType!) {\n  subdisciplines(\n    categoryID: $categoryId\n    disciplineID: $disciplineId\n    levelID: $levelId\n    performerType: $performerType\n  ) {\n    id\n    name\n    description\n  }\n}": types.SubDisciplinesDocument,
-    "query SubdisciplinesByType($categoryId: Int!, $disciplineId: Int!, $levelId: Int!, $performerType: PerformerType!) {\n  subdisciplines(\n    categoryID: $categoryId\n    disciplineID: $disciplineId\n    levelID: $levelId\n    performerType: $performerType\n  ) {\n    id\n    name\n    description\n    maxPerformers\n    minPerformers\n    performerType\n  }\n}": types.SubdisciplinesByTypeDocument,
+    "query SubDisciplines($disciplineId: Int!, $performerType: PerformerType!) {\n  subdisciplines(disciplineID: $disciplineId, performerType: $performerType) {\n    id\n    name\n    description\n  }\n}": types.SubDisciplinesDocument,
+    "query SubdisciplinesByType($disciplineId: Int!, $performerType: PerformerType!) {\n  subdisciplines(disciplineID: $disciplineId, performerType: $performerType) {\n    id\n    name\n    description\n    maxPerformers\n    minPerformers\n    performerType\n  }\n}": types.SubdisciplinesByTypeDocument,
 };
 
 /**
@@ -227,7 +227,7 @@ export function graphql(source: "query TeacherInfo($registrationId: Int!) {\n  r
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "query Categories($levelId: Int!, $subdisciplineId: Int!) {\n  categories(levelID: $levelId, subdisciplineID: $subdisciplineId) {\n    id\n    name\n    description\n    requiredComposer\n  }\n}"): (typeof documents)["query Categories($levelId: Int!, $subdisciplineId: Int!) {\n  categories(levelID: $levelId, subdisciplineID: $subdisciplineId) {\n    id\n    name\n    description\n    requiredComposer\n  }\n}"];
+export function graphql(source: "query Categories($levelId: Int, $subdisciplineId: Int) {\n  categories(levelID: $levelId, subdisciplineID: $subdisciplineId) {\n    id\n    name\n    description\n    requiredComposer\n  }\n}"): (typeof documents)["query Categories($levelId: Int, $subdisciplineId: Int) {\n  categories(levelID: $levelId, subdisciplineID: $subdisciplineId) {\n    id\n    name\n    description\n    requiredComposer\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -251,7 +251,7 @@ export function graphql(source: "query Instruments {\n  instruments {\n    id\n 
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "query Levels($subdisciplineId: Int!, $categoryId: Int!) {\n  levels(categoryID: $categoryId, subdisciplineID: $subdisciplineId) {\n    id\n    name\n    description\n  }\n}"): (typeof documents)["query Levels($subdisciplineId: Int!, $categoryId: Int!) {\n  levels(categoryID: $categoryId, subdisciplineID: $subdisciplineId) {\n    id\n    name\n    description\n  }\n}"];
+export function graphql(source: "query Levels($subdisciplineId: Int, $categoryId: Int) {\n  levels(categoryID: $categoryId, subdisciplineID: $subdisciplineId) {\n    id\n    name\n    description\n  }\n}"): (typeof documents)["query Levels($subdisciplineId: Int, $categoryId: Int) {\n  levels(categoryID: $categoryId, subdisciplineID: $subdisciplineId) {\n    id\n    name\n    description\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -259,11 +259,11 @@ export function graphql(source: "query Registrations($performerType: PerformerTy
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "query SubDisciplines($categoryId: Int!, $disciplineId: Int!, $levelId: Int!, $performerType: PerformerType!) {\n  subdisciplines(\n    categoryID: $categoryId\n    disciplineID: $disciplineId\n    levelID: $levelId\n    performerType: $performerType\n  ) {\n    id\n    name\n    description\n  }\n}"): (typeof documents)["query SubDisciplines($categoryId: Int!, $disciplineId: Int!, $levelId: Int!, $performerType: PerformerType!) {\n  subdisciplines(\n    categoryID: $categoryId\n    disciplineID: $disciplineId\n    levelID: $levelId\n    performerType: $performerType\n  ) {\n    id\n    name\n    description\n  }\n}"];
+export function graphql(source: "query SubDisciplines($disciplineId: Int!, $performerType: PerformerType!) {\n  subdisciplines(disciplineID: $disciplineId, performerType: $performerType) {\n    id\n    name\n    description\n  }\n}"): (typeof documents)["query SubDisciplines($disciplineId: Int!, $performerType: PerformerType!) {\n  subdisciplines(disciplineID: $disciplineId, performerType: $performerType) {\n    id\n    name\n    description\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "query SubdisciplinesByType($categoryId: Int!, $disciplineId: Int!, $levelId: Int!, $performerType: PerformerType!) {\n  subdisciplines(\n    categoryID: $categoryId\n    disciplineID: $disciplineId\n    levelID: $levelId\n    performerType: $performerType\n  ) {\n    id\n    name\n    description\n    maxPerformers\n    minPerformers\n    performerType\n  }\n}"): (typeof documents)["query SubdisciplinesByType($categoryId: Int!, $disciplineId: Int!, $levelId: Int!, $performerType: PerformerType!) {\n  subdisciplines(\n    categoryID: $categoryId\n    disciplineID: $disciplineId\n    levelID: $levelId\n    performerType: $performerType\n  ) {\n    id\n    name\n    description\n    maxPerformers\n    minPerformers\n    performerType\n  }\n}"];
+export function graphql(source: "query SubdisciplinesByType($disciplineId: Int!, $performerType: PerformerType!) {\n  subdisciplines(disciplineID: $disciplineId, performerType: $performerType) {\n    id\n    name\n    description\n    maxPerformers\n    minPerformers\n    performerType\n  }\n}"): (typeof documents)["query SubdisciplinesByType($disciplineId: Int!, $performerType: PerformerType!) {\n  subdisciplines(disciplineID: $disciplineId, performerType: $performerType) {\n    id\n    name\n    description\n    maxPerformers\n    minPerformers\n    performerType\n  }\n}"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

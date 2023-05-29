@@ -1,8 +1,6 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <script setup lang="ts">
-  import { ref } from 'vue'
-
-  import Summary from '@/components/summaryblocks/Summary.vue'
+  // import { Component, ref } from 'vue'
   import { useAppStore } from '@/stores/appStore'
   import { useClasses } from '@/stores/userClasses'
   import { useCommunity } from '@/stores/userCommunity'
@@ -14,17 +12,19 @@
   import { useTeacher } from '@/stores/userTeacher'
   import { PerformerType } from '~/graphql/gql/graphql'
 
-  const currentTab = ref('')
-  let tabs = {}
-
-  const FormSoloContactInfo = resolveComponent('FormSoloContactInfo')
-  const FormSoloClasses = resolveComponent('FormSoloClasses')
-  const FormGroupContactInfo = resolveComponent('FormGroupContactInfo')
-  const FormGroupClasses = resolveComponent('FormGroupClasses')
-  const FormSchoolInfo = resolveComponent('FormSchoolInfo')
-  const FormSchoolClasses = resolveComponent('FormSchoolClasses')
-  const FormCommunityInfo = resolveComponent('FormCommunityInfo')
-  const FormCommunityClasses = resolveComponent('FormCommunityClasses')
+  const FormSoloContactInfo = <Component>resolveComponent('FormSoloContactInfo')
+  const FormSoloClasses = <Component>resolveComponent('FormSoloClasses')
+  const FormGroupContactInfo = <Component>(
+    resolveComponent('FormGroupContactInfo')
+  )
+  const FormGroupClasses = <Component>resolveComponent('FormGroupClasses')
+  const FormSchoolInfo = <Component>resolveComponent('FormSchoolInfo')
+  const FormSchoolClasses = <Component>resolveComponent('FormSchoolClasses')
+  const FormCommunityInfo = <Component>resolveComponent('FormCommunityInfo')
+  const FormCommunityClasses = <Component>(
+    resolveComponent('FormCommunityClasses')
+  )
+  const Summary = <Component>resolveComponent('Summary')
 
   const registrationStore = useRegistration()
   const performerStore = usePerformers()
@@ -36,7 +36,16 @@
   const schoolGroupStore = useSchoolGroup()
   const teacherStore = useTeacher()
 
-  switch (appStore.performerType) {
+  const performerType = toRef(appStore.performerType)
+
+  interface DynamicComponent {
+    [key: string]: Component
+  }
+
+  const currentTab = ref('')
+  let tabs = {} as DynamicComponent
+
+  switch (performerType.value) {
     case 'SOLO':
       currentTab.value = 'Contact Info'
       tabs = {
@@ -118,7 +127,7 @@
 <template>
   <div>
     <BaseInput
-      v-model:string="registrationStore.registration.label"
+      v-model.string="registrationStore.registration.label"
       class="text-3xl mb-6 h-12 p-6"
       label="Registration Label"
       name="registrationLabel"

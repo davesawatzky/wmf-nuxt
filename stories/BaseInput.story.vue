@@ -13,16 +13,10 @@
       <BaseInput type="number" />
     </Variant>
     <Variant title="Postal Code">
-      <BaseInput
-        v-maska
-        type="text"
-        data-maska="A#A #A#" />
+      <BaseInput type="text" />
     </Variant>
     <Variant title="Phone">
-      <BaseInput
-        v-maska
-        type="tel"
-        data-maska="(###) ###-####" />
+      <BaseInput type="tel" />
     </Variant>
     <Variant title="Email">
       <BaseInput type="email" />

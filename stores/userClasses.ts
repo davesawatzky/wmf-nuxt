@@ -200,9 +200,11 @@ export const useClasses = defineStore(
         const regClass = registeredClasses.value.find(
           (item) => item.id === classId
         )
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { id, __typename, ...regcls } = regClass
         classUpdate({
           registeredClassId: classId,
-          registeredClass: <RegisteredClassInput>regClass,
+          registeredClass: <RegisteredClassInput>regcls,
         }).catch((error) => console.log(error))
         onDone(() => {
           resolve('Success')
@@ -293,9 +295,11 @@ export const useClasses = defineStore(
         const selection = registeredClasses.value
           .find((reg) => reg.id === classId)
           ?.selections?.find((sel) => sel.id === selectionId)
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { id, __typename, ...sel } = selection
         selectionUpdate({
           selectionId,
-          selection: <SelectionInput>selection,
+          selection: <SelectionInput>sel,
         }).catch((error) => console.log(error))
         onDone(() => {
           resolve('Success')

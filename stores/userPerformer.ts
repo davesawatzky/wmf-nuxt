@@ -40,7 +40,7 @@ export const usePerformers = defineStore(
         id: performer.id,
         firstName: performer.firstName || '',
         lastName: performer.lastName || '',
-        age: performer.age || null,
+        age: performer.age || 10,
         level: performer.level || '',
         instrument: performer.instrument || '',
         otherClasses: performer.otherClasses || '',
@@ -132,9 +132,11 @@ export const usePerformers = defineStore(
           fetchPolicy: 'no-cache',
         })
         const person = performers.value.find((item) => item.id === performerId)
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { id, __typename, ...personProps } = person
         performerUpdate({
           performerId,
-          performer: <PerformerInput>person,
+          performer: <PerformerInput>personProps,
         }).catch((error) => console.log(error))
         onDone(() => {
           resolve('Success')

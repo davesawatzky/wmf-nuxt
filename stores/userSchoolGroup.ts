@@ -114,9 +114,11 @@ export const useSchoolGroup = defineStore(
         const schoolGrp = schoolGroup.value.find(
           (item) => item.id === schoolGroupId
         )
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { id, __typename, ...schlgrp } = schoolGrp
         schoolGroupUpdate({
           schoolGroupId,
-          schoolGroup: <SchoolGroupInput>schoolGrp,
+          schoolGroup: <SchoolGroupInput>schlgrp,
         }).catch((error) => console.log(error))
         onDone(() => {
           resolve('Success')

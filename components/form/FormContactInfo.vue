@@ -209,9 +209,7 @@
         class="col-span-12 sm:col-span-3">
         <BaseInput
           v-model="contact.postalCode"
-          v-maska
           required
-          data-maska="A#A #A#"
           name="postalCode"
           type="text"
           label="Postal Code" />
@@ -219,9 +217,7 @@
       <div class="col-span-12 sm:col-span-5">
         <BaseInput
           v-model="contact.phone"
-          v-maska
           required
-          data-maska="(###) ###-####"
           name="phone"
           type="tel"
           label="Phone Number" />

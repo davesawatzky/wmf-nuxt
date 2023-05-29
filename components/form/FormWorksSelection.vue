@@ -76,8 +76,6 @@
       <div class="col-span-6 sm:col-span-3">
         <BaseInput
           v-model="work.duration"
-          v-maska
-          data-maska="##:##"
           name="duration"
           label="Duration"
           type="text" />
