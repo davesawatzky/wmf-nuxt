@@ -95,7 +95,15 @@ export const useClasses = defineStore(
           onDone,
           onError,
         } = useMutation(ClassCreateDocument, { fetchPolicy: 'no-cache' })
-        classCreate({ registrationId, registeredClass: { minSelections: 1, maxSelections: 1, numberOfSelections: 1, price: 0.00 }}).catch((error) => console.log(error))
+        classCreate({
+          registrationId,
+          registeredClass: {
+            minSelections: 1,
+            maxSelections: 1,
+            numberOfSelections: 1,
+            price: 0.0,
+          },
+        }).catch((error) => console.log(error))
         onDone((result) => {
           const regClass: RegisteredClass =
             result.data.registeredClassCreate.registeredClass
@@ -299,7 +307,7 @@ export const useClasses = defineStore(
 
     /**
      * Deletes a selection from a Registered Class.
-     * 
+     *
      * @param classId ID of Registered Class
      * @param selectionId ID of Selection item
      * @returns
@@ -313,16 +321,23 @@ export const useClasses = defineStore(
         } = useMutation(SelectionDeleteDocument)
         selectionDelete({ selectionId }).catch((error) => console.log(error))
         onDone(() => {
-          const classIndex = registeredClasses.value.findIndex((item) => item.id === classId)
-          console.log('ClassIndex-----: ', classIndex);
-          const selectionIndex = registeredClasses.value[classIndex].selections!.findIndex((item) => item.id === selectionId)
-          console.log('SelectionIndex-----: ', selectionIndex);
+          const classIndex = registeredClasses.value.findIndex(
+            (item) => item.id === classId
+          )
+          console.log('ClassIndex-----: ', classIndex)
+          const selectionIndex = registeredClasses.value[
+            classIndex
+          ].selections!.findIndex((item) => item.id === selectionId)
+          console.log('SelectionIndex-----: ', selectionIndex)
           registeredClasses.value[classIndex].selections?.splice(
             selectionIndex,
             1
           )
-          console.log('Sel Length after del-----: ',registeredClasses.value[classIndex].selections!.length);
-          
+          console.log(
+            'Sel Length after del-----: ',
+            registeredClasses.value[classIndex].selections!.length
+          )
+
           resolve('Success')
         })
         onError((error) => {
@@ -330,7 +345,6 @@ export const useClasses = defineStore(
         })
       })
     }
-    
 
     return {
       registeredClasses,

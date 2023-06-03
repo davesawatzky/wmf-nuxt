@@ -29,7 +29,9 @@
       <div class="pt-4 col-span-12">
         <BaseButton
           v-if="
-            classIndex + 1 === classesStore.registeredClasses.length ? true : false
+            classIndex + 1 === classesStore.registeredClasses.length
+              ? true
+              : false
           "
           class="btn btn-blue mb-6"
           @click="addClass(registrationStore.registrationId)">

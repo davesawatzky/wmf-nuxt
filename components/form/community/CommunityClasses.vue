@@ -14,7 +14,6 @@
 </script>
 
 <template>
-  <!-- Community Class Information Page -->
   <div
     v-auto-animate
     class="pb-8">

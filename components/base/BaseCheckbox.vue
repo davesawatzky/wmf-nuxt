@@ -13,6 +13,7 @@
 </script>
 
 <template>
+  <div>
   <input
     type="checkbox"
     :checked="modelValue"
@@ -20,4 +21,5 @@
       $emit('update:modelValue', ($event.target as HTMLInputElement).checked)
     " />
   <label v-if="label">{{ label }}</label>
+  </div>
 </template>

@@ -14,18 +14,16 @@
   const FormSoloPerformer = <Component>resolveComponent('FormSoloPerformer')
   const FormSoloTeacher = <Component>resolveComponent('FormSoloTeacher')
   const FormSoloClasses = <Component>resolveComponent('FormSoloClasses')
-  const FormGroupPerformers = <Component>(
-    resolveComponent('FormGroupPerformers')
-  )
-  const FormGroupTeacher = <Component>(
-    resolveComponent('FormGroupTeacher')
-  )
+  const FormGroupPerformers = <Component>resolveComponent('FormGroupPerformers')
+  const FormGroupTeacher = <Component>resolveComponent('FormGroupTeacher')
   const FormGroupClasses = <Component>resolveComponent('FormGroupClasses')
   const FormSchoolInfo = <Component>resolveComponent('FormSchoolInfo')
   const FormSchoolTeacher = <Component>resolveComponent('FormSchoolTeacher')
   const FormSchoolClasses = <Component>resolveComponent('FormSchoolClasses')
   const FormCommunityInfo = <Component>resolveComponent('FormCommunityInfo')
-  const FormCommunityTeacher = <Component>resolveComponent('FormCommunityTeacher')
+  const FormCommunityTeacher = <Component>(
+    resolveComponent('FormCommunityTeacher')
+  )
   const FormCommunityClasses = <Component>(
     resolveComponent('FormCommunityClasses')
   )
@@ -43,7 +41,7 @@
 
   const performerType = toRef(appStore.performerType)
 
-interface DynamicComponent {
+  interface DynamicComponent {
     [key: string]: Component // eslint-disable-line
   }
 
@@ -54,8 +52,8 @@ interface DynamicComponent {
     case 'SOLO':
       currentTab.value = 'Performer'
       tabs = {
-        'Performer': FormSoloPerformer,
-        'Teacher': FormSoloTeacher,
+        Performer: FormSoloPerformer,
+        Teacher: FormSoloTeacher,
         'Solo Classes': FormSoloClasses,
         Summary,
       }
@@ -63,8 +61,8 @@ interface DynamicComponent {
     case 'GROUP':
       currentTab.value = 'Group'
       tabs = {
-        'Group': FormGroupPerformers,
-        'Teacher': FormGroupTeacher,
+        Group: FormGroupPerformers,
+        Teacher: FormGroupTeacher,
         'Group Classes': FormGroupClasses,
         Summary,
       }
@@ -72,8 +70,8 @@ interface DynamicComponent {
     case 'SCHOOL':
       currentTab.value = 'School'
       tabs = {
-        'School': FormSchoolInfo,
-        'Teacher': FormSchoolTeacher,
+        School: FormSchoolInfo,
+        Teacher: FormSchoolTeacher,
         'School Classes': FormSchoolClasses,
         Summary,
       }
@@ -81,8 +79,8 @@ interface DynamicComponent {
     case 'COMMUNITY':
       currentTab.value = 'Community'
       tabs = {
-        'Community': FormCommunityInfo,
-        'Teacher': FormCommunityTeacher,
+        Community: FormCommunityInfo,
+        Teacher: FormCommunityTeacher,
         'Community Classes': FormCommunityClasses,
         Summary,
       }

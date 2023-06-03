@@ -26,9 +26,8 @@
 
   defineEmits(['update:modelValue'])
 
-const nameRef = toRef(props, 'name')
-const errorMessage = ref('')
-  
+  const nameRef = toRef(props, 'name')
+  const errorMessage = ref('')
 
   // const {
   //   value: optionValue,
@@ -40,6 +39,7 @@ const errorMessage = ref('')
 </script>
 
 <template>
+  <div>
   <label>
     <h4>Selections</h4>
   </label>
@@ -62,6 +62,7 @@ const errorMessage = ref('')
   <BaseErrorMessage :name="props.name">
     {{ errorMessage }}
   </BaseErrorMessage>
+  </div>
 </template>
 
 <style scoped>

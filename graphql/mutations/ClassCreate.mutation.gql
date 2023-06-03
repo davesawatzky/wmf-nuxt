@@ -1,5 +1,11 @@
-mutation ClassCreate($registrationId: Int!, $registeredClass: RegisteredClassInput!) {
-  registeredClassCreate(registrationID: $registrationId, registeredClass: $registeredClass) {
+mutation ClassCreate(
+  $registrationId: Int!
+  $registeredClass: RegisteredClassInput!
+) {
+  registeredClassCreate(
+    registrationID: $registrationId
+    registeredClass: $registeredClass
+  ) {
     registeredClass {
       id
     }

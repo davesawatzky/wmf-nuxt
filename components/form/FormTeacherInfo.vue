@@ -1,5 +1,5 @@
-<script setup lang='ts'>
- import * as yup from 'yup'
+<script setup lang="ts">
+  import * as yup from 'yup'
   import 'yup-phone-lite'
 
   const props = defineProps({
@@ -27,9 +27,9 @@
 
   const emits = defineEmits(['update:modelValue'])
 
-const currentYear = new Date().getFullYear()
+  const currentYear = new Date().getFullYear()
 
-    /**
+  /**
    * Sets the model value from all the props.
    * Allows the 'BaseInput' components to set
    * the model value in props.
@@ -265,6 +265,4 @@ const currentYear = new Date().getFullYear()
   </form>
 </template>
 
-<style lang="css" scoped>
-
-</style>
+<style lang="css" scoped></style>

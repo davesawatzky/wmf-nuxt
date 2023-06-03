@@ -14,7 +14,6 @@
 </script>
 
 <template>
-  <!-- Solo Class Information Page -->
   <form>
     <div v-auto-animate>
       <h2 class="pt-8">Solo Class Information</h2>

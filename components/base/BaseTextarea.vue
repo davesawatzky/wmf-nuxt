@@ -34,6 +34,7 @@
 </script>
 
 <template>
+  <div>
   <label
     v-if="label"
     class=""
@@ -52,4 +53,5 @@
   <BaseErrorMessage v-if="errorMessage">
     {{ errorMessage }}
   </BaseErrorMessage>
+</div>
 </template>

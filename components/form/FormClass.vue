@@ -12,10 +12,9 @@
   import { usePerformers } from '@/stores/userPerformer'
   import type { FestivalClass, RegisteredClass } from '@/graphql/gql/graphql'
 
-
   const props = defineProps<{
-    modelValue: RegisteredClass,
-    classIndex: number,
+    modelValue: RegisteredClass
+    classIndex: number
     classId: number
   }>()
 
@@ -264,7 +263,7 @@
     const maxWorks = selectedClasses.value.maxSelections!
     const selectionOptions = []
     for (let i = minWorks; i <= maxWorks; i++) {
-      selectionOptions.push({ value: i, label: `${i.toString()} Selections`})
+      selectionOptions.push({ value: i, label: `${i.toString()} Selections` })
     }
     return selectionOptions
   })
@@ -275,11 +274,11 @@
   watch(
     () => selectedClasses.value.numberOfSelections,
     async (newNumber) => {
-      let oldNumber = 
+      let oldNumber =
         classesStore.registeredClasses[props.classIndex].selections!.length
-      console.log('NwNumber-----: ', newNumber);
-      console.log('OldNumber-----: ', oldNumber);
-      
+      console.log('NwNumber-----: ', newNumber)
+      console.log('OldNumber-----: ', oldNumber)
+
       if (oldNumber < newNumber) {
         while (oldNumber < newNumber!) {
           await classesStore
@@ -289,17 +288,23 @@
         }
       } else if (oldNumber > newNumber) {
         while (oldNumber > newNumber!) {
-          const selectionLength = classesStore.registeredClasses[props.classIndex].selections!.length
-          console.log('Selection Length-----: ',selectionLength)
+          const selectionLength =
+            classesStore.registeredClasses[props.classIndex].selections!.length
+          console.log('Selection Length-----: ', selectionLength)
 
-          const selectionId = classesStore.registeredClasses[props.classIndex].selections![selectionLength - 1].id
+          const selectionId =
+            classesStore.registeredClasses[props.classIndex].selections![
+              selectionLength - 1
+            ].id
           console.log('SelectionID-----: ', selectionId)
-          
-          await classesStore.deleteSelection(props.classId, selectionId).catch((error) => console.log(error))
+
+          await classesStore
+            .deleteSelection(props.classId, selectionId)
+            .catch((error) => console.log(error))
           oldNumber -= 1
         }
       }
-    },
+    }
   )
 
   watch(classSelection, (newClassSelection) => {
@@ -310,10 +315,10 @@
     selectedClasses.value.maxSelections = newClassSelection.maxSelections
     selectedClasses.value.numberOfSelections = newClassSelection.minSelections
   })
-
 </script>
 
 <template>
+  <div>
   <div
     v-auto-animate
     class="grid grid-cols-12 gap-x-3 gap-y-5 items-end">
@@ -348,11 +353,11 @@
         :options="categories"
         :disabled="!selectedClasses.level" />
     </div>
-    <div 
+    <div
       v-if="className"
       class="col-span-12 md:col-span-12">
       <p class="text-2xl text-center font-bold">
-        Class {{ selectedClasses.classNumber}} - {{ className }}
+        Class {{ selectedClasses.classNumber }} - {{ className }}
       </p>
     </div>
     <div
@@ -364,66 +369,64 @@
         :options="instruments"
         label="Instrument" />
     </div>
-    </div>
+  </div>
+  <div
+    v-if="(classSelection.trophies ?? []).length > 0"
+    v-auto-animate>
+    <h4>Trophy Eligibility</h4>
     <div
-      v-if="(classSelection.trophies ?? []).length > 0"
+      v-for="trophy in classSelection.trophies"
+      :key="trophy.id">
+      <h6>{{ trophy.name }}:</h6>
+      <p class="text-sm pb-2">
+        {{ trophy.description }}
+      </p>
+    </div>
+  </div>
+  <div
+    v-if="notes"
+    class="col-span-12">
+    <h4 class="pb-2">Notes</h4>
+    <div
+      v-if="chosenSubdiscipline.description"
       v-auto-animate>
-      <h4>Trophy Eligibility</h4>
-      <div
-        v-for="trophy in classSelection.trophies"
-        :key="trophy.id">
-        <h6>{{ trophy.name }}:</h6>
-        <p class="text-sm pb-2">
-          {{ trophy.description }}
-        </p>
-      </div>
+      <h5>Subdiscipline</h5>
+      <p class="text-sm pb-2">
+        {{ chosenSubdiscipline.description }}
+      </p>
     </div>
     <div
-      v-if="notes"
-      class="col-span-12">
-      <h4 class="pb-2">Notes</h4>
-      <div
-        v-if="chosenSubdiscipline.description"
-        v-auto-animate>
-        <h5>Subdiscipline</h5>
-        <p class="text-sm pb-2">
-          {{ chosenSubdiscipline.description }}
-        </p>
-      </div>
-      <div
-        v-if="chosenGradeLevel.description"
-        v-auto-animate>
-        <h5>Grade / Level</h5>
-        <p class="text-sm pb-2">
-          {{ chosenGradeLevel.description }}
-        </p>
-      </div>
-      <div
-        v-if="chosenCategory.description"
-        v-auto-animate>
-        <h5>Category</h5>
-        <p class="text-sm pb-2">
-          {{ chosenCategory.description }}
-        </p>
-      </div>
-      <div 
+      v-if="chosenGradeLevel.description"
+      v-auto-animate>
+      <h5>Grade / Level</h5>
+      <p class="text-sm pb-2">
+        {{ chosenGradeLevel.description }}
+      </p>
+    </div>
+    <div
+      v-if="chosenCategory.description"
+      v-auto-animate>
+      <h5>Category</h5>
+      <p class="text-sm pb-2">
+        {{ chosenCategory.description }}
+      </p>
+    </div>
+    <div
       v-if="classSelection.minSelections !== classSelection.maxSelections"
       class="col-span-3 md:col-span-2">
       <BaseRadioGroup
         v-model="selectedClasses.numberOfSelections"
         :name="`${selectedClasses.classNumber} Selections`"
         :vertical="true"
-        :options="numberOfAllowedWorks"
-        />
+        :options="numberOfAllowedWorks" />
     </div>
-      <FormWorksSelection
+    <FormWorksSelection
       v-for="(selection, selectionIndex) in selectedClasses.selections"
       :key="selection.id"
       v-model="selectedClasses.selections![selectionIndex]"
-      :selection-index="selectionIndex"
-    />
+      :selection-index="selectionIndex" />
   </div>
-
+  </div>
 </template>
 
 <style scoped></style>

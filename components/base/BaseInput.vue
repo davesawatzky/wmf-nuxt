@@ -51,6 +51,7 @@
 </script>
 
 <template>
+  <div>
   <div class="ml-2">
     <label
       v-if="label"
@@ -69,4 +70,5 @@
     :aria-invalid="errorMessage ? true : false"
     v-on="validationListeners" />
   <BaseErrorMessage> {{ errorMessage }}</BaseErrorMessage>
+  </div>
 </template>

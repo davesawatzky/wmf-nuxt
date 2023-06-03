@@ -2,7 +2,6 @@
   import { usePerformers } from '@/stores/userPerformer'
 
   const performerStore = usePerformers()
-
 </script>
 
 <template>
