@@ -54,7 +54,8 @@
         </select>
         <FormClass
           v-model="classesStore.registeredClasses[classIndex]"
-          :class-index="classIndex" />
+          :class-index="classIndex"
+          :class-id="selectedClass.id" />
       </div>
       <div class="pt-4">
         <BaseButton

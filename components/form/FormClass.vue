@@ -1,4 +1,4 @@
-<script lang="ts" setup>
+<script setup lang="ts" generic="T">
   import {
     CategoriesDocument,
     DisciplinesByTypeDocument,
@@ -10,17 +10,14 @@
   import { useClasses } from '@/stores/userClasses'
   import { useAppStore } from '@/stores/appStore'
   import { usePerformers } from '@/stores/userPerformer'
+  import type { FestivalClass, RegisteredClass } from '@/graphql/gql/graphql'
 
-  const props = defineProps({
-    modelValue: {
-      type: Object,
-      default: () => ({}),
-    },
-    classIndex: {
-      type: Number,
-      default: 0,
-    },
-  })
+
+  const props = defineProps<{
+    modelValue: RegisteredClass,
+    classIndex: number,
+    classId: number
+  }>()
 
   const emits = defineEmits(['update:modelValue'])
   const instrumentRequired = ref(false)
@@ -38,14 +35,6 @@
   instrumentsError((error) => {
     console.log(error)
   })
-
-  watch(
-    () => selectedClasses.value.classNumber,
-    (classNumber: string) => {
-      instrumentRequired.value =
-        classesStore.MOZART_CLASSES.includes(classNumber)
-    }
-  )
 
   /**
    * Disciplines
@@ -75,7 +64,6 @@
   const {
     result: subdisc,
     load: loadSubdisciplines,
-    refetch: refetchSubdisciplines,
     onError: errorSubdisciplines,
   } = useLazyQuery(
     SubdisciplinesByTypeDocument,
@@ -106,7 +94,6 @@
   const {
     result: gradeLevels,
     load: loadLevels,
-    refetch: refetchLevels,
     onError: errorLevel,
   } = useLazyQuery(
     LevelsDocument,
@@ -134,7 +121,6 @@
   const {
     result: cat,
     load: loadCategories,
-    refetch: refetchCategories,
     onError: errorCategories,
   } = useLazyQuery(
     CategoriesDocument,
@@ -181,7 +167,6 @@
   const {
     result: classSearch,
     load: loadClassNumber,
-    refetch: refetchClassNumber,
     onError: errorClass,
   } = useLazyQuery(
     FestivalClassSearchDocument,
@@ -195,7 +180,7 @@
     { fetchPolicy: 'network-only' }
   )
   errorClass((error) => console.log(error))
-  const classSelection = computed({
+  const classSelection = computed<FestivalClass>({
     get: () => {
       if (
         chosenSubdiscipline.value.id &&
@@ -210,36 +195,24 @@
     set: (newValue) => newValue,
   })
 
+  // watch(
+  //   () => selectedClasses.value.classNumber,
+  //   (classNumber: string) => {
+  //     instrumentRequired.value =
+  //       classesStore.MOZART_CLASSES.includes(newClassNumber)
+  //   }
+  // )
+
   const notes = computed(() => {
     if (
       chosenSubdiscipline.value.description ||
       chosenGradeLevel.value.description ||
       chosenCategory.value.description ||
       (classSelection.value.trophies ?? []).length > 0
-    )
+    ) {
       return true
-    return false
-  })
-
-  /**
-   * Number of Allowed Works
-   */
-  const minWorks = computed(() => {
-    return classSearch.value?.festivalClassSearch[0].minSelection ?? null
-  })
-  const maxWorks = computed(() => {
-    return classSearch.value?.festivalClassSearch[0].maxSelection ?? null
-  })
-  const numberOfAllowedWorks = computed(() => {
-    if (minWorks.value === maxWorks.value) {
-      return [{ id: minWorks.value, name: minWorks.value }]
-    } else {
-      const selectionOptions = []
-      for (let i = minWorks.value; i <= maxWorks.value; i++)
-        selectionOptions.push({ id: i, name: i })
-
-      return selectionOptions
     }
+    return false
   })
 
   watch(
@@ -276,11 +249,7 @@
   watch(
     () => selectedClasses.value.category,
     () => {
-      selectedClasses.value.numberOfSelections = null
-      selectedClasses.value.className = null
-      selectedClasses.value.number = null
-      className.value = ''
-      classSelection.value = null
+      selectedClasses.value.classNumber = null
       if (selectedClasses.value.category !== null) {
         loadClassNumber()
       }
@@ -288,37 +257,60 @@
   )
 
   /**
+   * Number of Allowed Works
+   */
+  const numberOfAllowedWorks = computed(() => {
+    const minWorks = selectedClasses.value.minSelections!
+    const maxWorks = selectedClasses.value.maxSelections!
+    const selectionOptions = []
+    for (let i = minWorks; i <= maxWorks; i++) {
+      selectionOptions.push({ value: i, label: `${i.toString()} Selections`})
+    }
+    return selectionOptions
+  })
+
+  /**
    * Updating number of selections
    */
-  // watch(
-  //   () => selectedClasses.value.numberOfSelections,
-  //   async (newNumber) => {
-  //     let oldNumber =
-  //       classesStore.registeredClasses[props.classIndex].selections!.length
-  //     switch (oldNumber < newNumber) {
-  //       case true:
-  //         while (oldNumber < newNumber) {
-  //           await classesStore
-  //             .createSelection(props.classIndex)
-  //             .catch((error) => console.log(`There was an error!${error}`))
-  //           oldNumber += 1
-  //         }
-  //         break
-  //       case false:
-  //         while (oldNumber > newNumber) {
-  //           await classesStore.deleteSelection(props.classIndex, oldNumber - 1)
-  //           oldNumber -= 1
-  //         }
-  //         break
-  //     }
-  //     await classesStore.updateClass(props.classIndex)
-  //   }
-  // )
+  watch(
+    () => selectedClasses.value.numberOfSelections,
+    async (newNumber) => {
+      let oldNumber = 
+        classesStore.registeredClasses[props.classIndex].selections!.length
+      console.log('NwNumber-----: ', newNumber);
+      console.log('OldNumber-----: ', oldNumber);
+      
+      if (oldNumber < newNumber) {
+        while (oldNumber < newNumber!) {
+          await classesStore
+            .createSelection(props.classId)
+            .catch((error) => console.log(error))
+          oldNumber += 1
+        }
+      } else if (oldNumber > newNumber) {
+        while (oldNumber > newNumber!) {
+          const selectionLength = classesStore.registeredClasses[props.classIndex].selections!.length
+          console.log('Selection Length-----: ',selectionLength)
+
+          const selectionId = classesStore.registeredClasses[props.classIndex].selections![selectionLength - 1].id
+          console.log('SelectionID-----: ', selectionId)
+          
+          await classesStore.deleteSelection(props.classId, selectionId).catch((error) => console.log(error))
+          oldNumber -= 1
+        }
+      }
+    },
+  )
 
   watch(classSelection, (newClassSelection) => {
     classesStore.registeredClasses[props.classIndex].price =
       newClassSelection.price
+    selectedClasses.value.classNumber = newClassSelection.classNumber
+    selectedClasses.value.minSelections = newClassSelection.minSelections
+    selectedClasses.value.maxSelections = newClassSelection.maxSelections
+    selectedClasses.value.numberOfSelections = newClassSelection.minSelections
   })
+
 </script>
 
 <template>
@@ -356,34 +348,12 @@
         :options="categories"
         :disabled="!selectedClasses.level" />
     </div>
-    <div class="col-span-6 md:col-span-2">
-      <BaseSelect
-        v-model.number="selectedClasses.numberOfSelections"
-        :class="selectedClasses.category ? '' : 'off'"
-        label="Selections"
-        :options="numberOfAllowedWorks"
-        :disabled="!selectedClasses.category" />
-    </div>
-    <div class="col-span-6 md:col-span-2">
-      <label for="classNumber">Class Number</label>
-      <input
-        id="classNumber"
-        class="off"
-        :value="(selectedClasses.classNumber = classSelection.classNumber)"
-        label="Class Number"
-        type="text"
-        disabled
-        aria-disabled="true" />
-    </div>
-    <div class="col-span-12 md:col-span-8">
-      <label for="className">Class Name</label>
-      <input
-        id="className"
-        class="off"
-        :value="(selectedClasses.className = className)"
-        label="Class Name"
-        type="text"
-        disabled />
+    <div 
+      v-if="className"
+      class="col-span-12 md:col-span-12">
+      <p class="text-2xl text-center font-bold">
+        Class {{ selectedClasses.classNumber}} - {{ className }}
+      </p>
     </div>
     <div
       v-if="instrumentRequired"
@@ -394,6 +364,20 @@
         :options="instruments"
         label="Instrument" />
     </div>
+    </div>
+    <div
+      v-if="(classSelection.trophies ?? []).length > 0"
+      v-auto-animate>
+      <h4>Trophy Eligibility</h4>
+      <div
+        v-for="trophy in classSelection.trophies"
+        :key="trophy.id">
+        <h6>{{ trophy.name }}:</h6>
+        <p class="text-sm pb-2">
+          {{ trophy.description }}
+        </p>
+      </div>
+    </div>
     <div
       v-if="notes"
       class="col-span-12">
@@ -401,7 +385,7 @@
       <div
         v-if="chosenSubdiscipline.description"
         v-auto-animate>
-        <div class="font-bold">Subdiscipline</div>
+        <h5>Subdiscipline</h5>
         <p class="text-sm pb-2">
           {{ chosenSubdiscipline.description }}
         </p>
@@ -409,7 +393,7 @@
       <div
         v-if="chosenGradeLevel.description"
         v-auto-animate>
-        <div class="font-bold">Grade / Level</div>
+        <h5>Grade / Level</h5>
         <p class="text-sm pb-2">
           {{ chosenGradeLevel.description }}
         </p>
@@ -417,42 +401,29 @@
       <div
         v-if="chosenCategory.description"
         v-auto-animate>
-        <div class="font-bold">Category</div>
+        <h5>Category</h5>
         <p class="text-sm pb-2">
           {{ chosenCategory.description }}
         </p>
       </div>
-      <div
-        v-if="(classSelection.trophies ?? []).length > 0"
-        v-auto-animate>
-        <div class="font-bold">Trophy Eligibility</div>
-        <div
-          v-for="trophy in classSelection.trophies"
-          :key="trophy.id">
-          <div class="font-semibold text-sm">{{ trophy.name }}:</div>
-          <p class="text-sm pb-2">
-            {{ trophy.description }}
-          </p>
-        </div>
-      </div>
+      <div 
+      v-if="classSelection.minSelections !== classSelection.maxSelections"
+      class="col-span-3 md:col-span-2">
+      <BaseRadioGroup
+        v-model="selectedClasses.numberOfSelections"
+        :name="`${selectedClasses.classNumber} Selections`"
+        :vertical="true"
+        :options="numberOfAllowedWorks"
+        />
     </div>
-    <div
-      v-if="selectedClasses.category"
-      v-auto-animate
-      class="col-span-12">
-      <div v-if="!selectedClasses.numberOfSelections">
-        <h4>Please choose the number of selections above.</h4>
-      </div>
-      <div v-else>
-        <FormWorksSelection
-          v-for="(selection, selectionIndex) in selectedClasses.selections"
-          :key="selectionIndex"
-          v-model="selectedClasses.selections[selectionIndex]"
-          v-auto-animate
-          :work-number="selectionIndex" />
-      </div>
-    </div>
+      <FormWorksSelection
+      v-for="(selection, selectionIndex) in selectedClasses.selections"
+      :key="selection.id"
+      v-model="selectedClasses.selections![selectionIndex]"
+      :selection-index="selectionIndex"
+    />
   </div>
+
 </template>
 
 <style scoped></style>

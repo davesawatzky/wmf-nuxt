@@ -17,18 +17,19 @@
   <div v-auto-animate>
     <h2 class="pt-8">Group Class Information</h2>
     <div
-      v-for="(selectedClass, index) in classesStore.registeredClasses"
+      v-for="(selectedClass, classIndex) in classesStore.registeredClasses"
       :key="selectedClass.id">
       <div class="py-4">
-        <h3 class="pb-4">Class {{ index + 1 }}</h3>
+        <h3 class="pb-4">Class {{ classIndex + 1 }}</h3>
         <FormClass
-          v-model="classesStore.registeredClasses[index]"
-          :class-index="index" />
+          v-model="classesStore.registeredClasses[classIndex]"
+          :class-index="classIndex"
+          :class-id="selectedClass.id" />
       </div>
       <div class="pt-4 col-span-12">
         <BaseButton
           v-if="
-            index + 1 === classesStore.registeredClasses.length ? true : false
+            classIndex + 1 === classesStore.registeredClasses.length ? true : false
           "
           class="btn btn-blue mb-6"
           @click="addClass(registrationStore.registrationId)">

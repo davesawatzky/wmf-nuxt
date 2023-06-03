@@ -32,6 +32,7 @@ export default defineNuxtConfig({
   },
   eslint: {
     lintOnStart: false,
+    emitWarning: false,
   },
   experimental: {
     typedPages: true,

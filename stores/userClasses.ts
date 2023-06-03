@@ -95,7 +95,7 @@ export const useClasses = defineStore(
           onDone,
           onError,
         } = useMutation(ClassCreateDocument, { fetchPolicy: 'no-cache' })
-        classCreate({ registrationId }).catch((error) => console.log(error))
+        classCreate({ registrationId, registeredClass: { minSelections: 1, maxSelections: 1, numberOfSelections: 1, price: 0.00 }}).catch((error) => console.log(error))
         onDone((result) => {
           const regClass: RegisteredClass =
             result.data.registeredClassCreate.registeredClass
@@ -147,41 +147,6 @@ export const useClasses = defineStore(
         }
       })
     }
-
-    // function checkNumberOfSelections() {
-    //   let classIndex = 0
-    //   if (registeredClasses.value.selections.length > 0)
-    //     for (const item of registeredClasses.value) {
-    //       if (
-    //         item.selections.length === 0 ||
-    //         item.selections.length !== item.numberOfSelections
-    //       ) {
-    //         if (item.selections.length === 0) {
-    //           for (let i = 0; i < item.numberOfSelections; i++) {
-    //             createSelection(classIndex).catch((error) => console.log(error))
-    //           }
-    //         } else if (
-    //           item.selections!.length > 0 &&
-    //           item.selections!.length < item.numberOfSelections
-    //         ) {
-    //           for (let i = 1; i < 2; i++) {
-    //             createSelection(classIndex).catch((error) => console.log(error))
-    //           }
-    //         } else if (item.selections!.length > item.numberOfSelections) {
-    //           for (
-    //             let i = item.selections!.length;
-    //             i > item.numberOfSelections;
-    //             i--
-    //           ) {
-    //             deleteSelection(classIndex, i).catch((error) =>
-    //               console.log(error)
-    //             )
-    //           }
-    //         }
-    //       }
-    //       classIndex++
-    //     }
-    // }
 
     /**
      * Writes Registered Class field info for the specified class
@@ -333,10 +298,10 @@ export const useClasses = defineStore(
     }
 
     /**
-     * Deletes a selection from a specified Registered Class.
-     *
-     * @param classIndex Array index of Registered Class
-     * @param selectionIndex Array index of Selection
+     * Deletes a selection from a Registered Class.
+     * 
+     * @param classId ID of Registered Class
+     * @param selectionId ID of Selection item
      * @returns
      */
     function deleteSelection(classId: number, selectionId: number) {
@@ -348,16 +313,16 @@ export const useClasses = defineStore(
         } = useMutation(SelectionDeleteDocument)
         selectionDelete({ selectionId }).catch((error) => console.log(error))
         onDone(() => {
-          const classIndex = registeredClasses.value.findIndex(
-            (item) => item.id === classId
-          )
-          const selectionIndex = registeredClasses.value[
-            classIndex
-          ].selections!.findIndex((item) => item.id === selectionId)
+          const classIndex = registeredClasses.value.findIndex((item) => item.id === classId)
+          console.log('ClassIndex-----: ', classIndex);
+          const selectionIndex = registeredClasses.value[classIndex].selections!.findIndex((item) => item.id === selectionId)
+          console.log('SelectionIndex-----: ', selectionIndex);
           registeredClasses.value[classIndex].selections?.splice(
             selectionIndex,
             1
           )
+          console.log('Sel Length after del-----: ',registeredClasses.value[classIndex].selections!.length);
+          
           resolve('Success')
         })
         onError((error) => {
@@ -365,6 +330,7 @@ export const useClasses = defineStore(
         })
       })
     }
+    
 
     return {
       registeredClasses,

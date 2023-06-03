@@ -6,7 +6,7 @@
       type: Object,
       default: () => ({}),
     },
-    workNumber: {
+    selectionIndex: {
       type: Number,
       default: 0,
     },
@@ -43,7 +43,7 @@
 
 <template>
   <div>
-    <h3 class="pt-6">Selection {{ workNumber + 1 }}</h3>
+    <h3 class="pt-6">Selection {{ selectionIndex + 1 }}</h3>
     <div class="grid grid-cols-12 gap-x-3 gap-y-1 pt-4 items-end">
       <div class="col-span-12 sm:col-span-7">
         <BaseInput

@@ -25,7 +25,8 @@
           <h3 class="pb-4">Class {{ classIndex + 1 }}</h3>
           <FormClass
             v-model="classesStore.registeredClasses[classIndex]"
-            :class-index="classIndex" />
+            :class-index="classIndex"
+            :class-id="selectedClass.id" />
         </div>
         <div class="pt-4">
           <BaseButton

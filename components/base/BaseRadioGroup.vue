@@ -26,34 +26,40 @@
 
   defineEmits(['update:modelValue'])
 
-  const nameRef = toRef(props, 'name')
+const nameRef = toRef(props, 'name')
+const errorMessage = ref('')
+  
 
-  const {
-    value: optionValue,
-    errorMessage,
-    handleChange,
-  } = useField(nameRef, undefined, {
-    initialValue: props.modelValue,
-  })
+  // const {
+  //   value: optionValue,
+  //   errorMessage,
+  //   handleChange,
+  // } = useField(nameRef, undefined, {
+  //   initialValue: props.modelValue,
+  // })
 </script>
 
 <template>
+  <label>
+    <h4>Selections</h4>
+  </label>
   <component
     :is="vertical ? 'div' : 'span'"
-    v-for="option in options"
+    v-for="(option, optionIndex) in options"
     :key="option.value"
     :class="{
       horizontal: !vertical,
     }">
     <BaseRadio
       :label="option.label"
+      :checked="optionIndex === 0 ? true : false"
       :description="option.description"
       :value="option.value"
-      :model-value="optionValue"
-      :name="nameRef"
-      @change="handleChange" />
+      :model-value="option.value"
+      :name="props.name"
+      @change="$emit('update:modelValue', option.value)" />
   </component>
-  <BaseErrorMessage :name="name">
+  <BaseErrorMessage :name="props.name">
     {{ errorMessage }}
   </BaseErrorMessage>
 </template>

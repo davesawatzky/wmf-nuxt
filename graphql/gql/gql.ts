@@ -13,7 +13,7 @@ import type { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-
  * Therefore it is highly recommended to use the babel or swc plugin for production.
  */
 const documents = {
-    "mutation ClassCreate($registrationId: Int!) {\n  registeredClassCreate(registrationID: $registrationId) {\n    registeredClass {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.ClassCreateDocument,
+    "mutation ClassCreate($registrationId: Int!, $registeredClass: RegisteredClassInput!) {\n  registeredClassCreate(\n    registrationID: $registrationId\n    registeredClass: $registeredClass\n  ) {\n    registeredClass {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.ClassCreateDocument,
     "mutation ClassDelete($registeredClassId: Int!) {\n  registeredClassDelete(registeredClassID: $registeredClassId) {\n    registeredClass {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.ClassDeleteDocument,
     "mutation ClassUpdate($registeredClassId: Int!, $registeredClass: RegisteredClassInput!) {\n  registeredClassUpdate(\n    registeredClassID: $registeredClassId\n    registeredClassInput: $registeredClass\n  ) {\n    registeredClass {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.ClassUpdateDocument,
     "mutation CommunityCreate($registrationId: Int!) {\n  communityCreate(registrationID: $registrationId) {\n    community {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.CommunityCreateDocument,
@@ -79,7 +79,7 @@ export function graphql(source: string): unknown;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "mutation ClassCreate($registrationId: Int!) {\n  registeredClassCreate(registrationID: $registrationId) {\n    registeredClass {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}"): (typeof documents)["mutation ClassCreate($registrationId: Int!) {\n  registeredClassCreate(registrationID: $registrationId) {\n    registeredClass {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}"];
+export function graphql(source: "mutation ClassCreate($registrationId: Int!, $registeredClass: RegisteredClassInput!) {\n  registeredClassCreate(\n    registrationID: $registrationId\n    registeredClass: $registeredClass\n  ) {\n    registeredClass {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}"): (typeof documents)["mutation ClassCreate($registrationId: Int!, $registeredClass: RegisteredClassInput!) {\n  registeredClassCreate(\n    registrationID: $registrationId\n    registeredClass: $registeredClass\n  ) {\n    registeredClass {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

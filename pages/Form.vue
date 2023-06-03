@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/multi-word-component-names -->
 <script setup lang="ts">
   // import { Component, ref } from 'vue'
   import { useAppStore } from '@/stores/appStore'
@@ -12,15 +11,21 @@
   import { useTeacher } from '@/stores/userTeacher'
   import { PerformerType } from '~/graphql/gql/graphql'
 
-  const FormSoloContactInfo = <Component>resolveComponent('FormSoloContactInfo')
+  const FormSoloPerformer = <Component>resolveComponent('FormSoloPerformer')
+  const FormSoloTeacher = <Component>resolveComponent('FormSoloTeacher')
   const FormSoloClasses = <Component>resolveComponent('FormSoloClasses')
-  const FormGroupContactInfo = <Component>(
-    resolveComponent('FormGroupContactInfo')
+  const FormGroupPerformers = <Component>(
+    resolveComponent('FormGroupPerformers')
+  )
+  const FormGroupTeacher = <Component>(
+    resolveComponent('FormGroupTeacher')
   )
   const FormGroupClasses = <Component>resolveComponent('FormGroupClasses')
   const FormSchoolInfo = <Component>resolveComponent('FormSchoolInfo')
+  const FormSchoolTeacher = <Component>resolveComponent('FormSchoolTeacher')
   const FormSchoolClasses = <Component>resolveComponent('FormSchoolClasses')
   const FormCommunityInfo = <Component>resolveComponent('FormCommunityInfo')
+  const FormCommunityTeacher = <Component>resolveComponent('FormCommunityTeacher')
   const FormCommunityClasses = <Component>(
     resolveComponent('FormCommunityClasses')
   )
@@ -38,8 +43,8 @@
 
   const performerType = toRef(appStore.performerType)
 
-  interface DynamicComponent {
-    [key: string]: Component
+interface DynamicComponent {
+    [key: string]: Component // eslint-disable-line
   }
 
   const currentTab = ref('')
@@ -47,33 +52,37 @@
 
   switch (performerType.value) {
     case 'SOLO':
-      currentTab.value = 'Contact Info'
+      currentTab.value = 'Performer'
       tabs = {
-        'Contact Info': FormSoloContactInfo,
+        'Performer': FormSoloPerformer,
+        'Teacher': FormSoloTeacher,
         'Solo Classes': FormSoloClasses,
         Summary,
       }
       break
     case 'GROUP':
-      currentTab.value = 'Contact Info'
+      currentTab.value = 'Group'
       tabs = {
-        'Contact Info': FormGroupContactInfo,
+        'Group': FormGroupPerformers,
+        'Teacher': FormGroupTeacher,
         'Group Classes': FormGroupClasses,
         Summary,
       }
       break
     case 'SCHOOL':
-      currentTab.value = 'School Info'
+      currentTab.value = 'School'
       tabs = {
-        'School Info': FormSchoolInfo,
+        'School': FormSchoolInfo,
+        'Teacher': FormSchoolTeacher,
         'School Classes': FormSchoolClasses,
         Summary,
       }
       break
     case 'COMMUNITY':
-      currentTab.value = 'Community Info'
+      currentTab.value = 'Community'
       tabs = {
-        'Community Info': FormCommunityInfo,
+        'Community': FormCommunityInfo,
+        'Teacher': FormCommunityTeacher,
         'Community Classes': FormCommunityClasses,
         Summary,
       }
