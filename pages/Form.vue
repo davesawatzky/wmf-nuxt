@@ -42,8 +42,12 @@
   const performerType = toRef(appStore.performerType)
 
   interface DynamicComponent {
-    [key: string]: Component // eslint-disable-line
+    [key: string]: Component
   }
+
+  definePageMeta({
+    middleware: 'auth',
+  })
 
   const currentTab = ref('')
   let tabs = {} as DynamicComponent
@@ -94,8 +98,6 @@
         appStore.dataLoading = true
         await registrationStore.updateRegistration()
         await performerStore.updatePerformer(performerStore.performers[0].id!)
-        await teacherStore.updateTeacher()
-        await classesStore.updateAllClasses()
         appStore.dataLoading = false
         break
       case 'GROUP':
@@ -103,9 +105,7 @@
         appStore.dataLoading = true
         await registrationStore.updateRegistration()
         await groupStore.updateGroup()
-        await teacherStore.updateTeacher()
         await performerStore.updateAllPerformers()
-        await classesStore.updateAllClasses()
         appStore.dataLoading = false
         break
       case 'SCHOOL':
@@ -114,8 +114,6 @@
         await registrationStore.updateRegistration()
         await schoolStore.updateSchool()
         await schoolGroupStore.updateAllSchoolGroups()
-        await teacherStore.updateTeacher()
-        await classesStore.updateAllClasses()
         appStore.dataLoading = false
         break
       case 'COMMUNITY':
@@ -123,11 +121,13 @@
         appStore.dataLoading = true
         await registrationStore.updateRegistration()
         await communityStore.updateCommunity()
-        await teacherStore.updateTeacher()
-        await classesStore.updateAllClasses()
         appStore.dataLoading = false
         break
     }
+    appStore.dataLoading = true
+    await teacherStore.updateTeacher()
+    await classesStore.updateAllClasses()
+    appStore.dataLoading = false
   }
 </script>
 
@@ -135,7 +135,7 @@
   <div>
     <BaseInput
       v-model.string="registrationStore.registration.label"
-      class="text-3xl mb-6 h-12 p-6"
+      class="text-3xl"
       label="Registration Label"
       name="registrationLabel"
       :disabled="registrationStore.registration.confirmation"

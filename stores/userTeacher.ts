@@ -82,7 +82,7 @@ export const useTeacher = defineStore(
       return new Promise((resolve, reject) => {
         const {
           result: resultTeachers,
-          load: loadTeachers,
+          load,
           onError,
           onResult,
         } = useLazyQuery(
@@ -90,17 +90,18 @@ export const useTeacher = defineStore(
           { registrationId },
           { fetchPolicy: 'network-only' }
         )
+        load()
         onResult((result) => {
+          // if ( result.data.registration.teacher !== null ) {
           addToStore(<Teacher>result.data.registration.teacher)
+          // } else {
+          //   createTeacher(registrationId).catch((error) => console.log(error))
+          // }
           resolve('Success')
         })
         onError((error) => {
           reject(console.log(error))
         })
-        return {
-          resultTeachers,
-          loadTeachers,
-        }
       })
     }
 

@@ -1,3 +1,4 @@
+import { log } from 'console'
 import { defineStore } from 'pinia'
 import {
   PerformerCreateDocument,
@@ -92,7 +93,7 @@ export const usePerformers = defineStore(
       return new Promise((resolve, reject) => {
         const {
           result: resultPerformers,
-          load: loadPerformer,
+          load,
           onResult,
           onError,
         } = useLazyQuery(
@@ -100,6 +101,7 @@ export const usePerformers = defineStore(
           { registrationId },
           { fetchPolicy: 'no-cache' }
         )
+        load()
         onResult((result) => {
           const performers: Performer[] = result.data.registration.performers
           for (let i = 0; i < performers.length; i++) {
@@ -110,10 +112,6 @@ export const usePerformers = defineStore(
         onError((error) => {
           reject(console.log(error))
         })
-        return {
-          resultPerformers,
-          loadPerformer,
-        }
       })
     }
 
@@ -122,7 +120,10 @@ export const usePerformers = defineStore(
      * @param performerId ID of performer to update
      * @returns
      */
-    function updatePerformer(performerId: number): Promise<unknown> {
+    function updatePerformer(
+      performerId: number,
+      field?: string
+    ): Promise<unknown> {
       return new Promise((resolve, reject) => {
         const {
           mutate: performerUpdate,
@@ -131,12 +132,26 @@ export const usePerformers = defineStore(
         } = useMutation(PerformerUpdateDocument, {
           fetchPolicy: 'no-cache',
         })
-        const person = performers.value.find((item) => item.id === performerId)
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const person = performers.value.find((item) => {
+          return item.id === performerId
+        })
         const { id, __typename, ...personProps } = person
+        let performerField = null
+        if (field && Object.keys(personProps).includes(field)) {
+          performerField = Object.fromEntries(
+            Array(Object.entries(personProps).find((item) => item[0] === field))
+          )
+        }
+        console.log('Field-----: ', field)
+        console.log(
+          'ObjectKeys-----: ',
+          Object.keys(personProps).includes(field!)
+        )
+        console.log('PerformerField-----: ', performerField)
+
         performerUpdate({
           performerId,
-          performer: <PerformerInput>personProps,
+          performer: <PerformerInput>(performerField || personProps),
         }).catch((error) => console.log(error))
         onDone(() => {
           resolve('Success')

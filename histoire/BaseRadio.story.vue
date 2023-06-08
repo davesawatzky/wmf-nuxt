@@ -1,9 +1,9 @@
 <script setup lang="ts">
-  import BaseRadio from '../BaseRadio.vue'
+  import BaseRadio from '../components/base/BaseRadio.vue'
 </script>
 
 <template>
   <Story title="Component/BaseRadio">
-    <BaseRadio />
+    <BaseRadio value="1" />
   </Story>
 </template>

@@ -2,32 +2,16 @@
   import * as yup from 'yup'
   import 'yup-phone-lite'
 
-  const props = defineProps({
-    modelValue: {
-      type: Object,
-      required: true,
-    },
-    teacher: {
-      type: Boolean,
-      required: false,
-    },
-    schoolteacher: {
-      type: Boolean,
-      required: false,
-    },
-    school: {
-      type: Boolean,
-      required: false,
-    },
-    groupperformer: {
-      type: Boolean,
-      required: false,
-    },
-  })
+  const props = defineProps<{
+    modelValue: object
+    teacher?: boolean
+    schoolteacher?: boolean
+    school?: boolean
+    groupperformer?: boolean
+    status?: object
+  }>()
 
   const emits = defineEmits(['update:modelValue'])
-
-  const currentYear = new Date().getFullYear()
 
   /**
    * Sets the model value from all the props.
@@ -87,6 +71,8 @@
   useForm({
     validationSchema,
   })
+
+  const currentYear = new Date().getFullYear()
 </script>
 
 <template>
@@ -96,7 +82,8 @@
         v-if="!school"
         class="col-span-12 sm:col-span-5">
         <BaseInput
-          v-model="contact.firstName"
+          v-model.trim="contact.firstName"
+          :status="props.status?.firstName"
           required
           name="firstName"
           type="text"
@@ -106,7 +93,8 @@
         v-if="!school && !schoolteacher && !teacher"
         class="col-span-12 sm:col-span-4">
         <BaseInput
-          v-model="contact.lastName"
+          v-model.trim="contact.lastName"
+          :status="props.status?.lastName"
           required
           name="lastName"
           type="text"
@@ -116,7 +104,8 @@
         v-else-if="!school"
         class="col-span-12 sm:col-span-7">
         <BaseInput
-          v-model="contact.lastName"
+          v-model.trim="contact.lastName"
+          :status="props.status?.lastName"
           required
           name="lastName"
           type="text"
@@ -127,10 +116,12 @@
         class="col-span-12 sm:col-span-3">
         <BaseInput
           v-model.number="contact.age"
+          :status="props.status?.age"
           required
           name="age"
           type="number"
-          :label="`Age on Dec. 31, ${currentYear}`" />
+          label="Age"
+          :help-message="`Age as of December 31, ${currentYear}`" />
       </div>
       <!-- <div v-else class="col-span-12 sm:col-span-3"></div> -->
 
@@ -138,7 +129,8 @@
         v-if="!schoolteacher && !school"
         class="col-span-6 sm:col-span-3">
         <BaseInput
-          v-model="contact.apartment"
+          v-model.trim="contact.apartment"
+          :status="props.status?.apartment"
           name="apartment"
           type="text"
           label="Apt." />
@@ -147,28 +139,31 @@
         v-else-if="school && !schoolteacher"
         class="col-span-12 sm:col-span-4 mt-6 sm:mt-0">
         <BaseInput
-          v-model="contact.streetNumber"
+          v-model.trim="contact.streetNumber"
+          :status="props.status?.streetNumber"
           required
           name="streetNumber"
           type="text"
-          label="Street Number" />
+          label="Street #" />
       </div>
       <div
         v-if="!schoolteacher && !school"
         class="col-span-6 sm:col-span-3">
         <BaseInput
-          v-model="contact.streetNumber"
+          v-model.trim="contact.streetNumber"
+          :status="props.status?.streetNumber"
           required
           name="streetNumber"
           type="text"
-          label="Street Number" />
+          label="Street #" />
       </div>
 
       <div
         v-if="school && !schoolteacher"
         class="col-span-12 sm:col-span-8">
         <BaseInput
-          v-model="contact.streetName"
+          v-model.trim="contact.streetName"
+          :status="props.status?.streetName"
           requried
           name="streetName"
           type="text"
@@ -178,7 +173,8 @@
         v-if="!school && !schoolteacher"
         class="col-span-12 sm:col-span-6">
         <BaseInput
-          v-model="contact.streetName"
+          v-model.trim="contact.streetName"
+          :status="props.status?.streetName"
           required
           name="streetName"
           type="text"
@@ -188,7 +184,8 @@
         v-if="!schoolteacher"
         class="col-span-8 sm:col-span-7">
         <BaseInput
-          v-model="contact.city"
+          v-model.trim="contact.city"
+          :status="props.status?.city"
           required
           name="city"
           type="text"
@@ -198,7 +195,8 @@
         v-if="!schoolteacher"
         class="col-span-4 sm:col-span-2 self-start">
         <BaseSelect
-          v-model="contact.province"
+          v-model.trim="contact.province"
+          :status="props.status?.province"
           required
           name="province"
           label="Province"
@@ -208,7 +206,8 @@
         v-if="!schoolteacher"
         class="col-span-12 sm:col-span-3">
         <BaseInput
-          v-model="contact.postalCode"
+          v-model.trim="contact.postalCode"
+          :status="props.status?.postalCode"
           required
           name="postalCode"
           type="text"
@@ -216,7 +215,8 @@
       </div>
       <div class="col-span-12 sm:col-span-5">
         <BaseInput
-          v-model="contact.phone"
+          v-model.trim="contact.phone"
+          :status="props.status?.phone"
           required
           name="phone"
           type="tel"
@@ -226,7 +226,8 @@
         v-if="!school"
         class="col-span-12 sm:col-span-7">
         <BaseInput
-          v-model="contact.email"
+          v-model.trim="contact.email"
+          :status="props.status?.email"
           required
           name="email"
           type="email"
@@ -236,7 +237,8 @@
         v-if="groupperformer"
         class="col-span-12 sm:col-span-6">
         <BaseInput
-          v-model="contact.instrument"
+          v-model.trim="contact.instrument"
+          :status="props.status?.instrument"
           required
           name="instrument"
           type="text"
@@ -246,7 +248,8 @@
         v-if="groupperformer"
         class="col-span-12 sm:col-span-6">
         <BaseInput
-          v-model="contact.level"
+          v-model.trim="contact.level"
+          :status="props.status?.level"
           required
           name="level"
           type="text"
@@ -256,7 +259,8 @@
         v-if="groupperformer"
         class="col-span-12">
         <BaseTextarea
-          v-model="contact.otherClasses"
+          v-model.trim="contact.otherClasses"
+          :status="props.status?.otherClasses"
           required
           name="otherClasses"
           :label="textAreaLabel" />

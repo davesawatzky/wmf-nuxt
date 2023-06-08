@@ -70,7 +70,7 @@ export const useSchoolGroup = defineStore(
       return new Promise((resolve, reject) => {
         const {
           result: resultSchoolGroups,
-          load: loadSchoolGroups,
+          load,
           onResult,
           onError,
         } = useLazyQuery(
@@ -78,6 +78,7 @@ export const useSchoolGroup = defineStore(
           { registrationId },
           { fetchPolicy: 'no-cache' }
         )
+        load()
         onResult((result) => {
           const schoolGroups = <SchoolGroup[]>(
             result.data.registration.school.school_group
@@ -90,10 +91,6 @@ export const useSchoolGroup = defineStore(
         onError((error) => {
           reject(console.log(error))
         })
-        return {
-          resultSchoolGroups,
-          loadSchoolGroups,
-        }
       })
     }
 

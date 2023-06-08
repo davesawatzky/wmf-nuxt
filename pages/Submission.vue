@@ -33,6 +33,10 @@
   const date = new Date()
   const formattedDate = DateTime.now().toLocaleString(DateTime.DATETIME_MED)
 
+  definePageMeta({
+    middleware: 'auth',
+  })
+
   async function submitRegistration() {
     await saveRegistration()
     confirmationNumber.value = `WMF-${

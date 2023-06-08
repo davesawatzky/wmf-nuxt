@@ -42,6 +42,10 @@
   const md = useMediaQuery('(min-width: 768px)')
   const lg = useMediaQuery('(min-width: 1024px)')
 
+  definePageMeta({
+    middleware: 'auth',
+  })
+
   function dateFunction(date: Date | undefined) {
     if (date) {
       const dateString = date.toString()
@@ -57,6 +61,7 @@
     groupStore.$reset()
     communityStore.$reset()
     schoolStore.$reset()
+    schoolGroupStore.$reset()
     classesStore.$reset()
   })
 
@@ -75,7 +80,7 @@
 
   function openEditor(performerType: PerformerType): boolean {
     // eslint-disable-next-line no-eval
-    return eval(`${performerType.toLowerCase()}Open`)
+    return !!eval(`${performerType.toLowerCase()}Open`)
   }
 
   /**
@@ -97,17 +102,13 @@
         appStore.performerType = PerformerType.SOLO
         appStore.dataLoading = true
         await performerStore.loadPerformers(registrationId)
-        await teacherStore.loadTeacher(registrationId)
-        await classesStore.loadClasses(registrationId)
         appStore.dataLoading = false
         break
       case 'GROUP':
         appStore.performerType = PerformerType.GROUP
         appStore.dataLoading = true
         await groupStore.loadGroup(registrationId)
-        await teacherStore.loadTeacher(registrationId)
         await performerStore.loadPerformers(registrationId)
-        await classesStore.loadClasses(registrationId)
         appStore.dataLoading = false
         break
       case 'SCHOOL':
@@ -115,21 +116,18 @@
         appStore.dataLoading = true
         await schoolStore.loadSchool(registrationId)
         await schoolGroupStore.loadSchoolGroups(registrationId)
-        await teacherStore.loadTeacher(registrationId)
-        await classesStore.loadClasses(registrationId)
         appStore.dataLoading = false
         break
       case 'COMMUNITY':
         appStore.performerType = PerformerType.COMMUNITY
         appStore.dataLoading = true
         await communityStore.loadCommunity(registrationId)
-        await teacherStore.loadTeacher(registrationId)
-        await classesStore.loadClasses(registrationId)
         appStore.dataLoading = false
         break
     }
 
     appStore.dataLoading = true
+    await teacherStore.loadTeacher(registrationId)
     await classesStore.loadClasses(registrationId)
     appStore.dataLoading = false
     navigateTo('/form')
@@ -159,39 +157,33 @@
         appStore.performerType = PerformerType.SOLO
         appStore.dataLoading = true
         await performerStore.createPerformer(registrationId.value)
-        await teacherStore.createTeacher(registrationId.value)
-        await classesStore.createClass(registrationId.value)
         appStore.dataLoading = false
-
         break
       case 'GROUP':
         appStore.performerType = PerformerType.GROUP
         appStore.dataLoading = true
         await groupStore.createGroup(registrationId.value)
-        await teacherStore.createTeacher(registrationId.value)
         await performerStore.createPerformer(registrationId.value)
-        await classesStore.createClass(registrationId.value)
         appStore.dataLoading = false
-
         break
       case 'SCHOOL':
         appStore.performerType = PerformerType.SCHOOL
         appStore.dataLoading = true
         await schoolStore.createSchool(registrationId.value)
         await schoolGroupStore.createSchoolGroup(schoolStore.school.id!)
-        await teacherStore.createTeacher(registrationId.value)
-        await classesStore.createClass(registrationId.value)
         appStore.dataLoading = false
-
         break
       case 'COMMUNITY':
         appStore.performerType = PerformerType.COMMUNITY
         appStore.dataLoading = true
         await communityStore.createCommunity(registrationId.value)
-        await teacherStore.createTeacher(registrationId.value)
-        await classesStore.createClass(registrationId.value)
         appStore.dataLoading = false
     }
+
+    appStore.dataLoading = true
+    await teacherStore.createTeacher(registrationId.value)
+    await classesStore.createClass(registrationId.value)
+    appStore.dataLoading = false
 
     navigateTo('/form')
   }
@@ -277,10 +269,11 @@
       </thead>
       <tbody>
         <tr
-          v-for="(registration, index) in registrations"
-          :key="index"
+          v-for="(registration, registrationIndex) in registrations"
+          :key="registration.id"
           class="">
           <td class="">
+            {{ registration.confirmation }}
             <BaseButton
               class="text-sky-600 text-xl md:ml-4 ml-3"
               @click="
@@ -289,7 +282,7 @@
                   ? loadRegistration(
                       registration.id,
                       registration.performerType,
-                      index
+                      registrationIndex
                     )
                   : ''
               ">

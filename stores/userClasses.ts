@@ -47,7 +47,7 @@ export const useClasses = defineStore(
           numberOfSelections: regClass.numberOfSelections || 1,
           price: regClass.price || 0.0,
           schoolGroupID: regClass.schoolGroupID || null,
-          selections: <Selection[]>[],
+          selections: regClass.selections || <Selection[]>[],
           __typename: regClass.__typename || 'RegisteredClass',
         })
       } catch (err) {
@@ -149,10 +149,6 @@ export const useClasses = defineStore(
         onError((error) => {
           reject(console.log(error))
         })
-        return {
-          resultClasses,
-          loadClasses,
-        }
       })
     }
 

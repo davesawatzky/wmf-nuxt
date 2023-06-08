@@ -1,9 +1,9 @@
 <script setup lang="ts">
-  import BaseToggleA from '../BaseToggleA.vue'
+  import BaseToggleA from '../components/base/BaseToggleA.vue'
 </script>
 
 <template>
   <Story title="Component/BaseToggleA">
-    <BaseToggleA />
+    <BaseToggleA label="Toggle A" />
   </Story>
 </template>

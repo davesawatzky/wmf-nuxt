@@ -81,10 +81,6 @@ export const useCommunity = defineStore(
         onError((error) => {
           reject(console.log(error))
         })
-        return {
-          resultCommunity,
-          load,
-        }
       })
     }
 

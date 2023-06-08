@@ -62,25 +62,22 @@ export const useGroup = defineStore(
       return new Promise((resolve, reject) => {
         const {
           result: resultGroup,
-          load: loadGroup,
-          onResult: resultLoadGroup,
+          load,
+          onResult,
           onError,
         } = useLazyQuery(
           GroupInfoDocument,
           { registrationId },
           { fetchPolicy: 'no-cache' }
         )
-        resultLoadGroup((result) => {
+        load()
+        onResult((result) => {
           addToStore(<Group>result.data.registration.group)
           resolve('Success')
         })
         onError((error) => {
           reject(console.log(error))
         })
-        return {
-          resultGroup,
-          loadGroup,
-        }
       })
     }
 

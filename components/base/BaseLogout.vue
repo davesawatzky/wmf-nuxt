@@ -14,7 +14,6 @@
   const classStore = useClasses()
   const groupStore = useGroup()
   const schoolStore = useSchool()
-  const { onLogout } = useApollo()
 
   function signout() {
     appStore.$reset()
@@ -24,8 +23,21 @@
     classStore.$reset()
     groupStore.$reset()
     schoolStore.$reset()
-    onLogout()
-    navigateTo('Login')
+
+    const { onResult, onError } = useQuery(gql`
+      query Logout {
+        logout
+      }
+    `)
+    onResult((result) => {
+      console.log(result)
+      navigateTo('/login')
+    })
+    onError((error) => {
+      console.log(error)
+      navigateTo('/login')
+    })
+    navigateTo('/login')
   }
 </script>
 
