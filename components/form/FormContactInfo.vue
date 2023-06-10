@@ -2,13 +2,17 @@
   import * as yup from 'yup'
   import 'yup-phone-lite'
 
+  interface Status {
+    [key: string]: null | 'saved' | 'saving'
+  }
+
   const props = defineProps<{
     modelValue: object
     teacher?: boolean
     schoolteacher?: boolean
     school?: boolean
     groupperformer?: boolean
-    status?: object
+    status?: Status
   }>()
 
   const emits = defineEmits(['update:modelValue'])
@@ -79,6 +83,17 @@
   <form>
     <div class="grid grid-cols-12 gap-x-3 gap-y-1 items-end">
       <div
+        v-if="teacher"
+        class="col-span-12 sm:col-span-2 self-start">
+        <BaseSelect
+          v-model.trim="contact.prefix"
+          :status="props.status?.prefix"
+          required
+          name="prefix"
+          label="Title"
+          :options="prefixes" />
+      </div>
+      <div
         v-if="!school"
         class="col-span-12 sm:col-span-5">
         <BaseInput
@@ -102,7 +117,7 @@
       </div>
       <div
         v-else-if="!school"
-        class="col-span-12 sm:col-span-7">
+        class="col-span-12 sm:col-span-5">
         <BaseInput
           v-model.trim="contact.lastName"
           :status="props.status?.lastName"

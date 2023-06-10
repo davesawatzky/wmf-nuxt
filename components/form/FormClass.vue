@@ -12,10 +12,15 @@
   import { usePerformers } from '@/stores/userPerformer'
   import type { FestivalClass, RegisteredClass } from '@/graphql/gql/graphql'
 
+  interface Status {
+    [key: string]: null | 'saved' | 'saving'
+  }
+
   const props = defineProps<{
     modelValue: RegisteredClass
     classIndex: number
     classId: number
+    status?: Status
   }>()
 
   const emits = defineEmits(['update:modelValue'])
@@ -319,113 +324,119 @@
 
 <template>
   <div>
-  <div
-    v-auto-animate
-    class="grid grid-cols-12 gap-x-3 gap-y-5 items-end">
-    <div class="col-span-6 lg:col-span-2">
-      <BaseSelect
-        id=""
-        v-model="selectedClasses.discipline"
-        label="Discipline"
-        :options="disciplines" />
-    </div>
-    <div class="col-span-6 lg:col-span-3">
-      <BaseSelect
-        v-model="selectedClasses.subdiscipline"
-        :class="selectedClasses.discipline ? '' : 'off'"
-        label="Subdiscipline"
-        :options="subdisciplines"
-        :disabled="!selectedClasses.discipline" />
-    </div>
-    <div class="col-span-6 lg:col-span-3">
-      <BaseSelect
-        v-model="selectedClasses.level"
-        :class="selectedClasses.subdiscipline ? '' : 'off'"
-        label="Grade/Level"
-        :options="levels"
-        :disabled="!selectedClasses.subdiscipline" />
-    </div>
-    <div class="col-span-6 lg:col-span-4">
-      <BaseSelect
-        v-model="selectedClasses.category"
-        :class="selectedClasses.level ? '' : 'off'"
-        label="Category"
-        :options="categories"
-        :disabled="!selectedClasses.level" />
+    <div
+      v-auto-animate
+      class="grid grid-cols-12 gap-x-3 gap-y-5 items-end">
+      <div class="col-span-6 lg:col-span-2">
+        <BaseSelect
+          id=""
+          v-model="selectedClasses.discipline"
+          :status="props.status?.discipline"
+          label="Discipline"
+          :options="disciplines" />
+      </div>
+      <div class="col-span-6 lg:col-span-3">
+        <BaseSelect
+          v-model="selectedClasses.subdiscipline"
+          :status="props.status?.subdiscipline"
+          :class="selectedClasses.discipline ? '' : 'off'"
+          label="Subdiscipline"
+          :options="subdisciplines"
+          :disabled="!selectedClasses.discipline" />
+      </div>
+      <div class="col-span-6 lg:col-span-3">
+        <BaseSelect
+          v-model="selectedClasses.level"
+          :status="props.status?.level"
+          :class="selectedClasses.subdiscipline ? '' : 'off'"
+          label="Grade/Level"
+          :options="levels"
+          :disabled="!selectedClasses.subdiscipline" />
+      </div>
+      <div class="col-span-6 lg:col-span-4">
+        <BaseSelect
+          v-model="selectedClasses.category"
+          :status="props.status?.category"
+          :class="selectedClasses.level ? '' : 'off'"
+          label="Category"
+          :options="categories"
+          :disabled="!selectedClasses.level" />
+      </div>
+      <div
+        v-if="className"
+        class="col-span-12 md:col-span-12">
+        <p class="text-2xl text-center font-bold">
+          Class {{ selectedClasses.classNumber }} - {{ className }}
+        </p>
+      </div>
+      <div
+        v-if="instrumentRequired"
+        class="col-span-12">
+        <BaseSelect
+          id="instrument"
+          v-model="performerStore.performers[0].instrument"
+          :status="props.status?.instrument"
+          :options="instruments"
+          label="Instrument" />
+      </div>
     </div>
     <div
-      v-if="className"
-      class="col-span-12 md:col-span-12">
-      <p class="text-2xl text-center font-bold">
-        Class {{ selectedClasses.classNumber }} - {{ className }}
-      </p>
+      v-if="(classSelection.trophies ?? []).length > 0"
+      v-auto-animate>
+      <h4>Trophy Eligibility</h4>
+      <div
+        v-for="trophy in classSelection.trophies"
+        :key="trophy.id">
+        <h6>{{ trophy.name }}:</h6>
+        <p class="text-sm pb-2">
+          {{ trophy.description }}
+        </p>
+      </div>
     </div>
     <div
-      v-if="instrumentRequired"
+      v-if="notes"
       class="col-span-12">
-      <BaseSelect
-        id="instrument"
-        v-model="performerStore.performers[0].instrument"
-        :options="instruments"
-        label="Instrument" />
+      <h4 class="pb-2">Notes</h4>
+      <div
+        v-if="chosenSubdiscipline.description"
+        v-auto-animate>
+        <h5>Subdiscipline</h5>
+        <p class="text-sm pb-2">
+          {{ chosenSubdiscipline.description }}
+        </p>
+      </div>
+      <div
+        v-if="chosenGradeLevel.description"
+        v-auto-animate>
+        <h5>Grade / Level</h5>
+        <p class="text-sm pb-2">
+          {{ chosenGradeLevel.description }}
+        </p>
+      </div>
+      <div
+        v-if="chosenCategory.description"
+        v-auto-animate>
+        <h5>Category</h5>
+        <p class="text-sm pb-2">
+          {{ chosenCategory.description }}
+        </p>
+      </div>
+      <div
+        v-if="classSelection.minSelections !== classSelection.maxSelections"
+        class="col-span-3 md:col-span-2">
+        <BaseRadioGroup
+          v-model="selectedClasses.numberOfSelections"
+          :name="`${selectedClasses.classNumber} Selections`"
+          :vertical="true"
+          :options="numberOfAllowedWorks" />
+      </div>
+      <FormWorksSelection
+        v-for="(selection, selectionIndex) in selectedClasses.selections"
+        :key="selection.id"
+        v-model="selectedClasses.selections![selectionIndex]"
+        :status="props.status"
+        :selection-index="selectionIndex" />
     </div>
-  </div>
-  <div
-    v-if="(classSelection.trophies ?? []).length > 0"
-    v-auto-animate>
-    <h4>Trophy Eligibility</h4>
-    <div
-      v-for="trophy in classSelection.trophies"
-      :key="trophy.id">
-      <h6>{{ trophy.name }}:</h6>
-      <p class="text-sm pb-2">
-        {{ trophy.description }}
-      </p>
-    </div>
-  </div>
-  <div
-    v-if="notes"
-    class="col-span-12">
-    <h4 class="pb-2">Notes</h4>
-    <div
-      v-if="chosenSubdiscipline.description"
-      v-auto-animate>
-      <h5>Subdiscipline</h5>
-      <p class="text-sm pb-2">
-        {{ chosenSubdiscipline.description }}
-      </p>
-    </div>
-    <div
-      v-if="chosenGradeLevel.description"
-      v-auto-animate>
-      <h5>Grade / Level</h5>
-      <p class="text-sm pb-2">
-        {{ chosenGradeLevel.description }}
-      </p>
-    </div>
-    <div
-      v-if="chosenCategory.description"
-      v-auto-animate>
-      <h5>Category</h5>
-      <p class="text-sm pb-2">
-        {{ chosenCategory.description }}
-      </p>
-    </div>
-    <div
-      v-if="classSelection.minSelections !== classSelection.maxSelections"
-      class="col-span-3 md:col-span-2">
-      <BaseRadioGroup
-        v-model="selectedClasses.numberOfSelections"
-        :name="`${selectedClasses.classNumber} Selections`"
-        :vertical="true"
-        :options="numberOfAllowedWorks" />
-    </div>
-    <FormWorksSelection
-      v-for="(selection, selectionIndex) in selectedClasses.selections"
-      :key="selection.id"
-      v-model="selectedClasses.selections![selectionIndex]"
-      :selection-index="selectionIndex" />
-  </div>
   </div>
 </template>
 

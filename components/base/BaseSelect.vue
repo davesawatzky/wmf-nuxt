@@ -4,31 +4,49 @@
     name: string
   }
 
-  defineProps({
-    label: {
-      type: String,
-      default: '',
-    },
-    modelValue: {
-      type: [String, Number],
-      default: '',
-    },
-    options: {
-      type: Array as PropType<Options[]>,
-      required: true,
-    },
+  interface Props {
+    label?: string
+    modelValue: string | number
+    options: Options[]
+    status?: null | 'saving' | 'saved'
+    name: string
+    helpMessage?: string
+  }
+
+  const props = withDefaults(defineProps<Props>(), {
+    label: '',
+    status: null,
+    modelValue: '',
+    name: '',
   })
 
-  defineEmits(['update:modelValue'])
+  defineEmits<{
+    (event: 'update:modelValue', payload: string | number): void
+  }>()
+
   const uuid = UniqueID().getID()
 </script>
 
 <template>
   <div>
-    <label v-if="label">{{ label }}</label>
+    <div class="flex items-center ml-2">
+      <div class="flex-none">
+        <label
+          :for="uuid"
+          v-if="label">
+          {{ label }}
+          <BaseHelpButton :helpMessage="helpMessage" />
+        </label>
+      </div>
+      <div class="grow"></div>
+      <BaseSaved
+        class="flex-none mr-2"
+        :status="status" />
+    </div>
     <select
       :id="uuid"
       :value="modelValue"
+      :name="name"
       v-bind="{
         ...$attrs,
         onChange: ($event) => {

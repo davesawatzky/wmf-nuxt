@@ -24,14 +24,12 @@
 </script>
 
 <template>
-  <div
-    v-auto-animate
-    class="pb-8">
-    <h2 class="pb-4">School Class Information</h2>
+  <div v-auto-animate>
+    <h2 class="pt-8">School Class Information</h2>
     <div
       v-for="(selectedClass, classIndex) in classesStore.registeredClasses"
       :key="selectedClass.id">
-      <div class="pb-8">
+      <div class="py-4">
         <h3 class="pb-4">Class {{ classIndex + 1 }}</h3>
         <label for="schoolGroupSelect">Select a school group</label>
         <select
@@ -57,21 +55,21 @@
           :class-index="classIndex"
           :class-id="selectedClass.id" />
       </div>
-      <div class="pt-4">
+      <div class="pt-4 col-span-12">
         <BaseButton
           v-if="
             classIndex + 1 === classesStore.registeredClasses.length
               ? true
               : false
           "
-          class="btn btn-blue"
+          class="btn btn-blue mb-6"
           @click="addClass(registrationStore.registrationId)">
           Add Class
         </BaseButton>
         <BaseButton
           v-if="classesStore.registeredClasses.length > 1 ? true : false"
           id="index"
-          class="btn btn-red"
+          class="btn btn-red mb-6"
           @click="removeClass(selectedClass.id)">
           Remove Class
         </BaseButton>

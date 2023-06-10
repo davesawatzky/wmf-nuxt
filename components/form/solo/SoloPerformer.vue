@@ -24,11 +24,6 @@
     phone: null,
   })
 
-  // performerStore.$subscribe((mutation, state) => {
-  //   console.log('Mutation-----: ', mutation)
-  //   console.log('State-----: ', state.performers[0])
-  // })
-
   watch(
     () => [
       performerStore.performers[0].age,

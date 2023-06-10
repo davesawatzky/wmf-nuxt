@@ -51,8 +51,6 @@
       // input: handleChange, // only switched this
     }
   })
-
-  const msg = () => alert(props.helpMessage)
 </script>
 
 <template>
@@ -63,23 +61,13 @@
           v-if="label"
           :for="uuid">
           {{ label }}
-          <button
-            v-if="helpMessage"
-            @click="msg">
-            <Icon
-              class="text-lg"
-              name="fluent:question-circle-12-filled" />
-          </button>
+          <BaseHelpButton :helpMessage="helpMessage" />
         </label>
       </div>
       <div class="grow"></div>
-      <div class="flex-none mr-2">
-        <Icon
-          v-if="status === 'saving'"
-          class="animate-spin"
-          name="icomoon-free:spinner9" />
-        <BaseSaved v-else-if="status === 'saved'" />
-      </div>
+      <BaseSaved
+        class="flex-none mr-2"
+        :status="status" />
     </div>
     <input
       :id="uuid"

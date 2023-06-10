@@ -1,4 +1,3 @@
-import { log } from 'console'
 import { defineStore } from 'pinia'
 import {
   PerformerCreateDocument,
@@ -118,6 +117,7 @@ export const usePerformers = defineStore(
     /**
      * Updates an individual performer from store to db
      * @param performerId ID of performer to update
+     * @param field Optional single fieldname to update
      * @returns
      */
     function updatePerformer(
@@ -135,6 +135,7 @@ export const usePerformers = defineStore(
         const person = performers.value.find((item) => {
           return item.id === performerId
         })
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { id, __typename, ...personProps } = person
         let performerField = null
         if (field && Object.keys(personProps).includes(field)) {

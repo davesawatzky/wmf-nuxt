@@ -92,11 +92,7 @@ export const useTeacher = defineStore(
         )
         load()
         onResult((result) => {
-          // if ( result.data.registration.teacher !== null ) {
           addToStore(<Teacher>result.data.registration.teacher)
-          // } else {
-          //   createTeacher(registrationId).catch((error) => console.log(error))
-          // }
           resolve('Success')
         })
         onError((error) => {
@@ -109,7 +105,7 @@ export const useTeacher = defineStore(
      * Updates the Teacher record from the store to the db.
      * @returns Promise
      */
-    function updateTeacher(): Promise<unknown> {
+    function updateTeacher(field?: string): Promise<unknown> {
       return new Promise((resolve, reject) => {
         const {
           mutate: teacherUpdate,
@@ -119,10 +115,16 @@ export const useTeacher = defineStore(
           fetchPolicy: 'network-only',
         })
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { id, __typename, ...teach } = teacher.value
+        const { id, __typename, ...teachProps } = teacher.value
+        let teacherField = null
+        if (field && Object.keys(teachProps).includes(field)) {
+          teacherField = Object.fromEntries(
+            Array(Object.entries(teachProps).find((item) => item[0] === field))
+          )
+        }
         teacherUpdate({
           teacherId: teacher.value.id,
-          teacher: <TeacherInput>teach,
+          teacher: <TeacherInput>(teacherField || teachProps),
         }).catch((error) => console.log(error))
         onDone(() => {
           resolve('Success')

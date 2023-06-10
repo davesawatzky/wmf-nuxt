@@ -1,5 +1,6 @@
 <script setup lang="ts">
-  // import { Component, ref } from 'vue'
+  // import {Component, ref} from 'vue'
+  import type { Component } from 'vue'
   import { useAppStore } from '@/stores/appStore'
   import { useClasses } from '@/stores/userClasses'
   import { useCommunity } from '@/stores/userCommunity'
