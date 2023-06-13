@@ -2,54 +2,61 @@
   import { useClasses } from '@/stores/userClasses'
   import { useRegistration } from '@/stores/userRegistration'
   import { useSchoolGroup } from '@/stores/userSchoolGroup'
+  import { useAppStore } from '@/stores/appStore'
+  import { PerformerType } from '~/graphql/gql/graphql'
 
   const classesStore = useClasses()
   const registrationStore = useRegistration()
   const schoolGroupStore = useSchoolGroup()
+  const appStore = useAppStore()
 
-  function addClass(registrationId: number) {
-    classesStore.createClass(registrationId)
+  async function addClass(registrationId: number) {
+    await classesStore.createClass(registrationId)
   }
-  function removeClass(classId: number) {
-    classesStore.deleteClass(classId)
+
+  async function removeClass(classId: number) {
+    const classIndex = await classesStore.deleteClass(classId)
+    console.log('Delete Class Index-----: ', classIndex)
   }
 
   const schoolGroups = computed(() => {
     const newArray = []
     for (const schlGroup of schoolGroupStore.schoolGroup)
       newArray.push({ id: schlGroup.id, name: schlGroup.name })
-
     return newArray
   })
 </script>
 
 <template>
   <div v-auto-animate>
-    <h2 class="pt-8">School Class Information</h2>
+    <h2 class="pt-8">Class Information</h2>
     <div
       v-for="(selectedClass, classIndex) in classesStore.registeredClasses"
       :key="selectedClass.id">
       <div class="py-4">
         <h3 class="pb-4">Class {{ classIndex + 1 }}</h3>
-        <label for="schoolGroupSelect">Select a school group</label>
-        <select
-          id="schoolGroupSelect"
-          v-model.number="
-            classesStore.registeredClasses[classIndex].schoolGroupID
-          "
-          class="mb-6"
-          name="schoolGroup">
-          <option
-            v-for="schoolGrp in schoolGroups"
-            :key="schoolGrp.id"
-            :value="schoolGrp.id"
-            :selected="
-              classesStore.registeredClasses[classIndex].schoolGroupID ===
-              schoolGrp.id
-            ">
-            {{ schoolGrp.name }}
-          </option>
-        </select>
+        <div v-if="appStore.performerType === PerformerType.SCHOOL">
+          <label for="schoolGroupSelect">Select a school group</label>
+          <select
+            id="schoolGroupSelect"
+            v-model.number="
+              classesStore.registeredClasses[classIndex].schoolGroupID
+            "
+            :status="status[classIndex].schoolGroup"
+            class="mb-6"
+            name="schoolGroup">
+            <option
+              v-for="schoolGrp in schoolGroups"
+              :key="schoolGrp.id"
+              :value="schoolGrp.id"
+              :selected="
+                classesStore.registeredClasses[classIndex].schoolGroupID ===
+                schoolGrp.id
+              ">
+              {{ schoolGrp.name }}
+            </option>
+          </select>
+        </div>
         <FormClass
           v-model="classesStore.registeredClasses[classIndex]"
           :class-index="classIndex"

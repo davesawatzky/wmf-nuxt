@@ -1,5 +1,6 @@
 <script setup lang="ts">
   // 	@input ="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
+  import { StatusEnum } from '@/composables/types'
 
   interface Props {
     type?: string
@@ -7,7 +8,7 @@
     helpMessage?: string
     name: string
     placeholder?: string
-    status?: null | 'saving' | 'saved'
+    status?: StatusEnum
     modelValue: string | number
   }
 
@@ -15,7 +16,7 @@
     type: 'text',
     label: '',
     placeholder: '',
-    status: null,
+    status: StatusEnum.null,
     modelValue: '',
   })
 

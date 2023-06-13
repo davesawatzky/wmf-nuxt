@@ -1,21 +1,21 @@
 <script lang="ts" setup>
   import * as yup from 'yup'
   import 'yup-phone-lite'
-
-  interface Status {
-    [key: string]: null | 'saved' | 'saving'
-  }
+  import type { ContactInfo, Status } from '@/composables/types'
 
   const props = defineProps<{
-    modelValue: object
+    modelValue: ContactInfo
     teacher?: boolean
     schoolteacher?: boolean
     school?: boolean
     groupperformer?: boolean
-    status?: Status
+    // eslint-disable-next-line no-use-before-define
+    status: Status
   }>()
 
-  const emits = defineEmits(['update:modelValue'])
+  const emits = defineEmits<{
+    'update:modelValue': [ContactInfo]
+  }>()
 
   /**
    * Sets the model value from all the props.

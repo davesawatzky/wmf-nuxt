@@ -14,20 +14,15 @@
 
   const FormSoloPerformer = <Component>resolveComponent('FormSoloPerformer')
   const FormSoloTeacher = <Component>resolveComponent('FormSoloTeacher')
-  const FormSoloClasses = <Component>resolveComponent('FormSoloClasses')
   const FormGroupPerformers = <Component>resolveComponent('FormGroupPerformers')
   const FormGroupTeacher = <Component>resolveComponent('FormGroupTeacher')
-  const FormGroupClasses = <Component>resolveComponent('FormGroupClasses')
   const FormSchoolInfo = <Component>resolveComponent('FormSchoolInfo')
   const FormSchoolTeacher = <Component>resolveComponent('FormSchoolTeacher')
-  const FormSchoolClasses = <Component>resolveComponent('FormSchoolClasses')
   const FormCommunityInfo = <Component>resolveComponent('FormCommunityInfo')
   const FormCommunityTeacher = <Component>(
     resolveComponent('FormCommunityTeacher')
   )
-  const FormCommunityClasses = <Component>(
-    resolveComponent('FormCommunityClasses')
-  )
+  const FormTypeClasses = <Component>resolveComponent('FormTypeClasses')
   const Summary = <Component>resolveComponent('Summary')
 
   const registrationStore = useRegistration()
@@ -59,7 +54,7 @@
       tabs = {
         Performer: FormSoloPerformer,
         Teacher: FormSoloTeacher,
-        'Solo Classes': FormSoloClasses,
+        'Solo Classes': FormTypeClasses,
         Summary,
       }
       break
@@ -68,7 +63,7 @@
       tabs = {
         Group: FormGroupPerformers,
         Teacher: FormGroupTeacher,
-        'Group Classes': FormGroupClasses,
+        'Group Classes': FormTypeClasses,
         Summary,
       }
       break
@@ -77,7 +72,7 @@
       tabs = {
         School: FormSchoolInfo,
         Teacher: FormSchoolTeacher,
-        'School Classes': FormSchoolClasses,
+        'School Classes': FormTypeClasses,
         Summary,
       }
       break
@@ -86,49 +81,10 @@
       tabs = {
         Community: FormCommunityInfo,
         Teacher: FormCommunityTeacher,
-        'Community Classes': FormCommunityClasses,
+        'Community Classes': FormTypeClasses,
         Summary,
       }
       break
-  }
-
-  async function saveRegistration() {
-    switch (appStore.performerType) {
-      case 'SOLO':
-        appStore.performerType = PerformerType.SOLO
-        appStore.dataLoading = true
-        await registrationStore.updateRegistration()
-        await performerStore.updatePerformer(performerStore.performers[0].id!)
-        appStore.dataLoading = false
-        break
-      case 'GROUP':
-        appStore.performerType = PerformerType.GROUP
-        appStore.dataLoading = true
-        await registrationStore.updateRegistration()
-        await groupStore.updateGroup()
-        await performerStore.updateAllPerformers()
-        appStore.dataLoading = false
-        break
-      case 'SCHOOL':
-        appStore.performerType = PerformerType.SCHOOL
-        appStore.dataLoading = true
-        await registrationStore.updateRegistration()
-        await schoolStore.updateSchool()
-        await schoolGroupStore.updateAllSchoolGroups()
-        appStore.dataLoading = false
-        break
-      case 'COMMUNITY':
-        appStore.performerType = PerformerType.COMMUNITY
-        appStore.dataLoading = true
-        await registrationStore.updateRegistration()
-        await communityStore.updateCommunity()
-        appStore.dataLoading = false
-        break
-    }
-    appStore.dataLoading = true
-    await teacherStore.updateTeacher()
-    await classesStore.updateAllClasses()
-    appStore.dataLoading = false
   }
 </script>
 
@@ -168,12 +124,6 @@
       class="border border-spacing-1 shadow-md rounded-lg border-sky-500 p-6 mb-6">
       <Summary />
     </div>
-    <button
-      v-if="!registrationStore.registration.confirmation"
-      class="btn btn-blue"
-      @click="saveRegistration()">
-      Save
-    </button>
   </div>
 </template>
 

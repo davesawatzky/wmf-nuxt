@@ -1,16 +1,18 @@
 <script setup lang="ts">
+  import { StatusEnum } from '@/composables/types'
+
   defineProps<{
-    status?: null | 'saving' | 'saved'
+    status?: StatusEnum
   }>()
 </script>
 
 <template>
   <div>
     <Icon
-      v-if="status === 'saving'"
+      v-if="status === StatusEnum.saving"
       class="animate-spin"
       name="icomoon-free:spinner9" />
-    <div v-else-if="status === 'saved'">
+    <div v-else-if="status === StatusEnum.saved">
       <label class="self-center text-xs text-gray-400 font-bold italic">
         Saved
       </label>

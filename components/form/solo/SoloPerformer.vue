@@ -1,27 +1,24 @@
 <script lang="ts" setup>
   import { usePerformers } from '@/stores/userPerformer'
-
-  interface Status {
-    [key: string]: null | 'saved' | 'saving'
-  }
+  import type { Status } from '@/composables/types'
 
   const performerStore = usePerformers()
   const performerId = ref(performerStore.performers[0].id)
   const status = reactive<Status>({
-    firstName: null,
-    lastName: null,
-    age: null,
-    level: null,
-    instrument: null,
-    otherClasses: null,
-    apartment: null,
-    streetNumber: null,
-    streetName: null,
-    city: null,
-    province: null,
-    postalCode: null,
-    email: null,
-    phone: null,
+    firstName: StatusEnum.null,
+    lastName: StatusEnum.null,
+    age: StatusEnum.null,
+    level: StatusEnum.null,
+    instrument: StatusEnum.null,
+    otherClasses: StatusEnum.null,
+    apartment: StatusEnum.null,
+    streetNumber: StatusEnum.null,
+    streetName: StatusEnum.null,
+    city: StatusEnum.null,
+    province: StatusEnum.null,
+    postalCode: StatusEnum.null,
+    email: StatusEnum.null,
+    phone: StatusEnum.null,
   })
 
   watch(
@@ -76,74 +73,74 @@
       ]
     ) => {
       if (newAge !== oldAge) {
-        status.age = 'saving'
+        status.age = StatusEnum.saving
         await performerStore.updatePerformer(performerId.value, 'age')
-        status.age = 'saved'
+        status.age = StatusEnum.saved
       }
       if (newApartment !== oldApartment) {
-        status.apartment = 'saving'
+        status.apartment = StatusEnum.saving
         await performerStore.updatePerformer(performerId.value, 'apartment')
-        status.apartment = 'saved'
+        status.apartment = StatusEnum.saved
       }
       if (newCity !== oldCity) {
-        status.city = 'saving'
+        status.city = StatusEnum.saving
         await performerStore.updatePerformer(performerId.value, 'city')
-        status.city = 'saved'
+        status.city = StatusEnum.saved
       }
       if (newEmail !== oldEmail) {
-        status.email = 'saving'
+        status.email = StatusEnum.saving
         await performerStore.updatePerformer(performerId.value, 'email')
-        status.email = 'saved'
+        status.email = StatusEnum.saved
       }
       if (newFirstName !== oldFirstName) {
-        status.firstName = 'saving'
+        status.firstName = StatusEnum.saving
         await performerStore.updatePerformer(performerId.value, 'firstName')
-        status.firstName = 'saved'
+        status.firstName = StatusEnum.saved
       }
       if (newLastName !== oldLastName) {
-        status.lastName = 'saving'
+        status.lastName = StatusEnum.saving
         await performerStore.updatePerformer(performerId.value, 'lastName')
-        status.lastName = 'saved'
+        status.lastName = StatusEnum.saved
       }
       if (newInstrument !== oldInstrument) {
-        status.instrument = 'saving'
+        status.instrument = StatusEnum.saving
         await performerStore.updatePerformer(performerId.value, 'instrument')
-        status.instrument = 'saved'
+        status.instrument = StatusEnum.saved
       }
       if (newLevel !== oldLevel) {
-        status.level = 'saving'
+        status.level = StatusEnum.saving
         await performerStore.updatePerformer(performerId.value, 'level')
-        status.level = 'saved'
+        status.level = StatusEnum.saved
       }
       if (newOtherClasses !== oldOtherClasses) {
-        status.otherClasses = 'saving'
+        status.otherClasses = StatusEnum.saving
         await performerStore.updatePerformer(performerId.value, 'otherClasses')
-        status.otherClasses = 'saved'
+        status.otherClasses = StatusEnum.saved
       }
       if (newPhone !== oldPhone) {
-        status.phone = 'saving'
+        status.phone = StatusEnum.saving
         await performerStore.updatePerformer(performerId.value, 'phone')
-        status.phone = 'saved'
+        status.phone = StatusEnum.saved
       }
       if (newPostalCode !== oldPostalCode) {
-        status.postalCode = 'saving'
+        status.postalCode = StatusEnum.saving
         await performerStore.updatePerformer(performerId.value, 'postalCode')
-        status.postalCode = 'saved'
+        status.postalCode = StatusEnum.saved
       }
       if (newProvince !== oldProvince) {
-        status.province = 'saving'
+        status.province = StatusEnum.saving
         await performerStore.updatePerformer(performerId.value, 'province')
-        status.province = 'saved'
+        status.province = StatusEnum.saved
       }
       if (newStreetName !== oldStreetName) {
-        status.streetName = 'saving'
+        status.streetName = StatusEnum.saving
         await performerStore.updatePerformer(performerId.value, 'streetName')
-        status.streetName = 'saved'
+        status.streetName = StatusEnum.saved
       }
       if (newStreetNumber !== oldStreetNumber) {
-        status.streetNumber = 'saving'
+        status.streetNumber = StatusEnum.saving
         await performerStore.updatePerformer(performerId.value, 'streetNumber')
-        status.streetNumber = 'saved'
+        status.streetNumber = StatusEnum.saved
       }
     }
   )

@@ -10,20 +10,31 @@
   import { useClasses } from '@/stores/userClasses'
   import { useAppStore } from '@/stores/appStore'
   import { usePerformers } from '@/stores/userPerformer'
-  import type { FestivalClass, RegisteredClass } from '@/graphql/gql/graphql'
-
-  interface Status {
-    [key: string]: null | 'saved' | 'saving'
-  }
+  import type {
+    FestivalClass,
+    RegisteredClass,
+    RegisteredClassInput,
+  } from '@/graphql/gql/graphql'
+  import type { Status } from '@/composables/types'
+  import { StatusEnum } from '@/composables/types'
 
   const props = defineProps<{
     modelValue: RegisteredClass
     classIndex: number
     classId: number
-    status?: Status
   }>()
 
-  const emits = defineEmits(['update:modelValue'])
+  const emits = defineEmits<{ 'update:modelValue': [RegisteredClassInput] }>()
+
+  const status = reactive<Status>({
+    discipline: StatusEnum.null,
+    subdiscipline: StatusEnum.null,
+    level: StatusEnum.null,
+    category: StatusEnum.null,
+    schoolGroup: StatusEnum.null,
+    instrument: StatusEnum.null,
+  })
+
   const instrumentRequired = ref(false)
   const appStore = useAppStore()
   const performerStore = usePerformers()
@@ -199,13 +210,14 @@
     set: (newValue) => newValue,
   })
 
-  // watch(
-  //   () => selectedClasses.value.classNumber,
-  //   (classNumber: string) => {
-  //     instrumentRequired.value =
-  //       classesStore.MOZART_CLASSES.includes(newClassNumber)
-  //   }
-  // )
+  watch(
+    () => selectedClasses.value.classNumber,
+    (newClassNumber) => {
+      instrumentRequired.value = classesStore.MOZART_CLASSES.includes(
+        newClassNumber!
+      )
+    }
+  )
 
   const notes = computed(() => {
     if (
@@ -220,7 +232,7 @@
   })
 
   watch(
-    () => selectedClasses.value.discipline,
+    () => classesStore.registeredClasses[props.classIndex].discipline,
     () => {
       selectedClasses.value.subdiscipline = null
       chosenSubdiscipline.value = { id: '', name: '' }
@@ -229,7 +241,7 @@
   )
 
   watch(
-    () => selectedClasses.value.subdiscipline,
+    () => classesStore.registeredClasses[props.classIndex].subdiscipline,
     () => {
       selectedClasses.value.level = null
       chosenGradeLevel.value = { id: '', name: '' }
@@ -240,7 +252,7 @@
   )
 
   watch(
-    () => selectedClasses.value.level,
+    () => classesStore.registeredClasses[props.classIndex].level,
     () => {
       selectedClasses.value.category = null
       chosenCategory.value = { id: '', name: '' }
@@ -251,10 +263,17 @@
   )
 
   watch(
-    () => selectedClasses.value.category,
-    () => {
-      selectedClasses.value.classNumber = null
-      if (selectedClasses.value.category !== null) {
+    () => classesStore.registeredClasses[props.classIndex].category,
+    async (newValue, oldValue) => {
+      if (newValue === null) {
+        status.category = StatusEnum.null
+        status.discipline = StatusEnum.null
+        status.subdiscipline = StatusEnum.null
+        status.level = StatusEnum.null
+        await classesStore.updateClass(props.classId)
+        selectedClasses.value.classNumber = null
+      } else {
+        selectedClasses.value.classNumber = null
         loadClassNumber()
       }
     }
@@ -277,48 +296,61 @@
    * Updating number of selections
    */
   watch(
-    () => selectedClasses.value.numberOfSelections,
+    () => classesStore.registeredClasses[props.classIndex].numberOfSelections,
     async (newNumber) => {
       let oldNumber =
         classesStore.registeredClasses[props.classIndex].selections!.length
-      console.log('NwNumber-----: ', newNumber)
-      console.log('OldNumber-----: ', oldNumber)
-
-      if (oldNumber < newNumber) {
+      if (oldNumber < newNumber!) {
         while (oldNumber < newNumber!) {
           await classesStore
             .createSelection(props.classId)
             .catch((error) => console.log(error))
           oldNumber += 1
         }
-      } else if (oldNumber > newNumber) {
+      } else if (oldNumber > newNumber!) {
         while (oldNumber > newNumber!) {
           const selectionLength =
             classesStore.registeredClasses[props.classIndex].selections!.length
-          console.log('Selection Length-----: ', selectionLength)
-
           const selectionId =
             classesStore.registeredClasses[props.classIndex].selections![
               selectionLength - 1
             ].id
-          console.log('SelectionID-----: ', selectionId)
-
           await classesStore
             .deleteSelection(props.classId, selectionId)
             .catch((error) => console.log(error))
           oldNumber -= 1
         }
       }
+      await classesStore.updateClass(props.classId, 'numberOfSelections')
     }
   )
 
-  watch(classSelection, (newClassSelection) => {
+  watch(classSelection, async (newClassSelection) => {
+    status.category = StatusEnum.saving
+    status.discipline = StatusEnum.saving
+    status.subdiscipline = StatusEnum.saving
+    status.level = StatusEnum.saving
+
     classesStore.registeredClasses[props.classIndex].price =
       newClassSelection.price
     selectedClasses.value.classNumber = newClassSelection.classNumber
     selectedClasses.value.minSelections = newClassSelection.minSelections
     selectedClasses.value.maxSelections = newClassSelection.maxSelections
     selectedClasses.value.numberOfSelections = newClassSelection.minSelections
+
+    await classesStore.updateClass(props.classId)
+
+    status.category = StatusEnum.saved
+    status.discipline = StatusEnum.saved
+    status.subdiscipline = StatusEnum.saved
+    status.level = StatusEnum.saved
+  })
+
+  onMounted(() => {
+    loadSubdisciplines()
+    loadLevels()
+    loadCategories()
+    loadClassNumber()
   })
 </script>
 
@@ -331,34 +363,38 @@
         <BaseSelect
           id=""
           v-model="selectedClasses.discipline"
-          :status="props.status?.discipline"
+          :status="status.discipline"
           label="Discipline"
+          name="discipline"
           :options="disciplines" />
       </div>
       <div class="col-span-6 lg:col-span-3">
         <BaseSelect
           v-model="selectedClasses.subdiscipline"
-          :status="props.status?.subdiscipline"
+          :status="status.subdiscipline"
           :class="selectedClasses.discipline ? '' : 'off'"
           label="Subdiscipline"
+          name="subdiscipline"
           :options="subdisciplines"
           :disabled="!selectedClasses.discipline" />
       </div>
       <div class="col-span-6 lg:col-span-3">
         <BaseSelect
           v-model="selectedClasses.level"
-          :status="props.status?.level"
+          :status="status.level"
           :class="selectedClasses.subdiscipline ? '' : 'off'"
           label="Grade/Level"
+          name="level"
           :options="levels"
           :disabled="!selectedClasses.subdiscipline" />
       </div>
       <div class="col-span-6 lg:col-span-4">
         <BaseSelect
           v-model="selectedClasses.category"
-          :status="props.status?.category"
+          :status="status.category"
           :class="selectedClasses.level ? '' : 'off'"
           label="Category"
+          name="category"
           :options="categories"
           :disabled="!selectedClasses.level" />
       </div>
@@ -375,9 +411,10 @@
         <BaseSelect
           id="instrument"
           v-model="performerStore.performers[0].instrument"
-          :status="props.status?.instrument"
+          :status="status.instrument"
           :options="instruments"
-          label="Instrument" />
+          label="Instrument"
+          name="instrument" />
       </div>
     </div>
     <div
@@ -434,8 +471,10 @@
         v-for="(selection, selectionIndex) in selectedClasses.selections"
         :key="selection.id"
         v-model="selectedClasses.selections![selectionIndex]"
-        :status="props.status"
-        :selection-index="selectionIndex" />
+        :selectionIndex="selectionIndex"
+        :selectionId="selection.id"
+        :classId="classId"
+        :classIndex="classIndex" />
     </div>
   </div>
 </template>

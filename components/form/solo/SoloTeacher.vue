@@ -1,22 +1,22 @@
 <script lang="ts" setup>
   import { useTeacher } from '@/stores/userTeacher'
+  import { StatusEnum } from '@/composables/types'
+  import type { Status } from '@/composables/types'
 
-  interface Status {
-    [key: string]: null | 'saved' | 'saving'
-  }
   const teacherStore = useTeacher()
+
   const status = reactive<Status>({
-    prefix: null,
-    firstName: null,
-    lastName: null,
-    apartment: null,
-    streetNumber: null,
-    streetName: null,
-    city: null,
-    province: null,
-    postalCode: null,
-    email: null,
-    phone: null,
+    prefix: StatusEnum.null,
+    firstName: StatusEnum.null,
+    lastName: StatusEnum.null,
+    apartment: StatusEnum.null,
+    streetNumber: StatusEnum.null,
+    streetName: StatusEnum.null,
+    city: StatusEnum.null,
+    province: StatusEnum.null,
+    postalCode: StatusEnum.null,
+    email: StatusEnum.null,
+    phone: StatusEnum.null,
   })
 
   watch(
@@ -62,59 +62,59 @@
       ]
     ) => {
       if (newApartment !== oldApartment) {
-        status.apartment = 'saving'
+        status.apartment = StatusEnum.saving
         await teacherStore.updateTeacher('apartment')
-        status.apartment = 'saved'
+        status.apartment = StatusEnum.saved
       }
       if (newCity !== oldCity) {
-        status.city = 'saving'
+        status.city = StatusEnum.saving
         await teacherStore.updateTeacher('city')
-        status.city = 'saved'
+        status.city = StatusEnum.saved
       }
       if (newEmail !== oldEmail) {
-        status.email = 'saving'
+        status.email = StatusEnum.saving
         await teacherStore.updateTeacher('email')
-        status.email = 'saved'
+        status.email = StatusEnum.saved
       }
       if (newPrefix !== oldPrefix) {
-        status.prefix = 'saving'
+        status.prefix = StatusEnum.saving
         await teacherStore.updateTeacher('prefix')
-        status.prefix = 'saved'
+        status.prefix = StatusEnum.saved
       }
       if (newFirstName !== oldFirstName) {
-        status.firstName = 'saving'
+        status.firstName = StatusEnum.saving
         await teacherStore.updateTeacher('firstName')
-        status.firstName = 'saved'
+        status.firstName = StatusEnum.saved
       }
       if (newLastName !== oldLastName) {
-        status.lastName = 'saving'
+        status.lastName = StatusEnum.saving
         await teacherStore.updateTeacher('lastName')
-        status.lastName = 'saved'
+        status.lastName = StatusEnum.saved
       }
       if (newPhone !== oldPhone) {
-        status.phone = 'saving'
+        status.phone = StatusEnum.saving
         await teacherStore.updateTeacher('phone')
-        status.phone = 'saved'
+        status.phone = StatusEnum.saved
       }
       if (newPostalCode !== oldPostalCode) {
-        status.postalCode = 'saving'
+        status.postalCode = StatusEnum.saving
         await teacherStore.updateTeacher('postalCode')
-        status.postalCode = 'saved'
+        status.postalCode = StatusEnum.saved
       }
       if (newProvince !== oldProvince) {
-        status.province = 'saving'
+        status.province = StatusEnum.saving
         await teacherStore.updateTeacher('province')
-        status.province = 'saved'
+        status.province = StatusEnum.saved
       }
       if (newStreetName !== oldStreetName) {
-        status.streetName = 'saving'
+        status.streetName = StatusEnum.saving
         await teacherStore.updateTeacher('streetName')
-        status.streetName = 'saved'
+        status.streetName = StatusEnum.saved
       }
       if (newStreetNumber !== oldStreetNumber) {
-        status.streetNumber = 'saving'
+        status.streetNumber = StatusEnum.saving
         await teacherStore.updateTeacher('streetNumber')
-        status.streetNumber = 'saved'
+        status.streetNumber = StatusEnum.saved
       }
     }
   )

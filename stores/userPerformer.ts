@@ -143,13 +143,6 @@ export const usePerformers = defineStore(
             Array(Object.entries(personProps).find((item) => item[0] === field))
           )
         }
-        console.log('Field-----: ', field)
-        console.log(
-          'ObjectKeys-----: ',
-          Object.keys(personProps).includes(field!)
-        )
-        console.log('PerformerField-----: ', performerField)
-
         performerUpdate({
           performerId,
           performer: <PerformerInput>(performerField || personProps),

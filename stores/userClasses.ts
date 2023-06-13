@@ -157,9 +157,10 @@ export const useClasses = defineStore(
      * into the db.
      *
      * @param classId ID of the Registered Class
+     * @param field class field
      * @returns Promise
      */
-    function updateClass(classId: number) {
+    function updateClass(classId: number, field?: string): Promise<unknown> {
       return new Promise((resolve, reject) => {
         const {
           mutate: classUpdate,
@@ -170,10 +171,16 @@ export const useClasses = defineStore(
           (item) => item.id === classId
         )
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { id, __typename, ...regcls } = regClass
+        const { id, __typename, selections, ...classProps } = regClass
+        let classField = null
+        if (field && Object.keys(classProps).includes(field)) {
+          classField = Object.fromEntries(
+            Array(Object.entries(classProps).find((item) => item[0] === field))
+          )
+        }
         classUpdate({
           registeredClassId: classId,
-          registeredClass: <RegisteredClassInput>regcls,
+          registeredClass: <RegisteredClassInput>(classField || classProps),
         }).catch((error) => console.log(error))
         onDone(() => {
           resolve('Success')
@@ -197,9 +204,9 @@ export const useClasses = defineStore(
      * and deletes it from the db, including all details.
      *
      * @param registeredClassId ID of Registered Class
-     * @returns Promise
+     * @returns classIndex number
      */
-    function deleteClass(registeredClassId: number) {
+    function deleteClass(registeredClassId: number): Promise<number> {
       return new Promise((resolve, reject) => {
         const {
           mutate: classDelete,
@@ -212,7 +219,7 @@ export const useClasses = defineStore(
             (item) => item.id === registeredClassId
           )
           registeredClasses.value.splice(classIndex, 1)
-          resolve('Success')
+          resolve(classIndex)
         })
         onError((error) => {
           reject(console.log(error))
@@ -252,9 +259,14 @@ export const useClasses = defineStore(
      *
      * @param classId ID of Registered Class
      * @param selectionId ID of selection
+     * @param field selection field
      * @returns
      */
-    function updateSelection(classId: number, selectionId: number) {
+    function updateSelection(
+      classId: number,
+      selectionId: number,
+      field?: string
+    ) {
       return new Promise((resolve, reject) => {
         const {
           mutate: selectionUpdate,
@@ -265,10 +277,18 @@ export const useClasses = defineStore(
           .find((reg) => reg.id === classId)
           ?.selections?.find((sel) => sel.id === selectionId)
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { id, __typename, ...sel } = selection
+        const { id, __typename, ...selectionProps } = selection
+        let selectionField = null
+        if (field && Object.keys(selectionProps).includes(field)) {
+          selectionField = Object.fromEntries(
+            Array(
+              Object.entries(selectionProps).find((item) => item[0] === field)
+            )
+          )
+        }
         selectionUpdate({
           selectionId,
-          selection: <SelectionInput>sel,
+          selection: <SelectionInput>(selectionField || selectionProps),
         }).catch((error) => console.log(error))
         onDone(() => {
           resolve('Success')
