@@ -85,18 +85,24 @@ export const useGroup = defineStore(
      * Updates the Group object from the store to the db
      * @returns Promise
      */
-    function updateGroup(): Promise<unknown> {
+    function updateGroup(field?: string): Promise<unknown> {
       return new Promise((resolve, reject) => {
         const {
           mutate: groupUpdate,
           onDone,
           onError,
-        } = useMutation(GroupUpdateDocument)
+        } = useMutation(GroupUpdateDocument, { fetchPolicy: 'network-only' })
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { id, __typename, ...grp } = group.value
+        const { id, __typename, ...groupProps } = group.value
+        let groupField = null
+        if (field && Object.keys(groupProps).includes(field)) {
+          groupField = Object.fromEntries(
+            Array(Object.entries(groupProps).find((item) => item[0] === field))
+          )
+        }
         groupUpdate({
           groupId: group.value.id,
-          group: <GroupInput>grp,
+          group: <GroupInput>(groupField || groupProps),
         }).catch((error) => console.log(error))
         onDone(() => {
           resolve('Success')

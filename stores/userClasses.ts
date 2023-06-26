@@ -340,20 +340,13 @@ export const useClasses = defineStore(
           const classIndex = registeredClasses.value.findIndex(
             (item) => item.id === classId
           )
-          console.log('ClassIndex-----: ', classIndex)
           const selectionIndex = registeredClasses.value[
             classIndex
           ].selections!.findIndex((item) => item.id === selectionId)
-          console.log('SelectionIndex-----: ', selectionIndex)
           registeredClasses.value[classIndex].selections?.splice(
             selectionIndex,
             1
           )
-          console.log(
-            'Sel Length after del-----: ',
-            registeredClasses.value[classIndex].selections!.length
-          )
-
           resolve('Success')
         })
         onError((error) => {

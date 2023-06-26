@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import BaseCheckbox from '../components/base/BaseCheckbox.vue'
+  import BaseCheckbox from './BaseCheckbox.vue'
 </script>
 
 <template>

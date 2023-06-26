@@ -16,7 +16,6 @@
 
   async function removeClass(classId: number) {
     const classIndex = await classesStore.deleteClass(classId)
-    console.log('Delete Class Index-----: ', classIndex)
   }
 
   const schoolGroups = computed(() => {
@@ -71,14 +70,13 @@
           "
           class="btn btn-blue mb-6"
           @click="addClass(registrationStore.registrationId)">
-          Add Class
+          Add Another Class
         </BaseButton>
         <BaseButton
           v-if="classesStore.registeredClasses.length > 1 ? true : false"
-          id="index"
           class="btn btn-red mb-6"
           @click="removeClass(selectedClass.id)">
-          Remove Class
+          Remove This Class
         </BaseButton>
         <br /><br />
         <svg viewBox="0 0 800 2">

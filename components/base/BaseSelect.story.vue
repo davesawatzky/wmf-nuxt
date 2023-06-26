@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import BaseSelect from '../components/base/BaseSelect.vue'
+  import BaseSelect from './BaseSelect.vue'
 </script>
 
 <template>

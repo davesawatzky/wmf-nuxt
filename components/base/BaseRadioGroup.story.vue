@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import BaseRadioGroup from '../components/base/BaseRadioGroup.vue'
+  import BaseRadioGroup from './BaseRadioGroup.vue'
 
   const value = ref(2)
 </script>

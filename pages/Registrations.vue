@@ -145,7 +145,6 @@
     }
     await registrationStore.createRegistration(performerType, label)
     registrationId.value = registrationStore.registrationId
-    console.log('RegistrationID-----: ', registrationId.value)
     appStore.$patch({
       editExisting: false,
       performerType,

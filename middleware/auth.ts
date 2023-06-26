@@ -1,5 +1,5 @@
 export default defineNuxtRouteMiddleware((to) => {
-  if (to.path !== '/' && to.path !== '/login') {
+  if (to.path !== '/') {
     const { onResult, onError } = useQuery(gql`
       query TokenCheck {
         tokenCheck
@@ -16,5 +16,8 @@ export default defineNuxtRouteMiddleware((to) => {
       console.log(error)
       navigateTo('/login')
     })
+  }
+  if (to.path === '/') {
+    navigateTo('/login')
   }
 })

@@ -14,6 +14,7 @@
 
   const FormSoloPerformer = <Component>resolveComponent('FormSoloPerformer')
   const FormSoloTeacher = <Component>resolveComponent('FormSoloTeacher')
+  const FormGroupInfo = <Component>resolveComponent('FormGroupInfo')
   const FormGroupPerformers = <Component>resolveComponent('FormGroupPerformers')
   const FormGroupTeacher = <Component>resolveComponent('FormGroupTeacher')
   const FormSchoolInfo = <Component>resolveComponent('FormSchoolInfo')
@@ -61,7 +62,8 @@
     case 'GROUP':
       currentTab.value = 'Group'
       tabs = {
-        Group: FormGroupPerformers,
+        Group: FormGroupInfo,
+        Performers: FormGroupPerformers,
         Teacher: FormGroupTeacher,
         'Group Classes': FormTypeClasses,
         Summary,

@@ -2,8 +2,6 @@ mutation PerformerDelete($performerId: Int!) {
   performerDelete(performerID: $performerId) {
     performer {
       id
-      firstName
-      lastName
     }
     userErrors {
       message

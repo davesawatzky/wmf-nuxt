@@ -63,7 +63,6 @@ export const usePerformers = defineStore(
      */
     function createPerformer(registrationId: number): Promise<unknown> {
       return new Promise((resolve, reject) => {
-        console.log('RegID-----: ', registrationId)
         const { mutate, onDone, onError } = useMutation(PerformerCreateDocument)
         mutate({
           registrationId,
@@ -169,7 +168,7 @@ export const usePerformers = defineStore(
      * Removes a performer from the store and the db
      *
      * @param performerId ID of the individual performer in the Array
-     * @returns
+     * @returns performer array index number
      */
     function deletePerformer(performerId: number): Promise<unknown> {
       return new Promise((resolve, reject) => {
@@ -180,9 +179,11 @@ export const usePerformers = defineStore(
         } = useMutation(PerformerDeleteDocument)
         performerDelete({ performerId }).catch((error) => console.log(error))
         onDone(() => {
-          const index = performers.value.findIndex((e) => e.id === performerId)
-          performers.value.splice(index, 1)
-          resolve('Success')
+          const performerIndex = performers.value.findIndex(
+            (item) => item.id === performerId
+          )
+          performers.value.splice(performerIndex, 1)
+          resolve(performerIndex)
         })
         onError((error) => {
           reject(console.log(error))

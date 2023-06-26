@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import BaseTab from '../components/base/BaseTab.vue'
+  import BaseTab from './BaseTab.vue'
 </script>
 
 <template>

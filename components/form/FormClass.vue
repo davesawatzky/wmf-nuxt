@@ -7,6 +7,7 @@
     LevelsDocument,
     SubdisciplinesByTypeDocument,
   } from '@/graphql/gql/graphql'
+  import { logErrorMessages } from '@vue/apollo-util'
   import { useClasses } from '@/stores/userClasses'
   import { useAppStore } from '@/stores/appStore'
   import { usePerformers } from '@/stores/userPerformer'
@@ -39,7 +40,10 @@
   const appStore = useAppStore()
   const performerStore = usePerformers()
   const classesStore = useClasses()
+  const classSelection = ref(<FestivalClass>{}) // component variable
+
   const selectedClasses = computed({
+    // used to emit values back to parent
     get: () => props.modelValue,
     set: (value) => emits('update:modelValue', value),
   })
@@ -92,15 +96,12 @@
     console.log(error)
   })
   const subdisciplines = computed(() => subdisc.value?.subdisciplines ?? [])
-  const chosenSubdiscipline = computed({
-    get: () => {
-      return (
-        subdisciplines.value.find((item: any) => {
-          return item.name === selectedClasses.value.subdiscipline
-        }) ?? {}
-      )
-    },
-    set: (newValue) => newValue,
+  const chosenSubdiscipline = computed(() => {
+    return (
+      subdisciplines.value.find((item: any) => {
+        return item.name === selectedClasses.value.subdiscipline
+      }) ?? {}
+    )
   })
 
   /**
@@ -119,15 +120,12 @@
   )
   errorLevel((error) => console.log(error))
   const levels = computed(() => gradeLevels.value?.levels ?? [])
-  const chosenGradeLevel = computed({
-    get: () => {
-      return (
-        levels.value.find((item: any) => {
-          return item.name === selectedClasses.value.level
-        }) ?? {}
-      )
-    },
-    set: (newValue) => newValue,
+  const chosenGradeLevel = computed(() => {
+    return (
+      levels.value.find((item: any) => {
+        return item.name === selectedClasses.value.level
+      }) ?? {}
+    )
   })
 
   /**
@@ -147,41 +145,37 @@
   )
   errorCategories((error) => console.log(error))
   const categories = computed(() => cat.value?.categories ?? [])
-  const chosenCategory = computed({
-    get: () => {
-      return (
-        categories.value.find((item: any) => {
-          return item.name === selectedClasses.value.category
-        }) ?? {}
-      )
-    },
-    set: (newValue) => newValue,
+  const chosenCategory = computed(() => {
+    return (
+      categories.value.find((item: any) => {
+        return item.name === selectedClasses.value.category
+      }) ?? {}
+    )
   })
 
   /**
    * ClassName
    */
-  const className = computed({
-    get: () => {
-      if (
-        selectedClasses.value.subdiscipline &&
-        selectedClasses.value.level &&
-        selectedClasses.value.category
-      ) {
-        return `${selectedClasses.value.subdiscipline} - ${selectedClasses.value.level} - ${selectedClasses.value.category}`
-      } else {
-        return ''
-      }
-    },
-    set: (newValue) => newValue,
+  const className = computed(() => {
+    if (
+      selectedClasses.value.subdiscipline &&
+      selectedClasses.value.level &&
+      selectedClasses.value.category
+    ) {
+      return `${selectedClasses.value.subdiscipline} - ${selectedClasses.value.level} - ${selectedClasses.value.category}`
+    } else {
+      return ''
+    }
   })
 
   /**
    * Class Search for details incl. Number
+   * Full result it copied to classSelection.
+   * Run after category is selected in festival class
    */
   const {
-    result: classSearch,
-    load: loadClassNumber,
+    load: loadClassInformation,
+    onResult: onClassSearchResult,
     onError: errorClass,
   } = useLazyQuery(
     FestivalClassSearchDocument,
@@ -194,30 +188,21 @@
     }),
     { fetchPolicy: 'network-only' }
   )
-  errorClass((error) => console.log(error))
-  const classSelection = computed<FestivalClass>({
-    get: () => {
-      if (
-        chosenSubdiscipline.value.id &&
-        chosenGradeLevel.value.id &&
-        chosenCategory.value.id
-      ) {
-        return classSearch?.value?.festivalClassSearch[0] ?? []
-      } else {
-        return []
-      }
-    },
-    set: (newValue) => newValue,
+  onClassSearchResult((result) => {
+    classSelection.value = result.data.festivalClassSearch[0]
+    selectedClasses.value.minSelections = classSelection.value.minSelections
+    selectedClasses.value.maxSelections = classSelection.value.maxSelections
+    selectedClasses.value.numberOfSelections =
+      classSelection.value.minSelections
+    selectedClasses.value.classNumber = classSelection.value.classNumber
+    instrumentRequired.value = classesStore.MOZART_CLASSES.includes(
+      classSelection.value.classNumber
+    )
+    classesStore.updateClass(props.classId)
   })
-
-  watch(
-    () => selectedClasses.value.classNumber,
-    (newClassNumber) => {
-      instrumentRequired.value = classesStore.MOZART_CLASSES.includes(
-        newClassNumber!
-      )
-    }
-  )
+  errorClass((error) => {
+    logErrorMessages(error)
+  })
 
   const notes = computed(() => {
     if (
@@ -231,20 +216,36 @@
     return false
   })
 
+  /**
+   * Watchers for changes in discipline, subdiscipline
+   * level and category.
+   */
   watch(
-    () => classesStore.registeredClasses[props.classIndex].discipline,
-    () => {
+    () => selectedClasses.value.discipline,
+    async (newDiscipline, oldDiscipline) => {
       selectedClasses.value.subdiscipline = null
-      chosenSubdiscipline.value = { id: '', name: '' }
+      if (newDiscipline !== oldDiscipline) {
+        status.discipline = StatusEnum.saving
+        await classesStore.updateClass(props.classId, 'discipline')
+        newDiscipline !== null
+          ? (status.discipline = StatusEnum.saved)
+          : (status.discipline = StatusEnum.null)
+      }
       loadSubdisciplines()
     }
   )
 
   watch(
-    () => classesStore.registeredClasses[props.classIndex].subdiscipline,
-    () => {
+    () => selectedClasses.value.subdiscipline,
+    async (newSubdiscipline, oldSubdiscipline) => {
       selectedClasses.value.level = null
-      chosenGradeLevel.value = { id: '', name: '' }
+      if (newSubdiscipline !== oldSubdiscipline) {
+        status.subdiscipline = StatusEnum.saving
+        await classesStore.updateClass(props.classId, 'subdiscipline')
+        newSubdiscipline !== null
+          ? (status.subdiscipline = StatusEnum.saved)
+          : (status.subdiscipline = StatusEnum.null)
+      }
       if (selectedClasses.value.subdiscipline !== null) {
         loadLevels()
       }
@@ -252,10 +253,16 @@
   )
 
   watch(
-    () => classesStore.registeredClasses[props.classIndex].level,
-    () => {
+    () => selectedClasses.value.level,
+    async (newLevel, oldLevel) => {
       selectedClasses.value.category = null
-      chosenCategory.value = { id: '', name: '' }
+      if (newLevel !== oldLevel) {
+        status.level = StatusEnum.saving
+        await classesStore.updateClass(props.classId, 'level')
+        newLevel !== null
+          ? (status.level = StatusEnum.saved)
+          : (status.level = StatusEnum.null)
+      }
       if (selectedClasses.value.level !== null) {
         loadCategories()
       }
@@ -263,28 +270,32 @@
   )
 
   watch(
-    () => classesStore.registeredClasses[props.classIndex].category,
-    async (newValue, oldValue) => {
-      if (newValue === null) {
-        status.category = StatusEnum.null
-        status.discipline = StatusEnum.null
-        status.subdiscipline = StatusEnum.null
-        status.level = StatusEnum.null
-        await classesStore.updateClass(props.classId)
+    () => selectedClasses.value.category,
+    async (newCategory, oldCategory) => {
+      if (newCategory !== oldCategory) {
+        status.category = StatusEnum.saving
+        await classesStore.updateClass(props.classId, 'category')
+        newCategory !== null
+          ? (status.category = StatusEnum.saved)
+          : (status.category = StatusEnum.null)
+      }
+      if (selectedClasses.value.category === null) {
         selectedClasses.value.classNumber = null
       } else {
-        selectedClasses.value.classNumber = null
-        loadClassNumber()
+        loadClassInformation()
       }
     }
   )
 
   /**
-   * Number of Allowed Works
+   * Number of Allowed Works in class to choose from
    */
   const numberOfAllowedWorks = computed(() => {
-    const minWorks = selectedClasses.value.minSelections!
-    const maxWorks = selectedClasses.value.maxSelections!
+    let minWorks = classSelection.value.minSelections!
+    let maxWorks = classSelection.value.maxSelections!
+    if (minWorks === maxWorks) {
+      selectedClasses.value.numberOfSelections = minWorks
+    }
     const selectionOptions = []
     for (let i = minWorks; i <= maxWorks; i++) {
       selectionOptions.push({ value: i, label: `${i.toString()} Selections` })
@@ -293,10 +304,10 @@
   })
 
   /**
-   * Updating number of selections
+   * Updating number of selections to show based on what is chosen
    */
   watch(
-    () => classesStore.registeredClasses[props.classIndex].numberOfSelections,
+    () => selectedClasses.value.numberOfSelections,
     async (newNumber) => {
       let oldNumber =
         classesStore.registeredClasses[props.classIndex].selections!.length
@@ -324,34 +335,6 @@
       await classesStore.updateClass(props.classId, 'numberOfSelections')
     }
   )
-
-  watch(classSelection, async (newClassSelection) => {
-    status.category = StatusEnum.saving
-    status.discipline = StatusEnum.saving
-    status.subdiscipline = StatusEnum.saving
-    status.level = StatusEnum.saving
-
-    classesStore.registeredClasses[props.classIndex].price =
-      newClassSelection.price
-    selectedClasses.value.classNumber = newClassSelection.classNumber
-    selectedClasses.value.minSelections = newClassSelection.minSelections
-    selectedClasses.value.maxSelections = newClassSelection.maxSelections
-    selectedClasses.value.numberOfSelections = newClassSelection.minSelections
-
-    await classesStore.updateClass(props.classId)
-
-    status.category = StatusEnum.saved
-    status.discipline = StatusEnum.saved
-    status.subdiscipline = StatusEnum.saved
-    status.level = StatusEnum.saved
-  })
-
-  onMounted(() => {
-    loadSubdisciplines()
-    loadLevels()
-    loadCategories()
-    loadClassNumber()
-  })
 </script>
 
 <template>
@@ -398,11 +381,11 @@
           :options="categories"
           :disabled="!selectedClasses.level" />
       </div>
-      <div
-        v-if="className"
-        class="col-span-12 md:col-span-12">
+    </div>
+    <div v-if="className">
+      <div class="col-span-12 md:col-span-12">
         <p class="text-2xl text-center font-bold">
-          Class {{ selectedClasses.classNumber }} - {{ className }}
+          Class {{ classSelection.classNumber }} - {{ className }}
         </p>
       </div>
       <div
@@ -416,47 +399,48 @@
           label="Instrument"
           name="instrument" />
       </div>
-    </div>
-    <div
-      v-if="(classSelection.trophies ?? []).length > 0"
-      v-auto-animate>
-      <h4>Trophy Eligibility</h4>
+
       <div
-        v-for="trophy in classSelection.trophies"
-        :key="trophy.id">
-        <h6>{{ trophy.name }}:</h6>
-        <p class="text-sm pb-2">
-          {{ trophy.description }}
-        </p>
-      </div>
-    </div>
-    <div
-      v-if="notes"
-      class="col-span-12">
-      <h4 class="pb-2">Notes</h4>
-      <div
-        v-if="chosenSubdiscipline.description"
+        v-if="(classSelection.trophies ?? []).length > 0"
         v-auto-animate>
-        <h5>Subdiscipline</h5>
-        <p class="text-sm pb-2">
-          {{ chosenSubdiscipline.description }}
-        </p>
+        <h4>Trophy Eligibility</h4>
+        <div
+          v-for="trophy in classSelection.trophies"
+          :key="trophy.id">
+          <h6>{{ trophy.name }}:</h6>
+          <p class="text-sm pb-2">
+            {{ trophy.description }}
+          </p>
+        </div>
       </div>
       <div
-        v-if="chosenGradeLevel.description"
-        v-auto-animate>
-        <h5>Grade / Level</h5>
-        <p class="text-sm pb-2">
-          {{ chosenGradeLevel.description }}
-        </p>
-      </div>
-      <div
-        v-if="chosenCategory.description"
-        v-auto-animate>
-        <h5>Category</h5>
-        <p class="text-sm pb-2">
-          {{ chosenCategory.description }}
-        </p>
+        v-if="notes"
+        class="col-span-12">
+        <h4 class="pb-2">Notes</h4>
+        <div
+          v-if="chosenSubdiscipline.description"
+          v-auto-animate>
+          <h5>Subdiscipline</h5>
+          <p class="text-sm pb-2">
+            {{ chosenSubdiscipline.description }}
+          </p>
+        </div>
+        <div
+          v-if="chosenGradeLevel.description"
+          v-auto-animate>
+          <h5>Grade / Level</h5>
+          <p class="text-sm pb-2">
+            {{ chosenGradeLevel.description }}
+          </p>
+        </div>
+        <div
+          v-if="chosenCategory.description"
+          v-auto-animate>
+          <h5>Category</h5>
+          <p class="text-sm pb-2">
+            {{ chosenCategory.description }}
+          </p>
+        </div>
       </div>
       <div
         v-if="classSelection.minSelections !== classSelection.maxSelections"
@@ -471,10 +455,10 @@
         v-for="(selection, selectionIndex) in selectedClasses.selections"
         :key="selection.id"
         v-model="selectedClasses.selections![selectionIndex]"
-        :selectionIndex="selectionIndex"
-        :selectionId="selection.id"
-        :classId="classId"
-        :classIndex="classIndex" />
+        :selection-index="selectionIndex"
+        :selection-id="selection.id"
+        :class-id="classId"
+        :class-index="classIndex" />
     </div>
   </div>
 </template>

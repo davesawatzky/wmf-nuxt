@@ -2,6 +2,7 @@
   import * as yup from 'yup'
   import 'yup-phone-lite'
   import type { ContactInfo, Status } from '@/composables/types'
+  import { usePerformers } from '@/stores/userPerformer'
 
   const props = defineProps<{
     modelValue: ContactInfo
@@ -9,13 +10,15 @@
     schoolteacher?: boolean
     school?: boolean
     groupperformer?: boolean
-    // eslint-disable-next-line no-use-before-define
-    status: Status
+    performerIndex: number
+    performerId: number
   }>()
 
   const emits = defineEmits<{
     'update:modelValue': [ContactInfo]
   }>()
+
+  const performerStore = usePerformers()
 
   /**
    * Sets the model value from all the props.
@@ -26,6 +29,147 @@
     get: () => props.modelValue,
     set: (value) => emits('update:modelValue', value),
   })
+
+  const status = reactive<Status>({
+    firstName: StatusEnum.null,
+    lastName: StatusEnum.null,
+    age: StatusEnum.null,
+    level: StatusEnum.null,
+    instrument: StatusEnum.null,
+    otherClasses: StatusEnum.null,
+    apartment: StatusEnum.null,
+    streetNumber: StatusEnum.null,
+    streetName: StatusEnum.null,
+    city: StatusEnum.null,
+    province: StatusEnum.null,
+    postalCode: StatusEnum.null,
+    email: StatusEnum.null,
+    phone: StatusEnum.null,
+  })
+
+  watch(
+    () => [
+      performerStore.performers[props.performerIndex].age,
+      performerStore.performers[props.performerIndex].apartment,
+      performerStore.performers[props.performerIndex].city,
+      performerStore.performers[props.performerIndex].email,
+      performerStore.performers[props.performerIndex].firstName,
+      performerStore.performers[props.performerIndex].lastName,
+      performerStore.performers[props.performerIndex].instrument,
+      performerStore.performers[props.performerIndex].level,
+      performerStore.performers[props.performerIndex].otherClasses,
+      performerStore.performers[props.performerIndex].phone,
+      performerStore.performers[props.performerIndex].postalCode,
+      performerStore.performers[props.performerIndex].province,
+      performerStore.performers[props.performerIndex].streetName,
+      performerStore.performers[props.performerIndex].streetNumber,
+    ],
+    async (
+      [
+        newAge,
+        newApartment,
+        newCity,
+        newEmail,
+        newFirstName,
+        newLastName,
+        newInstrument,
+        newLevel,
+        newOtherClasses,
+        newPhone,
+        newPostalCode,
+        newProvince,
+        newStreetName,
+        newStreetNumber,
+      ],
+      [
+        oldAge,
+        oldApartment,
+        oldCity,
+        oldEmail,
+        oldFirstName,
+        oldLastName,
+        oldInstrument,
+        oldLevel,
+        oldOtherClasses,
+        oldPhone,
+        oldPostalCode,
+        oldProvince,
+        oldStreetName,
+        oldStreetNumber,
+      ]
+    ) => {
+      if (newAge !== oldAge) {
+        status.age = StatusEnum.saving
+        await performerStore.updatePerformer(props.performerId, 'age')
+        status.age = StatusEnum.saved
+      }
+      if (newApartment !== oldApartment) {
+        status.apartment = StatusEnum.saving
+        await performerStore.updatePerformer(props.performerId, 'apartment')
+        status.apartment = StatusEnum.saved
+      }
+      if (newCity !== oldCity) {
+        status.city = StatusEnum.saving
+        await performerStore.updatePerformer(props.performerId, 'city')
+        status.city = StatusEnum.saved
+      }
+      if (newEmail !== oldEmail) {
+        status.email = StatusEnum.saving
+        await performerStore.updatePerformer(props.performerId, 'email')
+        status.email = StatusEnum.saved
+      }
+      if (newFirstName !== oldFirstName) {
+        status.firstName = StatusEnum.saving
+        await performerStore.updatePerformer(props.performerId, 'firstName')
+        status.firstName = StatusEnum.saved
+      }
+      if (newLastName !== oldLastName) {
+        status.lastName = StatusEnum.saving
+        await performerStore.updatePerformer(props.performerId, 'lastName')
+        status.lastName = StatusEnum.saved
+      }
+      if (newInstrument !== oldInstrument) {
+        status.instrument = StatusEnum.saving
+        await performerStore.updatePerformer(props.performerId, 'instrument')
+        status.instrument = StatusEnum.saved
+      }
+      if (newLevel !== oldLevel) {
+        status.level = StatusEnum.saving
+        await performerStore.updatePerformer(props.performerId, 'level')
+        status.level = StatusEnum.saved
+      }
+      if (newOtherClasses !== oldOtherClasses) {
+        status.otherClasses = StatusEnum.saving
+        await performerStore.updatePerformer(props.performerId, 'otherClasses')
+        status.otherClasses = StatusEnum.saved
+      }
+      if (newPhone !== oldPhone) {
+        status.phone = StatusEnum.saving
+        await performerStore.updatePerformer(props.performerId, 'phone')
+        status.phone = StatusEnum.saved
+      }
+      if (newPostalCode !== oldPostalCode) {
+        status.postalCode = StatusEnum.saving
+        await performerStore.updatePerformer(props.performerId, 'postalCode')
+        status.postalCode = StatusEnum.saved
+      }
+      if (newProvince !== oldProvince) {
+        status.province = StatusEnum.saving
+        await performerStore.updatePerformer(props.performerId, 'province')
+        status.province = StatusEnum.saved
+      }
+      if (newStreetName !== oldStreetName) {
+        status.streetName = StatusEnum.saving
+        await performerStore.updatePerformer(props.performerId, 'streetName')
+        status.streetName = StatusEnum.saved
+      }
+      if (newStreetNumber !== oldStreetNumber) {
+        status.streetNumber = StatusEnum.saving
+        await performerStore.updatePerformer(props.performerId, 'streetNumber')
+        status.streetNumber = StatusEnum.saved
+      }
+    }
+  )
 
   const validationSchema = yup.object({
     firstName: yup.string().trim().required('First name is required'),
@@ -87,7 +231,7 @@
         class="col-span-12 sm:col-span-2 self-start">
         <BaseSelect
           v-model.trim="contact.prefix"
-          :status="props.status?.prefix"
+          :status="status.prefix"
           required
           name="prefix"
           label="Title"
@@ -98,7 +242,7 @@
         class="col-span-12 sm:col-span-5">
         <BaseInput
           v-model.trim="contact.firstName"
-          :status="props.status?.firstName"
+          :status="status.firstName"
           required
           name="firstName"
           type="text"
@@ -109,7 +253,7 @@
         class="col-span-12 sm:col-span-4">
         <BaseInput
           v-model.trim="contact.lastName"
-          :status="props.status?.lastName"
+          :status="status.lastName"
           required
           name="lastName"
           type="text"
@@ -120,7 +264,7 @@
         class="col-span-12 sm:col-span-5">
         <BaseInput
           v-model.trim="contact.lastName"
-          :status="props.status?.lastName"
+          :status="status.lastName"
           required
           name="lastName"
           type="text"
@@ -131,7 +275,7 @@
         class="col-span-12 sm:col-span-3">
         <BaseInput
           v-model.number="contact.age"
-          :status="props.status?.age"
+          :status="status.age"
           required
           name="age"
           type="number"
@@ -145,7 +289,7 @@
         class="col-span-6 sm:col-span-3">
         <BaseInput
           v-model.trim="contact.apartment"
-          :status="props.status?.apartment"
+          :status="status.apartment"
           name="apartment"
           type="text"
           label="Apt." />
@@ -155,7 +299,7 @@
         class="col-span-12 sm:col-span-4 mt-6 sm:mt-0">
         <BaseInput
           v-model.trim="contact.streetNumber"
-          :status="props.status?.streetNumber"
+          :status="status.streetNumber"
           required
           name="streetNumber"
           type="text"
@@ -166,7 +310,7 @@
         class="col-span-6 sm:col-span-3">
         <BaseInput
           v-model.trim="contact.streetNumber"
-          :status="props.status?.streetNumber"
+          :status="status.streetNumber"
           required
           name="streetNumber"
           type="text"
@@ -178,7 +322,7 @@
         class="col-span-12 sm:col-span-8">
         <BaseInput
           v-model.trim="contact.streetName"
-          :status="props.status?.streetName"
+          :status="status.streetName"
           requried
           name="streetName"
           type="text"
@@ -189,7 +333,7 @@
         class="col-span-12 sm:col-span-6">
         <BaseInput
           v-model.trim="contact.streetName"
-          :status="props.status?.streetName"
+          :status="status.streetName"
           required
           name="streetName"
           type="text"
@@ -200,7 +344,7 @@
         class="col-span-8 sm:col-span-7">
         <BaseInput
           v-model.trim="contact.city"
-          :status="props.status?.city"
+          :status="status.city"
           required
           name="city"
           type="text"
@@ -211,7 +355,7 @@
         class="col-span-4 sm:col-span-2 self-start">
         <BaseSelect
           v-model.trim="contact.province"
-          :status="props.status?.province"
+          :status="status.province"
           required
           name="province"
           label="Province"
@@ -222,7 +366,7 @@
         class="col-span-12 sm:col-span-3">
         <BaseInput
           v-model.trim="contact.postalCode"
-          :status="props.status?.postalCode"
+          :status="status.postalCode"
           required
           name="postalCode"
           type="text"
@@ -231,7 +375,7 @@
       <div class="col-span-12 sm:col-span-5">
         <BaseInput
           v-model.trim="contact.phone"
-          :status="props.status?.phone"
+          :status="status.phone"
           required
           name="phone"
           type="tel"
@@ -242,7 +386,7 @@
         class="col-span-12 sm:col-span-7">
         <BaseInput
           v-model.trim="contact.email"
-          :status="props.status?.email"
+          :status="status.email"
           required
           name="email"
           type="email"
@@ -253,7 +397,7 @@
         class="col-span-12 sm:col-span-6">
         <BaseInput
           v-model.trim="contact.instrument"
-          :status="props.status?.instrument"
+          :status="status.instrument"
           required
           name="instrument"
           type="text"
@@ -264,7 +408,7 @@
         class="col-span-12 sm:col-span-6">
         <BaseInput
           v-model.trim="contact.level"
-          :status="props.status?.level"
+          :status="status.level"
           required
           name="level"
           type="text"
@@ -275,7 +419,7 @@
         class="col-span-12">
         <BaseTextarea
           v-model.trim="contact.otherClasses"
-          :status="props.status?.otherClasses"
+          :status="status.otherClasses"
           required
           name="otherClasses"
           :label="textAreaLabel" />

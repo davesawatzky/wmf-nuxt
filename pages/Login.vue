@@ -134,7 +134,6 @@
         name="email"
         type="email"
         label="Email"
-        status="error"
         @keyup.enter="isLogin ? signin() : signup()"
         @change="handleChange" />
       <BaseInput

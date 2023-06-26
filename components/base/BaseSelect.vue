@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+  import { StatusEnum } from '@/composables/types'
+
   interface Options {
     id: string
     name: string
@@ -8,14 +10,14 @@
     label?: string
     modelValue: string | number
     options: Options[]
-    status?: null | 'saving' | 'saved'
+    status?: StatusEnum
     name: string
     helpMessage?: string
   }
 
   const props = withDefaults(defineProps<Props>(), {
     label: '',
-    status: null,
+    status: StatusEnum.null,
     modelValue: '',
     name: '',
   })

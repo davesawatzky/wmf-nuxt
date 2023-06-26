@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import BaseToggleA from '../components/base/BaseToggleA.vue'
+  import BaseToggleA from './BaseToggleA.vue'
 </script>
 
 <template>

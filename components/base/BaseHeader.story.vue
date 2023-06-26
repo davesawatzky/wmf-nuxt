@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import BaseHeader from '../components/base/BaseHeader.vue'
+  import BaseHeader from './BaseHeader.vue'
 </script>
 
 <template>
