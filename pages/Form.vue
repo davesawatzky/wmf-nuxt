@@ -19,6 +19,7 @@
   const FormGroupTeacher = <Component>resolveComponent('FormGroupTeacher')
   const FormSchoolInfo = <Component>resolveComponent('FormSchoolInfo')
   const FormSchoolTeacher = <Component>resolveComponent('FormSchoolTeacher')
+  const FormSchoolGroups = <Component>resolveComponent('FormSchoolGroups')
   const FormCommunityInfo = <Component>resolveComponent('FormCommunityInfo')
   const FormCommunityTeacher = <Component>(
     resolveComponent('FormCommunityTeacher')
@@ -74,6 +75,7 @@
       tabs = {
         School: FormSchoolInfo,
         Teacher: FormSchoolTeacher,
+        Groups: FormSchoolGroups,
         'School Classes': FormTypeClasses,
         Summary,
       }

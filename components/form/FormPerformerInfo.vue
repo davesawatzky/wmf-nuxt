@@ -168,7 +168,8 @@
         await performerStore.updatePerformer(props.performerId, 'streetNumber')
         status.streetNumber = StatusEnum.saved
       }
-    }
+    },
+    { flush: 'post' }
   )
 
   const validationSchema = yup.object({

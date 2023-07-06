@@ -15,26 +15,25 @@
   const props = withDefaults(defineProps<Props>(), {
     type: 'text',
     label: '',
+    name: '',
+    helpMessage: '',
     placeholder: '',
     status: StatusEnum.null,
     modelValue: '',
   })
 
-  defineEmits<{
-    (event: 'update:modelValue', payload: string | number): void
-  }>()
-
   const uuid = UniqueID().getID()
-  const nameRef = toRef(props, 'name')
   // Aggressive
   const {
     value: inputValue,
     errorMessage,
     handleChange,
-  } = useField(nameRef, undefined, {
+  } = useField(() => props.name, undefined, {
     validateOnValueUpdate: false,
     initialValue: props.modelValue,
+    syncVModel: true,
   })
+
   const validationListeners = computed(() => {
     // If the field is valid or has not been validated yet
     // lazy
@@ -62,7 +61,7 @@
           v-if="label"
           :for="uuid">
           {{ label }}
-          <BaseHelpButton :helpMessage="helpMessage" />
+          <BaseHelpButton :help-message="helpMessage" />
         </label>
       </div>
       <div class="grow"></div>

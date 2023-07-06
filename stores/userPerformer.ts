@@ -131,7 +131,7 @@ export const usePerformers = defineStore(
         } = useMutation(PerformerUpdateDocument, {
           fetchPolicy: 'no-cache',
         })
-        const person = performers.value.find((item) => {
+        const person = <Performer>performers.value.find((item) => {
           return item.id === performerId
         })
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -183,6 +183,8 @@ export const usePerformers = defineStore(
             (item) => item.id === performerId
           )
           performers.value.splice(performerIndex, 1)
+          console.log(performers.value)
+
           resolve(performerIndex)
         })
         onError((error) => {

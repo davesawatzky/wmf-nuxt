@@ -1,19 +1,99 @@
 <script lang="ts" setup>
   import * as yup from 'yup'
+  import 'yup-phone-lite'
   import { useSchool } from '@/stores/userSchool'
-  import { useTeacher } from '@/stores/userTeacher'
-  import { useSchoolGroup } from '@/stores/userSchoolGroup'
+  import type { Status } from '@/composables/types'
 
-  const teacherStore = useTeacher()
   const schoolStore = useSchool()
-  const schoolGroupStore = useSchoolGroup()
 
-  async function addSchoolGroup(schoolId: number) {
-    await schoolGroupStore.createSchoolGroup(schoolId)
-  }
-  async function removeSchoolGroup(schoolGroupId: number) {
-    await schoolGroupStore.deleteSchoolGroup(schoolGroupId)
-  }
+  const status = reactive<Status>({
+    name: StatusEnum.null,
+    division: StatusEnum.null,
+    streetNumber: StatusEnum.null,
+    streetName: StatusEnum.null,
+    city: StatusEnum.null,
+    province: StatusEnum.null,
+    postalCode: StatusEnum.null,
+    email: StatusEnum.null,
+    phone: StatusEnum.null,
+  })
+
+  watch(
+    () => [
+      schoolStore.school.name,
+      schoolStore.school.division,
+      schoolStore.school.city,
+      schoolStore.school.phone,
+      schoolStore.school.postalCode,
+      schoolStore.school.province,
+      schoolStore.school.streetName,
+      schoolStore.school.streetNumber,
+    ],
+    async (
+      [
+        newName,
+        newDivision,
+        newCity,
+        newPhone,
+        newPostalCode,
+        newProvince,
+        newStreetName,
+        newStreetNumber,
+      ],
+      [
+        oldName,
+        oldDivision,
+        oldCity,
+        oldPhone,
+        oldPostalCode,
+        oldProvince,
+        oldStreetName,
+        oldStreetNumber,
+      ]
+    ) => {
+      if (newName !== oldName) {
+        status.name = StatusEnum.saving
+        await schoolStore.updateSchool('name')
+        status.name = StatusEnum.saved
+      }
+      if (newDivision !== oldDivision) {
+        status.division = StatusEnum.saving
+        await schoolStore.updateSchool('division')
+        status.division = StatusEnum.saved
+      }
+      if (newCity !== oldCity) {
+        status.city = StatusEnum.saving
+        await schoolStore.updateSchool('city')
+        status.city = StatusEnum.saved
+      }
+      if (newPhone !== oldPhone) {
+        status.phone = StatusEnum.saving
+        await schoolStore.updateSchool('phone')
+        status.phone = StatusEnum.saved
+      }
+      if (newPostalCode !== oldPostalCode) {
+        status.postalCode = StatusEnum.saving
+        await schoolStore.updateSchool('postalCode')
+        status.postalCode = StatusEnum.saved
+      }
+      if (newProvince !== oldProvince) {
+        status.province = StatusEnum.saving
+        await schoolStore.updateSchool('province')
+        status.province = StatusEnum.saved
+      }
+      if (newStreetName !== oldStreetName) {
+        status.streetName = StatusEnum.saving
+        await schoolStore.updateSchool('streetName')
+        status.streetName = StatusEnum.saved
+      }
+      if (newStreetNumber !== oldStreetNumber) {
+        status.streetNumber = StatusEnum.saving
+        await schoolStore.updateSchool('streetNumber')
+        status.streetNumber = StatusEnum.saved
+      }
+    }
+  )
+
   const validationSchema = yup.object({
     schoolName: yup
       .string()
@@ -40,6 +120,7 @@
         <div class="col-span-12 sm:col-span-6">
           <BaseInput
             v-model="schoolStore.school.name"
+            :status="status.name"
             name="schoolName"
             type="text"
             label="School Name" />
@@ -47,58 +128,65 @@
         <div class="col-span-12 sm:col-span-6">
           <BaseInput
             v-model="schoolStore.school.division"
+            :status="status.division"
             name="schoolDivision"
             label="School Division"
             type="text" />
         </div>
       </div>
-      <FormContactInfo
-        v-model="schoolStore.school"
-        school />
-      <div class="pt-8">
-        <h2 class="pb-4">Teacher Information</h2>
-        <div>
-          <FormContactInfo
-            v-model="teacherStore.teacher"
-            teacher
-            schoolteacher />
-        </div>
+      <div class="col-span-12 sm:col-span-4 mt-6 sm:mt-0">
+        <BaseInput
+          v-model.trim="schoolStore.school.streetNumber"
+          :status="status.streetNumber"
+          required
+          name="streetNumber"
+          type="text"
+          label="Street #" />
       </div>
-    </div>
-    <h2>School Group Information</h2>
-    <div v-auto-animate>
-      <div
-        v-for="(schoolGrp, groupIndex) in schoolGroupStore.schoolGroup"
-        :key="schoolGrp.id">
-        <div class="py-4">
-          <h4 class="pb-4">School Group #{{ groupIndex + 1 }}</h4>
-          <FormSchoolGroup v-model="schoolGroupStore.schoolGroup[groupIndex]" />
-        </div>
-        <div class="pt-4">
-          <BaseButton
-            v-if="
-              groupIndex + 1 === schoolGroupStore.schoolGroup.length
-                ? true
-                : false
-            "
-            class="btn btn-blue mb-6"
-            @click="addSchoolGroup(schoolStore.school.id)">
-            Add School Group
-          </BaseButton>
-          <BaseButton
-            v-if="schoolGroupStore.schoolGroup.length > 1 ? true : false"
-            class="btn btn-red mb-6"
-            @click="removeSchoolGroup(schoolGrp.id)">
-            Remove School Group
-          </BaseButton>
-          <br /><br />
-          <svg viewBox="0 0 800 2">
-            <line
-              x1="0"
-              x2="800"
-              stroke="black" />
-          </svg>
-        </div>
+      <div class="col-span-12 sm:col-span-8">
+        <BaseInput
+          v-model.trim="schoolStore.school.streetName"
+          :status="status.streetName"
+          requried
+          name="streetName"
+          type="text"
+          label="Street Name" />
+      </div>
+      <div class="col-span-8 sm:col-span-7">
+        <BaseInput
+          v-model.trim="schoolStore.school.city"
+          :status="status.city"
+          required
+          name="city"
+          type="text"
+          label="City/Town" />
+      </div>
+      <div class="col-span-4 sm:col-span-2 self-start">
+        <BaseSelect
+          v-model.trim="schoolStore.school.province"
+          :status="status.province"
+          required
+          name="province"
+          label="Province"
+          :options="provinces" />
+      </div>
+      <div class="col-span-12 sm:col-span-3">
+        <BaseInput
+          v-model.trim="schoolStore.school.postalCode"
+          :status="status.postalCode"
+          required
+          name="postalCode"
+          type="text"
+          label="Postal Code" />
+      </div>
+      <div class="col-span-12 sm:col-span-5">
+        <BaseInput
+          v-model.trim="schoolStore.school.phone"
+          :status="status.phone"
+          required
+          name="phone"
+          type="tel"
+          label="Phone Number" />
       </div>
     </div>
   </form>

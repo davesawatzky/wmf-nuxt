@@ -117,7 +117,8 @@
         )
         status.duration = StatusEnum.saved
       }
-    }
+    },
+    { flush: 'post' }
   )
 </script>
 

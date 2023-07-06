@@ -909,7 +909,7 @@ export type SchoolGroup = {
   groupSize?: Maybe<Scalars['Int']>;
   id: Scalars['Int'];
   latestTime?: Maybe<Scalars['String']>;
-  name: Scalars['String'];
+  name?: Maybe<Scalars['String']>;
   unavailable?: Maybe<Scalars['String']>;
   wheelchairs?: Maybe<Scalars['Int']>;
 };
@@ -920,7 +920,7 @@ export type SchoolGroupInput = {
   earliestTime?: InputMaybe<Scalars['String']>;
   groupSize?: InputMaybe<Scalars['Int']>;
   latestTime?: InputMaybe<Scalars['String']>;
-  name: Scalars['String'];
+  name?: InputMaybe<Scalars['String']>;
   unavailable?: InputMaybe<Scalars['String']>;
   wheelchairs?: InputMaybe<Scalars['Int']>;
 };
@@ -1360,7 +1360,7 @@ export type SchoolGroupInfoQueryVariables = Exact<{
 }>;
 
 
-export type SchoolGroupInfoQuery = { __typename: 'Query', registration: { __typename: 'Registration', school?: { __typename: 'School', schoolGroups?: Array<{ __typename: 'SchoolGroup', id: number, name: string, groupSize?: number | null, chaperones?: number | null, wheelchairs?: number | null, earliestTime?: string | null, latestTime?: string | null, unavailable?: string | null, conflictPerformers?: string | null }> | null } | null } };
+export type SchoolGroupInfoQuery = { __typename: 'Query', registration: { __typename: 'Registration', school?: { __typename: 'School', schoolGroups?: Array<{ __typename: 'SchoolGroup', id: number, name?: string | null, groupSize?: number | null, chaperones?: number | null, wheelchairs?: number | null, earliestTime?: string | null, latestTime?: string | null, unavailable?: string | null, conflictPerformers?: string | null }> | null } | null } };
 
 export type SchoolInfoQueryVariables = Exact<{
   registrationId: Scalars['Int'];

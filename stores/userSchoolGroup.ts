@@ -51,7 +51,7 @@ export const useSchoolGroup = defineStore(
         schoolGroupCreate({ schoolId }).catch((error) => console.log(error))
         onDone((result) => {
           const schoolGroup: SchoolGroup =
-            result.data.registration.school.school_group
+            result.data.schoolGroupCreate.schoolGroup
           addToStore(schoolGroup)
           resolve('Success')
         })
@@ -97,9 +97,13 @@ export const useSchoolGroup = defineStore(
     /**
      * Updates individual school group information from store to db
      * @param schoolGroupId ID of registered School Group
+     * @param field optional field name to update.
      * @returns Promise
      */
-    function updateSchoolGroup(schoolGroupId: number): Promise<unknown> {
+    function updateSchoolGroup(
+      schoolGroupId: number,
+      field?: string
+    ): Promise<unknown> {
       return new Promise((resolve, reject) => {
         const {
           mutate: schoolGroupUpdate,
@@ -108,14 +112,23 @@ export const useSchoolGroup = defineStore(
         } = useMutation(SchoolGroupUpdateDocument, {
           fetchPolicy: 'no-cache',
         })
-        const schoolGrp = schoolGroup.value.find(
-          (item) => item.id === schoolGroupId
-        )
+        const schoolGrp = <SchoolGroup>schoolGroup.value.find((item) => {
+          return item.id === schoolGroupId
+        })
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { id, __typename, ...schlgrp } = schoolGrp
+        const { id, __typename, ...schlgrpProps } = schoolGrp
+        let schoolGroupField = null
+        if (field && Object.keys(schlgrpProps).includes(field)) {
+          schoolGroupField = Object.fromEntries(
+            Array(
+              Object.entries(schlgrpProps).find((item) => item[0] === field)
+            )
+          )
+        }
+        console.log(schlgrpProps)
         schoolGroupUpdate({
           schoolGroupId,
-          schoolGroup: <SchoolGroupInput>schlgrp,
+          schoolGroup: <SchoolGroupInput>(schoolGroupField || schlgrpProps),
         }).catch((error) => console.log(error))
         onDone(() => {
           resolve('Success')

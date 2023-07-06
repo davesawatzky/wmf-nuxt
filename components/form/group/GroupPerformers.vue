@@ -39,7 +39,7 @@
       :key="performer.id">
       <div class="pt-8">
         <h4 class="pb-4">Performer #{{ performerIndex + 1 }}</h4>
-        <FormContactInfo
+        <FormPerformerInfo
           v-model="performerStore.performers[performerIndex]"
           groupperformer
           :performer-index="performerIndex"

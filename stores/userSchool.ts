@@ -94,7 +94,7 @@ export const useSchool = defineStore(
      * Updates School record in db from store.
      * @returns Promise
      */
-    function updateSchool() {
+    function updateSchool(field?: string): Promise<unknown> {
       return new Promise((resolve, reject) => {
         const {
           mutate: schoolUpdate,
@@ -104,10 +104,16 @@ export const useSchool = defineStore(
           fetchPolicy: 'network-only',
         })
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { id, __typename, ...schl } = school.value
+        const { id, __typename, ...schoolProps } = school.value
+        let schoolField = null
+        if (field && Object.keys(schoolProps).includes(field)) {
+          schoolField = Object.fromEntries(
+            Array(Object.entries(schoolProps).find((item) => item[0] === field))
+          )
+        }
         schoolUpdate({
           schoolId: school.value.id,
-          school: <SchoolInput>schl,
+          school: <SchoolInput>(schoolField || schoolProps),
         }).catch((error) => console.log(error))
         onDone(() => {
           resolve('Success')

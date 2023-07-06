@@ -4,18 +4,27 @@
   import { useSchoolGroup } from '@/stores/userSchoolGroup'
   import { useAppStore } from '@/stores/appStore'
   import { PerformerType } from '~/graphql/gql/graphql'
+  import type { Status } from '@/composables/types'
 
   const classesStore = useClasses()
   const registrationStore = useRegistration()
   const schoolGroupStore = useSchoolGroup()
   const appStore = useAppStore()
 
+  const status = ref<Status[]>([{ schoolGroupStatus: StatusEnum.null }])
+
   async function addClass(registrationId: number) {
     await classesStore.createClass(registrationId)
+    if (appStore.performerType === PerformerType.SCHOOL) {
+      status.value.push({ schoolGroupStatus: StatusEnum.null })
+    }
   }
 
   async function removeClass(classId: number) {
     const classIndex = await classesStore.deleteClass(classId)
+    if (appStore.performerType === PerformerType.SCHOOL) {
+      status.value.splice(classIndex, 1)
+    }
   }
 
   const schoolGroups = computed(() => {
@@ -24,6 +33,12 @@
       newArray.push({ id: schlGroup.id, name: schlGroup.name })
     return newArray
   })
+
+  async function saveSelect(classId: number, classIndex: number) {
+    status.value[classIndex].schoolGroupStatus = StatusEnum.saving
+    await classesStore.updateClass(classId, 'schoolGroupID')
+    status.value[classIndex].schoolGroupStatus = StatusEnum.saved
+  }
 </script>
 
 <template>
@@ -35,15 +50,25 @@
       <div class="py-4">
         <h3 class="pb-4">Class {{ classIndex + 1 }}</h3>
         <div v-if="appStore.performerType === PerformerType.SCHOOL">
-          <label for="schoolGroupSelect">Select a school group</label>
+          <div class="flex items-center ml-2">
+            <div class="flex-none">
+              <label :for="`schoolGroupSelect${classIndex}`"
+                >Select a school group</label
+              >
+            </div>
+            <div class="grow"></div>
+            <BaseSaved
+              class="flex-none mr-2"
+              :status="status[classIndex].schoolGroupStatus" />
+          </div>
           <select
-            id="schoolGroupSelect"
+            :id="`schoolGroupSelect${classIndex}`"
             v-model.number="
               classesStore.registeredClasses[classIndex].schoolGroupID
             "
-            :status="status[classIndex].schoolGroup"
             class="mb-6"
-            name="schoolGroup">
+            name="schoolGroup"
+            @input="saveSelect(selectedClass.id, classIndex)">
             <option
               v-for="schoolGrp in schoolGroups"
               :key="schoolGrp.id"

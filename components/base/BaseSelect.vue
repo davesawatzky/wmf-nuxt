@@ -20,10 +20,11 @@
     status: StatusEnum.null,
     modelValue: '',
     name: '',
+    helpMessage: '',
   })
 
   defineEmits<{
-    (event: 'update:modelValue', payload: string | number): void
+    'update:modelValue': [value: string | number]
   }>()
 
   const uuid = UniqueID().getID()
@@ -34,10 +35,10 @@
     <div class="flex items-center ml-2">
       <div class="flex-none">
         <label
-          :for="uuid"
-          v-if="label">
+          v-if="label"
+          :for="uuid">
           {{ label }}
-          <BaseHelpButton :helpMessage="helpMessage" />
+          <BaseHelpButton :help-message="helpMessage" />
         </label>
       </div>
       <div class="grow"></div>
