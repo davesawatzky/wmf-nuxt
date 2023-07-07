@@ -1,10 +1,8 @@
 <script setup lang="ts">
   import * as yup from 'yup'
   import { useGroup } from '@/stores/userGroup'
-  import { usePerformers } from '@/stores/userPerformer'
   import type { Status } from '@/composables/types'
 
-  const performerStore = usePerformers()
   const groupStore = useGroup()
 
   const typeOptions = [
@@ -48,39 +46,15 @@
     age: StatusEnum.null,
   })
 
-  watch(
-    () => [
-      groupStore.group.name,
-      groupStore.group.groupType,
-      groupStore.group.instruments,
-      groupStore.group.age,
-    ],
-    async (
-      [newName, newGroupType, newInstruments, newAge],
-      [oldName, oldGroupType, oldInstruments, oldAge]
-    ) => {
-      if (newName !== oldName) {
-        status.name = StatusEnum.saving
-        await groupStore.updateGroup('name')
-        status.name = StatusEnum.saved
-      }
-      if (newGroupType !== oldGroupType) {
-        status.groupType = StatusEnum.saving
-        await groupStore.updateGroup('groupType')
-        status.groupType = StatusEnum.saved
-      }
-      if (newInstruments !== oldInstruments) {
-        status.instruments = StatusEnum.saving
-        await groupStore.updateGroup('instruments')
-        status.instruments = StatusEnum.saved
-      }
-      if (newAge !== oldAge) {
-        status.age = StatusEnum.saving
-        await groupStore.updateGroup('age')
-        status.age = StatusEnum.saved
-      }
-    }
-  )
+  async function fieldStatus(
+    fieldName: string,
+    updateFunction: any,
+    id?: number
+  ) {
+    status[fieldName] = StatusEnum.saving
+    await updateFunction(fieldName)
+    status[fieldName] = StatusEnum.saved
+  }
 </script>
 
 <template>
@@ -95,7 +69,8 @@
           name="groupname"
           label="Group Name"
           type="text"
-          :status="status.name" />
+          :status="status.name"
+          @change="fieldStatus('name', groupStore.updateGroup)" />
 
         <p>Number of Performers</p>
         <p>
@@ -110,7 +85,8 @@
             v-model="groupStore.group.groupType"
             name="groupType"
             :options="typeOptions"
-            :status="status.groupType" />
+            :status="status.groupType"
+            @change="fieldStatus('groupType', groupStore.updateGroup)" />
         </div>
       </div>
     </div>

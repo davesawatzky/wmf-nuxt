@@ -50,76 +50,15 @@
 
   useForm({ validationSchema })
 
-  watch(
-    () => [
-      classesStore.registeredClasses[props.classIndex].selections![
-        props.selectionIndex
-      ].title,
-      classesStore.registeredClasses[props.classIndex].selections![
-        props.selectionIndex
-      ].composer,
-      classesStore.registeredClasses[props.classIndex].selections![
-        props.selectionIndex
-      ].largerWork,
-      classesStore.registeredClasses[props.classIndex].selections![
-        props.selectionIndex
-      ].movement,
-      classesStore.registeredClasses[props.classIndex].selections![
-        props.selectionIndex
-      ].duration,
-    ],
-    async (
-      [newTitle, newComposer, newLargerWork, newMovement, newDuration],
-      [oldTitle, oldComposer, oldLargerWork, oldMovement, oldDuration]
-    ) => {
-      if (newTitle !== oldTitle) {
-        status.title = StatusEnum.saving
-        await classesStore.updateSelection(
-          props.classId,
-          props.selectionId,
-          'title'
-        )
-        status.title = StatusEnum.saved
-      }
-      if (newComposer !== oldComposer) {
-        status.composer = StatusEnum.saving
-        await classesStore.updateSelection(
-          props.classId,
-          props.selectionId,
-          'composer'
-        )
-        status.composer = StatusEnum.saved
-      }
-      if (newLargerWork !== oldLargerWork) {
-        status.largerWork = StatusEnum.saving
-        await classesStore.updateSelection(
-          props.classId,
-          props.selectionId,
-          'largerWork'
-        )
-        status.largerWork = StatusEnum.saved
-      }
-      if (newMovement !== oldMovement) {
-        status.movement = StatusEnum.saving
-        await classesStore.updateSelection(
-          props.classId,
-          props.selectionId,
-          'movement'
-        )
-        status.movement = StatusEnum.saved
-      }
-      if (newDuration !== oldDuration) {
-        status.duration = StatusEnum.saving
-        await classesStore.updateSelection(
-          props.classId,
-          props.selectionId,
-          'duration'
-        )
-        status.duration = StatusEnum.saved
-      }
-    },
-    { flush: 'post' }
-  )
+  async function fieldStatus(fieldName: string) {
+    status[fieldName] = StatusEnum.saving
+    await classesStore.updateSelection(
+      props.classId,
+      props.selectionId,
+      fieldName
+    )
+    status[fieldName] = StatusEnum.saved
+  }
 </script>
 
 <template>
@@ -132,7 +71,8 @@
           :status="status.title"
           name="title"
           label="Title (including Opus number if applicable)"
-          type="text" />
+          type="text"
+          @change="fieldStatus('title')" />
       </div>
       <div class="col-span-12 sm:col-span-5">
         <BaseInput
@@ -140,7 +80,8 @@
           :status="status.composer"
           name="composer"
           label="Composer"
-          type="text" />
+          type="text"
+          @change="fieldStatus('composer')" />
       </div>
       <div class="col-span-12 sm:col-span-5">
         <BaseInput
@@ -148,7 +89,8 @@
           :status="status.largerWork"
           name="largerWork"
           label="Title of Larger Work (if applicable)"
-          type="text" />
+          type="text"
+          @change="fieldStatus('largerWork')" />
       </div>
       <div class="col-span-6 sm:col-span-4">
         <BaseInput
@@ -156,7 +98,8 @@
           :status="status.movement"
           name="movement"
           label="Movement (if applicable)"
-          type="text" />
+          type="text"
+          @change="fieldStatus('movement')" />
       </div>
       <div class="col-span-6 sm:col-span-3">
         <BaseInput
@@ -164,7 +107,8 @@
           :status="status.duration"
           name="duration"
           label="Duration"
-          type="text" />
+          type="text"
+          @change="fieldStatus('duration')" />
       </div>
     </div>
   </div>

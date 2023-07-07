@@ -38,103 +38,11 @@
     )
   })
 
-  watch(
-    () => [
-      schoolGroupStore.schoolGroup[props.schoolGroupIndex].name,
-      schoolGroupStore.schoolGroup[props.schoolGroupIndex].earliestTime,
-      schoolGroupStore.schoolGroup[props.schoolGroupIndex].latestTime,
-      schoolGroupStore.schoolGroup[props.schoolGroupIndex].groupSize,
-      schoolGroupStore.schoolGroup[props.schoolGroupIndex].chaperones,
-      schoolGroupStore.schoolGroup[props.schoolGroupIndex].wheelchairs,
-      schoolGroupStore.schoolGroup[props.schoolGroupIndex].unavailable,
-      schoolGroupStore.schoolGroup[props.schoolGroupIndex].conflictPerformers,
-    ],
-    async (
-      [
-        newName,
-        newEarliestTime,
-        newLatestTime,
-        newGroupSize,
-        newChaperones,
-        newWheelchairs,
-        newUnavailable,
-        newConflictPerformers,
-      ],
-      [
-        oldName,
-        oldEarliestTime,
-        oldLatestTime,
-        oldGroupSize,
-        oldChaperones,
-        oldWheelchairs,
-        oldUnavailable,
-        oldConflictPerformers,
-      ]
-    ) => {
-      if (newName !== oldName) {
-        status.name = StatusEnum.saving
-        await schoolGroupStore.updateSchoolGroup(props.schoolGroupId, 'name')
-        status.name = StatusEnum.saved
-      }
-      if (newEarliestTime !== oldEarliestTime) {
-        status.earliestTime = StatusEnum.saving
-        await schoolGroupStore.updateSchoolGroup(
-          props.schoolGroupId,
-          'earliestTime'
-        )
-        status.earliestTime = StatusEnum.saved
-      }
-      if (newLatestTime !== oldLatestTime) {
-        status.latestTime = StatusEnum.saving
-        await schoolGroupStore.updateSchoolGroup(
-          props.schoolGroupId,
-          'latestTime'
-        )
-        status.latestTime = StatusEnum.saved
-      }
-      if (newGroupSize !== oldGroupSize) {
-        status.groupSize = StatusEnum.saving
-        await schoolGroupStore.updateSchoolGroup(
-          props.schoolGroupId,
-          'groupSize'
-        )
-        status.groupSize = StatusEnum.saved
-      }
-      if (newChaperones !== oldChaperones) {
-        status.chaperones = StatusEnum.saving
-        await schoolGroupStore.updateSchoolGroup(
-          props.schoolGroupId,
-          'chaperones'
-        )
-        status.chaperones = StatusEnum.saved
-      }
-      if (newWheelchairs !== oldWheelchairs) {
-        status.wheelchairs = StatusEnum.saving
-        await schoolGroupStore.updateSchoolGroup(
-          props.schoolGroupId,
-          'wheelchairs'
-        )
-        status.wheelchairs = StatusEnum.saved
-      }
-      if (newUnavailable !== oldUnavailable) {
-        status.unavailable = StatusEnum.saving
-        await schoolGroupStore.updateSchoolGroup(
-          props.schoolGroupId,
-          'unavailable'
-        )
-        status.unavailable = StatusEnum.saved
-      }
-      if (newConflictPerformers !== oldConflictPerformers) {
-        status.conflictPerformers = StatusEnum.saving
-        await schoolGroupStore.updateSchoolGroup(
-          props.schoolGroupId,
-          'conflictPerformers'
-        )
-        status.conflictPerformers = StatusEnum.saved
-      }
-    },
-    { flush: 'post' }
-  )
+  async function fieldStatus(fieldName: string) {
+    status[fieldName] = StatusEnum.saving
+    await schoolGroupStore.updateSchoolGroup(props.schoolGroupId, fieldName)
+    status[fieldName] = StatusEnum.saved
+  }
 
   const validationSchema = yup.object({
     groupName: yup
@@ -164,21 +72,24 @@
             :status="status.name"
             label="Group Name"
             name="groupName"
-            type="text" />
+            type="text"
+            @change="fieldStatus('name')" />
 
           <BaseInput
             v-model="schoolGroup.earliestTime"
             :status="status.earliestTime"
             name="earliestTime"
             label="Earliest time your group can perform"
-            type="time" />
+            type="time"
+            @change="fieldStatus('earliestTime')" />
 
           <BaseInput
             v-model="schoolGroup.latestTime"
             :status="status.latestTime"
             name="latestTime"
             label="Latest time your group can perform"
-            type="time" />
+            type="time"
+            @change="fieldStatus('latestTime')" />
         </div>
         <div
           class="col-span-12 sm:col-span-4 lg:col-span-4 grid grid-cols-2 gap-x-3 items-end">
@@ -188,7 +99,8 @@
               :status="status.groupSize"
               name="groupSize"
               label="Number of performers"
-              type="number" />
+              type="number"
+              @change="fieldStatus('groupSize')" />
           </div>
           <div class="col-1 sm:col-span-2">
             <BaseInput
@@ -196,7 +108,8 @@
               :status="status.chaperones"
               name="chaperones"
               label="Number of chaperones"
-              type="number" />
+              type="number"
+              @change="fieldStatus('chaperones')" />
           </div>
           <div class="col-1 sm:col-span-2">
             <BaseInput
@@ -204,7 +117,8 @@
               :status="status.wheelchairs"
               name="wheelchairs"
               label="Number of wheelchairs"
-              type="number" />
+              type="number"
+              @change="fieldStatus('wheelchairs')" />
           </div>
           <div class="off col-1 sm:col-span-2">
             <BaseInput
@@ -223,7 +137,8 @@
           :status="status.unavailable"
           name="unavailable"
           label="Unavailable Dates/Times"
-          rows="3" />
+          rows="3"
+          @change="fieldStatus('unavailable')" />
         <p class="text-sm mb-2">
           List any date/time when you are unavailable for performance, including
           school in-service days, using
@@ -236,7 +151,8 @@
           :status="status.conflictPerformers"
           name="conflictPerformers"
           label="Performers participating in other classes."
-          rows="3" />
+          rows="3"
+          @change="fieldStatus('conflictPerformers')" />
         <p class="text-sm mb-2">
           If there are any students in your group participating in other
           festival classes, list the students' names so that we can do our best

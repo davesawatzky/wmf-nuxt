@@ -61,7 +61,7 @@ export type Community = {
   groupSize?: Maybe<Scalars['Int']>;
   id: Scalars['Int'];
   latestTime?: Maybe<Scalars['String']>;
-  name: Scalars['String'];
+  name?: Maybe<Scalars['String']>;
   unavailable?: Maybe<Scalars['String']>;
   wheelchairs?: Maybe<Scalars['Int']>;
 };
@@ -72,7 +72,7 @@ export type CommunityInput = {
   earliestTime?: InputMaybe<Scalars['String']>;
   groupSize?: InputMaybe<Scalars['Int']>;
   latestTime?: InputMaybe<Scalars['String']>;
-  name: Scalars['String'];
+  name?: InputMaybe<Scalars['String']>;
   unavailable?: InputMaybe<Scalars['String']>;
   wheelchairs?: InputMaybe<Scalars['Int']>;
 };
@@ -1325,7 +1325,7 @@ export type CommunityInfoQueryVariables = Exact<{
 }>;
 
 
-export type CommunityInfoQuery = { __typename: 'Query', registration: { __typename: 'Registration', community?: { __typename: 'Community', id: number, name: string, groupSize?: number | null, chaperones?: number | null, wheelchairs?: number | null, earliestTime?: string | null, latestTime?: string | null, unavailable?: string | null, conflictPerformers?: string | null } | null } };
+export type CommunityInfoQuery = { __typename: 'Query', registration: { __typename: 'Registration', community?: { __typename: 'Community', id: number, name?: string | null, groupSize?: number | null, chaperones?: number | null, wheelchairs?: number | null, earliestTime?: string | null, latestTime?: string | null, unavailable?: string | null, conflictPerformers?: string | null } | null } };
 
 export type DisciplinesByTypeQueryVariables = Exact<{
   performerType: PerformerType;

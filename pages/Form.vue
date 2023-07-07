@@ -1,16 +1,7 @@
 <script setup lang="ts">
-  // import {Component, ref} from 'vue'
   import type { Component } from 'vue'
   import { useAppStore } from '@/stores/appStore'
-  import { useClasses } from '@/stores/userClasses'
-  import { useCommunity } from '@/stores/userCommunity'
-  import { useGroup } from '@/stores/userGroup'
-  import { usePerformers } from '@/stores/userPerformer'
   import { useRegistration } from '@/stores/userRegistration'
-  import { useSchool } from '@/stores/userSchool'
-  import { useSchoolGroup } from '@/stores/userSchoolGroup'
-  import { useTeacher } from '@/stores/userTeacher'
-  import { PerformerType } from '~/graphql/gql/graphql'
 
   const FormSoloPerformer = <Component>resolveComponent('FormSoloPerformer')
   const FormSoloTeacher = <Component>resolveComponent('FormSoloTeacher')
@@ -28,14 +19,7 @@
   const Summary = <Component>resolveComponent('Summary')
 
   const registrationStore = useRegistration()
-  const performerStore = usePerformers()
-  const groupStore = useGroup()
-  const communityStore = useCommunity()
-  const classesStore = useClasses()
   const appStore = useAppStore()
-  const schoolStore = useSchool()
-  const schoolGroupStore = useSchoolGroup()
-  const teacherStore = useTeacher()
 
   const performerType = toRef(appStore.performerType)
 
@@ -84,7 +68,7 @@
       currentTab.value = 'Community'
       tabs = {
         Community: FormCommunityInfo,
-        Teacher: FormCommunityTeacher,
+        Contact: FormCommunityTeacher,
         'Community Classes': FormTypeClasses,
         Summary,
       }

@@ -22,9 +22,9 @@ export const useCommunity = defineStore(
     function addToStore(comm: Community) {
       community.value.id = comm.id
       community.value.name = comm.name || ''
-      community.value.groupSize = comm.groupSize || null
-      community.value.chaperones = comm.chaperones || null
-      community.value.wheelchairs = comm.wheelchairs || null
+      community.value.groupSize = comm.groupSize || 0
+      community.value.chaperones = comm.chaperones || 0
+      community.value.wheelchairs = comm.wheelchairs || 0
       community.value.earliestTime = comm.earliestTime || ''
       community.value.latestTime = comm.latestTime || ''
       community.value.unavailable = comm.unavailable || ''
@@ -88,7 +88,7 @@ export const useCommunity = defineStore(
      * Updates Community information from store to the db
      * @returns Promise
      */
-    function updateCommunity() {
+    function updateCommunity(field?: string): Promise<unknown> {
       return new Promise((resolve, reject) => {
         const {
           mutate: communityUpdate,
@@ -98,10 +98,19 @@ export const useCommunity = defineStore(
           fetchPolicy: 'no-cache',
         })
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { id, __typename, ...comm } = community.value
+        const { id, __typename, ...communityProps } = community.value
+        let communityField = null
+        if (field && Object.keys(communityProps).includes(field)) {
+          communityField = Object.fromEntries(
+            Array(
+              Object.entries(communityProps).find((item) => item[0] === field)
+            )
+          )
+          console.log(communityField)
+        }
         communityUpdate({
           communityId: community.value.id,
-          community: <CommunityInput>comm,
+          community: <CommunityInput>(communityField || communityProps),
         }).catch((error) => console.log(error))
         onDone(() => {
           resolve('Success')

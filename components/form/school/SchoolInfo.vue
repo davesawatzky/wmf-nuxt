@@ -18,82 +18,6 @@
     phone: StatusEnum.null,
   })
 
-  watch(
-    () => [
-      schoolStore.school.name,
-      schoolStore.school.division,
-      schoolStore.school.city,
-      schoolStore.school.phone,
-      schoolStore.school.postalCode,
-      schoolStore.school.province,
-      schoolStore.school.streetName,
-      schoolStore.school.streetNumber,
-    ],
-    async (
-      [
-        newName,
-        newDivision,
-        newCity,
-        newPhone,
-        newPostalCode,
-        newProvince,
-        newStreetName,
-        newStreetNumber,
-      ],
-      [
-        oldName,
-        oldDivision,
-        oldCity,
-        oldPhone,
-        oldPostalCode,
-        oldProvince,
-        oldStreetName,
-        oldStreetNumber,
-      ]
-    ) => {
-      if (newName !== oldName) {
-        status.name = StatusEnum.saving
-        await schoolStore.updateSchool('name')
-        status.name = StatusEnum.saved
-      }
-      if (newDivision !== oldDivision) {
-        status.division = StatusEnum.saving
-        await schoolStore.updateSchool('division')
-        status.division = StatusEnum.saved
-      }
-      if (newCity !== oldCity) {
-        status.city = StatusEnum.saving
-        await schoolStore.updateSchool('city')
-        status.city = StatusEnum.saved
-      }
-      if (newPhone !== oldPhone) {
-        status.phone = StatusEnum.saving
-        await schoolStore.updateSchool('phone')
-        status.phone = StatusEnum.saved
-      }
-      if (newPostalCode !== oldPostalCode) {
-        status.postalCode = StatusEnum.saving
-        await schoolStore.updateSchool('postalCode')
-        status.postalCode = StatusEnum.saved
-      }
-      if (newProvince !== oldProvince) {
-        status.province = StatusEnum.saving
-        await schoolStore.updateSchool('province')
-        status.province = StatusEnum.saved
-      }
-      if (newStreetName !== oldStreetName) {
-        status.streetName = StatusEnum.saving
-        await schoolStore.updateSchool('streetName')
-        status.streetName = StatusEnum.saved
-      }
-      if (newStreetNumber !== oldStreetNumber) {
-        status.streetNumber = StatusEnum.saving
-        await schoolStore.updateSchool('streetNumber')
-        status.streetNumber = StatusEnum.saved
-      }
-    }
-  )
-
   const validationSchema = yup.object({
     schoolName: yup
       .string()
@@ -108,6 +32,12 @@
   })
 
   useForm({ validationSchema })
+
+  async function fieldStatus(fieldName: string) {
+    status[fieldName] = StatusEnum.saving
+    await schoolStore.updateSchool(fieldName)
+    status[fieldName] = StatusEnum.saved
+  }
 </script>
 
 <template>
@@ -123,7 +53,8 @@
             :status="status.name"
             name="schoolName"
             type="text"
-            label="School Name" />
+            label="School Name"
+            @change="fieldStatus('name')" />
         </div>
         <div class="col-span-12 sm:col-span-6">
           <BaseInput
@@ -131,7 +62,8 @@
             :status="status.division"
             name="schoolDivision"
             label="School Division"
-            type="text" />
+            type="text"
+            @change="fieldStatus('division')" />
         </div>
       </div>
       <div class="col-span-12 sm:col-span-4 mt-6 sm:mt-0">
@@ -141,7 +73,8 @@
           required
           name="streetNumber"
           type="text"
-          label="Street #" />
+          label="Street #"
+          @change="fieldStatus('streetNumber')" />
       </div>
       <div class="col-span-12 sm:col-span-8">
         <BaseInput
@@ -150,7 +83,8 @@
           requried
           name="streetName"
           type="text"
-          label="Street Name" />
+          label="Street Name"
+          @change="fieldStatus('streetName')" />
       </div>
       <div class="col-span-8 sm:col-span-7">
         <BaseInput
@@ -159,7 +93,8 @@
           required
           name="city"
           type="text"
-          label="City/Town" />
+          label="City/Town"
+          @change="fieldStatus('city')" />
       </div>
       <div class="col-span-4 sm:col-span-2 self-start">
         <BaseSelect
@@ -168,7 +103,8 @@
           required
           name="province"
           label="Province"
-          :options="provinces" />
+          :options="provinces"
+          @change="fieldStatus('province')" />
       </div>
       <div class="col-span-12 sm:col-span-3">
         <BaseInput
@@ -177,7 +113,8 @@
           required
           name="postalCode"
           type="text"
-          label="Postal Code" />
+          label="Postal Code"
+          @change="fieldStatus('postalCode')" />
       </div>
       <div class="col-span-12 sm:col-span-5">
         <BaseInput
@@ -186,7 +123,8 @@
           required
           name="phone"
           type="tel"
-          label="Phone Number" />
+          label="Phone Number"
+          @change="fieldStatus('phone')" />
       </div>
     </div>
   </form>

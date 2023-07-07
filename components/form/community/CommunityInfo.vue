@@ -1,10 +1,28 @@
 <script lang="ts" setup>
   import * as yup from 'yup'
   import { useCommunity } from '@/stores/userCommunity'
-  import { useTeacher } from '@/stores/userTeacher'
 
-  const teacherStore = useTeacher()
+  import type { Status } from '@/composables/types'
+
   const communityStore = useCommunity()
+
+  const status = reactive<Status>({
+    name: StatusEnum.null,
+    groupSize: StatusEnum.null,
+    chaperones: StatusEnum.null,
+    wheelchairs: StatusEnum.null,
+    conflictPerformers: StatusEnum.null,
+  })
+
+  async function fieldStatus(
+    fieldName: string,
+    updateFunction: any,
+    id?: number
+  ) {
+    status[fieldName] = StatusEnum.saving
+    await updateFunction(fieldName)
+    status[fieldName] = StatusEnum.saved
+  }
 
   const validationSchema = yup.object({
     name: yup.string().trim().required('Enter a name for the community group'),
@@ -41,41 +59,48 @@
         <div class="col-span-12">
           <BaseInput
             v-model="communityStore.community.name"
+            :status="status.name"
             name="name"
             type="text"
-            label="Community Group Name" />
+            label="Community Group Name"
+            @change="fieldStatus('name', communityStore.updateCommunity)" />
         </div>
         <div class="col-span-12 sm:col-span-4">
           <BaseInput
             v-model.number="communityStore.community.groupSize"
+            :status="status.groupSize"
             name="groupSize"
             type="number"
-            label="Group Size" />
+            label="Group Size"
+            @change="
+              fieldStatus('groupSize', communityStore.updateCommunity)
+            " />
         </div>
         <div class="col-span-12 sm:col-span-4">
           <BaseInput
             v-model.number="communityStore.community.chaperones"
+            :status="status.chaperones"
             name="numberOfChaperones"
             type="number"
-            label="Number of chaperones" />
+            label="Number of chaperones"
+            @change="
+              fieldStatus('chaperones', communityStore.updateCommunity)
+            " />
         </div>
         <div class="col-span-12 sm:col-span-4">
           <BaseInput
             v-model.number="communityStore.community.wheelchairs"
+            :status="status.wheelchairs"
             name="numberOfWheelchairs"
             type="number"
-            label="Number of wheelchairs" />
+            label="Number of wheelchairs"
+            @change="
+              fieldStatus('wheelchairs', communityStore.updateCommunity)
+            " />
         </div>
       </div>
     </div>
     <div class="pt-8">
-      <h2 class="pb-4">Conductor/Contact Information</h2>
-      <div>
-        <FormTeacherInfo
-          v-model="teacherStore.teacher"
-          teacher />
-      </div>
-
       <div class="grid grid-rows-1 grid-cols-12 gap-x-3 gap-y-2 items-start">
         <div class="col-span-12">
           <p>
@@ -85,9 +110,13 @@
           </p>
           <BaseTextarea
             v-model="communityStore.community.conflictPerformers"
+            :status="status.conflictPerformers"
             name="conflictPerformers"
             label="Performers participating in other classes."
-            rows="5" />
+            rows="5"
+            @change="
+              fieldStatus('conflictPerformers', communityStore.updateCommunity)
+            " />
         </div>
       </div>
     </div>
