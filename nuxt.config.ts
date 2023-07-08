@@ -51,7 +51,6 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     '@nuxt/image-edge',
     'nuxt-icon',
-    'vuetify-nuxt-module',
   ],
   pinia: {
     autoImports: ['defineStore'],
@@ -93,13 +92,5 @@ export default defineNuxtConfig({
         },
       }),
     ],
-  },
-  vuetify: {
-    moduleOptions: {},
-    vuetifyOptions: {
-      date: {
-        adapter: 'luxon',
-      },
-    },
   },
 })
