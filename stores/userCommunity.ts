@@ -97,7 +97,6 @@ export const useCommunity = defineStore(
         } = useMutation(CommunityUpdateDocument, {
           fetchPolicy: 'no-cache',
         })
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { id, __typename, ...communityProps } = community.value
         let communityField = null
         if (field && Object.keys(communityProps).includes(field)) {

@@ -92,7 +92,6 @@ export const useGroup = defineStore(
           onDone,
           onError,
         } = useMutation(GroupUpdateDocument, { fetchPolicy: 'network-only' })
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { id, __typename, ...groupProps } = group.value
         let groupField = null
         if (field && Object.keys(groupProps).includes(field)) {

@@ -115,7 +115,6 @@ export const useSchoolGroup = defineStore(
         const schoolGrp = <SchoolGroup>schoolGroup.value.find((item) => {
           return item.id === schoolGroupId
         })
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { id, __typename, ...schlgrpProps } = schoolGrp
         let schoolGroupField = null
         if (field && Object.keys(schlgrpProps).includes(field)) {

@@ -7,7 +7,11 @@
 }
 
 .btn-blue {
-  @apply bg-sky-700 text-white hover:bg-sky-500 hover:ring-sky-400 active:bg-sky-400 print:hidden;
+  @apply bg-sky-700 text-white hover:bg-sky-600 hover:ring-sky-500 active:bg-sky-500 print:hidden;
+}
+
+.btn-green {
+  @apply bg-green-700 text-white hover:bg-green-500 hover:ring-green-400 active:bg-green-400 print:hidden;
 }
 
 .btn-red {

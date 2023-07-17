@@ -134,7 +134,6 @@ export const usePerformers = defineStore(
         const person = <Performer>performers.value.find((item) => {
           return item.id === performerId
         })
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { id, __typename, ...personProps } = person
         let performerField = null
         if (field && Object.keys(personProps).includes(field)) {

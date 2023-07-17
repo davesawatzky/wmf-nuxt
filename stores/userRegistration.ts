@@ -93,7 +93,6 @@ export const useRegistration = defineStore(
         } = useMutation(RegistrationUpdateDocument, {
           fetchPolicy: 'network-only',
         })
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { id, __typename, ...reg } = registration.value
         registrationUpdate({
           registrationId: registrationId.value,

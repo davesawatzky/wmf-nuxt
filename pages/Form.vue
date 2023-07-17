@@ -3,6 +3,13 @@
   import { useAppStore } from '@/stores/appStore'
   import { useRegistration } from '@/stores/userRegistration'
 
+  interface DynamicComponent {
+    [key: string]: Component
+  }
+
+  definePageMeta({
+    middleware: 'auth',
+  })
   const FormSoloPerformer = <Component>resolveComponent('FormSoloPerformer')
   const FormSoloTeacher = <Component>resolveComponent('FormSoloTeacher')
   const FormGroupInfo = <Component>resolveComponent('FormGroupInfo')
@@ -17,26 +24,21 @@
   )
   const FormTypeClasses = <Component>resolveComponent('FormTypeClasses')
   const Summary = <Component>resolveComponent('Summary')
-
   const registrationStore = useRegistration()
+
   const appStore = useAppStore()
-
   const performerType = toRef(appStore.performerType)
+  const currentTab = ref('')
 
-  interface DynamicComponent {
-    [key: string]: Component
+  function setTab(tab: string) {
+    currentTab.value = tab
   }
 
-  definePageMeta({
-    middleware: 'auth',
-  })
-
-  const currentTab = ref('')
   let tabs = {} as DynamicComponent
 
   switch (performerType.value) {
     case 'SOLO':
-      currentTab.value = 'Performer'
+      // currentTab.value = 'Performer'
       tabs = {
         Performer: FormSoloPerformer,
         Teacher: FormSoloTeacher,
@@ -45,7 +47,7 @@
       }
       break
     case 'GROUP':
-      currentTab.value = 'Group'
+      // currentTab.value = 'Group'
       tabs = {
         Group: FormGroupInfo,
         Performers: FormGroupPerformers,
@@ -55,7 +57,7 @@
       }
       break
     case 'SCHOOL':
-      currentTab.value = 'School'
+      // currentTab.value = 'School'
       tabs = {
         School: FormSchoolInfo,
         Teacher: FormSchoolTeacher,
@@ -65,7 +67,7 @@
       }
       break
     case 'COMMUNITY':
-      currentTab.value = 'Community'
+      // currentTab.value = 'Community'
       tabs = {
         Community: FormCommunityInfo,
         Contact: FormCommunityTeacher,
@@ -88,20 +90,12 @@
 
     <div v-if="!registrationStore.registration.confirmation">
       <div class="text-left">
-        <button
-          v-for="(_, tab) in tabs"
-          :key="tab"
-          class="btn-blue py-1 px-2 mr-1 rounded-t-lg text-sm md:text-base"
-          :class="[
-            { active: currentTab === tab },
-            currentTab === tab ? 'bg-sky-600' : '',
-          ]"
-          @click="currentTab = String(tab)">
-          {{ tab }}
-        </button>
+        <BaseStepper
+          :tabs="tabs"
+          @set-tab="setTab" />
       </div>
       <div
-        class="border border-spacing-1 shadow-md rounded-b-lg rounded-tr-lg border-sky-500 p-2 mb-6">
+        class="border border-spacing-1 shadow-md rounded-lg border-sky-500 p-2 mb-6">
         <KeepAlive>
           <component :is="tabs[currentTab]" />
         </KeepAlive>

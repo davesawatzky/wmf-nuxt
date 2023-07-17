@@ -114,7 +114,6 @@ export const useTeacher = defineStore(
         } = useMutation(TeacherUpdateDocument, {
           fetchPolicy: 'network-only',
         })
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { id, __typename, ...teachProps } = teacher.value
         let teacherField = null
         if (field && Object.keys(teachProps).includes(field)) {
