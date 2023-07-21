@@ -204,6 +204,91 @@
     <h2>Registration Forms</h2>
     <div class="border border-sky-500 rounded-lg text-left mt-10 md:mt-15">
       <div class="p-4">
+        <h3>Submitted and In-Process Applications</h3>
+        <table
+          v-auto-animate
+          class="bg-white table_auto border-collapse w-full text-xs sm:text-base mt-3">
+          <thead class="bg-sky-600 text-white">
+            <tr class="py-2 px-2">
+              <th class="rounded-tl-lg">View</th>
+              <th v-if="sm">ID</th>
+              <th>Label</th>
+              <th v-if="lg">Created</th>
+              <th>Type</th>
+              <th v-if="md">Submitted</th>
+              <th>Total</th>
+              <th>Conf. #</th>
+              <th class="rounded-tr-lg">Del</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="registration in registrations"
+              :key="registration.id"
+              class="">
+              <td class="">
+                {{ registration.confirmation }}
+                <BaseButton
+                  class="text-sky-600 text-xl md:ml-4 ml-3"
+                  @click="
+                    registration.confirmation ||
+                    openEditor(registration.performerType)
+                      ? loadRegistration(
+                          registration.id,
+                          registration.performerType
+                        )
+                      : ''
+                  ">
+                  <Icon
+                    v-if="
+                      !registration.confirmation &&
+                      openEditor(registration.performerType)
+                    "
+                    name="fa-solid:pen" />
+                  <Icon
+                    v-else-if="
+                      !registration.confirmation &&
+                      !openEditor(registration.performerType)
+                    "
+                    name="fa-solid:ban" />
+                  <Icon
+                    v-else
+                    name="fa-solid:eye" />
+                </BaseButton>
+              </td>
+              <td
+                v-if="sm"
+                class="">
+                {{ registration.id }}
+              </td>
+              <td class="">
+                {{ registration.label }}
+              </td>
+              <td
+                v-if="lg"
+                class="">
+                {{ dateFunction(registration.createdAt) }}
+              </td>
+              <td class="">
+                {{ registration.performerType }}
+              </td>
+              <td v-if="md">
+                {{ dateFunction(registration.submittedAt) }}
+              </td>
+              <td>${{ registration.totalAmt }}.00</td>
+              <td>{{ registration.confirmation }}</td>
+              <td>
+                <BaseButton
+                  v-if="!registration.confirmation"
+                  class="text-red-600 text-xl md:ml-4 ml-3 my-3"
+                  @click="deleteRegistration(registration.id)">
+                  <Icon name="fa-solid:trash-alt" />
+                </BaseButton>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <br />
         <h3 class="pb-3">Registering for the Winnipeg Music Festival</h3>
         <ul class="list-disc pl-5">
           <li>
@@ -251,91 +336,6 @@
           " />
       </div>
     </div>
-    <br />
-    <h3>Submitted and In-Process Applications</h3>
-    <table
-      v-auto-animate
-      class="bg-white table_auto border-collapse w-full text-xs sm:text-base mt-3">
-      <thead class="bg-sky-600 text-white">
-        <tr class="py-2 px-2">
-          <th class="rounded-tl-lg">View</th>
-          <th v-if="sm">ID</th>
-          <th>Label</th>
-          <th v-if="lg">Created</th>
-          <th>Type</th>
-          <th v-if="md">Submitted</th>
-          <th>Total</th>
-          <th>Conf. #</th>
-          <th class="rounded-tr-lg">Del</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="registration in registrations"
-          :key="registration.id"
-          class="">
-          <td class="">
-            {{ registration.confirmation }}
-            <BaseButton
-              class="text-sky-600 text-xl md:ml-4 ml-3"
-              @click="
-                registration.confirmation ||
-                openEditor(registration.performerType)
-                  ? loadRegistration(
-                      registration.id,
-                      registration.performerType
-                    )
-                  : ''
-              ">
-              <Icon
-                v-if="
-                  !registration.confirmation &&
-                  openEditor(registration.performerType)
-                "
-                name="fa-solid:pen" />
-              <Icon
-                v-else-if="
-                  !registration.confirmation &&
-                  !openEditor(registration.performerType)
-                "
-                name="fa-solid:ban" />
-              <Icon
-                v-else
-                name="fa-solid:eye" />
-            </BaseButton>
-          </td>
-          <td
-            v-if="sm"
-            class="">
-            {{ registration.id }}
-          </td>
-          <td class="">
-            {{ registration.label }}
-          </td>
-          <td
-            v-if="lg"
-            class="">
-            {{ dateFunction(registration.createdAt) }}
-          </td>
-          <td class="">
-            {{ registration.performerType }}
-          </td>
-          <td v-if="md">
-            {{ dateFunction(registration.submittedAt) }}
-          </td>
-          <td>${{ registration.totalAmt }}.00</td>
-          <td>{{ registration.confirmation }}</td>
-          <td>
-            <BaseButton
-              v-if="!registration.confirmation"
-              class="text-red-600 text-xl md:ml-4 ml-3 my-3"
-              @click="deleteRegistration(registration.id)">
-              <Icon name="fa-solid:trash-alt" />
-            </BaseButton>
-          </td>
-        </tr>
-      </tbody>
-    </table>
   </div>
 </template>
 

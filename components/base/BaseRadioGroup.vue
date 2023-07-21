@@ -5,26 +5,20 @@
     description: string
   }
 
-  const props = defineProps({
-    options: {
-      type: Array as PropType<OptionsType[]>,
-      required: true,
-    },
-    name: {
-      type: String,
-      required: true,
-    },
-    modelValue: {
-      type: [String, Number],
-      required: true,
-    },
-    vertical: {
-      type: Boolean,
-      default: false,
-    },
+  interface Props {
+    options: OptionsType[]
+    name: string
+    modelValue: string | number
+    vertical: boolean
+  }
+
+  const props = withDefaults(defineProps<Props>(), {
+    vertical: false,
   })
 
-  defineEmits(['update:modelValue'])
+  const emits = defineEmits<{
+    'update:modelValue': [value: string | number]
+  }>()
 
   const nameRef = toRef(props, 'name')
   const errorMessage = ref('')
@@ -40,28 +34,28 @@
 
 <template>
   <div>
-  <label>
-    <h4>Selections</h4>
-  </label>
-  <component
-    :is="vertical ? 'div' : 'span'"
-    v-for="(option, optionIndex) in options"
-    :key="option.value"
-    :class="{
-      horizontal: !vertical,
-    }">
-    <BaseRadio
-      :label="option.label"
-      :checked="optionIndex === 0 ? true : false"
-      :description="option.description"
-      :value="option.value"
-      :model-value="option.value"
-      :name="props.name"
-      @change="$emit('update:modelValue', option.value)" />
-  </component>
-  <BaseErrorMessage :name="props.name">
-    {{ errorMessage }}
-  </BaseErrorMessage>
+    <label>
+      <h4>Selections</h4>
+    </label>
+    <component
+      :is="vertical ? 'div' : 'span'"
+      v-for="option in options"
+      :key="option.value"
+      :class="{
+        horizontal: !vertical,
+      }">
+      <BaseRadio
+        :label="option.label"
+        :checked="props.modelValue === option.value ? true : false"
+        :description="option.description"
+        :value="option.value"
+        :model-value="option.value"
+        :name="props.name"
+        @change="$emit('update:modelValue', option.value)" />
+    </component>
+    <BaseErrorMessage :name="props.name">
+      {{ errorMessage }}
+    </BaseErrorMessage>
   </div>
 </template>
 

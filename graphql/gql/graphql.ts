@@ -875,8 +875,11 @@ export type Registration = {
 };
 
 export type RegistrationInput = {
+  confirmation?: InputMaybe<Scalars['String']>;
   label?: InputMaybe<Scalars['String']>;
-  performerType: PerformerType;
+  payedAmt?: InputMaybe<Scalars['Decimal']>;
+  performerType?: InputMaybe<PerformerType>;
+  submittedAt?: InputMaybe<Scalars['DateTime']>;
   totalAmt?: InputMaybe<Scalars['Decimal']>;
   transactionInfo?: InputMaybe<Scalars['String']>;
 };

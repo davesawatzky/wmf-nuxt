@@ -2,6 +2,7 @@
   import type { Component } from 'vue'
   import { useAppStore } from '@/stores/appStore'
   import { useRegistration } from '@/stores/userRegistration'
+  import type { Status } from '@/composables/types'
 
   interface DynamicComponent {
     [key: string]: Component
@@ -31,6 +32,9 @@
   const currentTab = ref('')
   const tabIndex = ref(0)
   const slideDirection = ref('slide-left')
+  const status = reactive<Status>({
+    label: StatusEnum.null,
+  })
   let tabs = {} as DynamicComponent
 
   function setTab(tab: string, index: number) {
@@ -41,6 +45,12 @@
       slideDirection.value = 'slide-right'
     }
     tabIndex.value = index
+  }
+
+  async function fieldStatus(fieldName: string) {
+    status[fieldName] = StatusEnum.saving
+    await registrationStore.updateRegistration(fieldName)
+    status[fieldName] = StatusEnum.saved
   }
 
   switch (performerType.value) {
@@ -88,12 +98,14 @@
 <template>
   <div>
     <BaseInput
-      v-model.string="registrationStore.registration.label"
+      v-model="registrationStore.registration.label"
       class="text-3xl"
       label="Registration Label"
       name="registrationLabel"
-      :disabled="registrationStore.registration.confirmation"
-      type="text" />
+      placeholder="Enter a unique label"
+      :status="status.label"
+      type="text"
+      @change="fieldStatus('label')" />
 
     <div v-if="!registrationStore.registration.confirmation">
       <div class="text-left">

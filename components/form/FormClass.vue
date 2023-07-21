@@ -18,6 +18,7 @@
   } from '@/graphql/gql/graphql'
   import type { Status } from '@/composables/types'
   import { StatusEnum } from '@/composables/types'
+  import { TRUE } from 'sass'
 
   const props = defineProps<{
     modelValue: RegisteredClass
@@ -41,11 +42,28 @@
   const performerStore = usePerformers()
   const classesStore = useClasses()
   const classSelection = ref(<FestivalClass>{}) // component variable
+  const loadInfoFirstRun = ref(true)
 
   const selectedClasses = computed({
     // used to emit values back to parent
     get: () => props.modelValue,
     set: (value) => emits('update:modelValue', value),
+  })
+
+  onMounted(async () => {
+    if (props.modelValue.subdiscipline) {
+      loadSubdisciplines()
+    }
+    if (props.modelValue.level) {
+      loadLevels()
+    }
+    if (props.modelValue.category) {
+      loadCategories()
+      selectedClasses.value.numberOfSelections =
+        props.modelValue.numberOfSelections
+      loadInfoFirstRun.value = true
+      loadClassInformation()
+    }
   })
 
   const { result: instrumentQuery, onError: instrumentsError } =
@@ -192,13 +210,23 @@
     classSelection.value = result.data.festivalClassSearch[0]
     selectedClasses.value.minSelections = classSelection.value.minSelections
     selectedClasses.value.maxSelections = classSelection.value.maxSelections
-    selectedClasses.value.numberOfSelections =
-      classSelection.value.minSelections
+
+    if (
+      loadInfoFirstRun.value === true &&
+      !selectedClasses.value.numberOfSelections
+    ) {
+      selectedClasses.value.numberOfSelections =
+        classSelection.value.minSelections
+    } else if (loadInfoFirstRun.value === false) {
+      selectedClasses.value.numberOfSelections =
+        classSelection.value.minSelections
+    }
     selectedClasses.value.classNumber = classSelection.value.classNumber
     instrumentRequired.value = classesStore.MOZART_CLASSES.includes(
       classSelection.value.classNumber
     )
     classesStore.updateClass(props.classId)
+    loadInfoFirstRun.value = false
   })
   errorClass((error) => {
     logErrorMessages(error)
@@ -309,6 +337,7 @@
   watch(
     () => selectedClasses.value.numberOfSelections,
     async (newNumber) => {
+      console.log('running watch')
       let oldNumber =
         classesStore.registeredClasses[props.classIndex].selections!.length
       if (oldNumber < newNumber!) {

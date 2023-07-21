@@ -81,7 +81,7 @@ export const useSchoolGroup = defineStore(
         load()
         onResult((result) => {
           const schoolGroups = <SchoolGroup[]>(
-            result.data.registration.school.school_group
+            result.data.registration.school.schoolGroups
           )
           for (let i = 0; i < schoolGroups.length; i++) {
             addToStore(schoolGroups[i])

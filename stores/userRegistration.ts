@@ -84,7 +84,7 @@ export const useRegistration = defineStore(
      * Updates Registration form information from store to db.
      * @returns Promise
      */
-    function updateRegistration(): Promise<unknown> {
+    function updateRegistration(field?: string): Promise<unknown> {
       return new Promise((resolve, reject) => {
         const {
           mutate: registrationUpdate,
@@ -93,10 +93,16 @@ export const useRegistration = defineStore(
         } = useMutation(RegistrationUpdateDocument, {
           fetchPolicy: 'network-only',
         })
-        const { id, __typename, ...reg } = registration.value
+        const { id, __typename, updatedAt, ...regProps } = registration.value
+        let registrationField = null
+        if (field && Object.keys(regProps).includes(field)) {
+          registrationField = Object.fromEntries(
+            Array(Object.entries(regProps).find((item) => item[0] === field))
+          )
+        }
         registrationUpdate({
           registrationId: registrationId.value,
-          registrationInput: <RegistrationInput>reg,
+          registrationInput: <RegistrationInput>(registrationField || regProps),
         }).catch((error) => console.log(error))
         onDone(() => {
           resolve('Success')
