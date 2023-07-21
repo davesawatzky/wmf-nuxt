@@ -101,155 +101,153 @@
 </script>
 
 <template>
-  <form>
-    <div class="grid grid-cols-12 gap-x-3 gap-y-1 items-end">
-      <div class="col-span-12 sm:col-span-5">
-        <BaseInput
-          v-model.trim="contact.firstName"
-          :status="status.firstName"
-          required
-          name="firstName"
-          type="text"
-          label="First Name"
-          @change="fieldStatus('firstName')" />
-      </div>
-      <div class="col-span-12 sm:col-span-5">
-        <BaseInput
-          v-model.trim="contact.lastName"
-          :status="status.lastName"
-          required
-          name="lastName"
-          type="text"
-          label="Last Name"
-          @change="fieldStatus('lastName')" />
-      </div>
-      <div class="col-span-12 sm:col-span-3">
-        <BaseInput
-          v-model.number="contact.age"
-          :status="status.age"
-          required
-          name="age"
-          type="number"
-          label="Age"
-          :help-message="`Age as of December 31, ${currentYear}`"
-          @change="fieldStatus('age')" />
-      </div>
-      <div class="col-span-6 sm:col-span-3">
-        <BaseInput
-          v-model.trim="contact.apartment"
-          :status="status.apartment"
-          name="apartment"
-          type="text"
-          label="Apt."
-          @change="fieldStatus('apartment')" />
-      </div>
-      <div class="col-span-6 sm:col-span-3">
-        <BaseInput
-          v-model.trim="contact.streetNumber"
-          :status="status.streetNumber"
-          required
-          name="streetNumber"
-          type="text"
-          label="Street #"
-          @change="fieldStatus('streetNumber')" />
-      </div>
-      <div class="col-span-12 sm:col-span-6">
-        <BaseInput
-          v-model.trim="contact.streetName"
-          :status="status.streetName"
-          required
-          name="streetName"
-          type="text"
-          label="Street Name"
-          @change="fieldStatus('streetName')" />
-      </div>
-      <div class="col-span-8 sm:col-span-7">
-        <BaseInput
-          v-model.trim="contact.city"
-          :status="status.city"
-          required
-          name="city"
-          type="text"
-          label="City/Town"
-          @change="fieldStatus('city')" />
-      </div>
-      <div class="col-span-4 sm:col-span-2 self-start">
-        <BaseSelect
-          v-model.trim="contact.province"
-          :status="status.province"
-          required
-          name="province"
-          label="Province"
-          :options="provinces"
-          @change="fieldStatus('province')" />
-      </div>
-      <div class="col-span-12 sm:col-span-3">
-        <BaseInput
-          v-model.trim="contact.postalCode"
-          :status="status.postalCode"
-          required
-          name="postalCode"
-          type="text"
-          label="Postal Code"
-          @change="fieldStatus('postalCode')" />
-      </div>
-      <div class="col-span-12 sm:col-span-5">
-        <BaseInput
-          v-model.trim="contact.phone"
-          :status="status.phone"
-          required
-          name="phone"
-          type="tel"
-          label="Phone Number"
-          @change="fieldStatus('phone')" />
-      </div>
-      <div class="col-span-12 sm:col-span-7">
-        <BaseInput
-          v-model.trim="contact.email"
-          :status="status.email"
-          required
-          name="email"
-          type="email"
-          label="Email"
-          @change="fieldStatus('email')" />
-      </div>
-      <div
-        v-if="groupperformer"
-        class="col-span-12 sm:col-span-6">
-        <BaseInput
-          v-model.trim="contact.instrument"
-          :status="status.instrument"
-          required
-          name="instrument"
-          type="text"
-          label="Instrument"
-          @change="fieldStatus('instrument')" />
-      </div>
-      <div
-        v-if="groupperformer"
-        class="col-span-12 sm:col-span-6">
-        <BaseInput
-          v-model.trim="contact.level"
-          :status="status.level"
-          required
-          name="level"
-          type="text"
-          label="Level"
-          @change="fieldStatus('level')" />
-      </div>
-      <div
-        v-if="groupperformer"
-        class="col-span-12">
-        <BaseTextarea
-          v-model.trim="contact.otherClasses"
-          :status="status.otherClasses"
-          required
-          name="otherClasses"
-          :label="textAreaLabel"
-          @change="fieldStatus('otherClasses')" />
-      </div>
+  <div class="grid grid-cols-12 gap-x-3 gap-y-1 items-end">
+    <div class="col-span-12 sm:col-span-5">
+      <BaseInput
+        v-model.trim="contact.firstName"
+        :status="status.firstName"
+        required
+        name="firstName"
+        type="text"
+        label="First Name"
+        @change="fieldStatus('firstName')" />
     </div>
-  </form>
+    <div class="col-span-12 sm:col-span-5">
+      <BaseInput
+        v-model.trim="contact.lastName"
+        :status="status.lastName"
+        required
+        name="lastName"
+        type="text"
+        label="Last Name"
+        @change="fieldStatus('lastName')" />
+    </div>
+    <div class="col-span-12 sm:col-span-3">
+      <BaseInput
+        v-model.number="contact.age"
+        :status="status.age"
+        required
+        name="age"
+        type="number"
+        label="Age"
+        :help-message="`Age as of December 31, ${currentYear}`"
+        @change="fieldStatus('age')" />
+    </div>
+    <div class="col-span-6 sm:col-span-3">
+      <BaseInput
+        v-model.trim="contact.apartment"
+        :status="status.apartment"
+        name="apartment"
+        type="text"
+        label="Apt."
+        @change="fieldStatus('apartment')" />
+    </div>
+    <div class="col-span-6 sm:col-span-3">
+      <BaseInput
+        v-model.trim="contact.streetNumber"
+        :status="status.streetNumber"
+        required
+        name="streetNumber"
+        type="text"
+        label="Street #"
+        @change="fieldStatus('streetNumber')" />
+    </div>
+    <div class="col-span-12 sm:col-span-6">
+      <BaseInput
+        v-model.trim="contact.streetName"
+        :status="status.streetName"
+        required
+        name="streetName"
+        type="text"
+        label="Street Name"
+        @change="fieldStatus('streetName')" />
+    </div>
+    <div class="col-span-8 sm:col-span-7">
+      <BaseInput
+        v-model.trim="contact.city"
+        :status="status.city"
+        required
+        name="city"
+        type="text"
+        label="City/Town"
+        @change="fieldStatus('city')" />
+    </div>
+    <div class="col-span-4 sm:col-span-2 self-start">
+      <BaseSelect
+        v-model.trim="contact.province"
+        :status="status.province"
+        required
+        name="province"
+        label="Province"
+        :options="provinces"
+        @change="fieldStatus('province')" />
+    </div>
+    <div class="col-span-12 sm:col-span-3">
+      <BaseInput
+        v-model.trim="contact.postalCode"
+        :status="status.postalCode"
+        required
+        name="postalCode"
+        type="text"
+        label="Postal Code"
+        @change="fieldStatus('postalCode')" />
+    </div>
+    <div class="col-span-12 sm:col-span-5">
+      <BaseInput
+        v-model.trim="contact.phone"
+        :status="status.phone"
+        required
+        name="phone"
+        type="tel"
+        label="Phone Number"
+        @change="fieldStatus('phone')" />
+    </div>
+    <div class="col-span-12 sm:col-span-7">
+      <BaseInput
+        v-model.trim="contact.email"
+        :status="status.email"
+        required
+        name="email"
+        type="email"
+        label="Email"
+        @change="fieldStatus('email')" />
+    </div>
+    <div
+      v-if="groupperformer"
+      class="col-span-12 sm:col-span-6">
+      <BaseInput
+        v-model.trim="contact.instrument"
+        :status="status.instrument"
+        required
+        name="instrument"
+        type="text"
+        label="Instrument"
+        @change="fieldStatus('instrument')" />
+    </div>
+    <div
+      v-if="groupperformer"
+      class="col-span-12 sm:col-span-6">
+      <BaseInput
+        v-model.trim="contact.level"
+        :status="status.level"
+        required
+        name="level"
+        type="text"
+        label="Level"
+        @change="fieldStatus('level')" />
+    </div>
+    <div
+      v-if="groupperformer"
+      class="col-span-12">
+      <BaseTextarea
+        v-model.trim="contact.otherClasses"
+        :status="status.otherClasses"
+        required
+        name="otherClasses"
+        :label="textAreaLabel"
+        @change="fieldStatus('otherClasses')" />
+    </div>
+  </div>
 </template>
 
 <style scoped></style>

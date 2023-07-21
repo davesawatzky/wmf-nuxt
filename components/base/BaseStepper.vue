@@ -10,22 +10,23 @@
   }>()
 
   const emit = defineEmits<{
-    (ev: 'setTab', value: string): void
+    (ev: 'setTab', tab: string, index: number): void
   }>()
 
   const currentTab = ref('')
+  const tabIndex = ref(0)
+
+  function changeTab(tab: string, index: number) {
+    currentTab.value = tab
+    tabIndex.value = index
+  }
 
   watchEffect(() => {
     if (!currentTab.value) {
       currentTab.value = Object.keys(props.tabs)[0]
     }
-    emit('setTab', currentTab.value)
+    emit('setTab', currentTab.value, tabIndex.value)
   })
-
-  function setCurrentTab(tab: string) {
-    currentTab.value = tab
-    emit('setTab', tab)
-  }
 </script>
 
 <template>
@@ -33,7 +34,7 @@
     id="stepperGridContainer"
     class="grid grid-flow-col auto-cols-fr mx-28 my-4 z-20">
     <div
-      v-for="(_, tab, i) in tabs"
+      v-for="(_, tab, index) in tabs"
       :key="tab"
       class="flex flex-col relative z-20">
       <button
@@ -44,15 +45,15 @@
             ? 'bg-sky-400 ring-sky-300 ring-4'
             : 'btn-blue hover:ring-2',
         ]"
-        @click="currentTab = String(tab)">
-        {{ i + 1 }}
+        @click="changeTab(tab, index)">
+        {{ index + 1 }}
 
         <!-- TODO: Add conditional statement to BaseBadge -->
         <BaseBadge class="-right-2 top-0">25</BaseBadge>
-        <div
-          v-if="tab !== 'Summary'"
-          class="absolute z-10 h-1 bg-sky-900 top-[23px] left-12 -right-12"></div>
       </button>
+      <div
+        v-if="tab !== 'Summary'"
+        class="absolute z-10 h-1 bg-sky-900 top-[23px] w-full left-[50%]"></div>
       <div class="text-center font-semibold text-lg z-20">{{ tab }}</div>
     </div>
   </div>

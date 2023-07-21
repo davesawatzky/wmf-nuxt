@@ -29,12 +29,19 @@
   const appStore = useAppStore()
   const performerType = toRef(appStore.performerType)
   const currentTab = ref('')
-
-  function setTab(tab: string) {
-    currentTab.value = tab
-  }
-
+  const tabIndex = ref(0)
+  const slideDirection = ref('slide-left')
   let tabs = {} as DynamicComponent
+
+  function setTab(tab: string, index: number) {
+    currentTab.value = tab
+    if (index > tabIndex.value) {
+      slideDirection.value = 'slide-left'
+    } else if (index < tabIndex.value) {
+      slideDirection.value = 'slide-right'
+    }
+    tabIndex.value = index
+  }
 
   switch (performerType.value) {
     case 'SOLO':
@@ -96,9 +103,14 @@
       </div>
       <div
         class="border border-spacing-1 shadow-md rounded-lg border-sky-500 p-2 mb-6">
-        <KeepAlive>
-          <component :is="tabs[currentTab]" />
-        </KeepAlive>
+        <Transition
+          :name="slideDirection"
+          :css="true"
+          mode="out-in">
+          <KeepAlive>
+            <component :is="tabs[currentTab]" />
+          </KeepAlive>
+        </Transition>
       </div>
     </div>
     <div
@@ -109,4 +121,27 @@
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+  .slide-left-enter-active,
+  .slide-left-leave-active,
+  .slide-right-enter-active,
+  .slide-right-leave-active {
+    transition: all 0.2s;
+  }
+  .slide-left-enter-from {
+    opacity: 0;
+    transform: translate(50px, 0);
+  }
+  .slide-left-leave-to {
+    opacity: 0;
+    transform: translate(-50px, 0);
+  }
+  .slide-right-enter-from {
+    opacity: 0;
+    transform: translate(-50px, 0);
+  }
+  .slide-right-leave-to {
+    opacity: 0;
+    transform: translate(50px, 0);
+  }
+</style>

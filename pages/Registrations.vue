@@ -92,11 +92,14 @@
    */
   async function loadRegistration(
     registrationId: number,
-    performerType: PerformerType,
-    index: number
+    performerType: PerformerType
   ) {
+    const registration = registrations.value.find((reg) => {
+      return reg.id === registrationId
+    })
+
     registrationStore.registrationId = registrationId
-    registrationStore.addToStore(registrations.value[index])
+    registrationStore.addToStore(registration!)
     switch (performerType) {
       case 'SOLO':
         appStore.performerType = PerformerType.SOLO
@@ -268,7 +271,7 @@
       </thead>
       <tbody>
         <tr
-          v-for="(registration, registrationIndex) in registrations"
+          v-for="registration in registrations"
           :key="registration.id"
           class="">
           <td class="">
@@ -280,8 +283,7 @@
                 openEditor(registration.performerType)
                   ? loadRegistration(
                       registration.id,
-                      registration.performerType,
-                      registrationIndex
+                      registration.performerType
                     )
                   : ''
               ">

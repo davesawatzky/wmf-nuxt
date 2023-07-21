@@ -41,93 +41,91 @@
 </script>
 
 <template>
-  <form>
-    <div
-      v-auto-animate
-      class="pt-8">
-      <h2 class="pb-4">School Information</h2>
-      <div class="grid grid-cols-12 gap-x-3 gap-y-2">
-        <div class="col-span-12 sm:col-span-6">
-          <BaseInput
-            v-model="schoolStore.school.name"
-            :status="status.name"
-            name="schoolName"
-            type="text"
-            label="School Name"
-            @change="fieldStatus('name')" />
-        </div>
-        <div class="col-span-12 sm:col-span-6">
-          <BaseInput
-            v-model="schoolStore.school.division"
-            :status="status.division"
-            name="schoolDivision"
-            label="School Division"
-            type="text"
-            @change="fieldStatus('division')" />
-        </div>
-      </div>
-      <div class="col-span-12 sm:col-span-4 mt-6 sm:mt-0">
+  <div
+    v-auto-animate
+    class="pt-8">
+    <h2 class="pb-4">School Information</h2>
+    <div class="grid grid-cols-12 gap-x-3 gap-y-2">
+      <div class="col-span-12 sm:col-span-6">
         <BaseInput
-          v-model.trim="schoolStore.school.streetNumber"
-          :status="status.streetNumber"
-          required
-          name="streetNumber"
+          v-model="schoolStore.school.name"
+          :status="status.name"
+          name="schoolName"
           type="text"
-          label="Street #"
-          @change="fieldStatus('streetNumber')" />
+          label="School Name"
+          @change="fieldStatus('name')" />
       </div>
-      <div class="col-span-12 sm:col-span-8">
+      <div class="col-span-12 sm:col-span-6">
         <BaseInput
-          v-model.trim="schoolStore.school.streetName"
-          :status="status.streetName"
-          requried
-          name="streetName"
+          v-model="schoolStore.school.division"
+          :status="status.division"
+          name="schoolDivision"
+          label="School Division"
           type="text"
-          label="Street Name"
-          @change="fieldStatus('streetName')" />
-      </div>
-      <div class="col-span-8 sm:col-span-7">
-        <BaseInput
-          v-model.trim="schoolStore.school.city"
-          :status="status.city"
-          required
-          name="city"
-          type="text"
-          label="City/Town"
-          @change="fieldStatus('city')" />
-      </div>
-      <div class="col-span-4 sm:col-span-2 self-start">
-        <BaseSelect
-          v-model.trim="schoolStore.school.province"
-          :status="status.province"
-          required
-          name="province"
-          label="Province"
-          :options="provinces"
-          @change="fieldStatus('province')" />
-      </div>
-      <div class="col-span-12 sm:col-span-3">
-        <BaseInput
-          v-model.trim="schoolStore.school.postalCode"
-          :status="status.postalCode"
-          required
-          name="postalCode"
-          type="text"
-          label="Postal Code"
-          @change="fieldStatus('postalCode')" />
-      </div>
-      <div class="col-span-12 sm:col-span-5">
-        <BaseInput
-          v-model.trim="schoolStore.school.phone"
-          :status="status.phone"
-          required
-          name="phone"
-          type="tel"
-          label="Phone Number"
-          @change="fieldStatus('phone')" />
+          @change="fieldStatus('division')" />
       </div>
     </div>
-  </form>
+    <div class="col-span-12 sm:col-span-4 mt-6 sm:mt-0">
+      <BaseInput
+        v-model.trim="schoolStore.school.streetNumber"
+        :status="status.streetNumber"
+        required
+        name="streetNumber"
+        type="text"
+        label="Street #"
+        @change="fieldStatus('streetNumber')" />
+    </div>
+    <div class="col-span-12 sm:col-span-8">
+      <BaseInput
+        v-model.trim="schoolStore.school.streetName"
+        :status="status.streetName"
+        requried
+        name="streetName"
+        type="text"
+        label="Street Name"
+        @change="fieldStatus('streetName')" />
+    </div>
+    <div class="col-span-8 sm:col-span-7">
+      <BaseInput
+        v-model.trim="schoolStore.school.city"
+        :status="status.city"
+        required
+        name="city"
+        type="text"
+        label="City/Town"
+        @change="fieldStatus('city')" />
+    </div>
+    <div class="col-span-4 sm:col-span-2 self-start">
+      <BaseSelect
+        v-model.trim="schoolStore.school.province"
+        :status="status.province"
+        required
+        name="province"
+        label="Province"
+        :options="provinces"
+        @change="fieldStatus('province')" />
+    </div>
+    <div class="col-span-12 sm:col-span-3">
+      <BaseInput
+        v-model.trim="schoolStore.school.postalCode"
+        :status="status.postalCode"
+        required
+        name="postalCode"
+        type="text"
+        label="Postal Code"
+        @change="fieldStatus('postalCode')" />
+    </div>
+    <div class="col-span-12 sm:col-span-5">
+      <BaseInput
+        v-model.trim="schoolStore.school.phone"
+        :status="status.phone"
+        required
+        name="phone"
+        type="tel"
+        label="Phone Number"
+        @change="fieldStatus('phone')" />
+    </div>
+  </div>
 </template>
 
 <style scoped></style>

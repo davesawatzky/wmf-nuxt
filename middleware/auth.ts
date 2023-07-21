@@ -14,10 +14,9 @@ export default defineNuxtRouteMiddleware((to) => {
     })
     onError((error) => {
       console.log(error)
-      navigateTo('/login')
     })
   }
   if (to.path === '/') {
-    navigateTo('/login')
+    return navigateTo('/login')
   }
 })

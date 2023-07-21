@@ -101,134 +101,132 @@
 </script>
 
 <template>
-  <form>
-    <div class="grid grid-cols-12 gap-x-3 gap-y-1 items-end">
-      <div class="col-span-12 sm:col-span-2 self-start">
-        <BaseSelect
-          v-model.trim="contact.prefix"
-          :status="status.prefix"
-          required
-          name="prefix"
-          label="Title"
-          :options="prefixes"
-          @change="fieldStatus('prefix')" />
-      </div>
-      <div class="col-span-12 sm:col-span-5">
-        <BaseInput
-          v-model.trim="contact.firstName"
-          :status="status.firstName"
-          required
-          name="firstName"
-          type="text"
-          label="First Name"
-          @change="fieldStatus('firstName')" />
-      </div>
-      <div class="col-span-12 sm:col-span-5">
-        <BaseInput
-          v-model.trim="contact.lastName"
-          :status="status.lastName"
-          required
-          name="lastName"
-          type="text"
-          label="Last Name"
-          @change="fieldStatus('lastName')" />
-      </div>
-
-      <!-- <div v-else class="col-span-12 sm:col-span-3"></div> -->
-
-      <div
-        v-if="!schoolteacher"
-        class="col-span-6 sm:col-span-3">
-        <BaseInput
-          v-model.trim="contact.apartment"
-          :status="status.apartment"
-          name="apartment"
-          type="text"
-          label="Apt."
-          @change="fieldStatus('apartment')" />
-      </div>
-      <div
-        v-if="!schoolteacher"
-        class="col-span-6 sm:col-span-3">
-        <BaseInput
-          v-model.trim="contact.streetNumber"
-          :status="status.streetNumber"
-          required
-          name="streetNumber"
-          type="text"
-          label="Street #"
-          @change="fieldStatus('streetNumber')" />
-      </div>
-      <div
-        v-if="!schoolteacher"
-        class="col-span-12 sm:col-span-6">
-        <BaseInput
-          v-model.trim="contact.streetName"
-          :status="status.streetName"
-          required
-          name="streetName"
-          type="text"
-          label="Street Name"
-          @change="fieldStatus('streetName')" />
-      </div>
-      <div
-        v-if="!schoolteacher"
-        class="col-span-8 sm:col-span-7">
-        <BaseInput
-          v-model.trim="contact.city"
-          :status="status.city"
-          required
-          name="city"
-          type="text"
-          label="City/Town"
-          @change="fieldStatus('city')" />
-      </div>
-      <div
-        v-if="!schoolteacher"
-        class="col-span-4 sm:col-span-2 self-start">
-        <BaseSelect
-          v-model.trim="contact.province"
-          :status="status.province"
-          required
-          name="province"
-          label="Province"
-          :options="provinces"
-          @change="fieldStatus('province')" />
-      </div>
-      <div
-        v-if="!schoolteacher"
-        class="col-span-12 sm:col-span-3">
-        <BaseInput
-          v-model.trim="contact.postalCode"
-          :status="status.postalCode"
-          required
-          name="postalCode"
-          type="text"
-          label="Postal Code"
-          @change="fieldStatus('postalCode')" />
-      </div>
-      <div class="col-span-12 sm:col-span-5">
-        <BaseInput
-          v-model.trim="contact.phone"
-          :status="status.phone"
-          required
-          name="phone"
-          type="tel"
-          label="Phone Number"
-          @change="fieldStatus('phone')" />
-      </div>
-      <div class="col-span-12 sm:col-span-7">
-        <BaseInput
-          v-model.trim="contact.email"
-          :status="status.email"
-          required
-          name="email"
-          type="email"
-          label="Email"
-          @change="fieldStatus('email')" />
-      </div>
+  <div class="grid grid-cols-12 gap-x-3 gap-y-1 items-end">
+    <div class="col-span-12 sm:col-span-2 self-start">
+      <BaseSelect
+        v-model.trim="contact.prefix"
+        :status="status.prefix"
+        required
+        name="prefix"
+        label="Title"
+        :options="prefixes"
+        @change="fieldStatus('prefix')" />
     </div>
-  </form>
+    <div class="col-span-12 sm:col-span-5">
+      <BaseInput
+        v-model.trim="contact.firstName"
+        :status="status.firstName"
+        required
+        name="firstName"
+        type="text"
+        label="First Name"
+        @change="fieldStatus('firstName')" />
+    </div>
+    <div class="col-span-12 sm:col-span-5">
+      <BaseInput
+        v-model.trim="contact.lastName"
+        :status="status.lastName"
+        required
+        name="lastName"
+        type="text"
+        label="Last Name"
+        @change="fieldStatus('lastName')" />
+    </div>
+
+    <!-- <div v-else class="col-span-12 sm:col-span-3"></div> -->
+
+    <div
+      v-if="!schoolteacher"
+      class="col-span-6 sm:col-span-3">
+      <BaseInput
+        v-model.trim="contact.apartment"
+        :status="status.apartment"
+        name="apartment"
+        type="text"
+        label="Apt."
+        @change="fieldStatus('apartment')" />
+    </div>
+    <div
+      v-if="!schoolteacher"
+      class="col-span-6 sm:col-span-3">
+      <BaseInput
+        v-model.trim="contact.streetNumber"
+        :status="status.streetNumber"
+        required
+        name="streetNumber"
+        type="text"
+        label="Street #"
+        @change="fieldStatus('streetNumber')" />
+    </div>
+    <div
+      v-if="!schoolteacher"
+      class="col-span-12 sm:col-span-6">
+      <BaseInput
+        v-model.trim="contact.streetName"
+        :status="status.streetName"
+        required
+        name="streetName"
+        type="text"
+        label="Street Name"
+        @change="fieldStatus('streetName')" />
+    </div>
+    <div
+      v-if="!schoolteacher"
+      class="col-span-8 sm:col-span-7">
+      <BaseInput
+        v-model.trim="contact.city"
+        :status="status.city"
+        required
+        name="city"
+        type="text"
+        label="City/Town"
+        @change="fieldStatus('city')" />
+    </div>
+    <div
+      v-if="!schoolteacher"
+      class="col-span-4 sm:col-span-2 self-start">
+      <BaseSelect
+        v-model.trim="contact.province"
+        :status="status.province"
+        required
+        name="province"
+        label="Province"
+        :options="provinces"
+        @change="fieldStatus('province')" />
+    </div>
+    <div
+      v-if="!schoolteacher"
+      class="col-span-12 sm:col-span-3">
+      <BaseInput
+        v-model.trim="contact.postalCode"
+        :status="status.postalCode"
+        required
+        name="postalCode"
+        type="text"
+        label="Postal Code"
+        @change="fieldStatus('postalCode')" />
+    </div>
+    <div class="col-span-12 sm:col-span-5">
+      <BaseInput
+        v-model.trim="contact.phone"
+        :status="status.phone"
+        required
+        name="phone"
+        type="tel"
+        label="Phone Number"
+        @change="fieldStatus('phone')" />
+    </div>
+    <div class="col-span-12 sm:col-span-7">
+      <BaseInput
+        v-model.trim="contact.email"
+        :status="status.email"
+        required
+        name="email"
+        type="email"
+        label="Email"
+        @change="fieldStatus('email')" />
+    </div>
+  </div>
 </template>
 
 <style scoped></style>
