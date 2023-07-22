@@ -1,12 +1,8 @@
-<script setup lang="ts">
-  import Vpc from './components/vite-plugin-checker.vue'
-</script>
+<script setup lang="ts"></script>
 
 <template>
   <NuxtLayout>
-    <NuxtPage>
-      <Vpc />
-    </NuxtPage>
+    <NuxtPage />
   </NuxtLayout>
 </template>
 

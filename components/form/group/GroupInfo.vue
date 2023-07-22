@@ -26,15 +26,6 @@
 
   const validationSchema = yup.object({
     groupname: yup.string().trim().required('Enter a group name'),
-    numberOfPerformers: yup
-      .number()
-      .integer('Only whole numbers')
-      .positive('Must be a positive number')
-      .nullable()
-      .required('Enter number of performers'),
-    instrument: yup.string().trim().nullable().required(),
-    level: yup.string().max(20).nullable().required(),
-    otherClasses: yup.string().nullable(),
   })
 
   useForm({ validationSchema })

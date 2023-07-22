@@ -23,9 +23,9 @@ export const useGroup = defineStore(
       group.value.id = grp.id
       group.value.groupType = grp.groupType || ''
       group.value.name = grp.name || ''
-      group.value.numberOfPerformers = grp.numberOfPerformers || null
+      group.value.numberOfPerformers = grp.numberOfPerformers || undefined
       group.value.instruments = grp.instruments || ''
-      group.value.age = grp.age || null
+      group.value.age = grp.age || undefined
       group.value.__typename = grp.__typename || 'Group'
     }
 

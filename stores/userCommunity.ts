@@ -22,9 +22,9 @@ export const useCommunity = defineStore(
     function addToStore(comm: Community) {
       community.value.id = comm.id
       community.value.name = comm.name || ''
-      community.value.groupSize = comm.groupSize || 0
-      community.value.chaperones = comm.chaperones || 0
-      community.value.wheelchairs = comm.wheelchairs || 0
+      community.value.groupSize = comm.groupSize || undefined
+      community.value.chaperones = comm.chaperones || undefined
+      community.value.wheelchairs = comm.wheelchairs || undefined
       community.value.earliestTime = comm.earliestTime || ''
       community.value.latestTime = comm.latestTime || ''
       community.value.unavailable = comm.unavailable || ''

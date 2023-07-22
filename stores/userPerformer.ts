@@ -40,7 +40,7 @@ export const usePerformers = defineStore(
         id: performer.id,
         firstName: performer.firstName || '',
         lastName: performer.lastName || '',
-        age: performer.age || 10,
+        age: performer.age || undefined,
         level: performer.level || '',
         instrument: performer.instrument || '',
         otherClasses: performer.otherClasses || '',

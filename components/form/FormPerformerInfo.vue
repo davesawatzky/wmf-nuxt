@@ -53,11 +53,10 @@
     lastName: yup.string().trim().required('Last name is required'),
     age: yup
       .number()
-      .positive()
-      .integer()
-      .max(100)
-      .nullable()
-      .required('Indicate age'),
+      .positive('Enter positive age')
+      .integer('Enter age')
+      .max(100, 'Enter age')
+      .required('Enter age'),
     apartment: yup
       .string()
       .notRequired()
@@ -75,7 +74,7 @@
       .trim()
       .max(15, 'Too many characters')
       .required('Enter a city name'),
-    province: yup.string().length(2),
+    province: yup.string().length(2).required(),
     postalCode: yup
       .string()
       .matches(
@@ -96,6 +95,10 @@
   useForm({
     validationSchema,
   })
+
+  const maskaUcaseOption = {
+    preProcess: (val) => val.toUpperCase(),
+  }
 
   const currentYear = new Date().getFullYear()
 </script>
@@ -127,6 +130,9 @@
         v-model.number="contact.age"
         :status="status.age"
         required
+        min="1"
+        max="100"
+        step="1"
         name="age"
         type="number"
         label="Age"
@@ -187,6 +193,11 @@
         v-model.trim="contact.postalCode"
         :status="status.postalCode"
         required
+        placeholder="A0A 0A0"
+        v-maska:[maskaUcaseOption]
+        data-maska="A#A #A#"
+        data-maska-tokens="A:[A-Z]"
+        data-maska-eager
         name="postalCode"
         type="text"
         label="Postal Code"
@@ -197,6 +208,10 @@
         v-model.trim="contact.phone"
         :status="status.phone"
         required
+        placeholder="(###) ###-####"
+        v-maska
+        data-maska="(###) ###-####"
+        data-maska-eager
         name="phone"
         type="tel"
         label="Phone Number"
@@ -207,6 +222,7 @@
         v-model.trim="contact.email"
         :status="status.email"
         required
+        placeholder="example@email.com"
         name="email"
         type="email"
         label="Email"

@@ -1,4 +1,5 @@
 <script setup lang="ts" generic="T">
+  import * as yup from 'yup'
   import {
     CategoriesDocument,
     DisciplinesByTypeDocument,
@@ -364,6 +365,14 @@
       await classesStore.updateClass(props.classId, 'numberOfSelections')
     }
   )
+
+  const validationSchema = yup.object({
+    discipline: yup.string().required('Choose a discipline'),
+    subdiscipline: yup.string().required('Choose a subdiscipline'),
+    level: yup.string().required('Choose a grade/level'),
+    category: yup.string().required('Choose a category'),
+    instrument: yup.string().nullable(),
+  })
 </script>
 
 <template>

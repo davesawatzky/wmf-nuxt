@@ -29,6 +29,7 @@
     "pinia": "^2.1.4",
     "sass": "^1.64.0",
     "vee-validate": "^4.10.7",
+    "vue3-easy-data-table": "^1.5.47",
     "yup": "^1.2.0",
     "yup-password": "^0.2.2",
     "yup-phone-lite": "^2.0.1"
@@ -65,7 +66,6 @@
     "prettier": "^2.8.8",
     "tailwindcss": "^3.3.3",
     "typescript": "^5.1.6",
-    "vite-plugin-checker": "^0.6.1",
     "vue-tsc": "^1.8.5"
   },
   "overrides": {

@@ -23,9 +23,9 @@ export const useSchoolGroup = defineStore(
       schoolGroup.value.push({
         id: schoolGrp.id,
         name: schoolGrp.name || '',
-        groupSize: schoolGrp.groupSize || null,
-        chaperones: schoolGrp.chaperones || null,
-        wheelchairs: schoolGrp.wheelchairs || null,
+        groupSize: schoolGrp.groupSize || undefined,
+        chaperones: schoolGrp.chaperones || undefined,
+        wheelchairs: schoolGrp.wheelchairs || undefined,
         earliestTime: schoolGrp.earliestTime || '',
         latestTime: schoolGrp.latestTime || '',
         unavailable: schoolGrp.unavailable || '',

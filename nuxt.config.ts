@@ -1,7 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import checker from 'vite-plugin-checker'
 
 export default defineNuxtConfig({
   alias: {
@@ -83,14 +82,5 @@ export default defineNuxtConfig({
         propsDestructure: true,
       },
     },
-    plugins: [
-      checker({
-        typescript: true,
-        vueTsc: true,
-        eslint: {
-          lintCommand: 'eslint "./**/*.{ts,tsx,vue}"',
-        },
-      }),
-    ],
   },
 })

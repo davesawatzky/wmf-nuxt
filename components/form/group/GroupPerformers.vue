@@ -1,5 +1,4 @@
 <script setup lang="ts">
-  import * as yup from 'yup'
   import { usePerformers } from '@/stores/userPerformer'
   import { useRegistration } from '@/stores/userRegistration'
 
@@ -12,21 +11,6 @@
   async function removePerformer(performerId: number) {
     await performerStore.deletePerformer(performerId)
   }
-
-  const validationSchema = yup.object({
-    groupname: yup.string().trim().required('Enter a group name'),
-    numberOfPerformers: yup
-      .number()
-      .integer('Only whole numbers')
-      .positive('Must be a positive number')
-      .nullable()
-      .required('Enter number of performers'),
-    instrument: yup.string().trim().nullable().required(),
-    level: yup.string().max(20).nullable().required(),
-    otherClasses: yup.string().nullable(),
-  })
-
-  useForm({ validationSchema })
 </script>
 
 <template>

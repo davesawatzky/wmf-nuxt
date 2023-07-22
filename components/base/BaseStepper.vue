@@ -45,7 +45,7 @@
             ? 'bg-sky-400 ring-sky-300 ring-4'
             : 'btn-blue hover:ring-2',
         ]"
-        @click="changeTab(tab, index)">
+        @click="changeTab(tab.toString(), index)">
         {{ index + 1 }}
 
         <!-- TODO: Add conditional statement to BaseBadge -->
@@ -59,15 +59,4 @@
   </div>
 </template>
 
-<style lang="scss" scoped>
-  .progress {
-    position: absolute;
-    background-color: #850101;
-    height: 6px;
-    z-index: -1;
-    top: 22px;
-    left: 50px;
-    right: -50px;
-    margin: 0 auto;
-  }
-</style>
+<style lang="scss" scoped></style>

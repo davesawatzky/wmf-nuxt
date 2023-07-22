@@ -32,9 +32,9 @@
 
   const totalParticipants = computed<number>(() => {
     return (
-      schoolGroup.value.groupSize! +
-      schoolGroup.value.chaperones! +
-      schoolGroup.value.wheelchairs!
+      (schoolGroup.value.groupSize ?? 0) +
+      (schoolGroup.value.chaperones ?? 0) +
+      (schoolGroup.value.wheelchairs ?? 0)
     )
   })
 
@@ -45,16 +45,27 @@
   }
 
   const validationSchema = yup.object({
-    groupName: yup
-      .string()
-      .trim()
-      .nullable()
-      .required('Enter a name for your group'),
-    earliestTime: yup.string().nullable().required('Enter a time'),
-    latestTime: yup.string().nullable().required('Enter a time'),
-    groupSize: yup.number().required('Enter the numer of performers'),
-    chaperones: yup.number(),
-    wheelchaires: yup.number(),
+    groupName: yup.string().trim().required('Enter a name for your group'),
+    earliestTime: yup.string().required('Enter a time'),
+    latestTime: yup.string().required('Enter a time'),
+    groupSize: yup
+      .number()
+      .min(2)
+      .max(300)
+      .integer()
+      .required('Enter the numer of performers'),
+    chaperones: yup
+      .number()
+      .min(0)
+      .max(100)
+      .integer()
+      .required('Indicate the number of chaperones.'),
+    wheelchairs: yup
+      .number()
+      .min(0)
+      .max(100)
+      .integer()
+      .required('Indicate the number of wheelchairs'),
     unavailable: yup.string().trim().nullable(),
     conflictPerformers: yup.string().trim().nullable(),
   })
@@ -96,6 +107,9 @@
           <BaseInput
             v-model.number="schoolGroup.groupSize"
             :status="status.groupSize"
+            min="2"
+            max="300"
+            step="1"
             name="groupSize"
             label="Number of performers"
             type="number"
@@ -106,6 +120,9 @@
             v-model.number="schoolGroup.chaperones"
             :status="status.chaperones"
             name="chaperones"
+            min="0"
+            max="100"
+            step="1"
             label="Number of chaperones"
             type="number"
             @change="fieldStatus('chaperones')" />
@@ -115,18 +132,15 @@
             v-model.number="schoolGroup.wheelchairs"
             :status="status.wheelchairs"
             name="wheelchairs"
+            min="0"
+            max="100"
+            step="1"
             label="Number of wheelchairs"
             type="number"
             @change="fieldStatus('wheelchairs')" />
         </div>
-        <div class="off col-1 sm:col-span-2">
-          <BaseInput
-            v-model.number="totalParticipants"
-            name="totalParticipants"
-            label="Total Number"
-            :value="totalParticipants"
-            disabled
-            type="number" />
+        <div class="off col-1 sm:col-span-2 text-sm font-bold">
+          Total Number: {{ totalParticipants }}
         </div>
       </div>
     </div>

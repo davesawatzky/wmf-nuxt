@@ -45,13 +45,7 @@
   const validationSchema = yup.object({
     firstName: yup.string().trim().required('First name is required'),
     lastName: yup.string().trim().required('Last name is required'),
-    age: yup
-      .number()
-      .positive()
-      .integer()
-      .max(100)
-      .nullable()
-      .required('Indicate age'),
+    age: yup.number().positive().integer().max(100).required('Indicate age'),
     apartment: yup
       .string()
       .notRequired()
@@ -97,6 +91,10 @@
     status[fieldName] = StatusEnum.saving
     await teacherStore.updateTeacher(fieldName)
     status[fieldName] = StatusEnum.saved
+  }
+
+  const maskaUcaseOption = {
+    preProcess: (val) => val.toUpperCase(),
   }
 </script>
 
@@ -201,6 +199,9 @@
         v-model.trim="contact.postalCode"
         :status="status.postalCode"
         required
+        v-maska:[maskaUcaseOption]
+        data-maska="A#A #A#"
+        data-maska-token="A:[A-Z]"
         name="postalCode"
         type="text"
         label="Postal Code"
@@ -211,6 +212,10 @@
         v-model.trim="contact.phone"
         :status="status.phone"
         required
+        placeholder="(###) ###-####"
+        v-maska
+        data-maska="(###) ###-####"
+        data-maska-eager
         name="phone"
         type="tel"
         label="Phone Number"
@@ -220,6 +225,7 @@
       <BaseInput
         v-model.trim="contact.email"
         :status="status.email"
+        placeholder="example@email.com"
         required
         name="email"
         type="email"

@@ -19,16 +19,34 @@
   })
 
   const validationSchema = yup.object({
-    schoolName: yup
-      .string()
-      .trim()
-      .nullable()
-      .required('Enter the name of the school'),
+    schoolName: yup.string().trim().required('Enter the name of the school'),
     schoolDivision: yup
       .string()
       .trim()
-      .nullable()
       .required('Enter the name of the school divison'),
+    streetNumber: yup
+      .string()
+      .trim()
+      .max(5, '5 characters maximum')
+      .required('Enter a valid street number'),
+    streetName: yup.string().trim().required('Enter a valid street name'),
+    city: yup
+      .string()
+      .trim()
+      .max(15, 'Too many characters')
+      .required('Enter a city name'),
+    province: yup.string().length(2).required(),
+    postalCode: yup
+      .string()
+      .matches(
+        /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i,
+        'Enter a valid postal code'
+      )
+      .required('Enter a valid postal code'),
+    phone: yup
+      .string()
+      .phone('CA', 'Please enter a valid phone number')
+      .required('A phone number is required'),
   })
 
   useForm({ validationSchema })
@@ -37,6 +55,10 @@
     status[fieldName] = StatusEnum.saving
     await schoolStore.updateSchool(fieldName)
     status[fieldName] = StatusEnum.saved
+  }
+
+  const maskaUcaseOption = {
+    preProcess: (val) => val.toUpperCase(),
   }
 </script>
 
@@ -110,6 +132,11 @@
         v-model.trim="schoolStore.school.postalCode"
         :status="status.postalCode"
         required
+        placeholder="A0A 0A0"
+        v-maska:[maskaUcaseOption]
+        data-maska="A#A #A#"
+        data-maska-tokens="A:[A-Z]"
+        data-maska-eager
         name="postalCode"
         type="text"
         label="Postal Code"
@@ -120,6 +147,10 @@
         v-model.trim="schoolStore.school.phone"
         :status="status.phone"
         required
+        placeholder="(###) ###-####"
+        v-maska
+        data-maska="(###) ###-####"
+        data-maska-eager
         name="phone"
         type="tel"
         label="Phone Number"

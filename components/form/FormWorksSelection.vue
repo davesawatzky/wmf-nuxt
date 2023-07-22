@@ -29,22 +29,13 @@
   })
 
   const validationSchema = yup.object({
-    title: yup
-      .string()
-      .trim()
-      .nullable()
-      .required('Enter the title of the selection'),
-    composer: yup
-      .string()
-      .trim()
-      .nullable()
-      .required('Enter the name of the composer'),
+    title: yup.string().trim().required('Enter the title of the selection'),
+    composer: yup.string().trim().required('Enter the name of the composer'),
     largerWork: yup.string().trim().nullable(),
     movement: yup.string().trim().nullable(),
     duration: yup
       .string()
       .trim()
-      .nullable()
       .required('Indicate total duration of selection'),
   })
 

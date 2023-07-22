@@ -28,18 +28,21 @@
     name: yup.string().trim().required('Enter a name for the community group'),
     groupSize: yup
       .number()
+      .min(2)
+      .max(300)
       .integer()
-      .nullable()
       .required('Give the size of the group'),
     numberOfChaperones: yup
       .number()
+      .min(0)
+      .max(100)
       .integer()
-      .nullable()
       .required('Indicate the number of chaperones'),
     numberOfWheelchairs: yup
       .number()
+      .min(0)
+      .max(100)
       .integer()
-      .nullable()
       .required('Indicate the number of wheelchairs'),
     conflictPerformers: yup.string().trim().nullable(),
   })
@@ -69,6 +72,9 @@
           <BaseInput
             v-model.number="communityStore.community.groupSize"
             :status="status.groupSize"
+            min="2"
+            max="300"
+            step="1"
             name="groupSize"
             type="number"
             label="Group Size"
@@ -81,6 +87,9 @@
             v-model.number="communityStore.community.chaperones"
             :status="status.chaperones"
             name="numberOfChaperones"
+            min="0"
+            max="100"
+            step="1"
             type="number"
             label="Number of chaperones"
             @change="
@@ -92,6 +101,9 @@
             v-model.number="communityStore.community.wheelchairs"
             :status="status.wheelchairs"
             name="numberOfWheelchairs"
+            min="0"
+            max="100"
+            step="1"
             type="number"
             label="Number of wheelchairs"
             @change="

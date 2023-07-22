@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import * as yup from 'yup'
   import type { Component } from 'vue'
   import { useAppStore } from '@/stores/appStore'
   import { useRegistration } from '@/stores/userRegistration'
@@ -11,6 +12,7 @@
   definePageMeta({
     middleware: 'auth',
   })
+
   const FormSoloPerformer = <Component>resolveComponent('FormSoloPerformer')
   const FormSoloTeacher = <Component>resolveComponent('FormSoloTeacher')
   const FormGroupInfo = <Component>resolveComponent('FormGroupInfo')
@@ -25,8 +27,8 @@
   )
   const FormTypeClasses = <Component>resolveComponent('FormTypeClasses')
   const Summary = <Component>resolveComponent('Summary')
-  const registrationStore = useRegistration()
 
+  const registrationStore = useRegistration()
   const appStore = useAppStore()
   const performerType = toRef(appStore.performerType)
   const currentTab = ref('')
@@ -93,6 +95,10 @@
       }
       break
   }
+
+  const validationSchema = yup.object({
+    label: yup.string().trim().required('Please enter a label for this form'),
+  })
 </script>
 
 <template>
@@ -102,6 +108,7 @@
       class="text-3xl"
       label="Registration Label"
       name="registrationLabel"
+      :disabled="!!registrationStore.registration.confirmation"
       placeholder="Enter a unique label"
       :status="status.label"
       type="text"
