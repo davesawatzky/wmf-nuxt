@@ -23,11 +23,38 @@
     helpMessage: '',
   })
 
-  defineEmits<{
+  const emits = defineEmits<{
     'update:modelValue': [value: string | number]
   }>()
 
   const uuid = UniqueID().getID()
+
+  // Aggressive
+  const { value, errorMessage, meta, handleChange, handleBlur } = useField(
+    () => props.name,
+    undefined,
+    {
+      initialValue: props.modelValue,
+      syncVModel: true,
+    }
+  )
+
+  const validationListeners = computed(() => {
+    // If the field is valid or has not been validated yet
+    // lazy
+    if (!errorMessage.value) {
+      return {
+        blur: handleChange,
+        change: (e: string | number) => handleChange(e, true),
+        // input: (e: string | number) => handleChange(e, false),
+      }
+    }
+    return {
+      blur: handleChange,
+      change: handleChange,
+      // input: handleChange, // only switched this
+    }
+  })
 </script>
 
 <template>
@@ -48,14 +75,10 @@
     </div>
     <select
       :id="uuid"
-      :value="modelValue"
+      :value="value"
       :name="name"
-      v-bind="{
-        ...$attrs,
-        onChange: ($event) => {
-          $emit('update:modelValue', ($event.target as HTMLInputElement).value)
-        },
-      }">
+      v-bind="{ ...$attrs }"
+      v-on="validationListeners">
       <option
         v-for="option in options"
         :key="option.id"
@@ -66,3 +89,8 @@
     </select>
   </div>
 </template>
+
+<!-- ,
+        onChange: ($event) => {
+          $emit('update:modelValue', ($event.target as HTMLInputElement).value)
+        }, -->

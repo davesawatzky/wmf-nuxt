@@ -8,12 +8,17 @@ import type {
 
 export enum StatusEnum {
   null,
+  removed,
   saved,
-  saving,
+  pending,
 }
 
 export interface Status {
   [key: string]: StatusEnum
+}
+
+export interface ErrorCounts {
+  [key: string]: number
 }
 
 export type ContactInfo = PerformerInput &

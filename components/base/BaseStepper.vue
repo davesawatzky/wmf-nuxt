@@ -1,5 +1,6 @@
 <script setup lang="ts">
   import type { Component } from 'vue'
+  import type { ErrorCounts } from '@/composables/types'
 
   interface DynamicComponent {
     [key: string]: Component
@@ -7,6 +8,7 @@
 
   const props = defineProps<{
     tabs: DynamicComponent
+    fieldErrors: ErrorCounts
   }>()
 
   const emit = defineEmits<{
@@ -49,7 +51,11 @@
         {{ index + 1 }}
 
         <!-- TODO: Add conditional statement to BaseBadge -->
-        <BaseBadge class="-right-2 top-0">25</BaseBadge>
+        <BaseBadge
+          v-if="fieldErrors[tab.toString()] > 0"
+          class="-right-2 top-0"
+          >{{ fieldErrors[tab.toString()] }}</BaseBadge
+        >
       </button>
       <div
         v-if="tab !== 'Summary'"

@@ -28,18 +28,30 @@
     set: (value) => emits('update:modelValue', value),
   })
 
-  const validationSchema = yup.object({
-    title: yup.string().trim().required('Enter the title of the selection'),
-    composer: yup.string().trim().required('Enter the name of the composer'),
-    largerWork: yup.string().trim().nullable(),
-    movement: yup.string().trim().nullable(),
-    duration: yup
-      .string()
-      .trim()
-      .required('Indicate total duration of selection'),
-  })
+  // const validationSchema = toTypedSchema(
+  //   yup.object({
+  //     selection: yup.array().of(
+  //       yup.object({
+  //         title: yup
+  //           .string()
+  //           .trim()
+  //           .required('Enter the title of the selection'),
+  //         composer: yup
+  //           .string()
+  //           .trim()
+  //           .required('Enter the name of the composer'),
+  //         largerWork: yup.string().trim().nullable(),
+  //         movement: yup.string().trim().nullable(),
+  //         duration: yup
+  //           .string()
+  //           .trim()
+  //           .required('Indicate total duration of selection'),
+  //       })
+  //     ),
+  //   })
+  // )
 
-  useForm({ validationSchema })
+  // useForm({ validationSchema })
 
   async function fieldStatus(fieldName: string) {
     status[fieldName] = StatusEnum.saving
@@ -60,7 +72,7 @@
         <BaseInput
           v-model="work.title"
           :status="status.title"
-          name="title"
+          :name="`selection_${selectionId}.title`"
           label="Title (including Opus number if applicable)"
           type="text"
           @change="fieldStatus('title')" />
@@ -69,7 +81,7 @@
         <BaseInput
           v-model="work.composer"
           :status="status.composer"
-          name="composer"
+          :name="`selection_${selectionId}.composer`"
           label="Composer"
           type="text"
           @change="fieldStatus('composer')" />
@@ -78,7 +90,7 @@
         <BaseInput
           v-model="work.largerWork"
           :status="status.largerWork"
-          name="largerWork"
+          :name="`selection_${selectionId}.largerWork`"
           label="Title of Larger Work (if applicable)"
           type="text"
           @change="fieldStatus('largerWork')" />
@@ -87,7 +99,7 @@
         <BaseInput
           v-model="work.movement"
           :status="status.movement"
-          name="movement"
+          :name="`selection_${selectionId}.movement`"
           label="Movement (if applicable)"
           type="text"
           @change="fieldStatus('movement')" />
@@ -96,7 +108,7 @@
         <BaseInput
           v-model="work.duration"
           :status="status.duration"
-          name="duration"
+          :name="`selection_${selectionId}.duration`"
           label="Duration"
           type="text"
           @change="fieldStatus('duration')" />

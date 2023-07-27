@@ -1,7 +1,16 @@
 <script lang="ts" setup>
   import { usePerformers } from '@/stores/userPerformer'
 
+  const emits = defineEmits<{
+    (ev: 'error-counts', count: number): void
+  }>()
+
   const performerStore = usePerformers()
+
+  function errorCounts(count: number) {
+    // eslint-disable-next-line vue/custom-event-name-casing
+    emits('error-counts', count)
+  }
 </script>
 
 <template>
@@ -13,7 +22,8 @@
       <FormPerformerInfo
         v-model="performerStore.performers[0]"
         :performer-index="0"
-        :performer-id="performerStore.performers[0].id" />
+        :performer-id="performerStore.performers[0].id"
+        @error-counts="errorCounts" />
     </div>
     <div class="pt-4">
       <BaseTextarea :label="textAreaLabel" />

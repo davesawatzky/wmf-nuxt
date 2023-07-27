@@ -44,31 +44,40 @@
     status[fieldName] = StatusEnum.saved
   }
 
-  const validationSchema = yup.object({
-    groupName: yup.string().trim().required('Enter a name for your group'),
-    earliestTime: yup.string().required('Enter a time'),
-    latestTime: yup.string().required('Enter a time'),
-    groupSize: yup
-      .number()
-      .min(2)
-      .max(300)
-      .integer()
-      .required('Enter the numer of performers'),
-    chaperones: yup
-      .number()
-      .min(0)
-      .max(100)
-      .integer()
-      .required('Indicate the number of chaperones.'),
-    wheelchairs: yup
-      .number()
-      .min(0)
-      .max(100)
-      .integer()
-      .required('Indicate the number of wheelchairs'),
-    unavailable: yup.string().trim().nullable(),
-    conflictPerformers: yup.string().trim().nullable(),
-  })
+  const validationSchema = toTypedSchema(
+    yup.object({
+      schoolGroup: yup.array().of(
+        yup.object({
+          groupName: yup
+            .string()
+            .trim()
+            .required('Enter a name for your group'),
+          earliestTime: yup.string().required('Enter a time'),
+          latestTime: yup.string().required('Enter a time'),
+          groupSize: yup
+            .number()
+            .min(2)
+            .max(300)
+            .integer()
+            .required('Enter the numer of performers'),
+          chaperones: yup
+            .number()
+            .min(0)
+            .max(100)
+            .integer()
+            .required('Indicate the number of chaperones.'),
+          wheelchairs: yup
+            .number()
+            .min(0)
+            .max(100)
+            .integer()
+            .required('Indicate the number of wheelchairs'),
+          unavailable: yup.string().trim().nullable(),
+          conflictPerformers: yup.string().trim().nullable(),
+        })
+      ),
+    })
+  )
 
   useForm({ validationSchema })
 </script>
@@ -81,14 +90,14 @@
           v-model="schoolGroup.name"
           :status="status.name"
           label="Group Name"
-          name="groupName"
+          :name="`schoolGroup_${schoolGroupId}.groupName`"
           type="text"
           @change="fieldStatus('name')" />
 
         <BaseInput
           v-model="schoolGroup.earliestTime"
           :status="status.earliestTime"
-          name="earliestTime"
+          :name="`schoolGroup_${schoolGroupId}.earliestTime`"
           label="Earliest time your group can perform"
           type="time"
           @change="fieldStatus('earliestTime')" />
@@ -96,7 +105,7 @@
         <BaseInput
           v-model="schoolGroup.latestTime"
           :status="status.latestTime"
-          name="latestTime"
+          :name="`schoolGroup_${schoolGroupId}.latestTime`"
           label="Latest time your group can perform"
           type="time"
           @change="fieldStatus('latestTime')" />
@@ -110,7 +119,7 @@
             min="2"
             max="300"
             step="1"
-            name="groupSize"
+            :name="`schoolGroup_${schoolGroupId}.groupSize`"
             label="Number of performers"
             type="number"
             @change="fieldStatus('groupSize')" />
@@ -119,7 +128,7 @@
           <BaseInput
             v-model.number="schoolGroup.chaperones"
             :status="status.chaperones"
-            name="chaperones"
+            :name="`schoolGroup_${schoolGroupId}.chaperones`"
             min="0"
             max="100"
             step="1"
@@ -131,7 +140,7 @@
           <BaseInput
             v-model.number="schoolGroup.wheelchairs"
             :status="status.wheelchairs"
-            name="wheelchairs"
+            :name="`schoolGroup_${schoolGroupId}.wheelchairs`"
             min="0"
             max="100"
             step="1"
@@ -148,7 +157,7 @@
       <BaseTextarea
         v-model="schoolGroup.unavailable"
         :status="status.unavailable"
-        name="unavailable"
+        :name="`schoolGroup_${schoolGroupId}.unavailable`"
         label="Unavailable Dates/Times"
         rows="3"
         @change="fieldStatus('unavailable')" />
@@ -162,7 +171,7 @@
       <BaseTextarea
         v-model="schoolGroup.conflictPerformers"
         :status="status.conflictPerformers"
-        name="conflictPerformers"
+        :name="`schoolGroup_${schoolGroupId}.conflictPerformers`"
         label="Performers participating in other classes."
         rows="3"
         @change="fieldStatus('conflictPerformers')" />

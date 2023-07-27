@@ -2,26 +2,9 @@
   import { DateTime } from 'luxon'
   import _ from 'lodash'
   import { useRegistration } from '@/stores/userRegistration'
-  import { usePerformers } from '@/stores/userPerformer'
-  import { useAppStore } from '@/stores/appStore'
-  import { useTeacher } from '@/stores/userTeacher'
-  import { useClasses } from '@/stores/userClasses'
-  import { useGroup } from '@/stores/userGroup'
-  import { useCommunity } from '@/stores/userCommunity'
-  import { useSchool } from '@/stores/userSchool'
-  import { useSchoolGroup } from '@/stores/userSchoolGroup'
   import SummaryTable from '@/components/summaryblocks/SummaryTable.vue'
-  import { PerformerType } from '~/graphql/gql/graphql'
 
   const registrationStore = useRegistration()
-  const performerStore = usePerformers()
-  const teacherStore = useTeacher()
-  const classesStore = useClasses()
-  const groupStore = useGroup()
-  const appStore = useAppStore()
-  const communityStore = useCommunity()
-  const schoolStore = useSchool()
-  const schoolGroupStore = useSchoolGroup()
 
   const confirmationNumber = ref('')
   const submissionComplete = ref(false)
@@ -38,7 +21,6 @@
   })
 
   async function submitRegistration() {
-    await saveRegistration()
     confirmationNumber.value = `WMF-${
       registrationStore.registrationId
     }-${_.random(1000, 9999)}`
@@ -46,49 +28,6 @@
     registrationStore.registration.confirmation = confirmationNumber.value
     await registrationStore.updateRegistration()
     submissionComplete.value = true
-  }
-
-  async function saveRegistration() {
-    switch (appStore.performerType) {
-      case 'SOLO':
-        appStore.performerType = PerformerType.SOLO
-        appStore.dataLoading = true
-        await registrationStore.updateRegistration()
-        await performerStore.updatePerformer(performerStore.performers[0].id)
-        await teacherStore.updateTeacher()
-        await classesStore.updateAllClasses()
-        appStore.dataLoading = false
-        break
-      case 'GROUP':
-        appStore.performerType = PerformerType.GROUP
-        appStore.dataLoading = true
-        await registrationStore.updateRegistration()
-        await groupStore.updateGroup()
-        await teacherStore.updateTeacher()
-        await performerStore.updateAllPerformers()
-        await classesStore.updateAllClasses()
-        appStore.dataLoading = false
-        break
-      case 'SCHOOL':
-        appStore.performerType = PerformerType.SCHOOL
-        appStore.dataLoading = true
-        await registrationStore.updateRegistration()
-        await schoolStore.updateSchool()
-        await schoolGroupStore.updateAllSchoolGroups()
-        await teacherStore.updateTeacher()
-        await classesStore.updateAllClasses()
-        appStore.dataLoading = false
-        break
-      case 'COMMUNITY':
-        appStore.performerType = PerformerType.COMMUNITY
-        appStore.dataLoading = true
-        await registrationStore.updateRegistration()
-        await communityStore.updateCommunity()
-        await teacherStore.updateTeacher()
-        await classesStore.updateAllClasses()
-        appStore.dataLoading = false
-        break
-    }
   }
 </script>
 
@@ -145,8 +84,7 @@
       <BaseRouteButton
         v-if="!submissionComplete"
         class="btn btn-blue"
-        to="Registrations"
-        @click="saveRegistration">
+        to="Registrations">
         Cancel
       </BaseRouteButton>
       <div
@@ -161,8 +99,7 @@
       <BaseRouteButton
         v-if="submissionComplete"
         class="btn btn-blue h-14"
-        to="Registrations"
-        @click="saveRegistration">
+        to="Registrations">
         Return to Registrations
       </BaseRouteButton>
       <BaseButton

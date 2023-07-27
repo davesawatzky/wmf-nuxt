@@ -1,55 +1,57 @@
 <script setup lang="ts">
-  import { StatusEnum } from '@/composables/types'
+  import type { StatusEnum } from '@/composables/types'
 
   interface Props {
     type?: string
     label?: string
     helpMessage?: string
+    status?: StatusEnum
     name: string
     placeholder?: string
-    status?: StatusEnum
-    modelValue: string | number
+    modelValue: string | number | undefined
   }
 
   const props = withDefaults(defineProps<Props>(), {
     type: 'text',
-    label: '',
-    name: '',
-    helpMessage: '',
-    placeholder: '',
-    status: StatusEnum.null,
     modelValue: '',
   })
 
+  const emit = defineEmits<{
+    (ev: 'changeStatus', stat: string): void
+  }>()
+
   const uuid = UniqueID().getID()
-  // Aggressive
+
   const {
-    value: inputValue,
+    value,
+    errors,
+    resetField,
     errorMessage,
+    meta,
     handleChange,
+    handleBlur,
   } = useField(() => props.name, undefined, {
     validateOnValueUpdate: false,
     initialValue: props.modelValue,
     syncVModel: true,
   })
 
-  const validationListeners = computed(() => {
-    // If the field is valid or has not been validated yet
-    // lazy
-    if (!errorMessage.value) {
-      return {
-        blur: handleChange,
-        change: (e: string | number) => handleChange(e, false),
-        // disable `shouldValidate` to avoid validating on input
-        // input: (e: string | number) => handleChange(e, false),
+  const validationListeners = {
+    blur: (evt: Event) => handleBlur(evt, true),
+    change: (evt: Event) => {
+      handleChange(evt, true)
+      if (meta.dirty && meta.valid && !!value.value) {
+        emit('changeStatus', 'save')
+        resetField({ value: value.value })
+      } else if (meta.dirty && !value.value && !!meta.initialValue) {
+        emit('changeStatus', 'remove')
+        resetField({ value: '' })
       }
-    }
-    return {
-      blur: handleChange,
-      change: handleChange,
-      // input: handleChange, // only switched this
-    }
-  })
+    },
+    input: (evt: Event) => {
+      handleChange(evt, !!errorMessage.value)
+    },
+  }
 </script>
 
 <template>
@@ -74,10 +76,12 @@
       :name="name"
       :placeholder="placeholder"
       v-bind="{ ...$attrs }"
-      :value="inputValue"
+      :value="value"
       :aria-describedby="errorMessage ? `${uuid}-error` : ''"
       :aria-invalid="errorMessage ? true : false"
       v-on="validationListeners" />
-    <BaseErrorMessage> {{ errorMessage }}</BaseErrorMessage>
+    <BaseErrorMessage>
+      {{ errorMessage }}
+    </BaseErrorMessage>
   </div>
 </template>

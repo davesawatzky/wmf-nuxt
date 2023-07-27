@@ -366,13 +366,39 @@
     }
   )
 
-  const validationSchema = yup.object({
-    discipline: yup.string().required('Choose a discipline'),
-    subdiscipline: yup.string().required('Choose a subdiscipline'),
-    level: yup.string().required('Choose a grade/level'),
-    category: yup.string().required('Choose a category'),
-    instrument: yup.string().nullable(),
-  })
+  const validationSchema = toTypedSchema(
+    yup.object({
+      festivalClass: yup.array().of(
+        yup.object({
+          discipline: yup.string().required('Choose a discipline'),
+          subdiscipline: yup.string().required('Choose a subdiscipline'),
+          level: yup.string().required('Choose a grade/level'),
+          category: yup.string().required('Choose a category'),
+          instrument: yup.string().nullable(),
+          selection: yup.array().of(
+            yup.object({
+              title: yup
+                .string()
+                .trim()
+                .required('Enter the title of the selection'),
+              composer: yup
+                .string()
+                .trim()
+                .required('Enter the name of the composer'),
+              largerWork: yup.string().trim().nullable(),
+              movement: yup.string().trim().nullable(),
+              duration: yup
+                .string()
+                .trim()
+                .required('Indicate total duration of selection'),
+            })
+          ),
+        })
+      ),
+    })
+  )
+
+  useForm({ validationSchema })
 </script>
 
 <template>
@@ -386,7 +412,7 @@
           v-model="selectedClasses.discipline"
           :status="status.discipline"
           label="Discipline"
-          name="discipline"
+          :name="`festivalClass_${classId}.discipline`"
           :options="disciplines" />
       </div>
       <div class="col-span-6 lg:col-span-3">
@@ -395,7 +421,7 @@
           :status="status.subdiscipline"
           :class="selectedClasses.discipline ? '' : 'off'"
           label="Subdiscipline"
-          name="subdiscipline"
+          :name="`festivalClass_${classId}.subdiscipline`"
           :options="subdisciplines"
           :disabled="!selectedClasses.discipline" />
       </div>
@@ -405,7 +431,7 @@
           :status="status.level"
           :class="selectedClasses.subdiscipline ? '' : 'off'"
           label="Grade/Level"
-          name="level"
+          :name="`festivalClass_${classId}.level`"
           :options="levels"
           :disabled="!selectedClasses.subdiscipline" />
       </div>
@@ -415,7 +441,7 @@
           :status="status.category"
           :class="selectedClasses.level ? '' : 'off'"
           label="Category"
-          name="category"
+          :name="`festivalClass_${classId}.category`"
           :options="categories"
           :disabled="!selectedClasses.level" />
       </div>
@@ -435,7 +461,7 @@
           :status="status.instrument"
           :options="instruments"
           label="Instrument"
-          name="instrument" />
+          :name="`festivalClass_${classId}.instrument`" />
       </div>
 
       <div

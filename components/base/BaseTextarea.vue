@@ -35,23 +35,23 @@
 
 <template>
   <div>
-  <label
-    v-if="label"
-    class=""
-    :for="uuid"
-    >{{ label }}</label
-  >
-  <textarea
-    v-bind="{ ...$attrs }"
-    :id="uuid"
-    :value="inputValue"
-    :aria-describedby="error ? `${uuid}-error` : ''"
-    :aria-invalid="error ? true : false"
-    @input="handleChange"
-    @blur="handleBlur" />
+    <label
+      v-if="label"
+      class=""
+      :for="uuid"
+      >{{ label }}</label
+    >
+    <textarea
+      v-bind="{ ...$attrs }"
+      :id="uuid"
+      :value="inputValue"
+      :aria-describedby="errorMessage ? `${uuid}-error` : ''"
+      :aria-invalid="errorMessage ? true : false"
+      @input="handleChange"
+      @blur="handleBlur" />
 
-  <BaseErrorMessage v-if="errorMessage">
-    {{ errorMessage }}
-  </BaseErrorMessage>
-</div>
+    <BaseErrorMessage v-if="errorMessage">
+      {{ errorMessage }}
+    </BaseErrorMessage>
+  </div>
 </template>

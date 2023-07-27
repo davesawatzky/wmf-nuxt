@@ -8,7 +8,7 @@
   const error = ref('')
   const isLogin = ref(true)
 
-  const { setFieldValue, values, handleSubmit } = useForm({
+  const { values, handleSubmit } = useForm({
     validationSchema: toTypedSchema(
       yup.object({
         firstName: yup.string().trim().label('First Name'),
@@ -24,10 +24,6 @@
       })
     ),
   })
-
-  function handleChange(event: any) {
-    setFieldValue('email', event.target.value)
-  }
 
   /**
    * Sign in and retrieve Token after authenticating
@@ -134,8 +130,7 @@
         name="email"
         type="email"
         label="Email"
-        @keyup.enter="isLogin ? signin() : signup()"
-        @change="handleChange" />
+        @keyup.enter="isLogin ? signin() : signup()" />
       <BaseInput
         v-model="values.password"
         name="password"
@@ -149,22 +144,6 @@
         type="password"
         label="Re-enter Password"
         @keyup.enter="signup()" />
-
-      <div
-        v-if="error"
-        class="text-red-600 text-center">
-        {{ error }}
-      </div>
-
-      <div class="text-xs text-gray-500">
-        Password must:
-        <ul class="list-disc pl-4">
-          <li>be at least 8 characters</li>
-          <li>contain at least 1 uppercase letter</li>
-          <li>contain at least 1 number</li>
-          <li>contain at least 1 symbol</li>
-        </ul>
-      </div>
 
       <div v-if="isLogin">
         <BaseButton

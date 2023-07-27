@@ -24,9 +24,11 @@
     },
   ]
 
-  const validationSchema = yup.object({
-    groupname: yup.string().trim().required('Enter a group name'),
-  })
+  const validationSchema = toTypedSchema(
+    yup.object({
+      groupname: yup.string().trim().required('Enter a group name'),
+    })
+  )
 
   useForm({ validationSchema })
 

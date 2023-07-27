@@ -18,36 +18,43 @@
     phone: StatusEnum.null,
   })
 
-  const validationSchema = yup.object({
-    schoolName: yup.string().trim().required('Enter the name of the school'),
-    schoolDivision: yup
-      .string()
-      .trim()
-      .required('Enter the name of the school divison'),
-    streetNumber: yup
-      .string()
-      .trim()
-      .max(5, '5 characters maximum')
-      .required('Enter a valid street number'),
-    streetName: yup.string().trim().required('Enter a valid street name'),
-    city: yup
-      .string()
-      .trim()
-      .max(15, 'Too many characters')
-      .required('Enter a city name'),
-    province: yup.string().length(2).required(),
-    postalCode: yup
-      .string()
-      .matches(
-        /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i,
-        'Enter a valid postal code'
-      )
-      .required('Enter a valid postal code'),
-    phone: yup
-      .string()
-      .phone('CA', 'Please enter a valid phone number')
-      .required('A phone number is required'),
-  })
+  const validationSchema = toTypedSchema(
+    yup.object({
+      schoolInfo: yup.object({
+        schoolName: yup
+          .string()
+          .trim()
+          .required('Enter the name of the school'),
+        schoolDivision: yup
+          .string()
+          .trim()
+          .required('Enter the name of the school divison'),
+        streetNumber: yup
+          .string()
+          .trim()
+          .max(5, '5 characters maximum')
+          .required('Enter a valid street number'),
+        streetName: yup.string().trim().required('Enter a valid street name'),
+        city: yup
+          .string()
+          .trim()
+          .max(15, 'Too many characters')
+          .required('Enter a city name'),
+        province: yup.string().length(2).required(),
+        postalCode: yup
+          .string()
+          .matches(
+            /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i,
+            'Enter a valid postal code'
+          )
+          .required('Enter a valid postal code'),
+        phone: yup
+          .string()
+          .phone('CA', 'Please enter a valid phone number')
+          .required('A phone number is required'),
+      }),
+    })
+  )
 
   useForm({ validationSchema })
 

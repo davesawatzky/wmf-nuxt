@@ -24,28 +24,35 @@
     status[fieldName] = StatusEnum.saved
   }
 
-  const validationSchema = yup.object({
-    name: yup.string().trim().required('Enter a name for the community group'),
-    groupSize: yup
-      .number()
-      .min(2)
-      .max(300)
-      .integer()
-      .required('Give the size of the group'),
-    numberOfChaperones: yup
-      .number()
-      .min(0)
-      .max(100)
-      .integer()
-      .required('Indicate the number of chaperones'),
-    numberOfWheelchairs: yup
-      .number()
-      .min(0)
-      .max(100)
-      .integer()
-      .required('Indicate the number of wheelchairs'),
-    conflictPerformers: yup.string().trim().nullable(),
-  })
+  const validationSchema = toTypedSchema(
+    yup.object({
+      communityInfo: yup.object({
+        name: yup
+          .string()
+          .trim()
+          .required('Enter a name for the community group'),
+        groupSize: yup
+          .number()
+          .min(2)
+          .max(300)
+          .integer()
+          .required('Give the size of the group'),
+        numberOfChaperones: yup
+          .number()
+          .min(0)
+          .max(100)
+          .integer()
+          .required('Indicate the number of chaperones'),
+        numberOfWheelchairs: yup
+          .number()
+          .min(0)
+          .max(100)
+          .integer()
+          .required('Indicate the number of wheelchairs'),
+        conflictPerformers: yup.string().trim().nullable(),
+      }),
+    })
+  )
 
   useForm({
     validationSchema,
@@ -63,7 +70,7 @@
           <BaseInput
             v-model="communityStore.community.name"
             :status="status.name"
-            name="name"
+            name="communityInfo.name"
             type="text"
             label="Community Group Name"
             @change="fieldStatus('name', communityStore.updateCommunity)" />
@@ -75,7 +82,7 @@
             min="2"
             max="300"
             step="1"
-            name="groupSize"
+            name="communityInfo.groupSize"
             type="number"
             label="Group Size"
             @change="
@@ -86,7 +93,7 @@
           <BaseInput
             v-model.number="communityStore.community.chaperones"
             :status="status.chaperones"
-            name="numberOfChaperones"
+            name="communityInfo.numberOfChaperones"
             min="0"
             max="100"
             step="1"
@@ -100,7 +107,7 @@
           <BaseInput
             v-model.number="communityStore.community.wheelchairs"
             :status="status.wheelchairs"
-            name="numberOfWheelchairs"
+            name="communityInfo.numberOfWheelchairs"
             min="0"
             max="100"
             step="1"
@@ -123,7 +130,7 @@
           <BaseTextarea
             v-model="communityStore.community.conflictPerformers"
             :status="status.conflictPerformers"
-            name="conflictPerformers"
+            name="communityInfo.conflictPerformers"
             label="Performers participating in other classes."
             rows="5"
             @change="

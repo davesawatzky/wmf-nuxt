@@ -10,6 +10,10 @@
   import { useRegistration } from '@/stores/userRegistration'
   import { useAppStore } from '@/stores/appStore'
 
+  const emits = defineEmits<{
+    (ev: 'submitForm', value: any): void
+  }>()
+
   const performerStore = usePerformers()
   const teacherStore = useTeacher()
   const groupStore = useGroup()
@@ -20,76 +24,12 @@
   const appStore = useAppStore()
   const registrationStore = useRegistration()
 
-  const router = useRouter()
-
   function schoolClassGroup(id: number) {
     return schoolGroupStore.schoolGroup.find((item) => item.id === id)
   }
 
-  // Trying to get validations to work
-  const { handleSubmit } = useForm()
-
-  function onInvalidSubmit({ values, errors, results }: any) {
-    console.log(values)
-    console.log(errors)
-    console.log(results)
-  }
-
-  const submit = handleSubmit((values) => {
-    alert(JSON.stringify(values, null, 2))
-    router.push('Submission')
-  }, onInvalidSubmit)
-
   function printWindow() {
     window.print()
-  }
-
-  async function saveRegistration() {
-    switch (appStore.performerType) {
-      case 'SOLO':
-        appStore.performerType = PerformerType.SOLO
-        appStore.dataLoading = true
-        await registrationStore.updateRegistration()
-        await performerStore.updatePerformer(performerStore.performers[0].id)
-        await teacherStore.updateTeacher()
-        await classesStore.updateAllClasses()
-        appStore.dataLoading = false
-        break
-      case 'GROUP':
-        appStore.performerType = PerformerType.GROUP
-        appStore.dataLoading = true
-        await registrationStore.updateRegistration()
-        await groupStore.updateGroup()
-        await teacherStore.updateTeacher()
-        await performerStore.updateAllPerformers()
-        await classesStore.updateAllClasses()
-        appStore.dataLoading = false
-        break
-      case 'SCHOOL':
-        appStore.performerType = PerformerType.SCHOOL
-        appStore.dataLoading = true
-        await registrationStore.updateRegistration()
-        await schoolStore.updateSchool()
-        await schoolGroupStore.updateAllSchoolGroups()
-        await teacherStore.updateTeacher()
-        await classesStore.updateAllClasses()
-        appStore.dataLoading = false
-        break
-      case 'COMMUNITY':
-        appStore.performerType = PerformerType.COMMUNITY
-        appStore.dataLoading = true
-        await registrationStore.updateRegistration()
-        await communityStore.updateCommunity()
-        await teacherStore.updateTeacher()
-        await classesStore.updateAllClasses()
-        appStore.dataLoading = false
-        break
-    }
-  }
-  async function prepareRegistration() {
-    await saveRegistration()
-    await submit()
-    router.push('Submission')
   }
 </script>
 
@@ -236,7 +176,7 @@
     <BaseButton
       v-if="!registrationStore.registration.confirmation"
       class="btn btn-blue"
-      @click="prepareRegistration">
+      @click="$emit('submitForm')">
       Prepare to Submit
     </BaseButton>
     <BaseButton
