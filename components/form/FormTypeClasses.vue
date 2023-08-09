@@ -128,38 +128,6 @@
             label="Select a school Group"
             :options="schoolGroups"
             @change-status="(stat:string) => fieldStatus(stat, 'schoolGroupID', selectedClass.id, classIndex)"></BaseSelect>
-
-          <!-- <div class="flex items-center ml-2">
-            <div class="flex-none">
-              <label :for="`schoolGroupSelect${classIndex}`"
-                >Select a school group</label
-              >
-            </div>
-            <div class="grow"></div>
-            <BaseSaved
-              class="flex-none mr-2"
-              :status="status[classIndex].schoolGroupStatus" />
-          </div>
-          <select
-            :id="`schoolGroupSelect${classIndex}`"
-            v-model.number="
-              classesStore.registeredClasses[classIndex].schoolGroupID
-            "
-            class="mb-6"
-            name="schoolGroup"
-            @change="fieldStatus(selectedClass.id, classIndex)"
-            >
-            <option
-              v-for="schoolGrp in schoolGroups"
-              :key="schoolGrp.id"
-              :value="schoolGrp.id"
-              :selected="
-                classesStore.registeredClasses[classIndex].schoolGroupID ===
-                schoolGrp.id
-              ">
-              {{ schoolGrp.name }}
-            </option>
-          </select> -->
         </div>
         <FormClass
           v-model="classesStore.registeredClasses[classIndex]"
