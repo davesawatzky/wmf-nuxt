@@ -44,7 +44,7 @@ export default defineNuxtConfig({
     '@nuxtjs/apollo',
     '@pinia/nuxt',
     '@pinia-plugin-persistedstate/nuxt',
-    // '@nuxt/devtools',
+    '@nuxt/devtools',
     'nuxt-vitest',
     '@vee-validate/nuxt',
     '@vueuse/nuxt',

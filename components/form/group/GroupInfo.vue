@@ -3,51 +3,72 @@
   import { useGroup } from '@/stores/userGroup'
   import type { Status } from '@/composables/types'
 
+  const emits = defineEmits<{
+    errorCounts: [count: number]
+  }>()
+
   const groupStore = useGroup()
 
   const typeOptions = [
     {
       label: 'Vocal Group',
       description: 'Duets, Trios, Quartets, and Ensembles',
-      value: 'vocal',
+      val: 'vocal',
     },
     {
       label: 'Instrumental Group',
       description: 'Duets, Trios, Ensembles, and Chamber Groups',
-      value: 'instrumental',
+      val: 'instrumental',
     },
     {
       label: 'Mixed Group',
       description:
         'Mixed instrument chamber groups which include both instruments and voice.  Includes class 1945, "Family and/or Friends"',
-      value: 'mixed',
+      val: 'mixed',
     },
   ]
 
   const validationSchema = toTypedSchema(
     yup.object({
-      groupname: yup.string().trim().required('Enter a group name'),
+      name: yup.string().trim().required('Enter a group name'),
+      groupType: yup.string().required('Please select a group type'),
     })
   )
 
-  useForm({ validationSchema })
-
   const status = reactive<Status>({
-    name: StatusEnum.null,
-    groupType: StatusEnum.null,
-    instruments: StatusEnum.null,
-    age: StatusEnum.null,
+    name: groupStore.group.name ? StatusEnum.saved : StatusEnum.null,
+    groupType: groupStore.group.groupType ? StatusEnum.saved : StatusEnum.null,
   })
 
-  async function fieldStatus(
-    fieldName: string,
-    updateFunction: any,
-    id?: number
-  ) {
-    status[fieldName] = StatusEnum.saving
-    await updateFunction(fieldName)
-    status[fieldName] = StatusEnum.saved
+  async function fieldStatus(stat: string, fieldName: string) {
+    status[fieldName] = StatusEnum.pending
+    await groupStore.updateGroup(fieldName)
+    if (stat === 'saved') {
+      status[fieldName] = StatusEnum.saved
+    } else if (stat === 'remove') {
+      status[fieldName] = StatusEnum.removed
+    } else {
+      status[fieldName] = StatusEnum.null
+    }
   }
+
+  const { errors, validate } = useForm({
+    validationSchema,
+    validateOnMount: true,
+  })
+  const errorCount = computed(() => {
+    return Object.keys(errors.value).length
+  })
+  watchEffect(
+    () => {
+      emits('errorCounts', errorCount.value)
+    },
+    { flush: 'post' }
+  )
+
+  onActivated(() => {
+    validate()
+  })
 </script>
 
 <template>
@@ -59,11 +80,12 @@
       <div class="col-span-6 md:col-span-3">
         <BaseInput
           v-model="groupStore.group.name"
-          name="groupname"
+          name="name"
           label="Group Name"
           type="text"
           :status="status.name"
-          @change="fieldStatus('name', groupStore.updateGroup)" />
+          @change-status="(stat:string) =>
+        fieldStatus(stat, 'name')" />
 
         <p>Number of Performers</p>
         <p>
@@ -77,9 +99,10 @@
           <BaseRadioGroup
             v-model="groupStore.group.groupType"
             name="groupType"
+            label="Selections"
             :options="typeOptions"
             :status="status.groupType"
-            @change="fieldStatus('groupType', groupStore.updateGroup)" />
+            @change-status="(stat: string) => fieldStatus(stat, 'groupType')" />
         </div>
       </div>
     </div>

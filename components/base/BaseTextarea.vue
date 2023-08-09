@@ -1,56 +1,74 @@
 <script setup lang="ts">
-  const props = defineProps({
-    label: {
-      type: String,
-      default: '',
-    },
-    name: {
-      type: String,
-      required: false,
-      default: '',
-    },
-    modelValue: {
-      type: String,
-      default: '',
-    },
-    error: {
-      type: String,
-      default: '',
-    },
-  })
+  import type { StatusEnum } from '@/composables/types'
 
-  defineEmits(['update:modelValue'])
+  const props = defineProps<{
+    label?: string
+    name: string
+    helpMessage?: string
+    status?: StatusEnum
+    placeholder?: string
+    modelValue?: string
+  }>()
+
+  const emit = defineEmits<{
+    'update:modelValue': [value: string]
+    changeStatus: [stat: string]
+  }>()
 
   const uuid = UniqueID().getID()
 
-  const nameRef = toRef(props, 'name')
+  const { value, resetField, errorMessage, meta, handleBlur, handleChange } =
+    useField(() => props.name, undefined, {
+      validateOnValueUpdate: false,
+      initialValue: props.modelValue,
+      syncVModel: true,
+    })
 
-  const {
-    value: inputValue,
-    errorMessage,
-    handleBlur,
-    handleChange,
-  } = useField(nameRef, undefined, { initialValue: props.modelValue })
+  const validationListeners = {
+    blur: (evt: Event) => handleBlur(evt, true),
+    change: (evt: Event) => {
+      handleChange(evt, true)
+      if (meta.dirty && meta.valid && !!value.value) {
+        emit('changeStatus', 'saved')
+        resetField({ value: value.value })
+      } else if (meta.dirty && !value.value && !!meta.initialValue) {
+        emit('changeStatus', 'remove')
+        resetField({ value: '' })
+      }
+    },
+    input: (evt: Event) => {
+      handleChange(evt, !!errorMessage.value)
+    },
+  }
 </script>
 
 <template>
   <div>
-    <label
-      v-if="label"
-      class=""
-      :for="uuid"
-      >{{ label }}</label
-    >
+    <div class="flex items-center ml-2">
+      <div class="flex-none">
+        <label
+          v-if="label"
+          :for="uuid"
+          class="w-full">
+          {{ label }}
+          <BaseHelpButton :help-message="helpMessage" />
+        </label>
+      </div>
+      <div class="grow"></div>
+      <BaseSaved
+        class="flex-none mr-2"
+        :status="status" />
+    </div>
     <textarea
       v-bind="{ ...$attrs }"
       :id="uuid"
-      :value="inputValue"
+      :value="value"
+      :name="name"
       :aria-describedby="errorMessage ? `${uuid}-error` : ''"
       :aria-invalid="errorMessage ? true : false"
-      @input="handleChange"
-      @blur="handleBlur" />
+      v-on="validationListeners"></textarea>
 
-    <BaseErrorMessage v-if="errorMessage">
+    <BaseErrorMessage>
       {{ errorMessage }}
     </BaseErrorMessage>
   </div>

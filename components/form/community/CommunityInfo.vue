@@ -1,61 +1,86 @@
 <script lang="ts" setup>
   import * as yup from 'yup'
   import { useCommunity } from '@/stores/userCommunity'
-
   import type { Status } from '@/composables/types'
+
+  const emits = defineEmits<{
+    errorCounts: [count: number]
+  }>()
 
   const communityStore = useCommunity()
 
   const status = reactive<Status>({
-    name: StatusEnum.null,
-    groupSize: StatusEnum.null,
-    chaperones: StatusEnum.null,
-    wheelchairs: StatusEnum.null,
-    conflictPerformers: StatusEnum.null,
+    name: communityStore.community.name ? StatusEnum.saved : StatusEnum.null,
+    groupSize: communityStore.community.groupSize
+      ? StatusEnum.saved
+      : StatusEnum.null,
+    chaperones: communityStore.community.chaperones
+      ? StatusEnum.saved
+      : StatusEnum.null,
+    wheelchairs: communityStore.community.wheelchairs
+      ? StatusEnum.saved
+      : StatusEnum.null,
+    conflictPerformers: communityStore.community.conflictPerformers
+      ? StatusEnum.saved
+      : StatusEnum.null,
   })
 
-  async function fieldStatus(
-    fieldName: string,
-    updateFunction: any,
-    id?: number
-  ) {
-    status[fieldName] = StatusEnum.saving
-    await updateFunction(fieldName)
-    status[fieldName] = StatusEnum.saved
+  async function fieldStatus(stat: string, fieldName: string) {
+    status[fieldName] = StatusEnum.pending
+    await communityStore.updateCommunity(fieldName)
+    if (stat === 'saved') {
+      status[fieldName] = StatusEnum.saved
+    } else if (stat === 'remove') {
+      status[fieldName] = StatusEnum.removed
+    } else {
+      status[fieldName] = StatusEnum.null
+    }
   }
 
   const validationSchema = toTypedSchema(
     yup.object({
-      communityInfo: yup.object({
-        name: yup
-          .string()
-          .trim()
-          .required('Enter a name for the community group'),
-        groupSize: yup
-          .number()
-          .min(2)
-          .max(300)
-          .integer()
-          .required('Give the size of the group'),
-        numberOfChaperones: yup
-          .number()
-          .min(0)
-          .max(100)
-          .integer()
-          .required('Indicate the number of chaperones'),
-        numberOfWheelchairs: yup
-          .number()
-          .min(0)
-          .max(100)
-          .integer()
-          .required('Indicate the number of wheelchairs'),
-        conflictPerformers: yup.string().trim().nullable(),
-      }),
+      name: yup
+        .string()
+        .trim()
+        .required('Enter a name for the community group'),
+      groupSize: yup
+        .number()
+        .min(2)
+        .max(300)
+        .integer()
+        .required('Give the size of the group'),
+      numberOfChaperones: yup
+        .number()
+        .min(0)
+        .max(100)
+        .integer()
+        .required('Indicate the number of chaperones'),
+      numberOfWheelchairs: yup
+        .number()
+        .min(0)
+        .max(100)
+        .integer()
+        .required('Indicate the number of wheelchairs'),
+      conflictPerformers: yup.string().trim().nullable(),
     })
   )
 
-  useForm({
+  const { errors, validate } = useForm({
     validationSchema,
+    validateOnMount: true,
+  })
+  const errorCount = computed(() => {
+    return Object.keys(errors.value).length
+  })
+
+  watchEffect(
+    () => {
+      emits('errorCounts', errorCount.value)
+    },
+    { flush: 'post' }
+  )
+  onActivated(() => {
+    validate()
   })
 </script>
 
@@ -70,10 +95,10 @@
           <BaseInput
             v-model="communityStore.community.name"
             :status="status.name"
-            name="communityInfo.name"
+            name="name"
             type="text"
             label="Community Group Name"
-            @change="fieldStatus('name', communityStore.updateCommunity)" />
+            @change-status="(stat: string) => fieldStatus(stat, 'name')" />
         </div>
         <div class="col-span-12 sm:col-span-4">
           <BaseInput
@@ -82,39 +107,39 @@
             min="2"
             max="300"
             step="1"
-            name="communityInfo.groupSize"
+            name="groupSize"
             type="number"
             label="Group Size"
-            @change="
-              fieldStatus('groupSize', communityStore.updateCommunity)
+            @change-status="
+              (stat: string) => fieldStatus(stat, 'groupSize')
             " />
         </div>
         <div class="col-span-12 sm:col-span-4">
           <BaseInput
             v-model.number="communityStore.community.chaperones"
             :status="status.chaperones"
-            name="communityInfo.numberOfChaperones"
+            name="numberOfChaperones"
             min="0"
             max="100"
             step="1"
             type="number"
             label="Number of chaperones"
-            @change="
-              fieldStatus('chaperones', communityStore.updateCommunity)
+            @change-status="
+              (stat: string) => fieldStatus(stat, 'chaperones')
             " />
         </div>
         <div class="col-span-12 sm:col-span-4">
           <BaseInput
             v-model.number="communityStore.community.wheelchairs"
             :status="status.wheelchairs"
-            name="communityInfo.numberOfWheelchairs"
+            name="numberOfWheelchairs"
             min="0"
             max="100"
             step="1"
             type="number"
             label="Number of wheelchairs"
-            @change="
-              fieldStatus('wheelchairs', communityStore.updateCommunity)
+            @change-status="
+              (stat: string) => fieldStatus(stat, 'wheelchairs')
             " />
         </div>
       </div>
@@ -130,11 +155,11 @@
           <BaseTextarea
             v-model="communityStore.community.conflictPerformers"
             :status="status.conflictPerformers"
-            name="communityInfo.conflictPerformers"
+            name="conflictPerformers"
             label="Performers participating in other classes."
             rows="5"
-            @change="
-              fieldStatus('conflictPerformers', communityStore.updateCommunity)
+            @change-status="
+              (stat: string) => fieldStatus(stat, 'conflictPerformers')
             " />
         </div>
       </div>

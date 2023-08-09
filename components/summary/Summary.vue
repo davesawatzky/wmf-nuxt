@@ -1,5 +1,4 @@
 <script setup lang="ts">
-  import { PerformerType } from '~/graphql/gql/graphql'
   import { usePerformers } from '@/stores/userPerformer'
   import { useTeacher } from '@/stores/userTeacher'
   import { useGroup } from '@/stores/userGroup'

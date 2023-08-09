@@ -35,8 +35,11 @@
   const tabIndex = ref(0)
   const slideDirection = ref('slide-left')
   const status = reactive<Status>({
-    label: StatusEnum.null,
+    label: registrationStore.registration.label
+      ? StatusEnum.saved
+      : StatusEnum.null,
   })
+
   let tabs = {} as DynamicComponent
 
   function setTab(tab: string, index: number) {
@@ -49,10 +52,16 @@
     tabIndex.value = index
   }
 
-  async function fieldStatus(fieldName: string) {
+  async function fieldStatus(stat: string, fieldName: string) {
     status[fieldName] = StatusEnum.pending
     await registrationStore.updateRegistration(fieldName)
-    status[fieldName] = StatusEnum.saved
+    if (stat === 'saved') {
+      status[fieldName] = StatusEnum.saved
+    } else if (stat === 'remove') {
+      status[fieldName] = StatusEnum.removed
+    } else {
+      status[fieldName] = StatusEnum.null
+    }
   }
 
   switch (performerType.value) {
@@ -97,12 +106,11 @@
   }
 
   const fieldErrors = ref<ErrorCounts>({})
+  const tabNames = ref(Object.keys(tabs))
 
-  function errorTally(tab: string, count: number) {
+  function errorTally(count: number, tab: string) {
     fieldErrors.value[tab] = count
-    console.log('currentTab: ', tab)
-    console.log('fieldErrors: ', fieldErrors.value)
-    console.log('Form: ', count)
+    count = 0
   }
 
   const validationSchema = yup.object({
@@ -118,54 +126,48 @@
     console.log(errors)
     console.log(results)
   }
-
-  const onSubmit = handleSubmit((values) => {
-    alert(JSON.stringify(values, null, 2))
-    navigateTo('Submission')
-  }, onInvalidSubmit)
 </script>
 
 <template>
   <div>
-    <form @submit="onSubmit">
-      <BaseInput
-        v-model="registrationStore.registration.label"
-        class="text-3xl"
-        label="Registration Label"
-        name="registrationLabel"
-        :disabled="!!registrationStore.registration.confirmation"
-        placeholder="Enter a unique label"
-        :status="status.label"
-        type="text"
-        @change="fieldStatus('label')" />
+    {{ fieldErrors }}
+    <BaseInput
+      v-model="registrationStore.registration.label"
+      class="text-3xl"
+      label="Registration Label"
+      name="label"
+      :disabled="!!registrationStore.registration.confirmation"
+      placeholder="Enter a unique label"
+      :status="status.label"
+      type="text"
+      @change-status="(stat: string) => fieldStatus(stat, 'label')" />
 
-      <div v-if="!registrationStore.registration.confirmation">
-        <div class="text-left">
-          <BaseStepper
-            :tabs="tabs"
-            :field-errors="fieldErrors"
-            @set-tab="setTab" />
-        </div>
-        <div
-          class="border border-spacing-1 shadow-md rounded-lg border-sky-500 p-2 mb-6">
-          <Transition
-            :name="slideDirection"
-            :css="true"
-            mode="out-in">
-            <KeepAlive>
-              <component
-                :is="tabs[currentTab]"
-                @error-counts="(count:number) => errorTally(currentTab, count)" />
-            </KeepAlive>
-          </Transition>
-        </div>
+    <div v-if="!registrationStore.registration.confirmation">
+      <div class="text-left">
+        <BaseStepper
+          :tabs="tabNames"
+          :field-errors="fieldErrors"
+          @set-tab="setTab" />
       </div>
       <div
-        v-else
-        class="border border-spacing-1 shadow-md rounded-lg border-sky-500 p-6 mb-6">
-        <Summary @submitForm="onSubmit" />
+        class="border border-spacing-1 shadow-md rounded-lg border-sky-500 p-2 mb-6">
+        <Transition
+          :name="slideDirection"
+          :css="true"
+          mode="out-in">
+          <KeepAlive>
+            <component
+              :is="tabs[currentTab]"
+              @error-counts="(count:number) => errorTally(count ?? 0, currentTab)" />
+          </KeepAlive>
+        </Transition>
       </div>
-    </form>
+    </div>
+    <div
+      v-else
+      class="border border-spacing-1 shadow-md rounded-lg border-sky-500 p-6 mb-6">
+      <Summary @submitForm="onSubmit" />
+    </div>
   </div>
 </template>
 

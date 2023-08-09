@@ -2,7 +2,6 @@
   import { DateTime } from 'luxon'
   import _ from 'lodash'
   import { useRegistration } from '@/stores/userRegistration'
-  import SummaryTable from '@/components/summaryblocks/SummaryTable.vue'
 
   const registrationStore = useRegistration()
 

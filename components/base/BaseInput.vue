@@ -8,40 +8,33 @@
     status?: StatusEnum
     name: string
     placeholder?: string
-    modelValue: string | number | undefined
+    modelValue?: string | number
   }
 
   const props = withDefaults(defineProps<Props>(), {
     type: 'text',
-    modelValue: '',
   })
 
   const emit = defineEmits<{
-    (ev: 'changeStatus', stat: string): void
+    'update:modelValue': [value: string | number]
+    changeStatus: [stat: string]
   }>()
 
   const uuid = UniqueID().getID()
 
-  const {
-    value,
-    errors,
-    resetField,
-    errorMessage,
-    meta,
-    handleChange,
-    handleBlur,
-  } = useField(() => props.name, undefined, {
-    validateOnValueUpdate: false,
-    initialValue: props.modelValue,
-    syncVModel: true,
-  })
+  const { value, resetField, errorMessage, meta, handleChange, handleBlur } =
+    useField(() => props.name, undefined, {
+      validateOnValueUpdate: false,
+      initialValue: props.modelValue,
+      syncVModel: true,
+    })
 
   const validationListeners = {
     blur: (evt: Event) => handleBlur(evt, true),
     change: (evt: Event) => {
       handleChange(evt, true)
       if (meta.dirty && meta.valid && !!value.value) {
-        emit('changeStatus', 'save')
+        emit('changeStatus', 'saved')
         resetField({ value: value.value })
       } else if (meta.dirty && !value.value && !!meta.initialValue) {
         emit('changeStatus', 'remove')

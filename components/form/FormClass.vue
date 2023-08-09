@@ -19,7 +19,6 @@
   } from '@/graphql/gql/graphql'
   import type { Status } from '@/composables/types'
   import { StatusEnum } from '@/composables/types'
-  import { TRUE } from 'sass'
 
   const props = defineProps<{
     modelValue: RegisteredClass
@@ -30,12 +29,17 @@
   const emits = defineEmits<{ 'update:modelValue': [RegisteredClassInput] }>()
 
   const status = reactive<Status>({
-    discipline: StatusEnum.null,
-    subdiscipline: StatusEnum.null,
-    level: StatusEnum.null,
-    category: StatusEnum.null,
-    schoolGroup: StatusEnum.null,
-    instrument: StatusEnum.null,
+    discipline: props.modelValue.discipline
+      ? StatusEnum.saved
+      : StatusEnum.null,
+    subdiscipline: props.modelValue.subdiscipline
+      ? StatusEnum.saved
+      : StatusEnum.null,
+    level: props.modelValue.level ? StatusEnum.saved : StatusEnum.null,
+    category: props.modelValue.category ? StatusEnum.saved : StatusEnum.null,
+    schoolGroupID: props.modelValue.schoolGroupID
+      ? StatusEnum.saved
+      : StatusEnum.null,
   })
 
   const instrumentRequired = ref(false)
@@ -51,7 +55,7 @@
     set: (value) => emits('update:modelValue', value),
   })
 
-  onMounted(async () => {
+  onMounted(() => {
     if (props.modelValue.subdiscipline) {
       loadSubdisciplines()
     }
@@ -114,7 +118,10 @@
   errorSubdisciplines((error) => {
     console.log(error)
   })
-  const subdisciplines = computed(() => subdisc.value?.subdisciplines ?? [])
+  const subdisciplines = computed(() => {
+    console.log(subdisc.value?.subdisciplines ?? [])
+    return subdisc.value?.subdisciplines ?? []
+  })
   const chosenSubdiscipline = computed(() => {
     return (
       subdisciplines.value.find((item: any) => {
@@ -254,7 +261,7 @@
     async (newDiscipline, oldDiscipline) => {
       selectedClasses.value.subdiscipline = null
       if (newDiscipline !== oldDiscipline) {
-        status.discipline = StatusEnum.saving
+        status.discipline = StatusEnum.pending
         await classesStore.updateClass(props.classId, 'discipline')
         newDiscipline !== null
           ? (status.discipline = StatusEnum.saved)
@@ -269,7 +276,7 @@
     async (newSubdiscipline, oldSubdiscipline) => {
       selectedClasses.value.level = null
       if (newSubdiscipline !== oldSubdiscipline) {
-        status.subdiscipline = StatusEnum.saving
+        status.subdiscipline = StatusEnum.pending
         await classesStore.updateClass(props.classId, 'subdiscipline')
         newSubdiscipline !== null
           ? (status.subdiscipline = StatusEnum.saved)
@@ -286,7 +293,7 @@
     async (newLevel, oldLevel) => {
       selectedClasses.value.category = null
       if (newLevel !== oldLevel) {
-        status.level = StatusEnum.saving
+        status.level = StatusEnum.pending
         await classesStore.updateClass(props.classId, 'level')
         newLevel !== null
           ? (status.level = StatusEnum.saved)
@@ -302,7 +309,7 @@
     () => selectedClasses.value.category,
     async (newCategory, oldCategory) => {
       if (newCategory !== oldCategory) {
-        status.category = StatusEnum.saving
+        status.category = StatusEnum.pending
         await classesStore.updateClass(props.classId, 'category')
         newCategory !== null
           ? (status.category = StatusEnum.saved)

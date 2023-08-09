@@ -54,7 +54,7 @@
   // useForm({ validationSchema })
 
   async function fieldStatus(fieldName: string) {
-    status[fieldName] = StatusEnum.saving
+    status[fieldName] = StatusEnum.pending
     await classesStore.updateSelection(
       props.classId,
       props.selectionId,

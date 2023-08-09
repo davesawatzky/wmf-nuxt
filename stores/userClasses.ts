@@ -20,7 +20,7 @@ import type {
 export const useClasses = defineStore(
   'registeredClasses',
   () => {
-    const registeredClasses = ref([] as RegisteredClass[])
+    const registeredClasses = ref<RegisteredClass[]>([])
     const MOZART_CLASSES = ['7700', '7701', '7702', '7703', '7704']
 
     function $reset() {
@@ -170,8 +170,9 @@ export const useClasses = defineStore(
         const regClass = registeredClasses.value.find(
           (item) => item.id === classId
         )
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { id, __typename, selections, ...classProps } = regClass
+        const { id, __typename, selections, ...classProps } = <RegisteredClass>(
+          regClass
+        )
         let classField = null
         if (field && Object.keys(classProps).includes(field)) {
           classField = Object.fromEntries(
@@ -276,8 +277,7 @@ export const useClasses = defineStore(
         const selection = registeredClasses.value
           .find((reg) => reg.id === classId)
           ?.selections?.find((sel) => sel.id === selectionId)
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { id, __typename, ...selectionProps } = selection
+        const { id, __typename, ...selectionProps } = <Selection>selection
         let selectionField = null
         if (field && Object.keys(selectionProps).includes(field)) {
           selectionField = Object.fromEntries(

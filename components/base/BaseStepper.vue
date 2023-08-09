@@ -1,13 +1,8 @@
 <script setup lang="ts">
-  import type { Component } from 'vue'
   import type { ErrorCounts } from '@/composables/types'
 
-  interface DynamicComponent {
-    [key: string]: Component
-  }
-
   const props = defineProps<{
-    tabs: DynamicComponent
+    tabs: string[]
     fieldErrors: ErrorCounts
   }>()
 
@@ -25,7 +20,7 @@
 
   watchEffect(() => {
     if (!currentTab.value) {
-      currentTab.value = Object.keys(props.tabs)[0]
+      currentTab.value = props.tabs[0]
     }
     emit('setTab', currentTab.value, tabIndex.value)
   })
@@ -36,7 +31,7 @@
     id="stepperGridContainer"
     class="grid grid-flow-col auto-cols-fr mx-28 my-4 z-20">
     <div
-      v-for="(_, tab, index) in tabs"
+      v-for="(tab, index) in tabs"
       :key="tab"
       class="flex flex-col relative z-20">
       <button
@@ -47,14 +42,12 @@
             ? 'bg-sky-400 ring-sky-300 ring-4'
             : 'btn-blue hover:ring-2',
         ]"
-        @click="changeTab(tab.toString(), index)">
+        @click="changeTab(tab, index)">
         {{ index + 1 }}
-
-        <!-- TODO: Add conditional statement to BaseBadge -->
         <BaseBadge
-          v-if="fieldErrors[tab.toString()] > 0"
+          v-if="fieldErrors[tab] > 0"
           class="-right-2 top-0"
-          >{{ fieldErrors[tab.toString()] }}</BaseBadge
+          >{{ fieldErrors[tab] }}</BaseBadge
         >
       </button>
       <div

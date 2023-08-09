@@ -4,68 +4,90 @@
   import { useSchool } from '@/stores/userSchool'
   import type { Status } from '@/composables/types'
 
+  const emits = defineEmits<{
+    errorCounts: [count: number]
+  }>()
+
   const schoolStore = useSchool()
 
   const status = reactive<Status>({
-    name: StatusEnum.null,
-    division: StatusEnum.null,
-    streetNumber: StatusEnum.null,
-    streetName: StatusEnum.null,
-    city: StatusEnum.null,
-    province: StatusEnum.null,
-    postalCode: StatusEnum.null,
-    email: StatusEnum.null,
-    phone: StatusEnum.null,
+    name: schoolStore.school.name ? StatusEnum.saved : StatusEnum.null,
+    division: schoolStore.school.division ? StatusEnum.saved : StatusEnum.null,
+    streetNumber: schoolStore.school.streetNumber
+      ? StatusEnum.saved
+      : StatusEnum.null,
+    streetName: schoolStore.school.streetName
+      ? StatusEnum.saved
+      : StatusEnum.null,
+    city: schoolStore.school.city ? StatusEnum.saved : StatusEnum.null,
+    province: schoolStore.school.province ? StatusEnum.saved : StatusEnum.null,
+    postalCode: schoolStore.school.postalCode
+      ? StatusEnum.saved
+      : StatusEnum.null,
+    phone: schoolStore.school.phone ? StatusEnum.saved : StatusEnum.null,
   })
 
   const validationSchema = toTypedSchema(
     yup.object({
-      schoolInfo: yup.object({
-        schoolName: yup
-          .string()
-          .trim()
-          .required('Enter the name of the school'),
-        schoolDivision: yup
-          .string()
-          .trim()
-          .required('Enter the name of the school divison'),
-        streetNumber: yup
-          .string()
-          .trim()
-          .max(5, '5 characters maximum')
-          .required('Enter a valid street number'),
-        streetName: yup.string().trim().required('Enter a valid street name'),
-        city: yup
-          .string()
-          .trim()
-          .max(15, 'Too many characters')
-          .required('Enter a city name'),
-        province: yup.string().length(2).required(),
-        postalCode: yup
-          .string()
-          .matches(
-            /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i,
-            'Enter a valid postal code'
-          )
-          .required('Enter a valid postal code'),
-        phone: yup
-          .string()
-          .phone('CA', 'Please enter a valid phone number')
-          .required('A phone number is required'),
-      }),
+      schoolName: yup.string().trim().required('Enter the name of the school'),
+      schoolDivision: yup
+        .string()
+        .trim()
+        .required('Enter the name of the school divison'),
+      streetNumber: yup
+        .string()
+        .trim()
+        .max(5, '5 characters maximum')
+        .required('Enter a valid street number'),
+      streetName: yup.string().trim().required('Enter a valid street name'),
+      city: yup
+        .string()
+        .trim()
+        .max(15, 'Too many characters')
+        .required('Enter a city name'),
+      province: yup.string().max(3).required(),
+      postalCode: yup
+        .string()
+        .matches(
+          /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i,
+          'Enter a valid postal code'
+        )
+        .required('Enter a valid postal code'),
+      phone: yup
+        .string()
+        .phone('CA', 'Please enter a valid phone number')
+        .required('A phone number is required'),
     })
   )
 
-  useForm({ validationSchema })
-
-  async function fieldStatus(fieldName: string) {
-    status[fieldName] = StatusEnum.saving
+  async function fieldStatus(stat: string, fieldName: string) {
+    status[fieldName] = StatusEnum.pending
     await schoolStore.updateSchool(fieldName)
-    status[fieldName] = StatusEnum.saved
+    if (stat === 'saved') {
+      status[fieldName] = StatusEnum.saved
+    } else if (stat === 'remove') {
+      status[fieldName] = StatusEnum.removed
+    } else {
+      status[fieldName] = StatusEnum.null
+    }
   }
 
+  const { errors, validate } = useForm({
+    validationSchema,
+    validateOnMount: true,
+  })
+  const errorCount = computed(() => {
+    return Object.keys(errors.value).length
+  })
+  watchEffect(() => {
+    emits('errorCounts', errorCount.value)
+  })
+  onActivated(() => {
+    validate()
+  })
+
   const maskaUcaseOption = {
-    preProcess: (val) => val.toUpperCase(),
+    preProcess: (val: string) => val.toUpperCase(),
   }
 </script>
 
@@ -82,7 +104,7 @@
           name="schoolName"
           type="text"
           label="School Name"
-          @change="fieldStatus('name')" />
+          @change-status="(stat:string) => fieldStatus(stat, 'name')" />
       </div>
       <div class="col-span-12 sm:col-span-6">
         <BaseInput
@@ -91,7 +113,7 @@
           name="schoolDivision"
           label="School Division"
           type="text"
-          @change="fieldStatus('division')" />
+          @change-status="(stat:string) => fieldStatus(stat, 'division')" />
       </div>
     </div>
     <div class="col-span-12 sm:col-span-4 mt-6 sm:mt-0">
@@ -102,7 +124,7 @@
         name="streetNumber"
         type="text"
         label="Street #"
-        @change="fieldStatus('streetNumber')" />
+        @change-status="(stat:string) => fieldStatus(stat, 'streetNumber')" />
     </div>
     <div class="col-span-12 sm:col-span-8">
       <BaseInput
@@ -112,7 +134,7 @@
         name="streetName"
         type="text"
         label="Street Name"
-        @change="fieldStatus('streetName')" />
+        @change-status="(stat:string) => fieldStatus(stat, 'streetName')" />
     </div>
     <div class="col-span-8 sm:col-span-7">
       <BaseInput
@@ -122,7 +144,7 @@
         name="city"
         type="text"
         label="City/Town"
-        @change="fieldStatus('city')" />
+        @change-status="(stat:string) => fieldStatus(stat, 'city')" />
     </div>
     <div class="col-span-4 sm:col-span-2 self-start">
       <BaseSelect
@@ -132,36 +154,36 @@
         name="province"
         label="Province"
         :options="provinces"
-        @change="fieldStatus('province')" />
+        @change-status="(stat:string) => fieldStatus(stat, 'province')" />
     </div>
     <div class="col-span-12 sm:col-span-3">
       <BaseInput
         v-model.trim="schoolStore.school.postalCode"
+        v-maska:[maskaUcaseOption]
         :status="status.postalCode"
         required
         placeholder="A0A 0A0"
-        v-maska:[maskaUcaseOption]
         data-maska="A#A #A#"
         data-maska-tokens="A:[A-Z]"
         data-maska-eager
         name="postalCode"
         type="text"
         label="Postal Code"
-        @change="fieldStatus('postalCode')" />
+        @change-status="(stat:string) => fieldStatus(stat, 'postalCode')" />
     </div>
     <div class="col-span-12 sm:col-span-5">
       <BaseInput
         v-model.trim="schoolStore.school.phone"
+        v-maska
         :status="status.phone"
         required
         placeholder="(###) ###-####"
-        v-maska
         data-maska="(###) ###-####"
         data-maska-eager
         name="phone"
         type="tel"
         label="Phone Number"
-        @change="fieldStatus('phone')" />
+        @change-status="(stat:string) => fieldStatus(stat, 'phone')" />
     </div>
   </div>
 </template>

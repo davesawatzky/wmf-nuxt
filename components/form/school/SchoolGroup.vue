@@ -10,24 +10,39 @@
     schoolGroupId: number
   }>()
 
-  const emits = defineEmits<{ 'update:modelValue': [SchoolGroupInput] }>()
+  const emits = defineEmits<{
+    'update:modelValue': [value: SchoolGroupInput]
+    errorCounts: [count: number]
+  }>()
 
   const schoolGroupStore = useSchoolGroup()
-
-  const status = reactive<Status>({
-    name: StatusEnum.null,
-    earliestTime: StatusEnum.null,
-    latestTime: StatusEnum.null,
-    groupSize: StatusEnum.null,
-    chaperones: StatusEnum.null,
-    wheelchairs: StatusEnum.null,
-    unavailable: StatusEnum.null,
-    conflictPerformers: StatusEnum.null,
-  })
 
   const schoolGroup = computed({
     get: () => props.modelValue,
     set: (value) => emits('update:modelValue', value),
+  })
+
+  const status = reactive<Status>({
+    name: props.modelValue.name ? StatusEnum.saved : StatusEnum.null,
+    earliestTime: props.modelValue.earliestTime
+      ? StatusEnum.saved
+      : StatusEnum.null,
+    latestTime: props.modelValue.latestTime
+      ? StatusEnum.saved
+      : StatusEnum.null,
+    groupSize: props.modelValue.groupSize ? StatusEnum.saved : StatusEnum.null,
+    chaperones: props.modelValue.chaperones
+      ? StatusEnum.saved
+      : StatusEnum.null,
+    wheelchairs: props.modelValue.wheelchairs
+      ? StatusEnum.saved
+      : StatusEnum.null,
+    unavailable: props.modelValue.unavailable
+      ? StatusEnum.saved
+      : StatusEnum.null,
+    conflictPerformers: props.modelValue.conflictPerformers
+      ? StatusEnum.saved
+      : StatusEnum.null,
   })
 
   const totalParticipants = computed<number>(() => {
@@ -38,48 +53,61 @@
     )
   })
 
-  async function fieldStatus(fieldName: string) {
-    status[fieldName] = StatusEnum.saving
+  async function fieldStatus(stat: string, fieldName: string) {
+    status[fieldName] = StatusEnum.pending
     await schoolGroupStore.updateSchoolGroup(props.schoolGroupId, fieldName)
-    status[fieldName] = StatusEnum.saved
+    if (stat === 'saved') {
+      status[fieldName] = StatusEnum.saved
+    } else if (stat === 'remove') {
+      status[fieldName] = StatusEnum.removed
+    } else {
+      status[fieldName] = StatusEnum.null
+    }
   }
 
   const validationSchema = toTypedSchema(
     yup.object({
-      schoolGroup: yup.array().of(
-        yup.object({
-          groupName: yup
-            .string()
-            .trim()
-            .required('Enter a name for your group'),
-          earliestTime: yup.string().required('Enter a time'),
-          latestTime: yup.string().required('Enter a time'),
-          groupSize: yup
-            .number()
-            .min(2)
-            .max(300)
-            .integer()
-            .required('Enter the numer of performers'),
-          chaperones: yup
-            .number()
-            .min(0)
-            .max(100)
-            .integer()
-            .required('Indicate the number of chaperones.'),
-          wheelchairs: yup
-            .number()
-            .min(0)
-            .max(100)
-            .integer()
-            .required('Indicate the number of wheelchairs'),
-          unavailable: yup.string().trim().nullable(),
-          conflictPerformers: yup.string().trim().nullable(),
-        })
-      ),
+      groupName: yup.string().trim().required('Enter a name for your group'),
+      earliestTime: yup.string().required('Enter a time'),
+      latestTime: yup.string().required('Enter a time'),
+      groupSize: yup
+        .number()
+        .min(2)
+        .max(300)
+        .integer()
+        .required('Enter the numer of performers'),
+      chaperones: yup
+        .number()
+        .min(0)
+        .max(100)
+        .integer()
+        .required('Indicate the number of chaperones.'),
+      wheelchairs: yup
+        .number()
+        .min(0)
+        .max(100)
+        .integer()
+        .required('Indicate the number of wheelchairs'),
+      unavailable: yup.string().trim().nullable(),
+      conflictPerformers: yup.string().trim().nullable(),
     })
   )
 
-  useForm({ validationSchema })
+  const { errors, validate } = useForm({
+    validationSchema,
+    validateOnMount: true,
+  })
+  const errorCount = computed(() => {
+    return Object.keys(errors.value).length
+  })
+
+  watchEffect(() => {
+    emits('errorCounts', errorCount.value)
+  })
+
+  onActivated(() => {
+    validate()
+  })
 </script>
 
 <template>
@@ -90,25 +118,25 @@
           v-model="schoolGroup.name"
           :status="status.name"
           label="Group Name"
-          :name="`schoolGroup_${schoolGroupId}.groupName`"
+          name="groupName"
           type="text"
-          @change="fieldStatus('name')" />
+          @change-status="(stat: string) => fieldStatus(stat, 'name')" />
 
         <BaseInput
           v-model="schoolGroup.earliestTime"
           :status="status.earliestTime"
-          :name="`schoolGroup_${schoolGroupId}.earliestTime`"
+          name="earliestTime"
           label="Earliest time your group can perform"
           type="time"
-          @change="fieldStatus('earliestTime')" />
+          @change-status="(stat: string) => fieldStatus(stat, 'earliestTime')" />
 
         <BaseInput
           v-model="schoolGroup.latestTime"
           :status="status.latestTime"
-          :name="`schoolGroup_${schoolGroupId}.latestTime`"
+          name="latestTime"
           label="Latest time your group can perform"
           type="time"
-          @change="fieldStatus('latestTime')" />
+          @change-status="(stat: string) => fieldStatus(stat, 'latestTime')" />
       </div>
       <div
         class="col-span-12 sm:col-span-4 lg:col-span-4 grid grid-cols-2 gap-x-3 items-end">
@@ -119,34 +147,34 @@
             min="2"
             max="300"
             step="1"
-            :name="`schoolGroup_${schoolGroupId}.groupSize`"
+            name="groupSize"
             label="Number of performers"
             type="number"
-            @change="fieldStatus('groupSize')" />
+            @change-status="(stat: string) => fieldStatus(stat, 'groupSize')" />
         </div>
         <div class="col-1 sm:col-span-2">
           <BaseInput
             v-model.number="schoolGroup.chaperones"
             :status="status.chaperones"
-            :name="`schoolGroup_${schoolGroupId}.chaperones`"
+            name="chaperones"
             min="0"
             max="100"
             step="1"
             label="Number of chaperones"
             type="number"
-            @change="fieldStatus('chaperones')" />
+            @change-status="(stat: string) => fieldStatus(stat, 'chaperones')" />
         </div>
         <div class="col-1 sm:col-span-2">
           <BaseInput
             v-model.number="schoolGroup.wheelchairs"
             :status="status.wheelchairs"
-            :name="`schoolGroup_${schoolGroupId}.wheelchairs`"
+            name="wheelchairs"
             min="0"
             max="100"
             step="1"
             label="Number of wheelchairs"
             type="number"
-            @change="fieldStatus('wheelchairs')" />
+            @change-status="(stat: string) => fieldStatus(stat, 'wheelchairs')" />
         </div>
         <div class="off col-1 sm:col-span-2 text-sm font-bold">
           Total Number: {{ totalParticipants }}
@@ -157,10 +185,10 @@
       <BaseTextarea
         v-model="schoolGroup.unavailable"
         :status="status.unavailable"
-        :name="`schoolGroup_${schoolGroupId}.unavailable`"
+        name="unavailable"
         label="Unavailable Dates/Times"
         rows="3"
-        @change="fieldStatus('unavailable')" />
+        @change-status="(stat: string) => fieldStatus(stat, 'unavailable')" />
       <p class="text-sm mb-2">
         List any date/time when you are unavailable for performance, including
         school in-service days, using
@@ -171,10 +199,10 @@
       <BaseTextarea
         v-model="schoolGroup.conflictPerformers"
         :status="status.conflictPerformers"
-        :name="`schoolGroup_${schoolGroupId}.conflictPerformers`"
+        name="conflictPerformers"
         label="Performers participating in other classes."
         rows="3"
-        @change="fieldStatus('conflictPerformers')" />
+        @change-status="(stat: string) => fieldStatus(stat, 'conflictPerformers')" />
       <p class="text-sm mb-2">
         If there are any students in your group participating in other festival
         classes, list the students' names so that we can do our best to avoid

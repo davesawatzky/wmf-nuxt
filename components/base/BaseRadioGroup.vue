@@ -1,62 +1,92 @@
 <script setup lang="ts">
-  interface OptionsType {
-    value: string | number
+  import type { StatusEnum } from '@/composables/types'
+
+  interface Options {
+    val: string | number
     label: string
+    helpMessage?: string
     description: string
   }
 
   interface Props {
-    options: OptionsType[]
+    label?: string
+    options: Options[]
+    helpMessage?: string
     name: string
-    modelValue: string | number
-    vertical: boolean
+    status?: StatusEnum
+    modelValue?: string | number
+    vertical?: boolean
   }
 
   const props = withDefaults(defineProps<Props>(), {
     vertical: false,
   })
 
-  const emits = defineEmits<{
-    'update:modelValue': [value: string | number]
+  const emit = defineEmits<{
+    (ev: 'changeStatus', stat: string): void
+    (ev: 'update:modelValue', value: any): void
   }>()
 
-  const nameRef = toRef(props, 'name')
-  const errorMessage = ref('')
+  const uuid = UniqueID().getID()
 
-  // const {
-  //   value: optionValue,
-  //   errorMessage,
-  //   handleChange,
-  // } = useField(nameRef, undefined, {
-  //   initialValue: props.modelValue,
-  // })
+  const { value, resetField, errorMessage, meta, handleChange, handleBlur } =
+    useField(() => props.name, undefined, {
+      validateOnValueUpdate: false,
+      initialValue: props.modelValue,
+      syncVModel: true,
+    })
+
+  const validationListeners = {
+    blur: (evt: Event) => handleBlur(evt, true),
+    change: (evt: Event) => {
+      handleChange(evt, true)
+      if ((meta.dirty && meta.valid && !!value.value) || !meta.initialValue) {
+        emit('changeStatus', 'saved')
+        resetField({ value: value.value })
+      } else if (meta.dirty && !value.value && !!meta.initialValue) {
+        emit('changeStatus', 'remove')
+        resetField({ value: '' })
+      }
+    },
+    input: (evt: Event) => {
+      handleChange(evt, true)
+    },
+  }
 </script>
 
 <template>
-  <div>
-    <label>
-      <h4>Selections</h4>
-    </label>
+  <fieldset>
+    <div class="flex items-center ml-2">
+      <div class="flex-none">
+        <label
+          v-if="label"
+          :for="uuid">
+          {{ label }}
+          <BaseHelpButton :help-message="helpMessage" />
+        </label>
+      </div>
+      <div class="grow"></div>
+      <BaseSaved
+        class="flex-none mr-2"
+        :status="status" />
+    </div>
+    <BaseErrorMessage>{{ errorMessage }}</BaseErrorMessage>
     <component
       :is="vertical ? 'div' : 'span'"
       v-for="option in options"
-      :key="option.value"
+      :key="option.val"
       :class="{
         horizontal: !vertical,
       }">
       <BaseRadio
         :label="option.label"
-        :checked="props.modelValue === option.value ? true : false"
         :description="option.description"
-        :value="option.value"
-        :model-value="option.value"
+        :val="option.val"
+        :model-value="value"
         :name="props.name"
-        @change="$emit('update:modelValue', option.value)" />
+        v-on="validationListeners" />
     </component>
-    <BaseErrorMessage :name="props.name">
-      {{ errorMessage }}
-    </BaseErrorMessage>
-  </div>
+  </fieldset>
 </template>
 
 <style scoped>

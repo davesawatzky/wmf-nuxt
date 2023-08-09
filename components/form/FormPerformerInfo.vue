@@ -15,8 +15,8 @@
   }>()
 
   const emits = defineEmits<{
-    (ev: 'update:modelValue', value: ContactInfo): void
-    (ev: 'error-counts', count: number): void
+    'update:modelValue': [value: ContactInfo]
+    errorCounts: [count: number]
   }>()
 
   const performerStore = usePerformers()
@@ -56,7 +56,7 @@
   async function fieldStatus(stat: string, fieldName: string) {
     status[fieldName] = StatusEnum.pending
     await performerStore.updatePerformer(props.performerId, fieldName)
-    if (stat === 'save') {
+    if (stat === 'saved') {
       status[fieldName] = StatusEnum.saved
     } else if (stat === 'remove') {
       status[fieldName] = StatusEnum.removed
@@ -67,67 +67,72 @@
 
   const validationSchema = toTypedSchema(
     yup.object({
-      performers: yup.array().of(
-        yup.object({
-          firstName: yup.string().trim().required('First name is required'),
-          lastName: yup.string().trim().required('Last name is required'),
-          age: yup
-            .number()
-            .positive('Enter positive age')
-            .integer('Enter age')
-            .max(100, 'Enter age')
-            .required('Enter age'),
-          apartment: yup
-            .string()
-            .notRequired()
-            .trim()
-            .nullable()
-            .max(5, '5 characters maximum'),
-          streetNumber: yup
-            .string()
-            .trim()
-            .max(5, '5 characters maximum')
-            .required('Enter a valid street number'),
-          streetName: yup.string().trim().required('Enter a valid street name'),
-          city: yup
-            .string()
-            .trim()
-            .max(15, 'Too many characters')
-            .required('Enter a city name'),
-          province: yup.string().length(2).required(),
-          postalCode: yup
-            .string()
-            .matches(
-              /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i,
-              'Enter a valid postal code'
-            )
-            .required('Enter a valid postal code'),
-          phone: yup
-            .string()
-            .phone('CA', 'Please enter a valid phone number')
-            .required('A phone number is required'),
-          email: yup
-            .string()
-            .email('Must be a valid email address')
-            .required('Email address is required'),
-        })
-      ),
+      firstName: yup.string().trim().required(),
+      lastName: yup.string().trim().required('Last name is required'),
+      age: yup
+        .number()
+        .positive('Enter age')
+        .integer('Enter age')
+        .max(100, 'Enter age')
+        .required('Enter age'),
+      apartment: yup
+        .string()
+        .notRequired()
+        .trim()
+        .nullable()
+        .max(5, '5 characters maximum'),
+      streetNumber: yup
+        .string()
+        .trim()
+        .max(5, '5 characters maximum')
+        .required('Enter a valid street number'),
+      streetName: yup.string().trim().required('Enter a valid street name'),
+      city: yup
+        .string()
+        .trim()
+        .max(15, 'Too many characters')
+        .required('Enter a city name'),
+      province: yup.string().max(3).required(),
+      postalCode: yup
+        .string()
+        .matches(
+          /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i,
+          'Enter a valid postal code'
+        )
+        .required('Enter a valid postal code'),
+      phone: yup
+        .string()
+        .phone('CA', 'Please enter a valid phone number')
+        .required('A phone number is required'),
+      email: yup
+        .string()
+        .email('Must be a valid email address')
+        .required('Email address is required'),
     })
   )
 
-  const { errors } = useForm({ validationSchema, validateOnMount: true })
+  const { errors, validate } = useForm({
+    validationSchema,
+    validateOnMount: true,
+  })
   const errorCount = computed(() => {
     return Object.keys(errors.value).length
   })
 
-  watchEffect(() => {
-    console.log(errorCount.value)
-    // eslint-disable-next-line vue/custom-event-name-casing
-    emits('error-counts', errorCount.value)
+  watchEffect(
+    () => {
+      emits('errorCounts', errorCount.value)
+    },
+    { flush: 'post' }
+  )
+
+  onActivated(async () => {
+    await validate()
+    emits('errorCounts', errorCount.value)
   })
 
   const maskaUcaseOption = {
-    preProcess: (val) => val.toUpperCase(),
+    preProcess: (val: string) => val.toUpperCase(),
   }
 
   const currentYear = new Date().getFullYear()
@@ -139,7 +144,7 @@
       <BaseInput
         v-model.trim="contact.firstName"
         :status="status.firstName"
-        :name="`performers[${performerIndex}].firstName`"
+        name="firstName"
         type="text"
         label="First Name"
         @change-status="(stat:string) => fieldStatus(stat, 'firstName')" />
@@ -148,7 +153,7 @@
       <BaseInput
         v-model.trim="contact.lastName"
         :status="status.lastName"
-        :name="`performers[${performerIndex}].lastName`"
+        name="lastName"
         type="text"
         label="Last Name"
         @change-status="(stat:string) => fieldStatus(stat, 'lastName')" />
@@ -160,7 +165,7 @@
         min="1"
         max="100"
         step="1"
-        :name="`performers[${performerIndex}].age`"
+        name="age"
         type="number"
         label="Age"
         :help-message="`Age as of December 31, ${currentYear}`"
@@ -170,7 +175,7 @@
       <BaseInput
         v-model.trim="contact.apartment"
         :status="status.apartment"
-        :name="`performers[${performerIndex}].apartment`"
+        name="apartment"
         type="text"
         label="Apt."
         @change-status="(stat:string) => fieldStatus(stat, 'apartment')" />
@@ -179,7 +184,7 @@
       <BaseInput
         v-model.trim="contact.streetNumber"
         :status="status.streetNumber"
-        :name="`performers[${performerIndex}].streetNumber`"
+        name="streetNumber"
         type="text"
         label="Street #"
         @change-status="(stat:string) => fieldStatus(stat, 'streetNumber')" />
@@ -188,7 +193,7 @@
       <BaseInput
         v-model.trim="contact.streetName"
         :status="status.streetName"
-        :name="`performers[${performerIndex}].streetName`"
+        name="streetName"
         type="text"
         label="Street Name"
         @change-status="(stat:string) => fieldStatus(stat, 'streetName')" />
@@ -197,7 +202,7 @@
       <BaseInput
         v-model.trim="contact.city"
         :status="status.city"
-        :name="`performers[${performerIndex}].city`"
+        name="city"
         type="text"
         label="City/Town"
         @change-status="(stat:string) => fieldStatus(stat, 'city')" />
@@ -206,7 +211,7 @@
       <BaseSelect
         v-model.trim="contact.province"
         :status="status.province"
-        :name="`performers[${performerIndex}].province`"
+        name="province"
         label="Province"
         :options="provinces"
         @change-status="(stat:string) => fieldStatus(stat, 'province')" />
@@ -214,13 +219,13 @@
     <div class="col-span-12 sm:col-span-3">
       <BaseInput
         v-model.trim="contact.postalCode"
+        v-maska:[maskaUcaseOption]
         :status="status.postalCode"
         placeholder="A0A 0A0"
-        v-maska:[maskaUcaseOption]
         data-maska="A#A #A#"
         data-maska-tokens="A:[A-Z]"
         data-maska-eager
-        :name="`performers[${performerIndex}].postalCode`"
+        name="postalCode"
         type="text"
         label="Postal Code"
         @change-status="(stat:string) => fieldStatus(stat, 'postalCode')" />
@@ -228,12 +233,12 @@
     <div class="col-span-12 sm:col-span-5">
       <BaseInput
         v-model.trim="contact.phone"
+        v-maska
         :status="status.phone"
         placeholder="(###) ###-####"
-        v-maska
         data-maska="(###) ###-####"
         data-maska-eager
-        :name="`performers[${performerIndex}].phone`"
+        name="phone"
         type="tel"
         label="Phone Number"
         @change-status="(stat:string) => fieldStatus(stat, 'phone')" />
@@ -243,7 +248,7 @@
         v-model.trim="contact.email"
         :status="status.email"
         placeholder="example@email.com"
-        :name="`performers[${performerIndex}].email`"
+        name="email"
         type="email"
         label="Email"
         @change-status="(stat:string) => fieldStatus(stat, 'email')" />
@@ -254,7 +259,7 @@
       <BaseInput
         v-model.trim="contact.instrument"
         :status="status.instrument"
-        :name="`performers[${performerIndex}].instrument`"
+        name="instrument"
         type="text"
         label="Instrument"
         @change-status="(stat:string) => fieldStatus(stat, 'instrument')" />
@@ -265,7 +270,7 @@
       <BaseInput
         v-model.trim="contact.level"
         :status="status.level"
-        :name="`performers[${performerIndex}].level`"
+        name="level"
         type="text"
         label="Level"
         @change-status="(stat:string) => fieldStatus(stat, 'level')" />
@@ -276,7 +281,7 @@
       <BaseTextarea
         v-model.trim="contact.otherClasses"
         :status="status.otherClasses"
-        :name="`performers[${performerIndex}].otherClasses`"
+        name="otherClasses"
         :label="textAreaLabel"
         @change-status="(stat:string) => fieldStatus(stat, 'otherClasses')" />
     </div>

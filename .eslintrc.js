@@ -13,6 +13,7 @@ module.exports = {
     '@typescript-eslint/no-unused-vars': 'off',
     'eslint-comments/no-unlimited-disable': 'off',
     'vue/multi-word-component-names': 'off',
+    'vue/no-setup-props-destructure': 'off',
   },
   overrides: [
     {

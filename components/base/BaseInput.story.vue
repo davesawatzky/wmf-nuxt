@@ -12,7 +12,7 @@
         name="text"
         label="Text Input"
         placeholder="Texting"
-        helpMessage="This is a text message"
+        help-message="This is a text message"
         :status="StatusEnum.saved">
       </BaseInput>
     </Variant>
