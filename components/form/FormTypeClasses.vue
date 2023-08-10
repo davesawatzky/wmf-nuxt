@@ -101,9 +101,12 @@
 
   const saveStat = ref('')
 
-  watchEffect(() => {
-    emits('errorCounts', totalErrors.value)
-  })
+  watchEffect(
+    () => {
+      emits('errorCounts', totalErrors.value)
+    },
+    { flush: 'post' }
+  )
 
   onActivated(async () => {
     await validate()

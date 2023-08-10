@@ -1,4 +1,4 @@
-<script setup lang="ts" generic="T">
+<script setup lang="ts">
   import * as yup from 'yup'
   import {
     CategoriesDocument,
@@ -26,7 +26,10 @@
     classId: number
   }>()
 
-  const emits = defineEmits<{ 'update:modelValue': [RegisteredClassInput] }>()
+  const emits = defineEmits<{
+    'update:modelValue': [value: RegisteredClassInput]
+    errorCounts: [count: number]
+  }>()
 
   const status = reactive<Status>({
     discipline: props.modelValue.discipline
@@ -48,6 +51,7 @@
   const classesStore = useClasses()
   const classSelection = ref(<FestivalClass>{}) // component variable
   const loadInfoFirstRun = ref(true)
+  const numberOfErrors = ref<number[]>([0])
 
   const selectedClasses = computed({
     // used to emit values back to parent
@@ -373,6 +377,8 @@
     }
   )
 
+  // Validation code
+
   const validationSchema = toTypedSchema(
     yup.object({
       discipline: yup.string().required('Choose a discipline'),
@@ -401,7 +407,32 @@
     })
   )
 
-  const { errors } = useForm({ validationSchema, validateOnMount: true })
+  const { errors, validate } = useForm({
+    validationSchema,
+    validateOnMount: true,
+  })
+  function errorCounts(count: number, index: number) {
+    numberOfErrors.value[index] = count
+  }
+  const totalErrors = computed(() => {
+    const pageErrors = Object.keys(errors.value).length
+    return (
+      numberOfErrors.value.reduce((a, b) => {
+        return a + b
+      }, 0) + pageErrors
+    )
+  })
+  watchEffect(
+    () => {
+      emits('errorCounts', totalErrors.value)
+    },
+    { flush: 'post' }
+  )
+
+  onActivated(async () => {
+    await validate()
+    emits('errorCounts', totalErrors.value)
+  })
 </script>
 
 <template>
@@ -526,7 +557,8 @@
         :selection-index="selectionIndex"
         :selection-id="selection.id"
         :class-id="classId"
-        :class-index="classIndex" />
+        :class-index="classIndex"
+        @error-counts="(count:number) => errorCounts(count, selectionIndex)" />
     </div>
   </div>
 </template>
