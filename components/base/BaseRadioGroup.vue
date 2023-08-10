@@ -2,10 +2,10 @@
   import type { StatusEnum } from '@/composables/types'
 
   interface Options {
-    val: string | number
+    value: string | number
     label: string
     helpMessage?: string
-    description: string
+    description?: string
   }
 
   interface Props {
@@ -61,7 +61,7 @@
         <label
           v-if="label"
           :for="uuid">
-          {{ label }}
+          <h3>{{ label }}</h3>
           <BaseHelpButton :help-message="helpMessage" />
         </label>
       </div>
@@ -74,14 +74,14 @@
     <component
       :is="vertical ? 'div' : 'span'"
       v-for="option in options"
-      :key="option.val"
+      :key="option.value"
       :class="{
         horizontal: !vertical,
       }">
       <BaseRadio
         :label="option.label"
         :description="option.description"
-        :val="option.val"
+        :value="option.value"
         :model-value="value"
         :name="props.name"
         v-on="validationListeners" />

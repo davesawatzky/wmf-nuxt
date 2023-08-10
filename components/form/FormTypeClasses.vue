@@ -99,6 +99,8 @@
     )
   })
 
+  const saveStat = ref('')
+
   watchEffect(() => {
     emits('errorCounts', totalErrors.value)
   })
@@ -127,7 +129,7 @@
             return-id
             label="Select a school Group"
             :options="schoolGroups"
-            @change-status="(stat:string) => fieldStatus(stat, 'schoolGroupID', selectedClass.id, classIndex)"></BaseSelect>
+            @change-status="((stat: string) => fieldStatus(stat, 'schoolGroupID', selectedClass.id, classIndex))"></BaseSelect>
         </div>
         <FormClass
           v-model="classesStore.registeredClasses[classIndex]"

@@ -13,18 +13,18 @@
     {
       label: 'Vocal Group',
       description: 'Duets, Trios, Quartets, and Ensembles',
-      val: 'vocal',
+      value: 'vocal',
     },
     {
       label: 'Instrumental Group',
       description: 'Duets, Trios, Ensembles, and Chamber Groups',
-      val: 'instrumental',
+      value: 'instrumental',
     },
     {
       label: 'Mixed Group',
       description:
         'Mixed instrument chamber groups which include both instruments and voice.  Includes class 1945, "Family and/or Friends"',
-      val: 'mixed',
+      value: 'mixed',
     },
   ]
 

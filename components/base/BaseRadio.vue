@@ -4,7 +4,7 @@
     description?: string
     name: string
     modelValue?: string | number
-    val: string | number
+    value: string | number
   }>()
 
   const emit = defineEmits<{
@@ -15,16 +15,16 @@
 <template>
   <div>
     <input
-      :id="String(val)"
+      :id="String(value)"
       type="radio"
-      :checked="modelValue === val"
-      :value="val"
+      :checked="modelValue === value"
+      :value="value"
       :name="name"
       v-bind="{ ...$attrs }"
-      @change="$emit('update:modelValue', val)" />
+      @change="$emit('update:modelValue', value)" />
     <label
       v-if="label"
-      :for="String(val)"
+      :for="String(value)"
       class="pl-2"
       >{{ label }}</label
     >

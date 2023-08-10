@@ -33,18 +33,11 @@
 
   const validationListeners = {
     blur: (evt: Event) => handleBlur(evt, true),
-    change: (evt: Event) => {
-      handleChange(evt, true)
-      if (meta.dirty && meta.valid && !!value.value) {
+    input: async (evt: Event) => {
+      await handleChange(evt, true)
+      if (meta.valid) {
         emit('changeStatus', 'saved')
-        resetField({ value: value.value })
-      } else if (meta.dirty && !value.value && !!meta.initialValue) {
-        emit('changeStatus', 'remove')
-        resetField({ value: '' })
       }
-    },
-    input: (evt: Event) => {
-      handleChange(evt, !!errorMessage.value)
     },
   }
 </script>
@@ -81,7 +74,6 @@
         {{ option.name }}
       </option>
     </select>
-    MDV:{{ modelValue }} Val:{{ value }}
     <BaseErrorMessage> {{ errorMessage }}</BaseErrorMessage>
   </div>
 </template>
