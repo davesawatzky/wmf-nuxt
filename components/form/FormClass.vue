@@ -386,24 +386,6 @@
       level: yup.string().required('Choose a grade/level'),
       category: yup.string().required('Choose a category'),
       instrument: yup.string().nullable(),
-      selection: yup.array().of(
-        yup.object({
-          title: yup
-            .string()
-            .trim()
-            .required('Enter the title of the selection'),
-          composer: yup
-            .string()
-            .trim()
-            .required('Enter the name of the composer'),
-          largerWork: yup.string().trim().nullable(),
-          movement: yup.string().trim().nullable(),
-          duration: yup
-            .string()
-            .trim()
-            .required('Indicate total duration of selection'),
-        })
-      ),
     })
   )
 
@@ -558,7 +540,7 @@
         :selection-id="selection.id"
         :class-id="classId"
         :class-index="classIndex"
-        @error-counts="(count:number) => errorCounts(count, selectionIndex)" />
+        @error-counts="(count: number) => errorCounts(count, selectionIndex)" />
     </div>
   </div>
 </template>

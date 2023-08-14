@@ -3,6 +3,7 @@
   import type { Component } from 'vue'
   import { useAppStore } from '@/stores/appStore'
   import { useRegistration } from '@/stores/userRegistration'
+  import { useErrorStore } from '@/stores/useErrors'
   import type { Status, ErrorCounts } from '@/composables/types'
 
   interface DynamicComponent {
@@ -29,6 +30,7 @@
   const Summary = <Component>resolveComponent('Summary')
 
   const registrationStore = useRegistration()
+  const errorStore = toRefs(useErrorStore())
   const appStore = useAppStore()
   const performerType = toRef(appStore.performerType)
   const currentTab = ref('')
@@ -41,6 +43,7 @@
   })
 
   let tabs = {} as DynamicComponent
+  let errorStoreFields = {}
 
   function setTab(tab: string, index: number) {
     currentTab.value = tab
@@ -66,16 +69,19 @@
 
   switch (performerType.value) {
     case 'SOLO':
-      // currentTab.value = 'Performer'
       tabs = {
         Performer: FormSoloPerformer,
         Teacher: FormSoloTeacher,
         'Solo Classes': FormTypeClasses,
         Summary,
       }
+      errorStoreFields = {
+        Performer: 'soloPerformerErrors',
+        Teacher: 'soloTeacherErrors',
+        'Solo Classes': 'classErrors',
+      }
       break
     case 'GROUP':
-      // currentTab.value = 'Group'
       tabs = {
         Group: FormGroupInfo,
         Performers: FormGroupPerformers,
@@ -83,9 +89,14 @@
         'Group Classes': FormTypeClasses,
         Summary,
       }
+      errorStoreFields = {
+        Group: 'groupInfoErrors',
+        Performers: 'groupPerformersErrors',
+        Teacher: 'groupTeacherErrors',
+        'Group Classes': 'classErrors',
+      }
       break
     case 'SCHOOL':
-      // currentTab.value = 'School'
       tabs = {
         School: FormSchoolInfo,
         Teacher: FormSchoolTeacher,
@@ -93,14 +104,24 @@
         'School Classes': FormTypeClasses,
         Summary,
       }
+      errorStoreFields = {
+        School: 'schoolInfoErrors',
+        Teacher: 'schoolTeacherErrors',
+        Groups: 'schoolGroupErrors',
+        'School Classes': 'classErrors',
+      }
       break
     case 'COMMUNITY':
-      // currentTab.value = 'Community'
       tabs = {
         Community: FormCommunityInfo,
         Contact: FormCommunityTeacher,
         'Community Classes': FormTypeClasses,
         Summary,
+      }
+      errorStoreFields = {
+        Community: 'communityInfoErrors',
+        Contact: 'communityTeacherErrors',
+        'Community Classes': 'classErrors',
       }
       break
   }
@@ -109,8 +130,13 @@
   const tabNames = ref(Object.keys(tabs))
 
   function errorTally(count: number, tab: string) {
-    fieldErrors.value[tab] = count
-    count = 0
+    console.log('count: ', count, 'tab: ', tab)
+    fieldErrors.value[tab] = count ?? 0
+    if (tab !== 'Summary') {
+      let field: string = errorStoreFields[tab]
+      errorStore[field].value = count
+    }
+    fieldErrors.value['Summary'] = 0
   }
 
   const validationSchema = yup.object({
@@ -158,7 +184,10 @@
           <KeepAlive>
             <component
               :is="tabs[currentTab]"
-              @error-counts="(count:number) => errorTally(count ?? 0, currentTab)" />
+              @error-counts="
+                (count: number | undefined) =>
+                  errorTally(count ?? 0, currentTab)
+              " />
           </KeepAlive>
         </Transition>
       </div>
@@ -166,7 +195,7 @@
     <div
       v-else
       class="border border-spacing-1 shadow-md rounded-lg border-sky-500 p-6 mb-6">
-      <Summary @submitForm="onSubmit" />
+      <Summary @submitForm="" />
     </div>
   </div>
 </template>

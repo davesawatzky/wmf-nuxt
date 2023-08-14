@@ -7,7 +7,7 @@
   }>()
 
   const emit = defineEmits<{
-    (ev: 'setTab', tab: string, index: number): void
+    setTab: [tab: string, index: number]
   }>()
 
   const currentTab = ref('')
@@ -16,12 +16,11 @@
   function changeTab(tab: string, index: number) {
     currentTab.value = tab
     tabIndex.value = index
+    emit('setTab', currentTab.value, tabIndex.value)
   }
 
-  watchEffect(() => {
-    if (!currentTab.value) {
-      currentTab.value = props.tabs[0]
-    }
+  onMounted(() => {
+    currentTab.value = props.tabs[0]
     emit('setTab', currentTab.value, tabIndex.value)
   })
 </script>

@@ -17,13 +17,15 @@
   const appStore = useAppStore()
   const numberOfErrors = ref<number[]>([0])
 
-  const status = reactive<Status[]>([
-    {
-      schoolGroupID: classesStore.registeredClasses[0].schoolGroupID
-        ? StatusEnum.saved
-        : StatusEnum.null,
-    },
-  ])
+  const status = reactive<Status[]>([])
+  onBeforeMount(() => {
+    for (let i = 0; i < classesStore.registeredClasses.length; i++) {
+      status.push({ schoolGroupID: StatusEnum.null })
+      if (classesStore.registeredClasses[i].schoolGroupID) {
+        status[i].schoolGroupID = StatusEnum.saved
+      }
+    }
+  })
 
   async function addClass(registrationId: number) {
     await classesStore.createClass(registrationId)
@@ -99,8 +101,6 @@
     )
   })
 
-  const saveStat = ref('')
-
   watchEffect(
     () => {
       emits('errorCounts', totalErrors.value)
@@ -127,18 +127,21 @@
             v-model.number="
               classesStore.registeredClasses[classIndex].schoolGroupID
             "
-            :status="status[classIndex].schoolGroupID"
+            :status="status[classIndex].schoolGroupID ?? StatusEnum.null"
             :name="`schoolGroups[${classIndex}].id`"
             return-id
             label="Select a school Group"
             :options="schoolGroups"
-            @change-status="((stat: string) => fieldStatus(stat, 'schoolGroupID', selectedClass.id, classIndex))"></BaseSelect>
+            @change-status="
+              (stat: string) =>
+                fieldStatus(stat, 'schoolGroupID', selectedClass.id, classIndex)
+            "></BaseSelect>
         </div>
         <FormClass
           v-model="classesStore.registeredClasses[classIndex]"
           :class-index="classIndex"
           :class-id="selectedClass.id"
-          @error-counts="(count:number) => errorCounts(count, classIndex)" />
+          @error-counts="(count: number) => errorCounts(count, classIndex)" />
       </div>
       <div class="pt-4 col-span-12">
         <BaseButton

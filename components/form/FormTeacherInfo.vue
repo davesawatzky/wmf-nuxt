@@ -244,7 +244,8 @@
         v-maska:[maskaUcaseOption]
         :status="status.postalCode"
         data-maska="A#A #A#"
-        data-maska-token="A:[A-Z]"
+        data-maska-tokens="A:[A-Z]"
+        data-maska-eager
         name="postalCode"
         type="text"
         label="Postal Code"

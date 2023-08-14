@@ -147,7 +147,7 @@
         name="firstName"
         type="text"
         label="First Name"
-        @change-status="(stat:string) => fieldStatus(stat, 'firstName')" />
+        @change-status="(stat: string) => fieldStatus(stat, 'firstName')" />
     </div>
     <div class="col-span-12 sm:col-span-5">
       <BaseInput
@@ -156,7 +156,7 @@
         name="lastName"
         type="text"
         label="Last Name"
-        @change-status="(stat:string) => fieldStatus(stat, 'lastName')" />
+        @change-status="(stat: string) => fieldStatus(stat, 'lastName')" />
     </div>
     <div class="col-span-12 sm:col-span-3">
       <BaseInput
@@ -169,7 +169,7 @@
         type="number"
         label="Age"
         :help-message="`Age as of December 31, ${currentYear}`"
-        @change-status="(stat:string) => fieldStatus(stat, 'age')" />
+        @change-status="(stat: string) => fieldStatus(stat, 'age')" />
     </div>
     <div class="col-span-6 sm:col-span-3">
       <BaseInput
@@ -178,7 +178,7 @@
         name="apartment"
         type="text"
         label="Apt."
-        @change-status="(stat:string) => fieldStatus(stat, 'apartment')" />
+        @change-status="(stat: string) => fieldStatus(stat, 'apartment')" />
     </div>
     <div class="col-span-6 sm:col-span-3">
       <BaseInput
@@ -187,7 +187,7 @@
         name="streetNumber"
         type="text"
         label="Street #"
-        @change-status="(stat:string) => fieldStatus(stat, 'streetNumber')" />
+        @change-status="(stat: string) => fieldStatus(stat, 'streetNumber')" />
     </div>
     <div class="col-span-12 sm:col-span-6">
       <BaseInput
@@ -196,7 +196,7 @@
         name="streetName"
         type="text"
         label="Street Name"
-        @change-status="(stat:string) => fieldStatus(stat, 'streetName')" />
+        @change-status="(stat: string) => fieldStatus(stat, 'streetName')" />
     </div>
     <div class="col-span-8 sm:col-span-7">
       <BaseInput
@@ -205,7 +205,7 @@
         name="city"
         type="text"
         label="City/Town"
-        @change-status="(stat:string) => fieldStatus(stat, 'city')" />
+        @change-status="(stat: string) => fieldStatus(stat, 'city')" />
     </div>
     <div class="col-span-4 sm:col-span-2 self-start">
       <BaseSelect
@@ -214,7 +214,7 @@
         name="province"
         label="Province"
         :options="provinces"
-        @change-status="(stat:string) => fieldStatus(stat, 'province')" />
+        @change-status="(stat: string) => fieldStatus(stat, 'province')" />
     </div>
     <div class="col-span-12 sm:col-span-3">
       <BaseInput
@@ -228,7 +228,7 @@
         name="postalCode"
         type="text"
         label="Postal Code"
-        @change-status="(stat:string) => fieldStatus(stat, 'postalCode')" />
+        @change-status="(stat: string) => fieldStatus(stat, 'postalCode')" />
     </div>
     <div class="col-span-12 sm:col-span-5">
       <BaseInput
@@ -241,7 +241,7 @@
         name="phone"
         type="tel"
         label="Phone Number"
-        @change-status="(stat:string) => fieldStatus(stat, 'phone')" />
+        @change-status="(stat: string) => fieldStatus(stat, 'phone')" />
     </div>
     <div class="col-span-12 sm:col-span-7">
       <BaseInput
@@ -251,7 +251,7 @@
         name="email"
         type="email"
         label="Email"
-        @change-status="(stat:string) => fieldStatus(stat, 'email')" />
+        @change-status="(stat: string) => fieldStatus(stat, 'email')" />
     </div>
     <div
       v-if="groupperformer"
@@ -262,7 +262,7 @@
         name="instrument"
         type="text"
         label="Instrument"
-        @change-status="(stat:string) => fieldStatus(stat, 'instrument')" />
+        @change-status="(stat: string) => fieldStatus(stat, 'instrument')" />
     </div>
     <div
       v-if="groupperformer"
@@ -273,7 +273,7 @@
         name="level"
         type="text"
         label="Level"
-        @change-status="(stat:string) => fieldStatus(stat, 'level')" />
+        @change-status="(stat: string) => fieldStatus(stat, 'level')" />
     </div>
     <div
       v-if="groupperformer"
@@ -283,7 +283,7 @@
         :status="status.otherClasses"
         name="otherClasses"
         :label="textAreaLabel"
-        @change-status="(stat:string) => fieldStatus(stat, 'otherClasses')" />
+        @change-status="(stat: string) => fieldStatus(stat, 'otherClasses')" />
     </div>
   </div>
 </template>

@@ -8,9 +8,10 @@
   import { useClasses } from '@/stores/userClasses'
   import { useRegistration } from '@/stores/userRegistration'
   import { useAppStore } from '@/stores/appStore'
+  import { useErrorStore } from '@/stores/useErrors'
 
   const emits = defineEmits<{
-    (ev: 'submitForm', value: any): void
+    submitForm: [value: any]
   }>()
 
   const performerStore = usePerformers()
@@ -22,6 +23,7 @@
   const classesStore = useClasses()
   const appStore = useAppStore()
   const registrationStore = useRegistration()
+  const errorStore = useErrorStore()
 
   function schoolClassGroup(id: number) {
     return schoolGroupStore.schoolGroup.find((item) => item.id === id)
@@ -34,7 +36,16 @@
 
 <template>
   <div>
-    <div v-auto-animate>
+    <div v-if="errorStore.numberOfErrors > 0">
+      <h2>Errors were found in the registration form</h2>
+      <h3>
+        Please fix any errors on this registration. Incomplete registrations
+        will not be submitted.
+      </h3>
+    </div>
+    <div
+      v-else
+      v-auto-animate>
       <h1 class="pt-8">Registration Summary</h1>
 
       <!-- Community Groups -->

@@ -9,6 +9,7 @@
   import { useSchool } from '@/stores/userSchool'
   import { useSchoolGroup } from '@/stores/userSchoolGroup'
   import { useCommunity } from '@/stores/userCommunity'
+  import { useErrorStore } from '@/stores/useErrors'
   import {
     communityOpen,
     groupOpen,
@@ -36,6 +37,8 @@
   const schoolGroupStore = useSchoolGroup()
   const communityStore = useCommunity()
   const classesStore = useClasses()
+  const errorStore = useErrorStore()
+
   const registrationId = ref(0)
 
   const sm = useMediaQuery('(min-width: 640px)')
@@ -63,6 +66,7 @@
     schoolStore.$reset()
     schoolGroupStore.$reset()
     classesStore.$reset()
+    errorStore.$reset()
   })
 
   const {

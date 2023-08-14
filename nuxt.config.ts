@@ -1,6 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import process from 'node:process'
 
 export default defineNuxtConfig({
   alias: {
@@ -44,7 +45,7 @@ export default defineNuxtConfig({
     '@nuxtjs/apollo',
     '@pinia/nuxt',
     '@pinia-plugin-persistedstate/nuxt',
-    '@nuxt/devtools',
+    // '@nuxt/devtools',
     'nuxt-vitest',
     '@vee-validate/nuxt',
     '@vueuse/nuxt',

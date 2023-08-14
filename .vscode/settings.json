@@ -30,5 +30,6 @@
   "typescript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": false,
   "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": false,
   "files.refactoring.autoSave": false,
-  "eslint.run": "onSave"
+  "eslint.run": "onSave",
+  "vitest.enable": true
 }
