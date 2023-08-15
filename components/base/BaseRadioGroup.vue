@@ -8,7 +8,7 @@
     description?: string
   }
 
-  interface Props {
+  const props = defineProps<{
     label?: string
     options: Options[]
     helpMessage?: string
@@ -16,11 +16,7 @@
     status?: StatusEnum
     modelValue?: string | number
     vertical?: boolean
-  }
-
-  const props = withDefaults(defineProps<Props>(), {
-    vertical: false,
-  })
+  }>()
 
   const emit = defineEmits<{
     (ev: 'changeStatus', stat: string): void

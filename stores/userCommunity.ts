@@ -102,7 +102,7 @@ export const useCommunity = defineStore(
         if (field && Object.keys(communityProps).includes(field)) {
           communityField = Object.fromEntries(
             Array(
-              Object.entries(communityProps).find((item) => item[0] === field)
+              Object.entries(communityProps).find((item) => item[0] === field)!
             )
           )
           console.log(communityField)

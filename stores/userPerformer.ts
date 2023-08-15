@@ -138,7 +138,9 @@ export const usePerformers = defineStore(
         let performerField = null
         if (field && Object.keys(personProps).includes(field)) {
           performerField = Object.fromEntries(
-            Array(Object.entries(personProps).find((item) => item[0] === field))
+            Array(
+              Object.entries(personProps).find((item) => item[0] === field)!
+            )
           )
         }
         performerUpdate({

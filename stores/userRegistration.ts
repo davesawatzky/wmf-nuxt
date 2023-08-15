@@ -97,7 +97,7 @@ export const useRegistration = defineStore(
         let registrationField = null
         if (field && Object.keys(regProps).includes(field)) {
           registrationField = Object.fromEntries(
-            Array(Object.entries(regProps).find((item) => item[0] === field))
+            Array(Object.entries(regProps).find((item) => item[0] === field)!)
           )
         }
         registrationUpdate({

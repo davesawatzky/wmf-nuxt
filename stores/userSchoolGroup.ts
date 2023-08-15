@@ -120,7 +120,7 @@ export const useSchoolGroup = defineStore(
         if (field && Object.keys(schlgrpProps).includes(field)) {
           schoolGroupField = Object.fromEntries(
             Array(
-              Object.entries(schlgrpProps).find((item) => item[0] === field)
+              Object.entries(schlgrpProps).find((item) => item[0] === field)!
             )
           )
         }

@@ -5,46 +5,48 @@ export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
+export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: string;
-  String: string;
-  Boolean: boolean;
-  Int: number;
-  Float: number;
+  ID: { input: string; output: string; }
+  String: { input: string; output: string; }
+  Boolean: { input: boolean; output: boolean; }
+  Int: { input: number; output: number; }
+  Float: { input: number; output: number; }
   /** A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format. */
-  DateTime: any;
+  DateTime: { input: any; output: any; }
   /** An arbitrary-precision Decimal type */
-  Decimal: any;
+  Decimal: { input: any; output: any; }
 };
 
 export type AuthPayload = {
   __typename: 'AuthPayload';
-  diatonicToken?: Maybe<Scalars['String']>;
+  diatonicToken?: Maybe<Scalars['String']['output']>;
   user: User;
   userErrors: Array<UserError>;
 };
 
 export type Category = {
   __typename: 'Category';
-  description?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']['output']>;
   festivalClasses?: Maybe<Array<FestivalClass>>;
-  id: Scalars['Int'];
-  name: Scalars['String'];
-  requiredComposer?: Maybe<Scalars['String']>;
+  id: Scalars['Int']['output'];
+  name: Scalars['String']['output'];
+  requiredComposer?: Maybe<Scalars['String']['output']>;
 };
 
 
 export type CategoryfestivalClassesArgs = {
-  levelID: Scalars['Int'];
-  performerType: Scalars['String'];
-  subdisciplineID: Scalars['Int'];
+  levelID: Scalars['Int']['input'];
+  performerType: Scalars['String']['input'];
+  subdisciplineID: Scalars['Int']['input'];
 };
 
 export type CategoryInput = {
-  description?: InputMaybe<Scalars['String']>;
-  name: Scalars['String'];
-  requiredComposer?: InputMaybe<Scalars['String']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  name: Scalars['String']['input'];
+  requiredComposer?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type CategoryPayload = {
@@ -55,26 +57,26 @@ export type CategoryPayload = {
 
 export type Community = {
   __typename: 'Community';
-  chaperones?: Maybe<Scalars['Int']>;
-  conflictPerformers?: Maybe<Scalars['String']>;
-  earliestTime?: Maybe<Scalars['String']>;
-  groupSize?: Maybe<Scalars['Int']>;
-  id: Scalars['Int'];
-  latestTime?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  unavailable?: Maybe<Scalars['String']>;
-  wheelchairs?: Maybe<Scalars['Int']>;
+  chaperones?: Maybe<Scalars['Int']['output']>;
+  conflictPerformers?: Maybe<Scalars['String']['output']>;
+  earliestTime?: Maybe<Scalars['String']['output']>;
+  groupSize?: Maybe<Scalars['Int']['output']>;
+  id: Scalars['Int']['output'];
+  latestTime?: Maybe<Scalars['String']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+  unavailable?: Maybe<Scalars['String']['output']>;
+  wheelchairs?: Maybe<Scalars['Int']['output']>;
 };
 
 export type CommunityInput = {
-  chaperones?: InputMaybe<Scalars['Int']>;
-  conflictPerformers?: InputMaybe<Scalars['String']>;
-  earliestTime?: InputMaybe<Scalars['String']>;
-  groupSize?: InputMaybe<Scalars['Int']>;
-  latestTime?: InputMaybe<Scalars['String']>;
-  name?: InputMaybe<Scalars['String']>;
-  unavailable?: InputMaybe<Scalars['String']>;
-  wheelchairs?: InputMaybe<Scalars['Int']>;
+  chaperones?: InputMaybe<Scalars['Int']['input']>;
+  conflictPerformers?: InputMaybe<Scalars['String']['input']>;
+  earliestTime?: InputMaybe<Scalars['String']['input']>;
+  groupSize?: InputMaybe<Scalars['Int']['input']>;
+  latestTime?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  unavailable?: InputMaybe<Scalars['String']['input']>;
+  wheelchairs?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type CommunityPayload = {
@@ -84,21 +86,21 @@ export type CommunityPayload = {
 };
 
 export type CredentialsSignin = {
-  email: Scalars['String'];
-  password: Scalars['String'];
+  email: Scalars['String']['input'];
+  password: Scalars['String']['input'];
 };
 
 export type CredentialsSignup = {
-  email: Scalars['String'];
-  firstName: Scalars['String'];
-  lastName: Scalars['String'];
-  password: Scalars['String'];
+  email: Scalars['String']['input'];
+  firstName: Scalars['String']['input'];
+  lastName: Scalars['String']['input'];
+  password: Scalars['String']['input'];
 };
 
 export type Discipline = {
   __typename: 'Discipline';
-  id?: Maybe<Scalars['Int']>;
-  name?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['Int']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
   subdisciplines?: Maybe<Array<Subdiscipline>>;
 };
 
@@ -108,7 +110,7 @@ export type DisciplinesubdisciplinesArgs = {
 };
 
 export type DisciplineInput = {
-  name: Scalars['String'];
+  name: Scalars['String']['input'];
 };
 
 export type DisciplinePayload = {
@@ -120,28 +122,28 @@ export type DisciplinePayload = {
 export type FestivalClass = {
   __typename: 'FestivalClass';
   category: Category;
-  classNumber: Scalars['String'];
-  id: Scalars['Int'];
+  classNumber: Scalars['String']['output'];
+  id: Scalars['Int']['output'];
   level: Level;
-  maxSelections: Scalars['Int'];
-  minSelections: Scalars['Int'];
+  maxSelections: Scalars['Int']['output'];
+  minSelections: Scalars['Int']['output'];
   performerType: PerformerType;
-  price?: Maybe<Scalars['Decimal']>;
-  requiredSelection?: Maybe<Scalars['String']>;
+  price?: Maybe<Scalars['Decimal']['output']>;
+  requiredSelection?: Maybe<Scalars['String']['output']>;
   subdiscipline: Subdiscipline;
   trophies?: Maybe<Array<Trophy>>;
 };
 
 export type FestivalClassInput = {
-  categoryID: Scalars['Int'];
-  classNumber: Scalars['String'];
-  levelID: Scalars['Int'];
-  maxSelections: Scalars['Int'];
-  minSelections: Scalars['Int'];
+  categoryID: Scalars['Int']['input'];
+  classNumber: Scalars['String']['input'];
+  levelID: Scalars['Int']['input'];
+  maxSelections: Scalars['Int']['input'];
+  minSelections: Scalars['Int']['input'];
   performerType: PerformerType;
-  price?: InputMaybe<Scalars['Decimal']>;
-  requiredSelection?: InputMaybe<Scalars['String']>;
-  subdisciplineID: Scalars['Int'];
+  price?: InputMaybe<Scalars['Decimal']['input']>;
+  requiredSelection?: InputMaybe<Scalars['String']['input']>;
+  subdisciplineID: Scalars['Int']['input'];
 };
 
 export type FestivalClassPayload = {
@@ -151,27 +153,37 @@ export type FestivalClassPayload = {
 };
 
 export type FestivalClassSearchArgs = {
-  categoryID?: InputMaybe<Scalars['Int']>;
-  levelID?: InputMaybe<Scalars['Int']>;
-  subdisciplineID?: InputMaybe<Scalars['Int']>;
+  categoryID?: InputMaybe<Scalars['Int']['input']>;
+  levelID?: InputMaybe<Scalars['Int']['input']>;
+  subdisciplineID?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type FieldConfig = {
+  __typename: 'FieldConfig';
+  customField?: Maybe<Scalars['Boolean']['output']>;
+  customFieldType?: Maybe<Scalars['String']['output']>;
+  fieldName?: Maybe<Scalars['String']['output']>;
+  id: Scalars['Int']['output'];
+  submissionRequired?: Maybe<Scalars['Boolean']['output']>;
+  tableName?: Maybe<Scalars['String']['output']>;
 };
 
 export type Group = {
   __typename: 'Group';
-  age?: Maybe<Scalars['Int']>;
-  groupType?: Maybe<Scalars['String']>;
-  id: Scalars['Int'];
-  instruments?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  numberOfPerformers?: Maybe<Scalars['Int']>;
+  age?: Maybe<Scalars['Int']['output']>;
+  groupType?: Maybe<Scalars['String']['output']>;
+  id: Scalars['Int']['output'];
+  instruments?: Maybe<Scalars['String']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+  numberOfPerformers?: Maybe<Scalars['Int']['output']>;
 };
 
 export type GroupInput = {
-  age?: InputMaybe<Scalars['Int']>;
-  groupType?: InputMaybe<Scalars['String']>;
-  instruments?: InputMaybe<Scalars['String']>;
-  name: Scalars['String'];
-  numberOfPerformers?: InputMaybe<Scalars['Int']>;
+  age?: InputMaybe<Scalars['Int']['input']>;
+  groupType?: InputMaybe<Scalars['String']['input']>;
+  instruments?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  numberOfPerformers?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type GroupPayload = {
@@ -182,12 +194,12 @@ export type GroupPayload = {
 
 export type Instrument = {
   __typename: 'Instrument';
-  id: Scalars['Int'];
-  name: Scalars['String'];
+  id: Scalars['Int']['output'];
+  name: Scalars['String']['output'];
 };
 
 export type InstrumentInput = {
-  name?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type InstrumentPayload = {
@@ -199,21 +211,21 @@ export type InstrumentPayload = {
 export type Level = {
   __typename: 'Level';
   classes?: Maybe<Array<FestivalClass>>;
-  description?: Maybe<Scalars['String']>;
-  id: Scalars['Int'];
-  name: Scalars['String'];
+  description?: Maybe<Scalars['String']['output']>;
+  id: Scalars['Int']['output'];
+  name: Scalars['String']['output'];
 };
 
 
 export type LevelclassesArgs = {
-  categoryID: Scalars['Int'];
-  performerType: Scalars['String'];
-  subdisciplineID: Scalars['Int'];
+  categoryID: Scalars['Int']['input'];
+  performerType: Scalars['String']['input'];
+  subdisciplineID: Scalars['Int']['input'];
 };
 
 export type LevelInput = {
-  description?: InputMaybe<Scalars['String']>;
-  name: Scalars['String'];
+  description?: InputMaybe<Scalars['String']['input']>;
+  name: Scalars['String']['input'];
 };
 
 export type LevelPayload = {
@@ -286,28 +298,28 @@ export type MutationcategoryCreateArgs = {
 
 
 export type MutationcategoryDeleteArgs = {
-  id: Scalars['Int'];
+  id: Scalars['Int']['input'];
 };
 
 
 export type MutationcategoryUpdateArgs = {
-  categoryID: Scalars['Int'];
+  categoryID: Scalars['Int']['input'];
   categoryInput: CategoryInput;
 };
 
 
 export type MutationcommunityCreateArgs = {
-  registrationID: Scalars['Int'];
+  registrationID: Scalars['Int']['input'];
 };
 
 
 export type MutationcommunityDeleteArgs = {
-  communityID: Scalars['Int'];
+  communityID: Scalars['Int']['input'];
 };
 
 
 export type MutationcommunityUpdateArgs = {
-  communityID: Scalars['Int'];
+  communityID: Scalars['Int']['input'];
   communityInput: CommunityInput;
 };
 
@@ -318,45 +330,45 @@ export type MutationdisciplineCreateArgs = {
 
 
 export type MutationdisciplineDeleteArgs = {
-  id: Scalars['Int'];
+  id: Scalars['Int']['input'];
 };
 
 
 export type MutationdisciplineUpdateArgs = {
   disciplineInput: DisciplineInput;
-  id: Scalars['Int'];
+  id: Scalars['Int']['input'];
 };
 
 
 export type MutationfestivalClassCreateArgs = {
   festivalClass: FestivalClassInput;
-  performerType: Scalars['String'];
+  performerType: Scalars['String']['input'];
 };
 
 
 export type MutationfestivalClassDeleteArgs = {
-  festivalClassID: Scalars['Int'];
+  festivalClassID: Scalars['Int']['input'];
 };
 
 
 export type MutationfestivalClassUpdateArgs = {
   festivalClass: FestivalClassInput;
-  festivalClassID: Scalars['Int'];
+  festivalClassID: Scalars['Int']['input'];
 };
 
 
 export type MutationgroupCreateArgs = {
-  registrationID: Scalars['Int'];
+  registrationID: Scalars['Int']['input'];
 };
 
 
 export type MutationgroupDeleteArgs = {
-  groupID: Scalars['Int'];
+  groupID: Scalars['Int']['input'];
 };
 
 
 export type MutationgroupUpdateArgs = {
-  groupID: Scalars['Int'];
+  groupID: Scalars['Int']['input'];
   groupInput: GroupInput;
 };
 
@@ -367,13 +379,13 @@ export type MutationinstrumentCreateArgs = {
 
 
 export type MutationinstrumentDeleteArgs = {
-  id: Scalars['Int'];
+  id: Scalars['Int']['input'];
 };
 
 
 export type MutationinstrumentUpdateArgs = {
   instrument: InstrumentInput;
-  instrumentID: Scalars['Int'];
+  instrumentID: Scalars['Int']['input'];
 };
 
 
@@ -383,109 +395,109 @@ export type MutationlevelCreateArgs = {
 
 
 export type MutationlevelDeleteArgs = {
-  levelID: Scalars['Int'];
+  levelID: Scalars['Int']['input'];
 };
 
 
 export type MutationlevelUpdateArgs = {
-  levelID: Scalars['Int'];
+  levelID: Scalars['Int']['input'];
   levelInput: LevelInput;
 };
 
 
 export type MutationperformerCreateArgs = {
-  registrationID: Scalars['Int'];
+  registrationID: Scalars['Int']['input'];
 };
 
 
 export type MutationperformerDeleteArgs = {
-  performerID: Scalars['Int'];
+  performerID: Scalars['Int']['input'];
 };
 
 
 export type MutationperformerUpdateArgs = {
-  performerID: Scalars['Int'];
+  performerID: Scalars['Int']['input'];
   performerInput: PerformerInput;
 };
 
 
 export type MutationregisteredClassCreateArgs = {
-  registrationID: Scalars['Int'];
+  registrationID: Scalars['Int']['input'];
 };
 
 
 export type MutationregisteredClassDeleteArgs = {
-  registeredClassID: Scalars['Int'];
+  registeredClassID: Scalars['Int']['input'];
 };
 
 
 export type MutationregisteredClassUpdateArgs = {
-  registeredClassID: Scalars['Int'];
+  registeredClassID: Scalars['Int']['input'];
   registeredClassInput: RegisteredClassInput;
 };
 
 
 export type MutationregistrationCreateArgs = {
-  label: Scalars['String'];
+  label: Scalars['String']['input'];
   performerType: PerformerType;
 };
 
 
 export type MutationregistrationDeleteArgs = {
-  registrationID: Scalars['Int'];
+  registrationID: Scalars['Int']['input'];
 };
 
 
 export type MutationregistrationUpdateArgs = {
-  registrationID: Scalars['Int'];
+  registrationID: Scalars['Int']['input'];
   registrationInput: RegistrationInput;
 };
 
 
 export type MutationschoolCreateArgs = {
-  registrationID: Scalars['Int'];
+  registrationID: Scalars['Int']['input'];
 };
 
 
 export type MutationschoolDeleteArgs = {
-  schoolID: Scalars['Int'];
+  schoolID: Scalars['Int']['input'];
 };
 
 
 export type MutationschoolGroupCreateArgs = {
-  schoolID: Scalars['Int'];
+  schoolID: Scalars['Int']['input'];
 };
 
 
 export type MutationschoolGroupDeleteArgs = {
-  schoolGroupID: Scalars['Int'];
+  schoolGroupID: Scalars['Int']['input'];
 };
 
 
 export type MutationschoolGroupUpdateArgs = {
-  schoolGroupID: Scalars['Int'];
+  schoolGroupID: Scalars['Int']['input'];
   schoolGroupInput: SchoolGroupInput;
 };
 
 
 export type MutationschoolUpdateArgs = {
-  schoolID: Scalars['Int'];
+  schoolID: Scalars['Int']['input'];
   schoolInput: SchoolInput;
 };
 
 
 export type MutationselectionCreateArgs = {
-  registeredClassID: Scalars['Int'];
+  registeredClassID: Scalars['Int']['input'];
 };
 
 
 export type MutationselectionDeleteArgs = {
-  selectionID: Scalars['Int'];
+  selectionID: Scalars['Int']['input'];
 };
 
 
 export type MutationselectionUpdateArgs = {
-  selectionID: Scalars['Int'];
+  selectionID: Scalars['Int']['input'];
   selectionInput: SelectionInput;
 };
 
@@ -501,40 +513,40 @@ export type MutationsignupArgs = {
 
 
 export type MutationsubdisciplineCreateArgs = {
-  disciplineID: Scalars['Int'];
+  disciplineID: Scalars['Int']['input'];
   subdisciplineInput: SubdisciplineInput;
 };
 
 
 export type MutationsubdisciplineDeleteArgs = {
-  subdisciplineID: Scalars['Int'];
+  subdisciplineID: Scalars['Int']['input'];
 };
 
 
 export type MutationsubdisciplineUpdateArgs = {
-  subdisciplineID: Scalars['Int'];
+  subdisciplineID: Scalars['Int']['input'];
   subdisciplineInput: SubdisciplineInput;
 };
 
 
 export type MutationsubmitRegistrationArgs = {
-  registrationID: Scalars['Int'];
+  registrationID: Scalars['Int']['input'];
 };
 
 
 export type MutationteacherCreateArgs = {
-  registrationID: Scalars['Int'];
+  registrationID: Scalars['Int']['input'];
   teacherInput: TeacherInput;
 };
 
 
 export type MutationteacherDeleteArgs = {
-  teacherID: Scalars['Int'];
+  teacherID: Scalars['Int']['input'];
 };
 
 
 export type MutationteacherUpdateArgs = {
-  teacherID: Scalars['Int'];
+  teacherID: Scalars['Int']['input'];
   teacherInput: TeacherInput;
 };
 
@@ -545,60 +557,60 @@ export type MutationtrophyCreateArgs = {
 
 
 export type MutationtrophyDeleteArgs = {
-  id: Scalars['Int'];
+  id: Scalars['Int']['input'];
 };
 
 
 export type MutationtrophyUpdateArgs = {
-  trophyID: Scalars['Int'];
+  trophyID: Scalars['Int']['input'];
   trophyInput: TrophyInput;
 };
 
 
 export type MutationuserDeleteArgs = {
-  id: Scalars['Int'];
+  id: Scalars['Int']['input'];
 };
 
 
 export type MutationuserUpdateArgs = {
-  userID: Scalars['Int'];
-  userInput: Scalars['Int'];
+  userID: Scalars['Int']['input'];
+  userInput: Scalars['Int']['input'];
 };
 
 export type Performer = {
   __typename: 'Performer';
-  age?: Maybe<Scalars['Int']>;
-  apartment?: Maybe<Scalars['String']>;
-  city?: Maybe<Scalars['String']>;
-  email?: Maybe<Scalars['String']>;
-  firstName?: Maybe<Scalars['String']>;
-  id: Scalars['Int'];
-  instrument?: Maybe<Scalars['String']>;
-  lastName?: Maybe<Scalars['String']>;
-  level?: Maybe<Scalars['String']>;
-  otherClasses?: Maybe<Scalars['String']>;
-  phone?: Maybe<Scalars['String']>;
-  postalCode?: Maybe<Scalars['String']>;
-  province?: Maybe<Scalars['String']>;
-  streetName?: Maybe<Scalars['String']>;
-  streetNumber?: Maybe<Scalars['String']>;
+  age?: Maybe<Scalars['Int']['output']>;
+  apartment?: Maybe<Scalars['String']['output']>;
+  city?: Maybe<Scalars['String']['output']>;
+  email?: Maybe<Scalars['String']['output']>;
+  firstName?: Maybe<Scalars['String']['output']>;
+  id: Scalars['Int']['output'];
+  instrument?: Maybe<Scalars['String']['output']>;
+  lastName?: Maybe<Scalars['String']['output']>;
+  level?: Maybe<Scalars['String']['output']>;
+  otherClasses?: Maybe<Scalars['String']['output']>;
+  phone?: Maybe<Scalars['String']['output']>;
+  postalCode?: Maybe<Scalars['String']['output']>;
+  province?: Maybe<Scalars['String']['output']>;
+  streetName?: Maybe<Scalars['String']['output']>;
+  streetNumber?: Maybe<Scalars['String']['output']>;
 };
 
 export type PerformerInput = {
-  age?: InputMaybe<Scalars['Int']>;
-  apartment?: InputMaybe<Scalars['String']>;
-  city?: InputMaybe<Scalars['String']>;
-  email?: InputMaybe<Scalars['String']>;
-  firstName?: InputMaybe<Scalars['String']>;
-  instrument?: InputMaybe<Scalars['String']>;
-  lastName?: InputMaybe<Scalars['String']>;
-  level?: InputMaybe<Scalars['String']>;
-  otherClasses?: InputMaybe<Scalars['String']>;
-  phone?: InputMaybe<Scalars['String']>;
-  postalCode?: InputMaybe<Scalars['String']>;
-  province?: InputMaybe<Scalars['String']>;
-  streetName?: InputMaybe<Scalars['String']>;
-  streetNumber?: InputMaybe<Scalars['String']>;
+  age?: InputMaybe<Scalars['Int']['input']>;
+  apartment?: InputMaybe<Scalars['String']['input']>;
+  city?: InputMaybe<Scalars['String']['input']>;
+  email?: InputMaybe<Scalars['String']['input']>;
+  firstName?: InputMaybe<Scalars['String']['input']>;
+  instrument?: InputMaybe<Scalars['String']['input']>;
+  lastName?: InputMaybe<Scalars['String']['input']>;
+  level?: InputMaybe<Scalars['String']['input']>;
+  otherClasses?: InputMaybe<Scalars['String']['input']>;
+  phone?: InputMaybe<Scalars['String']['input']>;
+  postalCode?: InputMaybe<Scalars['String']['input']>;
+  province?: InputMaybe<Scalars['String']['input']>;
+  streetName?: InputMaybe<Scalars['String']['input']>;
+  streetNumber?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type PerformerPayload = {
@@ -627,13 +639,15 @@ export type Query = {
   festivalClassByNumber: FestivalClass;
   festivalClassSearch: Array<FestivalClass>;
   festivalClasses: Array<FestivalClass>;
+  fieldConfig: FieldConfig;
+  fieldConfigs: Array<FieldConfig>;
   group: Group;
   groups: Array<Group>;
   instrument: Instrument;
   instruments: Array<Instrument>;
   level: Level;
   levels: Array<Level>;
-  logout: Scalars['String'];
+  logout: Scalars['String']['output'];
   performer: Performer;
   performers: Array<Performer>;
   registeredClass: RegisteredClass;
@@ -652,7 +666,7 @@ export type Query = {
   submissions: Array<Registration>;
   teacher: Teacher;
   teachers: Array<Teacher>;
-  tokenCheck: Scalars['Boolean'];
+  tokenCheck: Scalars['Boolean']['output'];
   trophies: Array<Trophy>;
   trophy: Trophy;
   user: User;
@@ -661,23 +675,23 @@ export type Query = {
 
 
 export type QuerycategoriesArgs = {
-  levelID?: InputMaybe<Scalars['Int']>;
-  subdisciplineID?: InputMaybe<Scalars['Int']>;
+  levelID?: InputMaybe<Scalars['Int']['input']>;
+  subdisciplineID?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
 export type QuerycategoryArgs = {
-  id: Scalars['Int'];
+  id: Scalars['Int']['input'];
 };
 
 
 export type QuerycommunityArgs = {
-  registrationID: Scalars['Int'];
+  registrationID: Scalars['Int']['input'];
 };
 
 
 export type QuerydisciplineArgs = {
-  id: Scalars['Int'];
+  id: Scalars['Int']['input'];
 };
 
 
@@ -687,12 +701,12 @@ export type QuerydisciplinesArgs = {
 
 
 export type QueryfestivalClassArgs = {
-  id: Scalars['Int'];
+  id: Scalars['Int']['input'];
 };
 
 
 export type QueryfestivalClassByNumberArgs = {
-  festivalClassNumber: Scalars['String'];
+  festivalClassNumber: Scalars['String']['input'];
 };
 
 
@@ -707,49 +721,55 @@ export type QueryfestivalClassesArgs = {
 };
 
 
+export type QueryfieldConfigArgs = {
+  fieldName: Scalars['String']['input'];
+  tableName: Scalars['String']['input'];
+};
+
+
 export type QuerygroupArgs = {
-  registrationID: Scalars['Int'];
+  registrationID: Scalars['Int']['input'];
 };
 
 
 export type QueryinstrumentArgs = {
-  id: Scalars['Int'];
+  id: Scalars['Int']['input'];
 };
 
 
 export type QuerylevelArgs = {
-  id: Scalars['Int'];
+  id: Scalars['Int']['input'];
 };
 
 
 export type QuerylevelsArgs = {
-  categoryID?: InputMaybe<Scalars['Int']>;
-  subdisciplineID?: InputMaybe<Scalars['Int']>;
+  categoryID?: InputMaybe<Scalars['Int']['input']>;
+  subdisciplineID?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
 export type QueryperformerArgs = {
-  performerID: Scalars['Int'];
+  performerID: Scalars['Int']['input'];
 };
 
 
 export type QueryperformersArgs = {
-  registrationID: Scalars['Int'];
+  registrationID: Scalars['Int']['input'];
 };
 
 
 export type QueryregisteredClassArgs = {
-  registeredClassID: Scalars['Int'];
+  registeredClassID: Scalars['Int']['input'];
 };
 
 
 export type QueryregisteredClassesArgs = {
-  registrationID: Scalars['Int'];
+  registrationID: Scalars['Int']['input'];
 };
 
 
 export type QueryregistrationArgs = {
-  id: Scalars['Int'];
+  id: Scalars['Int']['input'];
 };
 
 
@@ -759,43 +779,43 @@ export type QueryregistrationsArgs = {
 
 
 export type QueryschoolArgs = {
-  schoolID: Scalars['Int'];
+  schoolID: Scalars['Int']['input'];
 };
 
 
 export type QueryschoolGroupArgs = {
-  schoolGroupID: Scalars['Int'];
+  schoolGroupID: Scalars['Int']['input'];
 };
 
 
 export type QueryschoolGroupsArgs = {
-  schoolID: Scalars['Int'];
+  schoolID: Scalars['Int']['input'];
 };
 
 
 export type QueryselectionArgs = {
-  selectionID: Scalars['Int'];
+  selectionID: Scalars['Int']['input'];
 };
 
 
 export type QueryselectionsArgs = {
-  registeredClassID?: InputMaybe<Scalars['Int']>;
+  registeredClassID?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
 export type QuerysubdisciplineArgs = {
-  subdisciplineID: Scalars['Int'];
+  subdisciplineID: Scalars['Int']['input'];
 };
 
 
 export type QuerysubdisciplinesArgs = {
-  disciplineID?: InputMaybe<Scalars['Int']>;
+  disciplineID?: InputMaybe<Scalars['Int']['input']>;
   performerType?: InputMaybe<PerformerType>;
 };
 
 
 export type QuerysubdisciplinesByNameArgs = {
-  name: Scalars['String'];
+  name: Scalars['String']['input'];
 };
 
 
@@ -805,46 +825,46 @@ export type QuerysubmissionsArgs = {
 
 
 export type QueryteacherArgs = {
-  teacherID: Scalars['Int'];
+  teacherID: Scalars['Int']['input'];
 };
 
 
 export type QuerytrophyArgs = {
-  id: Scalars['Int'];
+  id: Scalars['Int']['input'];
 };
 
 
 export type QueryuserArgs = {
-  userID: Scalars['Int'];
+  userID: Scalars['Int']['input'];
 };
 
 export type RegisteredClass = {
   __typename: 'RegisteredClass';
-  category?: Maybe<Scalars['String']>;
-  classNumber?: Maybe<Scalars['String']>;
-  discipline?: Maybe<Scalars['String']>;
-  id: Scalars['Int'];
-  level?: Maybe<Scalars['String']>;
-  maxSelections?: Maybe<Scalars['Int']>;
-  minSelections?: Maybe<Scalars['Int']>;
-  numberOfSelections?: Maybe<Scalars['Int']>;
-  price?: Maybe<Scalars['Decimal']>;
-  schoolGroupID?: Maybe<Scalars['Int']>;
+  category?: Maybe<Scalars['String']['output']>;
+  classNumber?: Maybe<Scalars['String']['output']>;
+  discipline?: Maybe<Scalars['String']['output']>;
+  id: Scalars['Int']['output'];
+  level?: Maybe<Scalars['String']['output']>;
+  maxSelections?: Maybe<Scalars['Int']['output']>;
+  minSelections?: Maybe<Scalars['Int']['output']>;
+  numberOfSelections?: Maybe<Scalars['Int']['output']>;
+  price?: Maybe<Scalars['Decimal']['output']>;
+  schoolGroupID?: Maybe<Scalars['Int']['output']>;
   selections?: Maybe<Array<Selection>>;
-  subdiscipline?: Maybe<Scalars['String']>;
+  subdiscipline?: Maybe<Scalars['String']['output']>;
 };
 
 export type RegisteredClassInput = {
-  category?: InputMaybe<Scalars['String']>;
-  classNumber?: InputMaybe<Scalars['String']>;
-  discipline?: InputMaybe<Scalars['String']>;
-  level?: InputMaybe<Scalars['String']>;
-  maxSelections?: InputMaybe<Scalars['Int']>;
-  minSelections?: InputMaybe<Scalars['Int']>;
-  numberOfSelections?: InputMaybe<Scalars['Int']>;
-  price?: InputMaybe<Scalars['Decimal']>;
-  schoolGroupID?: InputMaybe<Scalars['Int']>;
-  subdiscipline?: InputMaybe<Scalars['String']>;
+  category?: InputMaybe<Scalars['String']['input']>;
+  classNumber?: InputMaybe<Scalars['String']['input']>;
+  discipline?: InputMaybe<Scalars['String']['input']>;
+  level?: InputMaybe<Scalars['String']['input']>;
+  maxSelections?: InputMaybe<Scalars['Int']['input']>;
+  minSelections?: InputMaybe<Scalars['Int']['input']>;
+  numberOfSelections?: InputMaybe<Scalars['Int']['input']>;
+  price?: InputMaybe<Scalars['Decimal']['input']>;
+  schoolGroupID?: InputMaybe<Scalars['Int']['input']>;
+  subdiscipline?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type RegisteredClassPayload = {
@@ -856,32 +876,32 @@ export type RegisteredClassPayload = {
 export type Registration = {
   __typename: 'Registration';
   community?: Maybe<Community>;
-  confirmation?: Maybe<Scalars['String']>;
-  createdAt?: Maybe<Scalars['DateTime']>;
+  confirmation?: Maybe<Scalars['String']['output']>;
+  createdAt?: Maybe<Scalars['DateTime']['output']>;
   group?: Maybe<Group>;
-  id: Scalars['Int'];
-  label?: Maybe<Scalars['String']>;
-  payedAmt?: Maybe<Scalars['Decimal']>;
+  id: Scalars['Int']['output'];
+  label?: Maybe<Scalars['String']['output']>;
+  payedAmt?: Maybe<Scalars['Decimal']['output']>;
   performerType: PerformerType;
   performers?: Maybe<Array<Performer>>;
   registeredClasses?: Maybe<Array<RegisteredClass>>;
   school?: Maybe<School>;
-  submittedAt?: Maybe<Scalars['DateTime']>;
+  submittedAt?: Maybe<Scalars['DateTime']['output']>;
   teacher?: Maybe<Teacher>;
-  totalAmt?: Maybe<Scalars['Decimal']>;
-  transactionInfo?: Maybe<Scalars['String']>;
-  updatedAt?: Maybe<Scalars['DateTime']>;
+  totalAmt?: Maybe<Scalars['Decimal']['output']>;
+  transactionInfo?: Maybe<Scalars['String']['output']>;
+  updatedAt?: Maybe<Scalars['DateTime']['output']>;
   user: User;
 };
 
 export type RegistrationInput = {
-  confirmation?: InputMaybe<Scalars['String']>;
-  label?: InputMaybe<Scalars['String']>;
-  payedAmt?: InputMaybe<Scalars['Decimal']>;
+  confirmation?: InputMaybe<Scalars['String']['input']>;
+  label?: InputMaybe<Scalars['String']['input']>;
+  payedAmt?: InputMaybe<Scalars['Decimal']['input']>;
   performerType?: InputMaybe<PerformerType>;
-  submittedAt?: InputMaybe<Scalars['DateTime']>;
-  totalAmt?: InputMaybe<Scalars['Decimal']>;
-  transactionInfo?: InputMaybe<Scalars['String']>;
+  submittedAt?: InputMaybe<Scalars['DateTime']['input']>;
+  totalAmt?: InputMaybe<Scalars['Decimal']['input']>;
+  transactionInfo?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type RegistrationPayload = {
@@ -892,40 +912,40 @@ export type RegistrationPayload = {
 
 export type School = {
   __typename: 'School';
-  city?: Maybe<Scalars['String']>;
-  division?: Maybe<Scalars['String']>;
-  id: Scalars['Int'];
-  name: Scalars['String'];
-  phone?: Maybe<Scalars['String']>;
-  postalCode?: Maybe<Scalars['String']>;
-  province?: Maybe<Scalars['String']>;
+  city?: Maybe<Scalars['String']['output']>;
+  division?: Maybe<Scalars['String']['output']>;
+  id: Scalars['Int']['output'];
+  name: Scalars['String']['output'];
+  phone?: Maybe<Scalars['String']['output']>;
+  postalCode?: Maybe<Scalars['String']['output']>;
+  province?: Maybe<Scalars['String']['output']>;
   schoolGroups?: Maybe<Array<SchoolGroup>>;
-  streetName?: Maybe<Scalars['String']>;
-  streetNumber?: Maybe<Scalars['String']>;
+  streetName?: Maybe<Scalars['String']['output']>;
+  streetNumber?: Maybe<Scalars['String']['output']>;
 };
 
 export type SchoolGroup = {
   __typename: 'SchoolGroup';
-  chaperones?: Maybe<Scalars['Int']>;
-  conflictPerformers?: Maybe<Scalars['String']>;
-  earliestTime?: Maybe<Scalars['String']>;
-  groupSize?: Maybe<Scalars['Int']>;
-  id: Scalars['Int'];
-  latestTime?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  unavailable?: Maybe<Scalars['String']>;
-  wheelchairs?: Maybe<Scalars['Int']>;
+  chaperones?: Maybe<Scalars['Int']['output']>;
+  conflictPerformers?: Maybe<Scalars['String']['output']>;
+  earliestTime?: Maybe<Scalars['String']['output']>;
+  groupSize?: Maybe<Scalars['Int']['output']>;
+  id: Scalars['Int']['output'];
+  latestTime?: Maybe<Scalars['String']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+  unavailable?: Maybe<Scalars['String']['output']>;
+  wheelchairs?: Maybe<Scalars['Int']['output']>;
 };
 
 export type SchoolGroupInput = {
-  chaperones?: InputMaybe<Scalars['Int']>;
-  conflictPerformers?: InputMaybe<Scalars['String']>;
-  earliestTime?: InputMaybe<Scalars['String']>;
-  groupSize?: InputMaybe<Scalars['Int']>;
-  latestTime?: InputMaybe<Scalars['String']>;
-  name?: InputMaybe<Scalars['String']>;
-  unavailable?: InputMaybe<Scalars['String']>;
-  wheelchairs?: InputMaybe<Scalars['Int']>;
+  chaperones?: InputMaybe<Scalars['Int']['input']>;
+  conflictPerformers?: InputMaybe<Scalars['String']['input']>;
+  earliestTime?: InputMaybe<Scalars['String']['input']>;
+  groupSize?: InputMaybe<Scalars['Int']['input']>;
+  latestTime?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  unavailable?: InputMaybe<Scalars['String']['input']>;
+  wheelchairs?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type SchoolGroupPayload = {
@@ -935,14 +955,14 @@ export type SchoolGroupPayload = {
 };
 
 export type SchoolInput = {
-  city?: InputMaybe<Scalars['String']>;
-  division?: InputMaybe<Scalars['String']>;
-  name?: InputMaybe<Scalars['String']>;
-  phone?: InputMaybe<Scalars['String']>;
-  postalCode?: InputMaybe<Scalars['String']>;
-  province?: InputMaybe<Scalars['String']>;
-  streetName?: InputMaybe<Scalars['String']>;
-  streetNumber?: InputMaybe<Scalars['String']>;
+  city?: InputMaybe<Scalars['String']['input']>;
+  division?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  phone?: InputMaybe<Scalars['String']['input']>;
+  postalCode?: InputMaybe<Scalars['String']['input']>;
+  province?: InputMaybe<Scalars['String']['input']>;
+  streetName?: InputMaybe<Scalars['String']['input']>;
+  streetNumber?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type SchoolPayload = {
@@ -953,20 +973,20 @@ export type SchoolPayload = {
 
 export type Selection = {
   __typename: 'Selection';
-  composer?: Maybe<Scalars['String']>;
-  duration?: Maybe<Scalars['String']>;
-  id: Scalars['Int'];
-  largerWork?: Maybe<Scalars['String']>;
-  movement?: Maybe<Scalars['String']>;
-  title?: Maybe<Scalars['String']>;
+  composer?: Maybe<Scalars['String']['output']>;
+  duration?: Maybe<Scalars['String']['output']>;
+  id: Scalars['Int']['output'];
+  largerWork?: Maybe<Scalars['String']['output']>;
+  movement?: Maybe<Scalars['String']['output']>;
+  title?: Maybe<Scalars['String']['output']>;
 };
 
 export type SelectionInput = {
-  composer?: InputMaybe<Scalars['String']>;
-  duration?: InputMaybe<Scalars['String']>;
-  largerWork?: InputMaybe<Scalars['String']>;
-  movement?: InputMaybe<Scalars['String']>;
-  title?: InputMaybe<Scalars['String']>;
+  composer?: InputMaybe<Scalars['String']['input']>;
+  duration?: InputMaybe<Scalars['String']['input']>;
+  largerWork?: InputMaybe<Scalars['String']['input']>;
+  movement?: InputMaybe<Scalars['String']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type SelectionPayload = {
@@ -977,32 +997,32 @@ export type SelectionPayload = {
 
 export type Subdiscipline = {
   __typename: 'Subdiscipline';
-  description?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']['output']>;
   discipline?: Maybe<Discipline>;
   festivalClasses?: Maybe<Array<FestivalClass>>;
-  id: Scalars['Int'];
+  id: Scalars['Int']['output'];
   levels?: Maybe<Array<Level>>;
-  maxPerformers?: Maybe<Scalars['Int']>;
-  minPerformers?: Maybe<Scalars['Int']>;
-  name: Scalars['String'];
+  maxPerformers?: Maybe<Scalars['Int']['output']>;
+  minPerformers?: Maybe<Scalars['Int']['output']>;
+  name: Scalars['String']['output'];
   performerType: PerformerType;
-  price?: Maybe<Scalars['Decimal']>;
+  price?: Maybe<Scalars['Decimal']['output']>;
 };
 
 
 export type SubdisciplinefestivalClassesArgs = {
-  categoryID?: InputMaybe<Scalars['Int']>;
-  levelID?: InputMaybe<Scalars['Int']>;
+  categoryID?: InputMaybe<Scalars['Int']['input']>;
+  levelID?: InputMaybe<Scalars['Int']['input']>;
   performerType?: InputMaybe<PerformerType>;
 };
 
 export type SubdisciplineInput = {
-  description?: InputMaybe<Scalars['String']>;
-  maxPerformers?: InputMaybe<Scalars['Int']>;
-  minPerformers?: InputMaybe<Scalars['Int']>;
-  name: Scalars['String'];
+  description?: InputMaybe<Scalars['String']['input']>;
+  maxPerformers?: InputMaybe<Scalars['Int']['input']>;
+  minPerformers?: InputMaybe<Scalars['Int']['input']>;
+  name: Scalars['String']['input'];
   performerType: PerformerType;
-  price?: InputMaybe<Scalars['Decimal']>;
+  price?: InputMaybe<Scalars['Decimal']['input']>;
 };
 
 export type SubdisciplinePayload = {
@@ -1013,9 +1033,9 @@ export type SubdisciplinePayload = {
 
 export type Submission = {
   __typename: 'Submission';
-  confirmation: Scalars['String'];
-  payedAmt?: Maybe<Scalars['Decimal']>;
-  submittedAt: Scalars['DateTime'];
+  confirmation: Scalars['String']['output'];
+  payedAmt?: Maybe<Scalars['Decimal']['output']>;
+  submittedAt: Scalars['DateTime']['output'];
 };
 
 export type SubmissionPayload = {
@@ -1026,32 +1046,32 @@ export type SubmissionPayload = {
 
 export type Teacher = {
   __typename: 'Teacher';
-  apartment?: Maybe<Scalars['String']>;
-  city?: Maybe<Scalars['String']>;
-  email?: Maybe<Scalars['String']>;
-  firstName?: Maybe<Scalars['String']>;
-  id: Scalars['Int'];
-  lastName?: Maybe<Scalars['String']>;
-  phone?: Maybe<Scalars['String']>;
-  postalCode?: Maybe<Scalars['String']>;
-  prefix?: Maybe<Scalars['String']>;
-  province?: Maybe<Scalars['String']>;
-  streetName?: Maybe<Scalars['String']>;
-  streetNumber?: Maybe<Scalars['String']>;
+  apartment?: Maybe<Scalars['String']['output']>;
+  city?: Maybe<Scalars['String']['output']>;
+  email?: Maybe<Scalars['String']['output']>;
+  firstName?: Maybe<Scalars['String']['output']>;
+  id: Scalars['Int']['output'];
+  lastName?: Maybe<Scalars['String']['output']>;
+  phone?: Maybe<Scalars['String']['output']>;
+  postalCode?: Maybe<Scalars['String']['output']>;
+  prefix?: Maybe<Scalars['String']['output']>;
+  province?: Maybe<Scalars['String']['output']>;
+  streetName?: Maybe<Scalars['String']['output']>;
+  streetNumber?: Maybe<Scalars['String']['output']>;
 };
 
 export type TeacherInput = {
-  apartment?: InputMaybe<Scalars['String']>;
-  city?: InputMaybe<Scalars['String']>;
-  email?: InputMaybe<Scalars['String']>;
-  firstName?: InputMaybe<Scalars['String']>;
-  lastName?: InputMaybe<Scalars['String']>;
-  phone?: InputMaybe<Scalars['String']>;
-  postalCode?: InputMaybe<Scalars['String']>;
-  prefix?: InputMaybe<Scalars['String']>;
-  province?: InputMaybe<Scalars['String']>;
-  streetName?: InputMaybe<Scalars['String']>;
-  streetNumber?: InputMaybe<Scalars['String']>;
+  apartment?: InputMaybe<Scalars['String']['input']>;
+  city?: InputMaybe<Scalars['String']['input']>;
+  email?: InputMaybe<Scalars['String']['input']>;
+  firstName?: InputMaybe<Scalars['String']['input']>;
+  lastName?: InputMaybe<Scalars['String']['input']>;
+  phone?: InputMaybe<Scalars['String']['input']>;
+  postalCode?: InputMaybe<Scalars['String']['input']>;
+  prefix?: InputMaybe<Scalars['String']['input']>;
+  province?: InputMaybe<Scalars['String']['input']>;
+  streetName?: InputMaybe<Scalars['String']['input']>;
+  streetNumber?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type TeacherPayload = {
@@ -1062,15 +1082,15 @@ export type TeacherPayload = {
 
 export type Trophy = {
   __typename: 'Trophy';
-  description?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']['output']>;
   festivalClasses?: Maybe<Array<FestivalClass>>;
-  id: Scalars['Int'];
-  name: Scalars['String'];
+  id: Scalars['Int']['output'];
+  name: Scalars['String']['output'];
 };
 
 export type TrophyInput = {
-  description?: InputMaybe<Scalars['String']>;
-  name: Scalars['String'];
+  description?: InputMaybe<Scalars['String']['input']>;
+  name: Scalars['String']['input'];
 };
 
 export type TrophyPayload = {
@@ -1081,26 +1101,26 @@ export type TrophyPayload = {
 
 export type User = {
   __typename: 'User';
-  admin: Scalars['Boolean'];
-  apartment?: Maybe<Scalars['String']>;
-  city?: Maybe<Scalars['String']>;
-  email: Scalars['String'];
-  firstName?: Maybe<Scalars['String']>;
-  id: Scalars['Int'];
-  lastName?: Maybe<Scalars['String']>;
-  phone?: Maybe<Scalars['String']>;
-  postalCode?: Maybe<Scalars['String']>;
-  province?: Maybe<Scalars['String']>;
+  admin: Scalars['Boolean']['output'];
+  apartment?: Maybe<Scalars['String']['output']>;
+  city?: Maybe<Scalars['String']['output']>;
+  email: Scalars['String']['output'];
+  firstName?: Maybe<Scalars['String']['output']>;
+  id: Scalars['Int']['output'];
+  lastName?: Maybe<Scalars['String']['output']>;
+  phone?: Maybe<Scalars['String']['output']>;
+  postalCode?: Maybe<Scalars['String']['output']>;
+  province?: Maybe<Scalars['String']['output']>;
   registrations?: Maybe<Array<Registration>>;
-  staff: Scalars['Boolean'];
-  streetName?: Maybe<Scalars['String']>;
-  streetNumber?: Maybe<Scalars['String']>;
+  staff: Scalars['Boolean']['output'];
+  streetName?: Maybe<Scalars['String']['output']>;
+  streetNumber?: Maybe<Scalars['String']['output']>;
 };
 
 export type UserError = {
   __typename: 'UserError';
-  field: Array<Scalars['String']>;
-  message: Scalars['String'];
+  field: Array<Scalars['String']['output']>;
+  message: Scalars['String']['output'];
 };
 
 export type UserPayload = {
@@ -1110,21 +1130,21 @@ export type UserPayload = {
 };
 
 export type ClassCreateMutationVariables = Exact<{
-  registrationId: Scalars['Int'];
+  registrationId: Scalars['Int']['input'];
 }>;
 
 
 export type ClassCreateMutation = { __typename: 'Mutation', registeredClassCreate: { __typename: 'RegisteredClassPayload', registeredClass?: { __typename: 'RegisteredClass', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type ClassDeleteMutationVariables = Exact<{
-  registeredClassId: Scalars['Int'];
+  registeredClassId: Scalars['Int']['input'];
 }>;
 
 
 export type ClassDeleteMutation = { __typename: 'Mutation', registeredClassDelete: { __typename: 'RegisteredClassPayload', registeredClass?: { __typename: 'RegisteredClass', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type ClassUpdateMutationVariables = Exact<{
-  registeredClassId: Scalars['Int'];
+  registeredClassId: Scalars['Int']['input'];
   registeredClass: RegisteredClassInput;
 }>;
 
@@ -1132,21 +1152,21 @@ export type ClassUpdateMutationVariables = Exact<{
 export type ClassUpdateMutation = { __typename: 'Mutation', registeredClassUpdate: { __typename: 'RegisteredClassPayload', registeredClass?: { __typename: 'RegisteredClass', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type CommunityCreateMutationVariables = Exact<{
-  registrationId: Scalars['Int'];
+  registrationId: Scalars['Int']['input'];
 }>;
 
 
 export type CommunityCreateMutation = { __typename: 'Mutation', communityCreate: { __typename: 'CommunityPayload', community?: { __typename: 'Community', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type CommunityDeleteMutationVariables = Exact<{
-  communityId: Scalars['Int'];
+  communityId: Scalars['Int']['input'];
 }>;
 
 
 export type CommunityDeleteMutation = { __typename: 'Mutation', communityDelete: { __typename: 'CommunityPayload', community?: { __typename: 'Community', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type CommunityUpdateMutationVariables = Exact<{
-  communityId: Scalars['Int'];
+  communityId: Scalars['Int']['input'];
   community: CommunityInput;
 }>;
 
@@ -1154,21 +1174,21 @@ export type CommunityUpdateMutationVariables = Exact<{
 export type CommunityUpdateMutation = { __typename: 'Mutation', communityUpdate: { __typename: 'CommunityPayload', community?: { __typename: 'Community', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type GroupCreateMutationVariables = Exact<{
-  registrationId: Scalars['Int'];
+  registrationId: Scalars['Int']['input'];
 }>;
 
 
 export type GroupCreateMutation = { __typename: 'Mutation', groupCreate: { __typename: 'GroupPayload', group?: { __typename: 'Group', id: number } | null, userErrors?: Array<{ __typename: 'UserError', message: string }> | null } };
 
 export type GroupDeleteMutationVariables = Exact<{
-  groupId: Scalars['Int'];
+  groupId: Scalars['Int']['input'];
 }>;
 
 
 export type GroupDeleteMutation = { __typename: 'Mutation', groupDelete: { __typename: 'GroupPayload', group?: { __typename: 'Group', id: number } | null, userErrors?: Array<{ __typename: 'UserError', message: string }> | null } };
 
 export type GroupUpdateMutationVariables = Exact<{
-  groupId: Scalars['Int'];
+  groupId: Scalars['Int']['input'];
   group: GroupInput;
 }>;
 
@@ -1176,21 +1196,21 @@ export type GroupUpdateMutationVariables = Exact<{
 export type GroupUpdateMutation = { __typename: 'Mutation', groupUpdate: { __typename: 'GroupPayload', group?: { __typename: 'Group', id: number } | null, userErrors?: Array<{ __typename: 'UserError', message: string }> | null } };
 
 export type PerformerCreateMutationVariables = Exact<{
-  registrationId: Scalars['Int'];
+  registrationId: Scalars['Int']['input'];
 }>;
 
 
 export type PerformerCreateMutation = { __typename: 'Mutation', performerCreate: { __typename: 'PerformerPayload', performer?: { __typename: 'Performer', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type PerformerDeleteMutationVariables = Exact<{
-  performerId: Scalars['Int'];
+  performerId: Scalars['Int']['input'];
 }>;
 
 
 export type PerformerDeleteMutation = { __typename: 'Mutation', performerDelete: { __typename: 'PerformerPayload', performer?: { __typename: 'Performer', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type PerformerUpdateMutationVariables = Exact<{
-  performerId: Scalars['Int'];
+  performerId: Scalars['Int']['input'];
   performer: PerformerInput;
 }>;
 
@@ -1199,21 +1219,21 @@ export type PerformerUpdateMutation = { __typename: 'Mutation', performerUpdate:
 
 export type RegistrationCreateMutationVariables = Exact<{
   performerType: PerformerType;
-  label: Scalars['String'];
+  label: Scalars['String']['input'];
 }>;
 
 
 export type RegistrationCreateMutation = { __typename: 'Mutation', registrationCreate: { __typename: 'RegistrationPayload', registration?: { __typename: 'Registration', id: number, label?: string | null, performerType: PerformerType } | null, userErrors?: Array<{ __typename: 'UserError', message: string }> | null } };
 
 export type RegistrationDeleteMutationVariables = Exact<{
-  registrationId: Scalars['Int'];
+  registrationId: Scalars['Int']['input'];
 }>;
 
 
 export type RegistrationDeleteMutation = { __typename: 'Mutation', registrationDelete: { __typename: 'RegistrationPayload', registration?: { __typename: 'Registration', id: number } | null, userErrors?: Array<{ __typename: 'UserError', message: string }> | null } };
 
 export type RegistrationUpdateMutationVariables = Exact<{
-  registrationId: Scalars['Int'];
+  registrationId: Scalars['Int']['input'];
   registrationInput: RegistrationInput;
 }>;
 
@@ -1221,35 +1241,35 @@ export type RegistrationUpdateMutationVariables = Exact<{
 export type RegistrationUpdateMutation = { __typename: 'Mutation', registrationUpdate: { __typename: 'RegistrationPayload', registration?: { __typename: 'Registration', id: number } | null, userErrors?: Array<{ __typename: 'UserError', message: string }> | null } };
 
 export type SchoolCreateMutationVariables = Exact<{
-  registrationId: Scalars['Int'];
+  registrationId: Scalars['Int']['input'];
 }>;
 
 
 export type SchoolCreateMutation = { __typename: 'Mutation', schoolCreate: { __typename: 'SchoolPayload', school?: { __typename: 'School', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type SchoolDeleteMutationVariables = Exact<{
-  schoolId: Scalars['Int'];
+  schoolId: Scalars['Int']['input'];
 }>;
 
 
 export type SchoolDeleteMutation = { __typename: 'Mutation', schoolDelete: { __typename: 'SchoolPayload', school?: { __typename: 'School', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type SchoolGroupCreateMutationVariables = Exact<{
-  schoolId: Scalars['Int'];
+  schoolId: Scalars['Int']['input'];
 }>;
 
 
 export type SchoolGroupCreateMutation = { __typename: 'Mutation', schoolGroupCreate: { __typename: 'SchoolGroupPayload', schoolGroup?: { __typename: 'SchoolGroup', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type SchoolGroupDeleteMutationVariables = Exact<{
-  schoolGroupId: Scalars['Int'];
+  schoolGroupId: Scalars['Int']['input'];
 }>;
 
 
 export type SchoolGroupDeleteMutation = { __typename: 'Mutation', schoolGroupDelete: { __typename: 'SchoolGroupPayload', schoolGroup?: { __typename: 'SchoolGroup', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type SchoolGroupUpdateMutationVariables = Exact<{
-  schoolGroupId: Scalars['Int'];
+  schoolGroupId: Scalars['Int']['input'];
   schoolGroup: SchoolGroupInput;
 }>;
 
@@ -1257,7 +1277,7 @@ export type SchoolGroupUpdateMutationVariables = Exact<{
 export type SchoolGroupUpdateMutation = { __typename: 'Mutation', schoolGroupUpdate: { __typename: 'SchoolGroupPayload', schoolGroup?: { __typename: 'SchoolGroup', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type SchoolUpdateMutationVariables = Exact<{
-  schoolId: Scalars['Int'];
+  schoolId: Scalars['Int']['input'];
   school: SchoolInput;
 }>;
 
@@ -1265,21 +1285,21 @@ export type SchoolUpdateMutationVariables = Exact<{
 export type SchoolUpdateMutation = { __typename: 'Mutation', schoolUpdate: { __typename: 'SchoolPayload', school?: { __typename: 'School', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type SelectionCreateMutationVariables = Exact<{
-  registeredClassId: Scalars['Int'];
+  registeredClassId: Scalars['Int']['input'];
 }>;
 
 
 export type SelectionCreateMutation = { __typename: 'Mutation', selectionCreate: { __typename: 'SelectionPayload', selection?: { __typename: 'Selection', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type SelectionDeleteMutationVariables = Exact<{
-  selectionId: Scalars['Int'];
+  selectionId: Scalars['Int']['input'];
 }>;
 
 
 export type SelectionDeleteMutation = { __typename: 'Mutation', selectionDelete: { __typename: 'SelectionPayload', selection?: { __typename: 'Selection', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type SelectionUpdateMutationVariables = Exact<{
-  selectionId: Scalars['Int'];
+  selectionId: Scalars['Int']['input'];
   selection: SelectionInput;
 }>;
 
@@ -1287,7 +1307,7 @@ export type SelectionUpdateMutationVariables = Exact<{
 export type SelectionUpdateMutation = { __typename: 'Mutation', selectionUpdate: { __typename: 'SelectionPayload', selection?: { __typename: 'Selection', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type TeacherCreateMutationVariables = Exact<{
-  registrationId: Scalars['Int'];
+  registrationId: Scalars['Int']['input'];
   teacher: TeacherInput;
 }>;
 
@@ -1295,14 +1315,14 @@ export type TeacherCreateMutationVariables = Exact<{
 export type TeacherCreateMutation = { __typename: 'Mutation', teacherCreate: { __typename: 'TeacherPayload', teacher?: { __typename: 'Teacher', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type TeacherDeleteMutationVariables = Exact<{
-  teacherId: Scalars['Int'];
+  teacherId: Scalars['Int']['input'];
 }>;
 
 
 export type TeacherDeleteMutation = { __typename: 'Mutation', teacherDelete: { __typename: 'TeacherPayload', teacher?: { __typename: 'Teacher', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type TeacherUpdateMutationVariables = Exact<{
-  teacherId: Scalars['Int'];
+  teacherId: Scalars['Int']['input'];
   teacher: TeacherInput;
 }>;
 
@@ -1324,7 +1344,7 @@ export type SignUpMutationVariables = Exact<{
 export type SignUpMutation = { __typename: 'Mutation', signup: { __typename: 'AuthPayload', diatonicToken?: string | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type CommunityInfoQueryVariables = Exact<{
-  registrationId: Scalars['Int'];
+  registrationId: Scalars['Int']['input'];
 }>;
 
 
@@ -1338,57 +1358,57 @@ export type DisciplinesByTypeQueryVariables = Exact<{
 export type DisciplinesByTypeQuery = { __typename: 'Query', disciplines: Array<{ __typename: 'Discipline', id?: number | null, name?: string | null }> };
 
 export type GroupInfoQueryVariables = Exact<{
-  registrationId: Scalars['Int'];
+  registrationId: Scalars['Int']['input'];
 }>;
 
 
 export type GroupInfoQuery = { __typename: 'Query', registration: { __typename: 'Registration', group?: { __typename: 'Group', id: number, age?: number | null, groupType?: string | null, instruments?: string | null, name?: string | null, numberOfPerformers?: number | null } | null } };
 
 export type PerformerInfoQueryVariables = Exact<{
-  registrationId: Scalars['Int'];
+  registrationId: Scalars['Int']['input'];
 }>;
 
 
 export type PerformerInfoQuery = { __typename: 'Query', registration: { __typename: 'Registration', performers?: Array<{ __typename: 'Performer', id: number, firstName?: string | null, lastName?: string | null, age?: number | null, apartment?: string | null, streetNumber?: string | null, streetName?: string | null, city?: string | null, province?: string | null, postalCode?: string | null, phone?: string | null, email?: string | null, instrument?: string | null, level?: string | null }> | null } };
 
 export type RegisteredClassesQueryVariables = Exact<{
-  registrationId: Scalars['Int'];
+  registrationId: Scalars['Int']['input'];
 }>;
 
 
 export type RegisteredClassesQuery = { __typename: 'Query', registration: { __typename: 'Registration', registeredClasses?: Array<{ __typename: 'RegisteredClass', category?: string | null, classNumber?: string | null, discipline?: string | null, id: number, level?: string | null, minSelections?: number | null, maxSelections?: number | null, numberOfSelections?: number | null, price?: any | null, subdiscipline?: string | null, schoolGroupID?: number | null, selections?: Array<{ __typename: 'Selection', composer?: string | null, duration?: string | null, id: number, largerWork?: string | null, movement?: string | null, title?: string | null }> | null }> | null } };
 
 export type SchoolGroupInfoQueryVariables = Exact<{
-  registrationId: Scalars['Int'];
+  registrationId: Scalars['Int']['input'];
 }>;
 
 
 export type SchoolGroupInfoQuery = { __typename: 'Query', registration: { __typename: 'Registration', school?: { __typename: 'School', schoolGroups?: Array<{ __typename: 'SchoolGroup', id: number, name?: string | null, groupSize?: number | null, chaperones?: number | null, wheelchairs?: number | null, earliestTime?: string | null, latestTime?: string | null, unavailable?: string | null, conflictPerformers?: string | null }> | null } | null } };
 
 export type SchoolInfoQueryVariables = Exact<{
-  registrationId: Scalars['Int'];
+  registrationId: Scalars['Int']['input'];
 }>;
 
 
 export type SchoolInfoQuery = { __typename: 'Query', registration: { __typename: 'Registration', school?: { __typename: 'School', id: number, name: string, division?: string | null, streetNumber?: string | null, streetName?: string | null, city?: string | null, province?: string | null, postalCode?: string | null, phone?: string | null } | null } };
 
 export type TeacherInfoQueryVariables = Exact<{
-  registrationId: Scalars['Int'];
+  registrationId: Scalars['Int']['input'];
 }>;
 
 
 export type TeacherInfoQuery = { __typename: 'Query', registration: { __typename: 'Registration', teacher?: { __typename: 'Teacher', id: number, prefix?: string | null, firstName?: string | null, lastName?: string | null, apartment?: string | null, streetNumber?: string | null, streetName?: string | null, city?: string | null, province?: string | null, postalCode?: string | null, phone?: string | null, email?: string | null } | null } };
 
 export type CategoriesQueryVariables = Exact<{
-  levelId?: InputMaybe<Scalars['Int']>;
-  subdisciplineId?: InputMaybe<Scalars['Int']>;
+  levelId?: InputMaybe<Scalars['Int']['input']>;
+  subdisciplineId?: InputMaybe<Scalars['Int']['input']>;
 }>;
 
 
 export type CategoriesQuery = { __typename: 'Query', categories: Array<{ __typename: 'Category', id: number, name: string, description?: string | null, requiredComposer?: string | null }> };
 
 export type ClassByNumberQueryVariables = Exact<{
-  festivalClassNumber: Scalars['String'];
+  festivalClassNumber: Scalars['String']['input'];
 }>;
 
 
@@ -1413,14 +1433,27 @@ export type DisciplinesQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type DisciplinesQuery = { __typename: 'Query', disciplines: Array<{ __typename: 'Discipline', id?: number | null, name?: string | null }> };
 
+export type FieldConfigQueryVariables = Exact<{
+  fieldName: Scalars['String']['input'];
+  tableName: Scalars['String']['input'];
+}>;
+
+
+export type FieldConfigQuery = { __typename: 'Query', fieldConfig: { __typename: 'FieldConfig', id: number, tableName?: string | null, fieldName?: string | null, customField?: boolean | null, customFieldType?: string | null, submissionRequired?: boolean | null } };
+
+export type FieldConfigsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type FieldConfigsQuery = { __typename: 'Query', fieldConfigs: Array<{ __typename: 'FieldConfig', id: number, tableName?: string | null, fieldName?: string | null, submissionRequired?: boolean | null, customField?: boolean | null, customFieldType?: string | null }> };
+
 export type InstrumentsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type InstrumentsQuery = { __typename: 'Query', instruments: Array<{ __typename: 'Instrument', id: number, name: string }> };
 
 export type LevelsQueryVariables = Exact<{
-  subdisciplineId?: InputMaybe<Scalars['Int']>;
-  categoryId?: InputMaybe<Scalars['Int']>;
+  subdisciplineId?: InputMaybe<Scalars['Int']['input']>;
+  categoryId?: InputMaybe<Scalars['Int']['input']>;
 }>;
 
 
@@ -1434,7 +1467,7 @@ export type RegistrationsQueryVariables = Exact<{
 export type RegistrationsQuery = { __typename: 'Query', registrations: Array<{ __typename: 'Registration', id: number, createdAt?: any | null, label?: string | null, performerType: PerformerType, submittedAt?: any | null, payedAmt?: any | null, totalAmt?: any | null, transactionInfo?: string | null, confirmation?: string | null }> };
 
 export type SubDisciplinesQueryVariables = Exact<{
-  disciplineId: Scalars['Int'];
+  disciplineId: Scalars['Int']['input'];
   performerType: PerformerType;
 }>;
 
@@ -1442,7 +1475,7 @@ export type SubDisciplinesQueryVariables = Exact<{
 export type SubDisciplinesQuery = { __typename: 'Query', subdisciplines: Array<{ __typename: 'Subdiscipline', id: number, name: string, description?: string | null }> };
 
 export type SubdisciplinesByTypeQueryVariables = Exact<{
-  disciplineId: Scalars['Int'];
+  disciplineId: Scalars['Int']['input'];
   performerType: PerformerType;
 }>;
 
@@ -1492,6 +1525,8 @@ export const ClassByNumberDocument = {"kind":"Document","definitions":[{"kind":"
 export const FestivalClassSearchDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FestivalClassSearch"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"festivalClassSearch"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"FestivalClassSearchArgs"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"festivalClassSearch"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"festivalClassSearch"},"value":{"kind":"Variable","name":{"kind":"Name","value":"festivalClassSearch"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"classNumber"}},{"kind":"Field","name":{"kind":"Name","value":"maxSelections"}},{"kind":"Field","name":{"kind":"Name","value":"minSelections"}},{"kind":"Field","name":{"kind":"Name","value":"requiredSelection"}},{"kind":"Field","name":{"kind":"Name","value":"performerType"}},{"kind":"Field","name":{"kind":"Name","value":"price"}},{"kind":"Field","name":{"kind":"Name","value":"subdiscipline"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"level"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"category"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"trophies"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}}]}}]}}]} as unknown as DocumentNode<FestivalClassSearchQuery, FestivalClassSearchQueryVariables>;
 export const FestivalClassesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FestivalClasses"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"performerType"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"PerformerType"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"festivalClasses"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"performerType"},"value":{"kind":"Variable","name":{"kind":"Name","value":"performerType"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"subdiscipline"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]} as unknown as DocumentNode<FestivalClassesQuery, FestivalClassesQueryVariables>;
 export const DisciplinesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Disciplines"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"disciplines"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]} as unknown as DocumentNode<DisciplinesQuery, DisciplinesQueryVariables>;
+export const FieldConfigDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FieldConfig"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"fieldName"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"tableName"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldConfig"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"fieldName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"fieldName"}}},{"kind":"Argument","name":{"kind":"Name","value":"tableName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"tableName"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"tableName"}},{"kind":"Field","name":{"kind":"Name","value":"fieldName"}},{"kind":"Field","name":{"kind":"Name","value":"customField"}},{"kind":"Field","name":{"kind":"Name","value":"customFieldType"}},{"kind":"Field","name":{"kind":"Name","value":"submissionRequired"}},{"kind":"Field","name":{"kind":"Name","value":"__typename"}}]}}]}}]} as unknown as DocumentNode<FieldConfigQuery, FieldConfigQueryVariables>;
+export const FieldConfigsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FieldConfigs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldConfigs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"tableName"}},{"kind":"Field","name":{"kind":"Name","value":"fieldName"}},{"kind":"Field","name":{"kind":"Name","value":"submissionRequired"}},{"kind":"Field","name":{"kind":"Name","value":"customField"}},{"kind":"Field","name":{"kind":"Name","value":"customFieldType"}},{"kind":"Field","name":{"kind":"Name","value":"__typename"}}]}}]}}]} as unknown as DocumentNode<FieldConfigsQuery, FieldConfigsQueryVariables>;
 export const InstrumentsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Instruments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"instruments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]} as unknown as DocumentNode<InstrumentsQuery, InstrumentsQueryVariables>;
 export const LevelsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Levels"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"subdisciplineId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"categoryId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"levels"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"categoryID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"categoryId"}}},{"kind":"Argument","name":{"kind":"Name","value":"subdisciplineID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"subdisciplineId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}}]}}]} as unknown as DocumentNode<LevelsQuery, LevelsQueryVariables>;
 export const RegistrationsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Registrations"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"performerType"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"PerformerType"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registrations"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"performerType"},"value":{"kind":"Variable","name":{"kind":"Name","value":"performerType"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"performerType"}},{"kind":"Field","name":{"kind":"Name","value":"submittedAt"}},{"kind":"Field","name":{"kind":"Name","value":"payedAmt"}},{"kind":"Field","name":{"kind":"Name","value":"totalAmt"}},{"kind":"Field","name":{"kind":"Name","value":"transactionInfo"}},{"kind":"Field","name":{"kind":"Name","value":"confirmation"}}]}}]}}]} as unknown as DocumentNode<RegistrationsQuery, RegistrationsQueryVariables>;

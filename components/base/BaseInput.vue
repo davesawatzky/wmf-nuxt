@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import type { StatusEnum } from '@/composables/types'
+  import { StatusEnum } from '@/composables/types'
 
   interface Props {
     type?: string
@@ -13,6 +13,11 @@
 
   const props = withDefaults(defineProps<Props>(), {
     type: 'text',
+    label: '',
+    helpMessage: undefined,
+    status: StatusEnum.null,
+    placeholder: '',
+    modelValue: '',
   })
 
   const emit = defineEmits<{

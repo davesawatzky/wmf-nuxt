@@ -1,0 +1,11 @@
+query FieldConfig($fieldName: String!, $tableName: String!) {
+  fieldConfig(fieldName: $fieldName, tableName: $tableName) {
+    id
+    tableName
+    fieldName
+    customField
+    customFieldType
+    submissionRequired
+    __typename
+  }
+}

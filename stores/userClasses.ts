@@ -176,7 +176,7 @@ export const useClasses = defineStore(
         let classField = null
         if (field && Object.keys(classProps).includes(field)) {
           classField = Object.fromEntries(
-            Array(Object.entries(classProps).find((item) => item[0] === field))
+            Array(Object.entries(classProps).find((item) => item[0] === field)!)
           )
         }
         classUpdate({
@@ -282,7 +282,7 @@ export const useClasses = defineStore(
         if (field && Object.keys(selectionProps).includes(field)) {
           selectionField = Object.fromEntries(
             Array(
-              Object.entries(selectionProps).find((item) => item[0] === field)
+              Object.entries(selectionProps).find((item) => item[0] === field)!
             )
           )
         }

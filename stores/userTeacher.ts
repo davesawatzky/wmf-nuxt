@@ -118,7 +118,7 @@ export const useTeacher = defineStore(
         let teacherField = null
         if (field && Object.keys(teachProps).includes(field)) {
           teacherField = Object.fromEntries(
-            Array(Object.entries(teachProps).find((item) => item[0] === field))
+            Array(Object.entries(teachProps).find((item) => item[0] === field)!)
           )
         }
         teacherUpdate({

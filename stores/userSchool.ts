@@ -107,7 +107,9 @@ export const useSchool = defineStore(
         let schoolField = null
         if (field && Object.keys(schoolProps).includes(field)) {
           schoolField = Object.fromEntries(
-            Array(Object.entries(schoolProps).find((item) => item[0] === field))
+            Array(
+              Object.entries(schoolProps).find((item) => item[0] === field)!
+            )
           )
         }
         schoolUpdate({

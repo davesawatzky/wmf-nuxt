@@ -96,7 +96,7 @@ export const useGroup = defineStore(
         let groupField = null
         if (field && Object.keys(groupProps).includes(field)) {
           groupField = Object.fromEntries(
-            Array(Object.entries(groupProps).find((item) => item[0] === field))
+            Array(Object.entries(groupProps).find((item) => item[0] === field)!)
           )
         }
         groupUpdate({

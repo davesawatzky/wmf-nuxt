@@ -10,6 +10,10 @@
     [key: string]: Component
   }
 
+  interface ErrorStoreField {
+    [key: string]: string
+  }
+
   definePageMeta({
     middleware: 'auth',
   })
@@ -30,7 +34,7 @@
   const Summary = <Component>resolveComponent('Summary')
 
   const registrationStore = useRegistration()
-  const errorStore = toRefs(useErrorStore())
+  const errorStore = useErrorStore()
   const appStore = useAppStore()
   const performerType = toRef(appStore.performerType)
   const currentTab = ref('')
@@ -43,7 +47,7 @@
   })
 
   let tabs = {} as DynamicComponent
-  let errorStoreFields = {}
+  let errorStoreFields = {} as ErrorStoreField
 
   function setTab(tab: string, index: number) {
     currentTab.value = tab
@@ -133,8 +137,10 @@
     console.log('count: ', count, 'tab: ', tab)
     fieldErrors.value[tab] = count ?? 0
     if (tab !== 'Summary') {
-      let field: string = errorStoreFields[tab]
-      errorStore[field].value = count
+      let field = errorStoreFields[
+        tab as keyof typeof errorStoreFields
+      ] as keyof typeof errorStore.errorField
+      errorStore.errorField[field] = count
     }
     fieldErrors.value['Summary'] = 0
   }
