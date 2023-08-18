@@ -67,11 +67,11 @@ export default defineNuxtConfig({
   typescript: {
     strict: true,
     typeCheck: true,
-    // tsConfig: {
-    //   compilerOptions: {
-    //     moduleResolution: 'bundler'
-    //   }
-    // }
+    tsConfig: {
+      compilerOptions: {
+        moduleResolution: 'bundler',
+      },
+    },
   },
   veeValidate: {
     autoImports: true,

@@ -14,6 +14,10 @@
     submitForm: [value: any]
   }>()
 
+  definePageMeta({
+    middleware: 'auth',
+  })
+
   const performerStore = usePerformers()
   const teacherStore = useTeacher()
   const groupStore = useGroup()
