@@ -172,38 +172,6 @@ export type FieldConfig = {
   tableName: Scalars['String']['output'];
 };
 
-export type FormError = {
-  __typename: 'FormError';
-  classErrors: Scalars['Int']['output'];
-  communityInfoErrors: Scalars['Int']['output'];
-  communityTeacherErrors: Scalars['Int']['output'];
-  groupInfoErrors: Scalars['Int']['output'];
-  groupPerformersErrors: Scalars['Int']['output'];
-  groupTeacherErrors: Scalars['Int']['output'];
-  id: Scalars['Int']['output'];
-  schoolGroupErrors: Scalars['Int']['output'];
-  schoolGroupsErrors: Scalars['Int']['output'];
-  schoolInfoErrors: Scalars['Int']['output'];
-  schoolTeacherErrors: Scalars['Int']['output'];
-  soloPerformerErrors: Scalars['Int']['output'];
-  soloTeacherErrors: Scalars['Int']['output'];
-};
-
-export type FormErrorInput = {
-  classErrors: Scalars['Int']['input'];
-  communityInfoErrors: Scalars['Int']['input'];
-  communityTeacherErrors: Scalars['Int']['input'];
-  groupInfoErrors: Scalars['Int']['input'];
-  groupPerformersErrors: Scalars['Int']['input'];
-  groupTeacherErrors: Scalars['Int']['input'];
-  schoolGroupErrors: Scalars['Int']['input'];
-  schoolGroupsErrors: Scalars['Int']['input'];
-  schoolInfoErrors: Scalars['Int']['input'];
-  schoolTeacherErrors: Scalars['Int']['input'];
-  soloPerformerErrors: Scalars['Int']['input'];
-  soloTeacherErrors: Scalars['Int']['input'];
-};
-
 export type Group = {
   __typename: 'Group';
   age?: Maybe<Scalars['Int']['output']>;
@@ -284,9 +252,6 @@ export type Mutation = {
   festivalClassCreate: FestivalClassPayload;
   festivalClassDelete: FestivalClassPayload;
   festivalClassUpdate: FestivalClassPayload;
-  formErrorCreate: FormError;
-  formErrorDelete: FormError;
-  formErrorUpdate: FormError;
   groupCreate: GroupPayload;
   groupDelete: GroupPayload;
   groupUpdate: GroupPayload;
@@ -393,23 +358,6 @@ export type MutationfestivalClassDeleteArgs = {
 export type MutationfestivalClassUpdateArgs = {
   festivalClass: FestivalClassInput;
   festivalClassID: Scalars['Int']['input'];
-};
-
-
-export type MutationformErrorCreateArgs = {
-  formErrorInput: FormErrorInput;
-  registrationID: Scalars['Int']['input'];
-};
-
-
-export type MutationformErrorDeleteArgs = {
-  formErrorID: Scalars['Int']['input'];
-};
-
-
-export type MutationformErrorUpdateArgs = {
-  formErrorID: Scalars['Int']['input'];
-  formErrorInput: FormErrorInput;
 };
 
 
@@ -697,8 +645,6 @@ export type Query = {
   festivalClasses: Array<FestivalClass>;
   fieldConfig: FieldConfig;
   fieldConfigs: Array<FieldConfig>;
-  formError: FormError;
-  formErrors: Array<FormError>;
   group: Group;
   groups: Array<Group>;
   instrument: Instrument;
@@ -782,17 +728,6 @@ export type QueryfestivalClassesArgs = {
 export type QueryfieldConfigArgs = {
   fieldName: Scalars['String']['input'];
   tableName: Scalars['String']['input'];
-};
-
-
-export type QueryformErrorArgs = {
-  formErrorID?: InputMaybe<Scalars['Int']['input']>;
-  registrationID?: InputMaybe<Scalars['Int']['input']>;
-};
-
-
-export type QueryformErrorsArgs = {
-  registrationID: Scalars['Int']['input'];
 };
 
 
@@ -947,7 +882,6 @@ export type Registration = {
   community?: Maybe<Community>;
   confirmation?: Maybe<Scalars['String']['output']>;
   createdAt?: Maybe<Scalars['DateTime']['output']>;
-  formError?: Maybe<FormError>;
   group?: Maybe<Group>;
   id: Scalars['Int']['output'];
   label?: Maybe<Scalars['String']['output']>;
@@ -1243,29 +1177,6 @@ export type CommunityUpdateMutationVariables = Exact<{
 
 export type CommunityUpdateMutation = { __typename: 'Mutation', communityUpdate: { __typename: 'CommunityPayload', community?: { __typename: 'Community', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
-export type FormErrorCreateMutationVariables = Exact<{
-  formErrorInput: FormErrorInput;
-  registrationId: Scalars['Int']['input'];
-}>;
-
-
-export type FormErrorCreateMutation = { __typename: 'Mutation', formErrorCreate: { __typename: 'FormError', id: number } };
-
-export type FormErrorDeleteMutationVariables = Exact<{
-  formErrorId: Scalars['Int']['input'];
-}>;
-
-
-export type FormErrorDeleteMutation = { __typename: 'Mutation', formErrorDelete: { __typename: 'FormError', id: number } };
-
-export type FormErrorUpdateMutationVariables = Exact<{
-  formErrorId: Scalars['Int']['input'];
-  formErrorInput: FormErrorInput;
-}>;
-
-
-export type FormErrorUpdateMutation = { __typename: 'Mutation', formErrorUpdate: { __typename: 'FormError', id: number, classErrors: number, communityInfoErrors: number, communityTeacherErrors: number, groupInfoErrors: number, groupPerformersErrors: number, groupTeacherErrors: number, schoolGroupErrors: number, schoolGroupsErrors: number, schoolInfoErrors: number, schoolTeacherErrors: number, soloPerformerErrors: number, soloTeacherErrors: number } };
-
 export type GroupCreateMutationVariables = Exact<{
   registrationId: Scalars['Int']['input'];
 }>;
@@ -1539,14 +1450,6 @@ export type FieldConfigsQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type FieldConfigsQuery = { __typename: 'Query', fieldConfigs: Array<{ __typename: 'FieldConfig', id: number, tableName: string, fieldName: string, submissionRequired: boolean, customField: boolean, customFieldType?: string | null }> };
 
-export type FormErrorQueryVariables = Exact<{
-  registrationId?: InputMaybe<Scalars['Int']['input']>;
-  formErrorId?: InputMaybe<Scalars['Int']['input']>;
-}>;
-
-
-export type FormErrorQuery = { __typename: 'Query', formError: { __typename: 'FormError', id: number, classErrors: number, communityInfoErrors: number, communityTeacherErrors: number, groupInfoErrors: number, groupPerformersErrors: number, groupTeacherErrors: number, schoolGroupErrors: number, schoolGroupsErrors: number, schoolInfoErrors: number, schoolTeacherErrors: number, soloPerformerErrors: number, soloTeacherErrors: number } };
-
 export type InstrumentsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -1590,9 +1493,6 @@ export const ClassUpdateDocument = {"kind":"Document","definitions":[{"kind":"Op
 export const CommunityCreateDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CommunityCreate"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"registrationId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"communityCreate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"registrationID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"registrationId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"community"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"userErrors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]} as unknown as DocumentNode<CommunityCreateMutation, CommunityCreateMutationVariables>;
 export const CommunityDeleteDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CommunityDelete"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"communityId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"communityDelete"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"communityID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"communityId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"community"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"userErrors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]} as unknown as DocumentNode<CommunityDeleteMutation, CommunityDeleteMutationVariables>;
 export const CommunityUpdateDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CommunityUpdate"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"communityId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"community"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CommunityInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"communityUpdate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"communityID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"communityId"}}},{"kind":"Argument","name":{"kind":"Name","value":"communityInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"community"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"community"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"userErrors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]} as unknown as DocumentNode<CommunityUpdateMutation, CommunityUpdateMutationVariables>;
-export const FormErrorCreateDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"FormErrorCreate"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"formErrorInput"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"FormErrorInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"registrationId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"formErrorCreate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"formErrorInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"formErrorInput"}}},{"kind":"Argument","name":{"kind":"Name","value":"registrationID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"registrationId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<FormErrorCreateMutation, FormErrorCreateMutationVariables>;
-export const FormErrorDeleteDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"FormErrorDelete"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"formErrorId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"formErrorDelete"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"formErrorID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"formErrorId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<FormErrorDeleteMutation, FormErrorDeleteMutationVariables>;
-export const FormErrorUpdateDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"FormErrorUpdate"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"formErrorId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"formErrorInput"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"FormErrorInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"formErrorUpdate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"formErrorID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"formErrorId"}}},{"kind":"Argument","name":{"kind":"Name","value":"formErrorInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"formErrorInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"classErrors"}},{"kind":"Field","name":{"kind":"Name","value":"communityInfoErrors"}},{"kind":"Field","name":{"kind":"Name","value":"communityTeacherErrors"}},{"kind":"Field","name":{"kind":"Name","value":"groupInfoErrors"}},{"kind":"Field","name":{"kind":"Name","value":"groupPerformersErrors"}},{"kind":"Field","name":{"kind":"Name","value":"groupTeacherErrors"}},{"kind":"Field","name":{"kind":"Name","value":"schoolGroupErrors"}},{"kind":"Field","name":{"kind":"Name","value":"schoolGroupsErrors"}},{"kind":"Field","name":{"kind":"Name","value":"schoolInfoErrors"}},{"kind":"Field","name":{"kind":"Name","value":"schoolTeacherErrors"}},{"kind":"Field","name":{"kind":"Name","value":"soloPerformerErrors"}},{"kind":"Field","name":{"kind":"Name","value":"soloTeacherErrors"}},{"kind":"Field","name":{"kind":"Name","value":"__typename"}}]}}]}}]} as unknown as DocumentNode<FormErrorUpdateMutation, FormErrorUpdateMutationVariables>;
 export const GroupCreateDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"GroupCreate"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"registrationId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"groupCreate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"registrationID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"registrationId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"userErrors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]} as unknown as DocumentNode<GroupCreateMutation, GroupCreateMutationVariables>;
 export const GroupDeleteDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"GroupDelete"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"groupId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"groupDelete"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"groupID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"groupId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"userErrors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]} as unknown as DocumentNode<GroupDeleteMutation, GroupDeleteMutationVariables>;
 export const GroupUpdateDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"GroupUpdate"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"groupId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"group"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"GroupInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"groupUpdate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"groupID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"groupId"}}},{"kind":"Argument","name":{"kind":"Name","value":"groupInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"group"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"userErrors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]} as unknown as DocumentNode<GroupUpdateMutation, GroupUpdateMutationVariables>;
@@ -1631,7 +1531,6 @@ export const FestivalClassesDocument = {"kind":"Document","definitions":[{"kind"
 export const DisciplinesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Disciplines"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"disciplines"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]} as unknown as DocumentNode<DisciplinesQuery, DisciplinesQueryVariables>;
 export const FieldConfigDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FieldConfig"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"fieldName"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"tableName"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldConfig"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"fieldName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"fieldName"}}},{"kind":"Argument","name":{"kind":"Name","value":"tableName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"tableName"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"tableName"}},{"kind":"Field","name":{"kind":"Name","value":"fieldName"}},{"kind":"Field","name":{"kind":"Name","value":"customField"}},{"kind":"Field","name":{"kind":"Name","value":"customFieldType"}},{"kind":"Field","name":{"kind":"Name","value":"submissionRequired"}},{"kind":"Field","name":{"kind":"Name","value":"__typename"}}]}}]}}]} as unknown as DocumentNode<FieldConfigQuery, FieldConfigQueryVariables>;
 export const FieldConfigsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FieldConfigs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldConfigs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"tableName"}},{"kind":"Field","name":{"kind":"Name","value":"fieldName"}},{"kind":"Field","name":{"kind":"Name","value":"submissionRequired"}},{"kind":"Field","name":{"kind":"Name","value":"customField"}},{"kind":"Field","name":{"kind":"Name","value":"customFieldType"}},{"kind":"Field","name":{"kind":"Name","value":"__typename"}}]}}]}}]} as unknown as DocumentNode<FieldConfigsQuery, FieldConfigsQueryVariables>;
-export const FormErrorDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FormError"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"registrationId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"formErrorId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"formError"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"formErrorID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"formErrorId"}}},{"kind":"Argument","name":{"kind":"Name","value":"registrationID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"registrationId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"classErrors"}},{"kind":"Field","name":{"kind":"Name","value":"communityInfoErrors"}},{"kind":"Field","name":{"kind":"Name","value":"communityTeacherErrors"}},{"kind":"Field","name":{"kind":"Name","value":"groupInfoErrors"}},{"kind":"Field","name":{"kind":"Name","value":"groupPerformersErrors"}},{"kind":"Field","name":{"kind":"Name","value":"groupTeacherErrors"}},{"kind":"Field","name":{"kind":"Name","value":"schoolGroupErrors"}},{"kind":"Field","name":{"kind":"Name","value":"schoolGroupsErrors"}},{"kind":"Field","name":{"kind":"Name","value":"schoolInfoErrors"}},{"kind":"Field","name":{"kind":"Name","value":"schoolTeacherErrors"}},{"kind":"Field","name":{"kind":"Name","value":"soloPerformerErrors"}},{"kind":"Field","name":{"kind":"Name","value":"soloTeacherErrors"}},{"kind":"Field","name":{"kind":"Name","value":"__typename"}}]}}]}}]} as unknown as DocumentNode<FormErrorQuery, FormErrorQueryVariables>;
 export const InstrumentsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Instruments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"instruments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]} as unknown as DocumentNode<InstrumentsQuery, InstrumentsQueryVariables>;
 export const LevelsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Levels"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"subdisciplineId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"categoryId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"levels"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"categoryID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"categoryId"}}},{"kind":"Argument","name":{"kind":"Name","value":"subdisciplineID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"subdisciplineId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}}]}}]} as unknown as DocumentNode<LevelsQuery, LevelsQueryVariables>;
 export const RegistrationsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Registrations"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"performerType"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"PerformerType"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registrations"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"performerType"},"value":{"kind":"Variable","name":{"kind":"Name","value":"performerType"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"performerType"}},{"kind":"Field","name":{"kind":"Name","value":"submittedAt"}},{"kind":"Field","name":{"kind":"Name","value":"payedAmt"}},{"kind":"Field","name":{"kind":"Name","value":"totalAmt"}},{"kind":"Field","name":{"kind":"Name","value":"transactionInfo"}},{"kind":"Field","name":{"kind":"Name","value":"confirmation"}}]}}]}}]} as unknown as DocumentNode<RegistrationsQuery, RegistrationsQueryVariables>;

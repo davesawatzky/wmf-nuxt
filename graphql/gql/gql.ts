@@ -19,9 +19,6 @@ const documents = {
     "mutation CommunityCreate($registrationId: Int!) {\n  communityCreate(registrationID: $registrationId) {\n    community {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.CommunityCreateDocument,
     "mutation CommunityDelete($communityId: Int!) {\n  communityDelete(communityID: $communityId) {\n    community {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.CommunityDeleteDocument,
     "mutation CommunityUpdate($communityId: Int!, $community: CommunityInput!) {\n  communityUpdate(communityID: $communityId, communityInput: $community) {\n    community {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.CommunityUpdateDocument,
-    "mutation FormErrorCreate($formErrorInput: FormErrorInput!, $registrationId: Int!) {\n  formErrorCreate(\n    formErrorInput: $formErrorInput\n    registrationID: $registrationId\n  ) {\n    id\n  }\n}": types.FormErrorCreateDocument,
-    "mutation FormErrorDelete($formErrorId: Int!) {\n  formErrorDelete(formErrorID: $formErrorId) {\n    id\n  }\n}": types.FormErrorDeleteDocument,
-    "mutation FormErrorUpdate($formErrorId: Int!, $formErrorInput: FormErrorInput!) {\n  formErrorUpdate(formErrorID: $formErrorId, formErrorInput: $formErrorInput) {\n    id\n    classErrors\n    communityInfoErrors\n    communityTeacherErrors\n    groupInfoErrors\n    groupPerformersErrors\n    groupTeacherErrors\n    schoolGroupErrors\n    schoolGroupsErrors\n    schoolInfoErrors\n    schoolTeacherErrors\n    soloPerformerErrors\n    soloTeacherErrors\n    __typename\n  }\n}": types.FormErrorUpdateDocument,
     "mutation GroupCreate($registrationId: Int!) {\n  groupCreate(registrationID: $registrationId) {\n    group {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.GroupCreateDocument,
     "mutation GroupDelete($groupId: Int!) {\n  groupDelete(groupID: $groupId) {\n    group {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.GroupDeleteDocument,
     "mutation GroupUpdate($groupId: Int!, $group: GroupInput!) {\n  groupUpdate(groupID: $groupId, groupInput: $group) {\n    group {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.GroupUpdateDocument,
@@ -60,7 +57,6 @@ const documents = {
     "query Disciplines {\n  disciplines {\n    id\n    name\n  }\n}": types.DisciplinesDocument,
     "query FieldConfig($fieldName: String!, $tableName: String!) {\n  fieldConfig(fieldName: $fieldName, tableName: $tableName) {\n    id\n    tableName\n    fieldName\n    customField\n    customFieldType\n    submissionRequired\n    __typename\n  }\n}": types.FieldConfigDocument,
     "query FieldConfigs {\n  fieldConfigs {\n    id\n    tableName\n    fieldName\n    submissionRequired\n    customField\n    customFieldType\n    __typename\n  }\n}": types.FieldConfigsDocument,
-    "query FormError($registrationId: Int, $formErrorId: Int) {\n  formError(formErrorID: $formErrorId, registrationID: $registrationId) {\n    id\n    classErrors\n    communityInfoErrors\n    communityTeacherErrors\n    groupInfoErrors\n    groupPerformersErrors\n    groupTeacherErrors\n    schoolGroupErrors\n    schoolGroupsErrors\n    schoolInfoErrors\n    schoolTeacherErrors\n    soloPerformerErrors\n    soloTeacherErrors\n    __typename\n  }\n}": types.FormErrorDocument,
     "query Instruments {\n  instruments {\n    id\n    name\n  }\n}": types.InstrumentsDocument,
     "query Levels($subdisciplineId: Int, $categoryId: Int) {\n  levels(categoryID: $categoryId, subdisciplineID: $subdisciplineId) {\n    id\n    name\n    description\n  }\n}": types.LevelsDocument,
     "query Registrations($performerType: PerformerType) {\n  registrations(performerType: $performerType) {\n    id\n    createdAt\n    label\n    performerType\n    submittedAt\n    payedAmt\n    totalAmt\n    transactionInfo\n    confirmation\n  }\n}": types.RegistrationsDocument,
@@ -106,18 +102,6 @@ export function graphql(source: "mutation CommunityDelete($communityId: Int!) {\
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "mutation CommunityUpdate($communityId: Int!, $community: CommunityInput!) {\n  communityUpdate(communityID: $communityId, communityInput: $community) {\n    community {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}"): (typeof documents)["mutation CommunityUpdate($communityId: Int!, $community: CommunityInput!) {\n  communityUpdate(communityID: $communityId, communityInput: $community) {\n    community {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "mutation FormErrorCreate($formErrorInput: FormErrorInput!, $registrationId: Int!) {\n  formErrorCreate(\n    formErrorInput: $formErrorInput\n    registrationID: $registrationId\n  ) {\n    id\n  }\n}"): (typeof documents)["mutation FormErrorCreate($formErrorInput: FormErrorInput!, $registrationId: Int!) {\n  formErrorCreate(\n    formErrorInput: $formErrorInput\n    registrationID: $registrationId\n  ) {\n    id\n  }\n}"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "mutation FormErrorDelete($formErrorId: Int!) {\n  formErrorDelete(formErrorID: $formErrorId) {\n    id\n  }\n}"): (typeof documents)["mutation FormErrorDelete($formErrorId: Int!) {\n  formErrorDelete(formErrorID: $formErrorId) {\n    id\n  }\n}"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "mutation FormErrorUpdate($formErrorId: Int!, $formErrorInput: FormErrorInput!) {\n  formErrorUpdate(formErrorID: $formErrorId, formErrorInput: $formErrorInput) {\n    id\n    classErrors\n    communityInfoErrors\n    communityTeacherErrors\n    groupInfoErrors\n    groupPerformersErrors\n    groupTeacherErrors\n    schoolGroupErrors\n    schoolGroupsErrors\n    schoolInfoErrors\n    schoolTeacherErrors\n    soloPerformerErrors\n    soloTeacherErrors\n    __typename\n  }\n}"): (typeof documents)["mutation FormErrorUpdate($formErrorId: Int!, $formErrorInput: FormErrorInput!) {\n  formErrorUpdate(formErrorID: $formErrorId, formErrorInput: $formErrorInput) {\n    id\n    classErrors\n    communityInfoErrors\n    communityTeacherErrors\n    groupInfoErrors\n    groupPerformersErrors\n    groupTeacherErrors\n    schoolGroupErrors\n    schoolGroupsErrors\n    schoolInfoErrors\n    schoolTeacherErrors\n    soloPerformerErrors\n    soloTeacherErrors\n    __typename\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -270,10 +254,6 @@ export function graphql(source: "query FieldConfig($fieldName: String!, $tableNa
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "query FieldConfigs {\n  fieldConfigs {\n    id\n    tableName\n    fieldName\n    submissionRequired\n    customField\n    customFieldType\n    __typename\n  }\n}"): (typeof documents)["query FieldConfigs {\n  fieldConfigs {\n    id\n    tableName\n    fieldName\n    submissionRequired\n    customField\n    customFieldType\n    __typename\n  }\n}"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "query FormError($registrationId: Int, $formErrorId: Int) {\n  formError(formErrorID: $formErrorId, registrationID: $registrationId) {\n    id\n    classErrors\n    communityInfoErrors\n    communityTeacherErrors\n    groupInfoErrors\n    groupPerformersErrors\n    groupTeacherErrors\n    schoolGroupErrors\n    schoolGroupsErrors\n    schoolInfoErrors\n    schoolTeacherErrors\n    soloPerformerErrors\n    soloTeacherErrors\n    __typename\n  }\n}"): (typeof documents)["query FormError($registrationId: Int, $formErrorId: Int) {\n  formError(formErrorID: $formErrorId, registrationID: $registrationId) {\n    id\n    classErrors\n    communityInfoErrors\n    communityTeacherErrors\n    groupInfoErrors\n    groupPerformersErrors\n    groupTeacherErrors\n    schoolGroupErrors\n    schoolGroupsErrors\n    schoolInfoErrors\n    schoolTeacherErrors\n    soloPerformerErrors\n    soloTeacherErrors\n    __typename\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
