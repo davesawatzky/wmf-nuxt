@@ -121,6 +121,7 @@
 
   watchEffect(
     () => {
+      console.log('Performer Errors: ', performerStore.performerErrors)
       emits('errorCounts', errorCount.value)
     },
     { flush: 'post' }

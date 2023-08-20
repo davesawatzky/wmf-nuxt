@@ -1,0 +1,18 @@
+mutation FormErrorUpdate($formErrorId: Int!, $formErrorInput: FormErrorInput!) {
+  formErrorUpdate(formErrorID: $formErrorId, formErrorInput: $formErrorInput) {
+    id
+    classErrors
+    communityInfoErrors
+    communityTeacherErrors
+    groupInfoErrors
+    groupPerformersErrors
+    groupTeacherErrors
+    schoolGroupErrors
+    schoolGroupsErrors
+    schoolInfoErrors
+    schoolTeacherErrors
+    soloPerformerErrors
+    soloTeacherErrors
+    __typename
+  }
+}

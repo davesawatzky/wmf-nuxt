@@ -73,7 +73,7 @@ export const useClasses = defineStore(
           largerWork: selection.largerWork || '',
           movement: selection.movement || '',
           composer: selection.composer || '',
-          duration: selection.duration || '0:00',
+          duration: selection.duration || '',
           __typename: selection.__typename || 'Selection',
         })
       } catch (err) {

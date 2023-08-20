@@ -1,0 +1,5 @@
+mutation FormErrorDelete($formErrorId: Int!) {
+  formErrorDelete(formErrorID: $formErrorId) {
+    id
+  }
+}

@@ -20,13 +20,29 @@ export const usePerformers = defineStore(
       return performers.value.length
     })
 
+    const performerErrors = computed(() => {
+      const performerKeys = Object.keys(performers.value[0])
+      let count = 0
+      for (const performer of performers.value) {
+        for (const key of performerKeys) {
+          if (!!performer[key as keyof Performer] === false) {
+            count++
+          }
+        }
+      }
+      return count
+    })
+
     /**
      * Returns first name plus last name
      */
     const fullName = computed(() => {
-      const name = performers.value.map((item) => {
-        return item.firstName && ' ' && item.lastName
-      })
+      const name = []
+      for (let i = 0; i < performers.value.length; i++) {
+        name.push(
+          `${performers.value[i].firstName} ${performers.value[i].lastName}`
+        )
+      }
       return name
     })
 
@@ -198,6 +214,7 @@ export const usePerformers = defineStore(
       performers,
       $reset,
       numberOfPerformers,
+      performerErrors,
       fullName,
       addToStore,
       createPerformer,
