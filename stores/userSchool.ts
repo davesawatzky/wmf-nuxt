@@ -1,3 +1,4 @@
+import { useFieldConfig } from '@/stores/useFieldConfig'
 import {
   SchoolCreateDocument,
   SchoolDeleteDocument,
@@ -5,6 +6,8 @@ import {
   SchoolUpdateDocument,
 } from '~/graphql/gql/graphql'
 import type { School, SchoolInput } from '~/graphql/gql/graphql'
+
+const fieldConfigStore = useFieldConfig()
 
 export const useSchool = defineStore(
   'school',
@@ -15,6 +18,16 @@ export const useSchool = defineStore(
       school.value = <School>{}
     }
 
+    const schoolErrors = computed(() => {
+      const schoolKeys = fieldConfigStore.performerTypeFields('School')
+      let count = 0
+      for (const key of schoolKeys) {
+        if (!!school.value[key as keyof School] === false) {
+          count++
+        }
+      }
+      return count
+    })
     /**
      * Adds School Object to the store. Only one
      * @param schl School object must have valid id property value
@@ -151,6 +164,7 @@ export const useSchool = defineStore(
     return {
       deleteSchool,
       $reset,
+      schoolErrors,
       updateSchool,
       loadSchool,
       createSchool,

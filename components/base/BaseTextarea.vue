@@ -7,11 +7,11 @@
     helpMessage?: string
     status?: StatusEnum
     placeholder?: string
-    modelValue?: string
+    modelValue?: string | number | string[]
   }>()
 
   const emit = defineEmits<{
-    'update:modelValue': [value: string]
+    'update:modelValue': [value: string | number | string[]]
     changeStatus: [stat: string]
   }>()
 

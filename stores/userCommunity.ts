@@ -1,3 +1,4 @@
+import { useFieldConfig } from '@/stores/useFieldConfig'
 import {
   CommunityCreateDocument,
   CommunityDeleteDocument,
@@ -5,6 +6,8 @@ import {
   CommunityUpdateDocument,
 } from '~/graphql/gql/graphql'
 import type { Community, CommunityInput } from '~/graphql/gql/graphql'
+
+const fieldConfigStore = useFieldConfig()
 
 export const useCommunity = defineStore(
   'community',
@@ -14,6 +17,18 @@ export const useCommunity = defineStore(
     function $reset() {
       community.value = <Community>{}
     }
+
+    const communityErrors = computed(() => {
+      const communityKeys = fieldConfigStore.performerTypeFields('Community')
+      let count = 0
+      for (const key of communityKeys) {
+        if (!!community.value[key as keyof Community] === false) {
+          count++
+        }
+      }
+      return count
+    })
+
     /**
      * Adds empty Community properties or a Community object into the store
      *
@@ -153,6 +168,7 @@ export const useCommunity = defineStore(
 
     return {
       $reset,
+      communityErrors,
       deleteCommunity,
       updateCommunity,
       community,

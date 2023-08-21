@@ -56,7 +56,7 @@ const documents = {
     "query FestivalClasses($performerType: PerformerType) {\n  festivalClasses(performerType: $performerType) {\n    subdiscipline {\n      id\n      name\n    }\n  }\n}": types.FestivalClassesDocument,
     "query Disciplines {\n  disciplines {\n    id\n    name\n  }\n}": types.DisciplinesDocument,
     "query FieldConfig($fieldName: String!, $tableName: String!) {\n  fieldConfig(fieldName: $fieldName, tableName: $tableName) {\n    id\n    tableName\n    fieldName\n    customField\n    customFieldType\n    submissionRequired\n    __typename\n  }\n}": types.FieldConfigDocument,
-    "query FieldConfigs {\n  fieldConfigs {\n    id\n    tableName\n    fieldName\n    submissionRequired\n    customField\n    customFieldType\n    __typename\n  }\n}": types.FieldConfigsDocument,
+    "query FieldConfigs {\n  fieldConfigs {\n    id\n    tableName\n    fieldName\n    communityRequired\n    groupRequired\n    schoolRequired\n    soloRequired\n    customField\n    customFieldType\n    __typename\n  }\n}": types.FieldConfigsDocument,
     "query Instruments {\n  instruments {\n    id\n    name\n  }\n}": types.InstrumentsDocument,
     "query Levels($subdisciplineId: Int, $categoryId: Int) {\n  levels(categoryID: $categoryId, subdisciplineID: $subdisciplineId) {\n    id\n    name\n    description\n  }\n}": types.LevelsDocument,
     "query Registrations($performerType: PerformerType) {\n  registrations(performerType: $performerType) {\n    id\n    createdAt\n    label\n    performerType\n    submittedAt\n    payedAmt\n    totalAmt\n    transactionInfo\n    confirmation\n  }\n}": types.RegistrationsDocument,
@@ -253,7 +253,7 @@ export function graphql(source: "query FieldConfig($fieldName: String!, $tableNa
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "query FieldConfigs {\n  fieldConfigs {\n    id\n    tableName\n    fieldName\n    submissionRequired\n    customField\n    customFieldType\n    __typename\n  }\n}"): (typeof documents)["query FieldConfigs {\n  fieldConfigs {\n    id\n    tableName\n    fieldName\n    submissionRequired\n    customField\n    customFieldType\n    __typename\n  }\n}"];
+export function graphql(source: "query FieldConfigs {\n  fieldConfigs {\n    id\n    tableName\n    fieldName\n    communityRequired\n    groupRequired\n    schoolRequired\n    soloRequired\n    customField\n    customFieldType\n    __typename\n  }\n}"): (typeof documents)["query FieldConfigs {\n  fieldConfigs {\n    id\n    tableName\n    fieldName\n    communityRequired\n    groupRequired\n    schoolRequired\n    soloRequired\n    customField\n    customFieldType\n    __typename\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

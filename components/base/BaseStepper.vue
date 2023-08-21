@@ -1,9 +1,8 @@
 <script setup lang="ts">
-  import type { ErrorCounts } from '@/composables/types'
+  import { formErrors } from '../../composables/formErrors'
 
   const props = defineProps<{
     tabs: string[]
-    fieldErrors: ErrorCounts
   }>()
 
   const emit = defineEmits<{
@@ -44,9 +43,9 @@
         @click="changeTab(tab, index)">
         {{ index + 1 }}
         <BaseBadge
-          v-if="fieldErrors[tab] > 0"
+          v-if="formErrors.value[tab] > 0"
           class="-right-2 top-0"
-          >{{ fieldErrors[tab] }}</BaseBadge
+          >{{ formErrors.value[tab] }}</BaseBadge
         >
       </button>
       <div

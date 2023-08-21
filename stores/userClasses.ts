@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-
+import { useFieldConfig } from '@/stores/useFieldConfig'
 import {
   ClassCreateDocument,
   ClassDeleteDocument,
@@ -17,6 +17,8 @@ import type {
   SelectionInput,
 } from '~/graphql/gql/graphql'
 
+const fieldConfigStore = useFieldConfig()
+
 export const useClasses = defineStore(
   'registeredClasses',
   () => {
@@ -26,6 +28,32 @@ export const useClasses = defineStore(
     function $reset() {
       registeredClasses.value = <RegisteredClass[]>[]
     }
+
+    const classErrors = computed(() => {
+      const classKeys = fieldConfigStore.performerTypeFields('FestivalClasses')
+      console.log('ClassKeys: ', classKeys)
+      const selectionKeys = fieldConfigStore.performerTypeFields('Selection')
+      console.log('SelectionKeys: ', selectionKeys)
+      let count = 0
+      for (const festclass of registeredClasses.value) {
+        for (const key of classKeys) {
+          if (key !== 'selections') {
+            if (!!festclass[key as keyof RegisteredClass] === false) {
+              count++
+            }
+          } else {
+            for (const select of festclass.selections ?? <Selection[]>[]) {
+              for (const key2 of selectionKeys) {
+                if (!!select[key2 as keyof Selection] === false) {
+                  count++
+                }
+              }
+            }
+          }
+        }
+      }
+      return count
+    })
 
     /**
      * Add empty class variables to store. Used when requiring a new
@@ -358,6 +386,7 @@ export const useClasses = defineStore(
     return {
       registeredClasses,
       $reset,
+      classErrors,
       MOZART_CLASSES,
       addClassToStore,
       addSelectionToStore,

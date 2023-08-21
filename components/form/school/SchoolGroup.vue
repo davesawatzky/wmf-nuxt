@@ -88,8 +88,8 @@
         .max(100)
         .integer()
         .required('Indicate the number of wheelchairs'),
-      unavailable: yup.string().trim().nullable(),
-      conflictPerformers: yup.string().trim().nullable(),
+      unavailable: yup.string().trim(),
+      conflictPerformers: yup.string().trim(),
     })
   )
 
@@ -128,7 +128,9 @@
           name="earliestTime"
           label="Earliest time your group can perform"
           type="time"
-          @change-status="(stat: string) => fieldStatus(stat, 'earliestTime')" />
+          @change-status="
+            (stat: string) => fieldStatus(stat, 'earliestTime')
+          " />
 
         <BaseInput
           v-model="schoolGroup.latestTime"
@@ -162,7 +164,9 @@
             step="1"
             label="Number of chaperones"
             type="number"
-            @change-status="(stat: string) => fieldStatus(stat, 'chaperones')" />
+            @change-status="
+              (stat: string) => fieldStatus(stat, 'chaperones')
+            " />
         </div>
         <div class="col-1 sm:col-span-2">
           <BaseInput
@@ -174,7 +178,9 @@
             step="1"
             label="Number of wheelchairs"
             type="number"
-            @change-status="(stat: string) => fieldStatus(stat, 'wheelchairs')" />
+            @change-status="
+              (stat: string) => fieldStatus(stat, 'wheelchairs')
+            " />
         </div>
         <div class="off col-1 sm:col-span-2 text-sm font-bold">
           Total Number: {{ totalParticipants }}
@@ -202,7 +208,9 @@
         name="conflictPerformers"
         label="Performers participating in other classes."
         rows="3"
-        @change-status="(stat: string) => fieldStatus(stat, 'conflictPerformers')" />
+        @change-status="
+          (stat: string) => fieldStatus(stat, 'conflictPerformers')
+        " />
       <p class="text-sm mb-2">
         If there are any students in your group participating in other festival
         classes, list the students' names so that we can do our best to avoid

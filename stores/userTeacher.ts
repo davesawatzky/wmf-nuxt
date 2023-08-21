@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { useFieldConfig } from '@/stores/useFieldConfig'
 import {
   TeacherCreateDocument,
   TeacherDeleteDocument,
@@ -6,6 +7,8 @@ import {
   TeacherUpdateDocument,
 } from '~/graphql/gql/graphql'
 import type { Teacher, TeacherInput } from '~/graphql/gql/graphql'
+
+const fieldConfigStore = useFieldConfig()
 
 export const useTeacher = defineStore(
   'teacher',
@@ -16,11 +19,22 @@ export const useTeacher = defineStore(
       teacher.value = <Teacher>{}
     }
 
+    const teacherErrors = computed(() => {
+      const teacherKeys = fieldConfigStore.performerTypeFields('Teacher')
+      let count = 0
+      for (const key of teacherKeys) {
+        if (!!teacher.value[key as keyof Teacher] === false) {
+          count++
+        }
+      }
+      return count
+    })
+
     /**
      * First name plus last name
      */
     const fullName = computed(() => {
-      return teacher.value.firstName && ' ' && teacher.value.lastName
+      return `${teacher.value.firstName} ${teacher.value.lastName}`
     })
 
     /**
@@ -159,6 +173,7 @@ export const useTeacher = defineStore(
     return {
       teacher,
       $reset,
+      teacherErrors,
       deleteTeacher,
       updateTeacher,
       createTeacher,

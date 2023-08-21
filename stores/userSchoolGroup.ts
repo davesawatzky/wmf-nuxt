@@ -1,3 +1,4 @@
+import { useFieldConfig } from '@/stores/useFieldConfig'
 import {
   SchoolGroupCreateDocument,
   SchoolGroupDeleteDocument,
@@ -5,6 +6,8 @@ import {
   SchoolGroupUpdateDocument,
 } from '~/graphql/gql/graphql'
 import type { SchoolGroup, SchoolGroupInput } from '~/graphql/gql/graphql'
+
+const fieldConfigStore = useFieldConfig()
 
 export const useSchoolGroup = defineStore(
   'schoolGroup',
@@ -14,6 +17,20 @@ export const useSchoolGroup = defineStore(
     function $reset() {
       schoolGroup.value = <SchoolGroup[]>[]
     }
+
+    const schoolGroupErrors = computed(() => {
+      const schoolGroupKeys =
+        fieldConfigStore.performerTypeFields('SchoolGroup')
+      let count = 0
+      for (const group of schoolGroup.value) {
+        for (const key of schoolGroupKeys) {
+          if (!!group[key as keyof SchoolGroup] === false) {
+            count++
+          }
+        }
+      }
+      return count
+    })
 
     /**
      * Adds School Group store array
@@ -177,6 +194,7 @@ export const useSchoolGroup = defineStore(
 
     return {
       $reset,
+      schoolGroupErrors,
       deleteSchoolGroup,
       updateSchoolGroup,
       schoolGroup,

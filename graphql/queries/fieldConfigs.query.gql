@@ -1,11 +1,12 @@
 query FieldConfigs {
   fieldConfigs {
-    id
     tableName
     fieldName
-    submissionRequired
+    communityRequired
+    groupRequired
+    schoolRequired
+    soloRequired
     customField
     customFieldType
-    __typename
   }
 }

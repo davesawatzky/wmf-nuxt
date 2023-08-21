@@ -3,15 +3,10 @@
   import type { Component } from 'vue'
   import { useAppStore } from '@/stores/appStore'
   import { useRegistration } from '@/stores/userRegistration'
-  import { useErrorStore } from '@/stores/useErrors'
-  import type { Status, ErrorCounts } from '@/composables/types'
+  import type { Status } from '@/composables/types'
 
   interface DynamicComponent {
     [key: string]: Component
-  }
-
-  interface ErrorStoreField {
-    [key: string]: string
   }
 
   definePageMeta({
@@ -34,7 +29,6 @@
   const Summary = <Component>resolveComponent('Summary')
 
   const registrationStore = useRegistration()
-  const errorStore = useErrorStore()
   const appStore = useAppStore()
   const performerType = toRef(appStore.performerType)
   const currentTab = ref('')
@@ -47,7 +41,6 @@
   })
 
   let tabs = {} as DynamicComponent
-  let errorStoreFields = {} as ErrorStoreField
 
   function setTab(tab: string, index: number) {
     currentTab.value = tab
@@ -79,11 +72,6 @@
         'Solo Classes': FormTypeClasses,
         Summary,
       }
-      errorStoreFields = {
-        Performer: 'soloPerformerErrors',
-        Teacher: 'soloTeacherErrors',
-        'Solo Classes': 'classErrors',
-      }
       break
     case 'GROUP':
       tabs = {
@@ -92,12 +80,6 @@
         Teacher: FormGroupTeacher,
         'Group Classes': FormTypeClasses,
         Summary,
-      }
-      errorStoreFields = {
-        Group: 'groupInfoErrors',
-        Performers: 'groupPerformersErrors',
-        Teacher: 'groupTeacherErrors',
-        'Group Classes': 'classErrors',
       }
       break
     case 'SCHOOL':
@@ -108,12 +90,6 @@
         'School Classes': FormTypeClasses,
         Summary,
       }
-      errorStoreFields = {
-        School: 'schoolInfoErrors',
-        Teacher: 'schoolTeacherErrors',
-        Groups: 'schoolGroupErrors',
-        'School Classes': 'classErrors',
-      }
       break
     case 'COMMUNITY':
       tabs = {
@@ -122,28 +98,10 @@
         'Community Classes': FormTypeClasses,
         Summary,
       }
-      errorStoreFields = {
-        Community: 'communityInfoErrors',
-        Contact: 'communityTeacherErrors',
-        'Community Classes': 'classErrors',
-      }
       break
   }
 
-  const fieldErrors = ref<ErrorCounts>({})
   const tabNames = ref(Object.keys(tabs))
-
-  function errorTally(count: number, tab: string) {
-    console.log('count: ', count, 'tab: ', tab)
-    fieldErrors.value[tab] = count ?? 0
-    if (tab !== 'Summary') {
-      let field = errorStoreFields[
-        tab as keyof typeof errorStoreFields
-      ] as keyof typeof errorStore.errorField
-      errorStore.errorField[field] = count
-    }
-    fieldErrors.value['Summary'] = 0
-  }
 
   const validationSchema = yup.object({
     label: yup.string().trim().required('Please enter a label for this form'),
@@ -162,7 +120,6 @@
 
 <template>
   <div>
-    {{ fieldErrors }}
     <BaseInput
       v-model="registrationStore.registration.label"
       class="text-3xl"
@@ -178,7 +135,6 @@
       <div class="text-left">
         <BaseStepper
           :tabs="tabNames"
-          :field-errors="fieldErrors"
           @set-tab="setTab" />
       </div>
       <div
@@ -188,12 +144,7 @@
           :css="true"
           mode="out-in">
           <KeepAlive>
-            <component
-              :is="tabs[currentTab]"
-              @error-counts="
-                (count: number | undefined) =>
-                  errorTally(count ?? 0, currentTab)
-              " />
+            <component :is="tabs[currentTab]" />
           </KeepAlive>
         </Transition>
       </div>

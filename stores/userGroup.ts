@@ -1,3 +1,4 @@
+import { useFieldConfig } from '@/stores/useFieldConfig'
 import {
   GroupCreateDocument,
   GroupDeleteDocument,
@@ -5,6 +6,8 @@ import {
   GroupUpdateDocument,
 } from '~/graphql/gql/graphql'
 import type { Group, GroupInput } from '~/graphql/gql/graphql'
+
+const fieldConfigStore = useFieldConfig()
 
 export const useGroup = defineStore(
   'group',
@@ -15,6 +18,16 @@ export const useGroup = defineStore(
       group.value = <Group>{}
     }
 
+    const groupErrors = computed(() => {
+      const groupKeys = fieldConfigStore.performerTypeFields('Group')
+      let count = 0
+      for (const key of groupKeys) {
+        if (!!group.value[key as keyof Group] === false) {
+          count++
+        }
+      }
+      return count
+    })
     /**
      * Adds empty Group properties or Group object to the store
      * @param grp Group object, must include id property value
@@ -138,6 +151,7 @@ export const useGroup = defineStore(
     return {
       group,
       $reset,
+      groupErrors,
       addToStore,
       createGroup,
       loadGroup,

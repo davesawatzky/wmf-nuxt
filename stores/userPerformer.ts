@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { useFieldConfig } from '@/stores/useFieldConfig'
 import {
   PerformerCreateDocument,
   PerformerDeleteDocument,
@@ -6,6 +7,8 @@ import {
   PerformerUpdateDocument,
 } from '~/graphql/gql/graphql'
 import type { Performer, PerformerInput } from '~/graphql/gql/graphql'
+
+const fieldConfigStore = useFieldConfig()
 
 export const usePerformers = defineStore(
   'performers',
@@ -21,7 +24,7 @@ export const usePerformers = defineStore(
     })
 
     const performerErrors = computed(() => {
-      const performerKeys = Object.keys(performers.value[0])
+      const performerKeys = fieldConfigStore.performerTypeFields('Performer')
       let count = 0
       for (const performer of performers.value) {
         for (const key of performerKeys) {

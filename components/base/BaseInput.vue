@@ -8,7 +8,7 @@
     status?: StatusEnum
     name: string
     placeholder?: string
-    modelValue?: string | number
+    modelValue?: string | number | null
   }
 
   const props = withDefaults(defineProps<Props>(), {

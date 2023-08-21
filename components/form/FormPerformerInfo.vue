@@ -108,6 +108,8 @@
         .string()
         .email('Must be a valid email address')
         .required('Email address is required'),
+      instrument: yup.string().trim().required('Please indicate an instrument'),
+      level: yup.string().trim().required('Please indicate grade or level'),
     })
   )
 

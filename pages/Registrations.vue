@@ -9,7 +9,7 @@
   import { useSchool } from '@/stores/userSchool'
   import { useSchoolGroup } from '@/stores/userSchoolGroup'
   import { useCommunity } from '@/stores/userCommunity'
-  import { useErrorStore } from '@/stores/useErrors'
+  import { useFieldConfig } from '@/stores/useFieldConfig'
   import {
     communityOpen,
     groupOpen,
@@ -37,7 +37,7 @@
   const schoolGroupStore = useSchoolGroup()
   const communityStore = useCommunity()
   const classesStore = useClasses()
-  const errorStore = useErrorStore()
+  const fieldConfigStore = useFieldConfig()
 
   const registrationId = ref(0)
 
@@ -66,7 +66,7 @@
     schoolStore.$reset()
     schoolGroupStore.$reset()
     classesStore.$reset()
-    errorStore.$reset()
+    fieldConfigStore.$reset()
   })
 
   const {
@@ -136,6 +136,7 @@
     appStore.dataLoading = true
     await teacherStore.loadTeacher(registrationId)
     await classesStore.loadClasses(registrationId)
+    await fieldConfigStore.loadRequiredFields()
     appStore.dataLoading = false
     navigateTo('/form')
   }
@@ -189,6 +190,7 @@
     appStore.dataLoading = true
     await teacherStore.createTeacher(registrationId.value)
     await classesStore.createClass(registrationId.value)
+    await fieldConfigStore.loadRequiredFields()
     appStore.dataLoading = false
 
     navigateTo('/form')

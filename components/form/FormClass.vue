@@ -349,7 +349,6 @@
   watch(
     () => selectedClasses.value.numberOfSelections,
     async (newNumber) => {
-      console.log('running watch')
       let oldNumber =
         classesStore.registeredClasses[props.classIndex].selections!.length
       if (oldNumber < newNumber!) {

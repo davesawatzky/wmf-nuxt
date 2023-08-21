@@ -12,7 +12,7 @@
     status?: StatusEnum
     name: string
     options: Options[]
-    modelValue?: string | number
+    modelValue?: string | number | null
     returnId?: boolean
   }>()
 
