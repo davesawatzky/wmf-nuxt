@@ -2,44 +2,16 @@
   import { usePerformers } from '@/stores/userPerformer'
   import { useRegistration } from '@/stores/userRegistration'
 
-  const emits = defineEmits<{
-    errorCounts: [count: number]
-  }>()
-
   const registrationStore = useRegistration()
   const performerStore = usePerformers()
-  const numberOfErrors = ref<number[]>([0])
 
   async function addPerformer(registrationId: number) {
-    numberOfErrors.value.push(0)
     await performerStore.createPerformer(registrationId)
   }
 
-  async function removePerformer(performerId: number, index: number) {
+  async function removePerformer(performerId: number) {
     await performerStore.deletePerformer(performerId)
-    numberOfErrors.value.splice(index, 1)
   }
-
-  const totalErrors = computed(() => {
-    return numberOfErrors.value.reduce((a, b) => {
-      return a + b
-    }, 0)
-  })
-
-  function errorCounts(count: number, index: number) {
-    numberOfErrors.value[index] = count
-  }
-
-  watchEffect(
-    () => {
-      emits('errorCounts', totalErrors.value)
-    },
-    { flush: 'post' }
-  )
-
-  onActivated(() => {
-    emits('errorCounts', totalErrors.value)
-  })
 </script>
 
 <template>
@@ -56,8 +28,7 @@
           v-model="performerStore.performers[performerIndex]"
           groupperformer
           :performer-index="performerIndex"
-          :performer-id="performer.id"
-          @error-counts="(count:number) => errorCounts(count, performerIndex)" />
+          :performer-id="performer.id" />
       </div>
       <div class="pt-4">
         <BaseButton
@@ -73,7 +44,7 @@
         <BaseButton
           v-if="performerStore.performers.length > 1 ? true : false"
           class="btn btn-red mb-6"
-          @click="removePerformer(performer.id, performerIndex)">
+          @click="removePerformer(performer.id)">
           Remove This Performer
         </BaseButton>
         <br /><br />

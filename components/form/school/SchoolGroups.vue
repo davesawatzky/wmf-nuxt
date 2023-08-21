@@ -2,42 +2,15 @@
   import { useSchoolGroup } from '@/stores/userSchoolGroup'
   import { useSchool } from '@/stores/userSchool'
 
-  const emits = defineEmits<{
-    errorCounts: [count: number]
-  }>()
-
   const schoolGroupStore = useSchoolGroup()
   const schoolStore = useSchool()
-  const numberOfErrors = ref<number[]>([])
 
   async function addSchoolGroup(schoolId: number) {
-    numberOfErrors.value.push(0)
     await schoolGroupStore.createSchoolGroup(schoolId)
   }
-  async function removeSchoolGroup(schoolGroupId: number, index: number) {
+  async function removeSchoolGroup(schoolGroupId: number) {
     await schoolGroupStore.deleteSchoolGroup(schoolGroupId)
-    numberOfErrors.value.splice(index, 1)
   }
-  const totalErrors = computed(() => {
-    return numberOfErrors.value.reduce((a, b) => {
-      return a + b
-    }, 0)
-  })
-
-  function errorCounts(count: number, index: number) {
-    numberOfErrors.value[index] = count
-  }
-
-  watchEffect(
-    () => {
-      emits('errorCounts', totalErrors.value)
-    },
-    { flush: 'post' }
-  )
-
-  onActivated(() => {
-    emits('errorCounts', totalErrors.value)
-  })
 </script>
 
 <template>
@@ -54,8 +27,7 @@
           <FormSchoolGroup
             v-model="schoolGroupStore.schoolGroup[schoolGroupIndex]"
             :school-group-index="schoolGroupIndex"
-            :school-group-id="schoolGrp.id"
-            @error-counts="(count: number) => errorCounts(count, schoolGroupIndex)" />
+            :school-group-id="schoolGrp.id" />
         </div>
         <div class="pt-4">
           <BaseButton
@@ -71,7 +43,7 @@
           <BaseButton
             v-if="schoolGroupStore.schoolGroup.length > 1 ? true : false"
             class="btn btn-red mb-6"
-            @click="removeSchoolGroup(schoolGrp.id, schoolGroupIndex)">
+            @click="removeSchoolGroup(schoolGrp.id)">
             Remove This School Group
           </BaseButton>
           <br /><br />

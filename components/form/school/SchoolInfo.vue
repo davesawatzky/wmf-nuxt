@@ -4,10 +4,6 @@
   import { useSchool } from '@/stores/userSchool'
   import type { Status } from '@/composables/types'
 
-  const emits = defineEmits<{
-    errorCounts: [count: number]
-  }>()
-
   const schoolStore = useSchool()
 
   const status = reactive<Status>({
@@ -76,12 +72,7 @@
     validationSchema,
     validateOnMount: true,
   })
-  const errorCount = computed(() => {
-    return Object.keys(errors.value).length
-  })
-  watchEffect(() => {
-    emits('errorCounts', errorCount.value)
-  })
+
   onActivated(() => {
     validate()
   })
@@ -104,7 +95,7 @@
           name="schoolName"
           type="text"
           label="School Name"
-          @change-status="(stat:string) => fieldStatus(stat, 'name')" />
+          @change-status="(stat: string) => fieldStatus(stat, 'name')" />
       </div>
       <div class="col-span-12 sm:col-span-6">
         <BaseInput
@@ -113,7 +104,7 @@
           name="schoolDivision"
           label="School Division"
           type="text"
-          @change-status="(stat:string) => fieldStatus(stat, 'division')" />
+          @change-status="(stat: string) => fieldStatus(stat, 'division')" />
       </div>
     </div>
     <div class="col-span-12 sm:col-span-4 mt-6 sm:mt-0">
@@ -124,7 +115,7 @@
         name="streetNumber"
         type="text"
         label="Street #"
-        @change-status="(stat:string) => fieldStatus(stat, 'streetNumber')" />
+        @change-status="(stat: string) => fieldStatus(stat, 'streetNumber')" />
     </div>
     <div class="col-span-12 sm:col-span-8">
       <BaseInput
@@ -134,7 +125,7 @@
         name="streetName"
         type="text"
         label="Street Name"
-        @change-status="(stat:string) => fieldStatus(stat, 'streetName')" />
+        @change-status="(stat: string) => fieldStatus(stat, 'streetName')" />
     </div>
     <div class="col-span-8 sm:col-span-7">
       <BaseInput
@@ -144,7 +135,7 @@
         name="city"
         type="text"
         label="City/Town"
-        @change-status="(stat:string) => fieldStatus(stat, 'city')" />
+        @change-status="(stat: string) => fieldStatus(stat, 'city')" />
     </div>
     <div class="col-span-4 sm:col-span-2 self-start">
       <BaseSelect
@@ -154,7 +145,7 @@
         name="province"
         label="Province"
         :options="provinces"
-        @change-status="(stat:string) => fieldStatus(stat, 'province')" />
+        @change-status="(stat: string) => fieldStatus(stat, 'province')" />
     </div>
     <div class="col-span-12 sm:col-span-3">
       <BaseInput
@@ -169,7 +160,7 @@
         name="postalCode"
         type="text"
         label="Postal Code"
-        @change-status="(stat:string) => fieldStatus(stat, 'postalCode')" />
+        @change-status="(stat: string) => fieldStatus(stat, 'postalCode')" />
     </div>
     <div class="col-span-12 sm:col-span-5">
       <BaseInput
@@ -183,7 +174,7 @@
         name="phone"
         type="tel"
         label="Phone Number"
-        @change-status="(stat:string) => fieldStatus(stat, 'phone')" />
+        @change-status="(stat: string) => fieldStatus(stat, 'phone')" />
     </div>
   </div>
 </template>

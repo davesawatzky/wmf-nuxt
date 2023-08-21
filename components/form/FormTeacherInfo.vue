@@ -15,7 +15,6 @@
 
   const emits = defineEmits<{
     'update:modelValue': [value: ContactInfo]
-    errorCounts: [count: number]
   }>()
 
   /**
@@ -134,15 +133,6 @@
     validationSchema,
     validateOnMount: true,
   })
-  const errorCount = computed(() => {
-    return Object.keys(errors.value).length
-  })
-  watchEffect(
-    () => {
-      emits('errorCounts', errorCount.value)
-    },
-    { flush: 'post' }
-  )
 
   onActivated(() => {
     validate()

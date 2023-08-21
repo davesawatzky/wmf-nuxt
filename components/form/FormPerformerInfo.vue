@@ -16,7 +16,6 @@
 
   const emits = defineEmits<{
     'update:modelValue': [value: ContactInfo]
-    errorCounts: [count: number]
   }>()
 
   const performerStore = usePerformers()
@@ -117,21 +116,9 @@
     validationSchema,
     validateOnMount: true,
   })
-  const errorCount = computed(() => {
-    return Object.keys(errors.value).length
-  })
-
-  watchEffect(
-    () => {
-      console.log('Performer Errors: ', performerStore.performerErrors)
-      emits('errorCounts', errorCount.value)
-    },
-    { flush: 'post' }
-  )
 
   onActivated(async () => {
     await validate()
-    emits('errorCounts', errorCount.value)
   })
 
   const maskaUcaseOption = {

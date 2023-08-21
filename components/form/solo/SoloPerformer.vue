@@ -1,15 +1,7 @@
 <script lang="ts" setup>
   import { usePerformers } from '@/stores/userPerformer'
 
-  const emits = defineEmits<{
-    errorCounts: [count: number]
-  }>()
-
   const performerStore = usePerformers()
-
-  function errorCounts(count: number) {
-    emits('errorCounts', count)
-  }
 </script>
 
 <template>
@@ -21,8 +13,7 @@
       <FormPerformerInfo
         v-model="performerStore.performers[0]"
         :performer-index="0"
-        :performer-id="performerStore.performers[0].id"
-        @error-counts="errorCounts" />
+        :performer-id="performerStore.performers[0].id" />
     </div>
   </div>
 </template>

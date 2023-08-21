@@ -14,7 +14,6 @@
 
   const emits = defineEmits<{
     'update:modelValue': [value: SelectionInput]
-    errorCounts: [count: number]
   }>()
 
   const classesStore = useClasses()
@@ -67,19 +66,6 @@
     validationSchema,
     validateOnMount: true,
   })
-  const errorCount = computed(() => {
-    return Object.keys(errors.value).length
-  })
-  watchEffect(
-    () => {
-      emits('errorCounts', errorCount.value)
-    },
-    { flush: 'post' }
-  )
-  onActivated(async () => {
-    await validate()
-    emits('errorCounts', errorCount.value)
-  })
 </script>
 
 <template>
@@ -93,7 +79,7 @@
           name="title"
           label="Title (including Opus number if applicable)"
           type="text"
-          @change-status="(stat:string) => fieldStatus(stat, 'title')" />
+          @change-status="(stat: string) => fieldStatus(stat, 'title')" />
       </div>
       <div class="col-span-12 sm:col-span-5">
         <BaseInput
@@ -120,7 +106,7 @@
           name="movement"
           label="Movement (if applicable)"
           type="text"
-          @change-status="(stat:string) => fieldStatus(stat, 'movement')" />
+          @change-status="(stat: string) => fieldStatus(stat, 'movement')" />
       </div>
       <div class="col-span-6 sm:col-span-3">
         <BaseInput

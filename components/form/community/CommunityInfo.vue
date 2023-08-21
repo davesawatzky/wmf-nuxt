@@ -3,10 +3,6 @@
   import { useCommunity } from '@/stores/userCommunity'
   import type { Status } from '@/composables/types'
 
-  const emits = defineEmits<{
-    errorCounts: [count: number]
-  }>()
-
   const communityStore = useCommunity()
 
   const status = reactive<Status>({
@@ -69,16 +65,6 @@
     validationSchema,
     validateOnMount: true,
   })
-  const errorCount = computed(() => {
-    return Object.keys(errors.value).length
-  })
-
-  watchEffect(
-    () => {
-      emits('errorCounts', errorCount.value)
-    },
-    { flush: 'post' }
-  )
   onActivated(() => {
     validate()
   })
@@ -110,9 +96,7 @@
             name="groupSize"
             type="number"
             label="Group Size"
-            @change-status="
-              (stat: string) => fieldStatus(stat, 'groupSize')
-            " />
+            @change-status="(stat: string) => fieldStatus(stat, 'groupSize')" />
         </div>
         <div class="col-span-12 sm:col-span-4">
           <BaseInput

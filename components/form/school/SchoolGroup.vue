@@ -12,7 +12,6 @@
 
   const emits = defineEmits<{
     'update:modelValue': [value: SchoolGroupInput]
-    errorCounts: [count: number]
   }>()
 
   const schoolGroupStore = useSchoolGroup()
@@ -96,13 +95,6 @@
   const { errors, validate } = useForm({
     validationSchema,
     validateOnMount: true,
-  })
-  const errorCount = computed(() => {
-    return Object.keys(errors.value).length
-  })
-
-  watchEffect(() => {
-    emits('errorCounts', errorCount.value)
   })
 
   onActivated(() => {

@@ -7,15 +7,10 @@
   import { useAppStore } from '@/stores/appStore'
   import { PerformerType } from '~/graphql/gql/graphql'
 
-  const emits = defineEmits<{
-    errorCounts: [count: number]
-  }>()
-
   const classesStore = useClasses()
   const registrationStore = useRegistration()
   const schoolGroupStore = useSchoolGroup()
   const appStore = useAppStore()
-  const numberOfErrors = ref<number[]>([0])
 
   const status = reactive<Status[]>([])
   onBeforeMount(() => {
@@ -29,7 +24,6 @@
 
   async function addClass(registrationId: number) {
     await classesStore.createClass(registrationId)
-    numberOfErrors.value.push(0)
     if (appStore.performerType === PerformerType.SCHOOL) {
       status.push({ schoolGroupID: StatusEnum.null })
     }
@@ -37,7 +31,6 @@
 
   async function removeClass(classId: number, index: number) {
     const classIndex = await classesStore.deleteClass(classId)
-    numberOfErrors.value.splice(index, 1)
     if (appStore.performerType === PerformerType.SCHOOL) {
       status.splice(classIndex, 1)
     }
@@ -58,8 +51,6 @@
     classId: number,
     classIndex: number
   ) {
-    console.log(stat, fieldName, classId, classIndex)
-    console.log(classesStore.registeredClasses[classIndex].schoolGroupID)
     status[classIndex][fieldName] = StatusEnum.pending
     await classesStore.updateClass(classId, fieldName)
     if (stat === 'saved') {
@@ -88,29 +79,8 @@
     validateOnMount: true,
   })
 
-  function errorCounts(count: number, index: number) {
-    numberOfErrors.value[index] = count
-  }
-
-  const totalErrors = computed(() => {
-    const pageErrors = Object.keys(errors.value).length
-    return (
-      numberOfErrors.value.reduce((a, b) => {
-        return a + b
-      }, 0) + pageErrors
-    )
-  })
-
-  watchEffect(
-    () => {
-      emits('errorCounts', totalErrors.value)
-    },
-    { flush: 'post' }
-  )
-
   onActivated(async () => {
     await validate()
-    emits('errorCounts', totalErrors.value)
   })
 </script>
 
@@ -140,8 +110,7 @@
         <FormClass
           v-model="classesStore.registeredClasses[classIndex]"
           :class-index="classIndex"
-          :class-id="selectedClass.id"
-          @error-counts="(count: number) => errorCounts(count, classIndex)" />
+          :class-id="selectedClass.id" />
       </div>
       <div class="pt-4 col-span-12">
         <BaseButton

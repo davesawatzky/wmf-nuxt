@@ -3,10 +3,6 @@
   import { useGroup } from '@/stores/userGroup'
   import type { Status } from '@/composables/types'
 
-  const emits = defineEmits<{
-    errorCounts: [count: number]
-  }>()
-
   const groupStore = useGroup()
 
   const typeOptions = [
@@ -56,15 +52,6 @@
     validationSchema,
     validateOnMount: true,
   })
-  const errorCount = computed(() => {
-    return Object.keys(errors.value).length
-  })
-  watchEffect(
-    () => {
-      emits('errorCounts', errorCount.value)
-    },
-    { flush: 'post' }
-  )
 
   onActivated(() => {
     validate()
@@ -84,8 +71,7 @@
           label="Group Name"
           type="text"
           :status="status.name"
-          @change-status="(stat:string) =>
-        fieldStatus(stat, 'name')" />
+          @change-status="(stat: string) => fieldStatus(stat, 'name')" />
 
         <p>Number of Performers</p>
         <p>

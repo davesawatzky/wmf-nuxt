@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { formErrors } from '../../composables/formErrors'
+  import { formErrors } from '@/composables/formErrors'
 
   const props = defineProps<{
     tabs: string[]
