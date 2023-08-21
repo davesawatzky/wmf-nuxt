@@ -8,6 +8,7 @@
   import { useClasses } from '@/stores/userClasses'
   import { useRegistration } from '@/stores/userRegistration'
   import { useAppStore } from '@/stores/appStore'
+  import { formErrors } from '@/composables/formErrors'
 
   const emits = defineEmits<{
     submitForm: [value: any]
@@ -34,18 +35,31 @@
   function printWindow() {
     window.print()
   }
+
+  console.log('FormErrors: ', formErrors.value.value)
+
+  const totalErrors = computed(() => {
+    const errors: number[] = Object.values(formErrors.value.value)
+    return errors.reduce((a, b) => {
+      return a + b
+    }, 0)
+  })
 </script>
 
 <template>
   <div>
-    <!-- <div>
+    <div
+      v-if="totalErrors > 0"
+      v-auto-animate>
       <h2>Errors were found in the registration form</h2>
       <h3>
         Please fix any errors on this registration. Incomplete registrations
         will not be submitted.
       </h3>
-    </div> -->
-    <div v-auto-animate>
+    </div>
+    <div
+      v-else
+      v-auto-animate>
       <h1 class="pt-8">Registration Summary</h1>
 
       <!-- Community Groups -->
@@ -183,17 +197,19 @@
     </div>
 
     <!-- Submission -->
-    <BaseButton
-      v-if="!registrationStore.registration.confirmation"
-      class="btn btn-blue"
-      @click="$emit('submitForm')">
-      Prepare to Submit
-    </BaseButton>
-    <BaseButton
-      class="btn btn-blue"
-      @click="printWindow">
-      Print this page
-    </BaseButton>
+    <div v-if="totalErrors === 0">
+      <BaseButton
+        v-if="!registrationStore.registration.confirmation"
+        class="btn btn-blue"
+        @click="$emit('submitForm')">
+        Prepare to Submit
+      </BaseButton>
+      <BaseButton
+        class="btn btn-blue"
+        @click="printWindow">
+        Print this page
+      </BaseButton>
+    </div>
   </div>
 </template>
 

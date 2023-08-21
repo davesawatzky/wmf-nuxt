@@ -225,7 +225,7 @@
         v-model.trim="contact.phone"
         v-maska
         :status="status.phone"
-        placeholder="(###) ###-####"
+        placeholder="(___) ___-____"
         data-maska="(###) ###-####"
         data-maska-eager
         name="phone"

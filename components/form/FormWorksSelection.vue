@@ -57,14 +57,19 @@
       movement: yup.string().trim().nullable(),
       duration: yup
         .string()
+        .matches(/[0-5]{0,1}[0-9]:(?<!00:)[0-5][0-9]/, 'Minimum - 01:00')
         .trim()
-        .required('Indicate total duration of selection'),
+        .required('Enter valid duration - mm:ss'),
     })
   )
 
   const { errors, validate } = useForm({
     validationSchema,
     validateOnMount: true,
+  })
+
+  onActivated(async () => {
+    await validate()
   })
 </script>
 
@@ -111,7 +116,12 @@
       <div class="col-span-6 sm:col-span-3">
         <BaseInput
           v-model="work.duration"
+          v-maska
           :status="status.duration"
+          placeholder="mm:ss"
+          data-maska="A#:A#"
+          data-maska-tokens="A:[0-5]"
+          data-maska-eager
           name="duration"
           label="Duration"
           type="text"

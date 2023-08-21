@@ -44,9 +44,11 @@
         {{ index + 1 }}
         <BaseBadge
           v-if="formErrors.value[tab] > 0"
-          class="-right-2 top-0"
-          >{{ formErrors.value[tab] }}</BaseBadge
-        >
+          has-errors
+          class="-right-2 top-0">
+          {{ formErrors.value[tab] }}
+        </BaseBadge>
+        <BaseBadge v-else-if="tab !== 'Summary'"></BaseBadge>
       </button>
       <div
         v-if="tab !== 'Summary'"

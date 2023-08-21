@@ -31,9 +31,7 @@ export const useClasses = defineStore(
 
     const classErrors = computed(() => {
       const classKeys = fieldConfigStore.performerTypeFields('FestivalClasses')
-      console.log('ClassKeys: ', classKeys)
       const selectionKeys = fieldConfigStore.performerTypeFields('Selection')
-      console.log('SelectionKeys: ', selectionKeys)
       let count = 0
       for (const festclass of registeredClasses.value) {
         for (const key of classKeys) {
