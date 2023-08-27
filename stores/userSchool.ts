@@ -5,7 +5,11 @@ import {
   SchoolInfoDocument,
   SchoolUpdateDocument,
 } from '~/graphql/gql/graphql'
-import type { School, SchoolInput } from '~/graphql/gql/graphql'
+import type {
+  School,
+  SchoolCreateMutation,
+  SchoolInput,
+} from '~/graphql/gql/graphql'
 
 const fieldConfigStore = useFieldConfig()
 
@@ -32,8 +36,8 @@ export const useSchool = defineStore(
      * Adds School Object to the store. Only one
      * @param schl School object must have valid id property value
      */
-    function addToStore(schl: School) {
-      school.value.id = schl.id
+    function addToStore(schl: Partial<School>) {
+      school.value.id = schl.id!
       school.value.division = schl.division || ''
       school.value.name = schl.name || ''
       school.value.streetNumber = schl.streetNumber || ''
@@ -59,15 +63,20 @@ export const useSchool = defineStore(
         } = useMutation(SchoolCreateDocument)
         schoolCreate({
           registrationId,
-          schoolInput: <School>{
+          school: <SchoolInput>{
             city: 'Winnipeg',
             province: 'MB',
           },
         }).catch((error) => console.log(error))
         onDone((result) => {
-          const school: School = result.data.schoolCreate.school
-          addToStore(school)
-          resolve('Success')
+          if (result.data?.schoolCreate.school) {
+            const school: SchoolCreateMutation['schoolCreate']['school'] =
+              result.data.schoolCreate.school
+            addToStore(school)
+            resolve('Success')
+          } else if (result.data?.schoolCreate.userErrors) {
+            console.log(result.data.schoolCreate.userErrors)
+          }
         })
         onError((error) => {
           reject(console.log(error))

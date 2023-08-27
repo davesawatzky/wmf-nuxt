@@ -7,6 +7,10 @@ import { useSchoolGroup } from '@/stores/userSchoolGroup'
 import { useTeacher } from '@/stores/userTeacher'
 import { useAppStore } from '@/stores/appStore'
 
+interface FormErrors {
+  [key: string]: number
+}
+
 const performerStore = usePerformers()
 const classesStore = useClasses()
 const communityStore = useCommunity()
@@ -15,7 +19,7 @@ const schoolStore = useSchool()
 const schoolGroupStore = useSchoolGroup()
 const teacherStore = useTeacher()
 const appStore = useAppStore()
-const tabName = ref({})
+const tabName = ref({} as FormErrors)
 
 export const formErrors = computed(() => {
   switch (appStore.performerType) {

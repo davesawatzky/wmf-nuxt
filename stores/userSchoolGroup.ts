@@ -5,7 +5,11 @@ import {
   SchoolGroupInfoDocument,
   SchoolGroupUpdateDocument,
 } from '~/graphql/gql/graphql'
-import type { SchoolGroup, SchoolGroupInput } from '~/graphql/gql/graphql'
+import type {
+  SchoolGroup,
+  SchoolGroupCreateMutation,
+  SchoolGroupInput,
+} from '~/graphql/gql/graphql'
 
 const fieldConfigStore = useFieldConfig()
 
@@ -67,10 +71,14 @@ export const useSchoolGroup = defineStore(
         })
         schoolGroupCreate({ schoolId }).catch((error) => console.log(error))
         onDone((result) => {
-          const schoolGroup: SchoolGroup =
-            result.data.schoolGroupCreate.schoolGroup
-          addToStore(schoolGroup)
-          resolve('Success')
+          if (result.data?.schoolGroupCreate.schoolGroup) {
+            const schoolGroup: SchoolGroupCreateMutation['schoolGroupCreate']['schoolGroup'] =
+              result.data.schoolGroupCreate.schoolGroup
+            addToStore(schoolGroup)
+            resolve('Success')
+          } else if (result.data?.schoolGroupCreate.userErrors) {
+            console.log(result.data.schoolGroupCreate.userErrors)
+          }
         })
         onError((error) => {
           reject(console.log(error))
@@ -98,7 +106,7 @@ export const useSchoolGroup = defineStore(
         load()
         onResult((result) => {
           const schoolGroups = <SchoolGroup[]>(
-            result.data.registration.school.schoolGroups
+            result.data.registration.school?.schoolGroups
           )
           for (let i = 0; i < schoolGroups.length; i++) {
             addToStore(schoolGroups[i])

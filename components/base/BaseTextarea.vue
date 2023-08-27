@@ -7,7 +7,7 @@
     helpMessage?: string
     status?: StatusEnum
     placeholder?: string
-    modelValue?: string
+    modelValue?: string | number | null
   }>()
 
   const emit = defineEmits<{
@@ -61,8 +61,9 @@
     </div>
     <textarea
       v-bind="{ ...$attrs }"
+      type="string"
       :id="uuid"
-      :value="value"
+      :value="value ?? ''"
       :name="name"
       :aria-describedby="errorMessage ? `${uuid}-error` : ''"
       :aria-invalid="errorMessage ? true : false"

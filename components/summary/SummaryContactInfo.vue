@@ -1,14 +1,10 @@
 <script setup lang="ts">
-  defineProps({
-    contact: {
-      type: Object,
-      required: true,
-    },
-    fullName: {
-      type: String,
-      required: true,
-    },
-  })
+  import type { ContactInfo } from '~/composables/types'
+
+  defineProps<{
+    contact: ContactInfo
+    fullName: string
+  }>()
 </script>
 
 <template>

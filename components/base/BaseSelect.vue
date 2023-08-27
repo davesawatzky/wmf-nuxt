@@ -2,8 +2,8 @@
   import type { StatusEnum } from '@/composables/types'
 
   interface Options {
-    id: string
-    name: string
+    id: string | number
+    name?: string
   }
 
   const props = defineProps<{

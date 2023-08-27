@@ -4,6 +4,7 @@
     CategoriesDocument,
     DisciplinesByTypeDocument,
     FestivalClassSearchDocument,
+    FestivalClassesDocument,
     InstrumentsDocument,
     LevelsDocument,
     SubdisciplinesByTypeDocument,
@@ -13,9 +14,15 @@
   import { useAppStore } from '@/stores/appStore'
   import { usePerformers } from '@/stores/userPerformer'
   import type {
+    Category,
+    Discipline,
+    DisciplineInput,
+    DisciplinesByTypeQuery,
     FestivalClass,
+    Level,
     RegisteredClass,
     RegisteredClassInput,
+    Subdiscipline,
   } from '@/graphql/gql/graphql'
   import type { Status } from '@/composables/types'
   import { StatusEnum } from '@/composables/types'
@@ -75,7 +82,7 @@
 
   const { result: instrumentQuery, onError: instrumentsError } =
     useQuery(InstrumentsDocument)
-  const instruments = computed(() => instrumentQuery.value.instruments ?? [])
+  const instruments = computed(() => instrumentQuery.value?.instruments ?? [])
   instrumentsError((error) => {
     console.log(error)
   })
@@ -95,11 +102,13 @@
   })
   const disciplines = computed(() => disciplineQuery.value?.disciplines ?? [])
   const chosenDiscipline = computed(() => {
-    return (
-      disciplines.value.find((item: any) => {
+    if (!!disciplines) {
+      return disciplines.value.find((item: Discipline) => {
         return item.name === selectedClasses.value.discipline
-      }) ?? {}
-    )
+      })
+    } else {
+      return <Discipline>{}
+    }
   })
 
   /**
@@ -112,7 +121,7 @@
   } = useLazyQuery(
     SubdisciplinesByTypeDocument,
     () => ({
-      disciplineId: chosenDiscipline.value.id,
+      disciplineId: chosenDiscipline.value!.id!,
       performerType: appStore.performerType,
     }),
     { fetchPolicy: 'network-only' }
@@ -121,15 +130,16 @@
     console.log(error)
   })
   const subdisciplines = computed(() => {
-    console.log(subdisc.value?.subdisciplines ?? [])
     return subdisc.value?.subdisciplines ?? []
   })
   const chosenSubdiscipline = computed(() => {
-    return (
-      subdisciplines.value.find((item: any) => {
+    if (!!subdisciplines) {
+      return subdisciplines.value.find((item: Subdiscipline) => {
         return item.name === selectedClasses.value.subdiscipline
-      }) ?? {}
-    )
+      })
+    } else {
+      return <Subdiscipline>{}
+    }
   })
 
   /**
@@ -142,18 +152,20 @@
   } = useLazyQuery(
     LevelsDocument,
     () => ({
-      subdisciplineId: chosenSubdiscipline.value.id,
+      subdisciplineId: chosenSubdiscipline.value!.id,
     }),
     { fetchPolicy: 'network-only' }
   )
   errorLevel((error) => console.log(error))
   const levels = computed(() => gradeLevels.value?.levels ?? [])
   const chosenGradeLevel = computed(() => {
-    return (
-      levels.value.find((item: any) => {
+    if (!!levels) {
+      return levels.value.find((item: Level) => {
         return item.name === selectedClasses.value.level
-      }) ?? {}
-    )
+      })
+    } else {
+      return <Level>{}
+    }
   })
 
   /**
@@ -166,19 +178,21 @@
   } = useLazyQuery(
     CategoriesDocument,
     () => ({
-      subdisciplineId: chosenSubdiscipline.value.id,
-      levelId: chosenGradeLevel.value.id,
+      subdisciplineId: chosenSubdiscipline.value!.id,
+      levelId: chosenGradeLevel.value!.id,
     }),
     { fetchPolicy: 'network-only' }
   )
   errorCategories((error) => console.log(error))
   const categories = computed(() => cat.value?.categories ?? [])
   const chosenCategory = computed(() => {
-    return (
-      categories.value.find((item: any) => {
+    if (!!categories) {
+      return categories.value.find((item: Category) => {
         return item.name === selectedClasses.value.category
-      }) ?? {}
-    )
+      })
+    } else {
+      return <Category>{}
+    }
   })
 
   /**
@@ -209,15 +223,15 @@
     FestivalClassSearchDocument,
     () => ({
       festivalClassSearch: {
-        subdisciplineID: chosenSubdiscipline.value.id,
-        levelID: chosenGradeLevel.value.id,
-        categoryID: chosenCategory.value.id,
+        subdisciplineID: chosenSubdiscipline.value!.id,
+        levelID: chosenGradeLevel.value!.id,
+        categoryID: chosenCategory.value!.id,
       },
     }),
     { fetchPolicy: 'network-only' }
   )
   onClassSearchResult((result) => {
-    classSelection.value = result.data.festivalClassSearch[0]
+    classSelection.value = <FestivalClass>result.data.festivalClassSearch[0]
     selectedClasses.value.minSelections = classSelection.value.minSelections
     selectedClasses.value.maxSelections = classSelection.value.maxSelections
 
@@ -244,9 +258,9 @@
 
   const notes = computed(() => {
     if (
-      chosenSubdiscipline.value.description ||
-      chosenGradeLevel.value.description ||
-      chosenCategory.value.description ||
+      chosenSubdiscipline.value?.description ||
+      chosenGradeLevel.value?.description ||
+      chosenCategory.value?.description ||
       (classSelection.value.trophies ?? []).length > 0
     ) {
       return true
@@ -386,7 +400,7 @@
     })
   )
 
-  const { errors, validate } = useForm({
+  const { validate } = useForm({
     validationSchema,
     validateOnMount: true,
   })
@@ -477,7 +491,7 @@
         class="col-span-12">
         <h4 class="pb-2">Notes</h4>
         <div
-          v-if="chosenSubdiscipline.description"
+          v-if="chosenSubdiscipline?.description"
           v-auto-animate>
           <h5>Subdiscipline</h5>
           <p class="text-sm pb-2">
@@ -485,7 +499,7 @@
           </p>
         </div>
         <div
-          v-if="chosenGradeLevel.description"
+          v-if="chosenGradeLevel?.description"
           v-auto-animate>
           <h5>Grade / Level</h5>
           <p class="text-sm pb-2">
@@ -493,7 +507,7 @@
           </p>
         </div>
         <div
-          v-if="chosenCategory.description"
+          v-if="chosenCategory?.description"
           v-auto-animate>
           <h5>Category</h5>
           <p class="text-sm pb-2">

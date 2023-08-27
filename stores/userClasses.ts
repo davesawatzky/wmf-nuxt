@@ -131,11 +131,15 @@ export const useClasses = defineStore(
           },
         }).catch((error) => console.log(error))
         onDone((result) => {
-          const regClass: RegisteredClass =
-            result.data.registeredClassCreate.registeredClass
-          addClassToStore(regClass)
-          createSelection(regClass.id).catch((err) => console.log(err))
-          resolve('Success')
+          if (result.data?.registeredClassCreate.registeredClass) {
+            const regClass: RegisteredClass =
+              result.data.registeredClassCreate.registeredClass
+            addClassToStore(regClass)
+            createSelection(regClass.id).catch((err) => console.log(err))
+            resolve('Success')
+          } else if (result.data?.registeredClassCreate.userErrors) {
+            console.log(result.data.registeredClassCreate.userErrors)
+          }
         })
         onError((error) => {
           reject(console.log(error))
@@ -164,13 +168,15 @@ export const useClasses = defineStore(
         )
         load()
         onResult((result) => {
-          const returnedClasses: RegisteredClass[] =
-            result.data.registration.registeredClasses
-          const length = returnedClasses.length
-          for (let i = 0; i < length; i++) {
-            addClassToStore(returnedClasses[i])
+          if (result.data.registration.registeredClasses) {
+            const returnedClasses: RegisteredClass[] =
+              result.data.registration.registeredClasses
+            const length = returnedClasses.length
+            for (let i = 0; i < length; i++) {
+              addClassToStore(returnedClasses[i])
+            }
+            resolve('Success')
           }
-          resolve('Success')
         })
         onError((error) => {
           reject(console.log(error))
@@ -271,9 +277,13 @@ export const useClasses = defineStore(
           console.log(error)
         )
         onDone((result) => {
-          const selection: Selection = result.data.selectionCreate.selection
-          addSelectionToStore(selection, classId)
-          resolve('Success')
+          if (result.data?.selectionCreate.selection) {
+            const selection: Selection = result.data.selectionCreate.selection
+            addSelectionToStore(selection, classId)
+            resolve('Success')
+          } else if (result.data?.selectionCreate.userErrors) {
+            console.log(result.data.selectionCreate.userErrors)
+          }
         })
         onError((error) => {
           reject(console.log(error))

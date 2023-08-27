@@ -14,7 +14,7 @@
     helpMessage?: string
     name: string
     status?: StatusEnum
-    modelValue?: string | number
+    modelValue?: string | number | null
     vertical?: boolean
   }>()
 
@@ -78,7 +78,7 @@
         :label="option.label"
         :description="option.description"
         :value="option.value"
-        :model-value="value"
+        :model-value="value ?? undefined"
         :name="props.name"
         v-on="validationListeners" />
     </component>

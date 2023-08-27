@@ -9,5 +9,6 @@ query Registrations($performerType: PerformerType) {
     totalAmt
     transactionInfo
     confirmation
+    updatedAt
   }
 }

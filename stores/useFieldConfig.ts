@@ -61,7 +61,9 @@ export const useFieldConfig = defineStore(
           load,
           onError,
           onResult,
-        } = useLazyQuery(FieldConfigsDocument, { fetchPolicy: 'network-only' })
+        } = useLazyQuery(FieldConfigsDocument, undefined, {
+          fetchPolicy: 'network-only',
+        })
         load()
         onResult((result) => {
           for (let i = 0; i < result.data.fieldConfigs.length; i++) {

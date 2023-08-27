@@ -6,7 +6,11 @@ import {
   PerformerInfoDocument,
   PerformerUpdateDocument,
 } from '~/graphql/gql/graphql'
-import type { Performer, PerformerInput } from '~/graphql/gql/graphql'
+import type {
+  Performer,
+  PerformerCreateMutation,
+  PerformerInput,
+} from '~/graphql/gql/graphql'
 
 const fieldConfigStore = useFieldConfig()
 
@@ -54,7 +58,7 @@ export const usePerformers = defineStore(
      * Multiple performers may be included in group registrations
      * @param perform at minimum, must include valid id property value
      */
-    function addToStore(performer: Performer): void {
+    function addToStore(performer: Partial<Performer>): void {
       performers.value.push(<Performer>{
         id: performer.id,
         firstName: performer.firstName || '',
@@ -91,9 +95,14 @@ export const usePerformers = defineStore(
           },
         }).catch((error) => console.log(error))
         onDone((result) => {
-          const performer: Performer = result.data.performerCreate.performer
-          addToStore(performer)
-          resolve('Success')
+          if (result.data?.performerCreate.performer) {
+            const performer: PerformerCreateMutation['performerCreate']['performer'] =
+              result.data.performerCreate.performer
+            addToStore(performer)
+            resolve('Success')
+          } else if (result.data?.performerCreate.userErrors) {
+            console.log(result.data.performerCreate.userErrors)
+          }
         })
         onError((error) => {
           reject(console.log(error))
@@ -120,11 +129,19 @@ export const usePerformers = defineStore(
         )
         load()
         onResult((result) => {
-          const performers: Performer[] = result.data.registration.performers
-          for (let i = 0; i < performers.length; i++) {
-            addToStore(performers[i])
+          try {
+            if (result.data.registration.performers) {
+              const performers: Performer[] =
+                result.data.registration.performers
+              for (let i = 0; i < performers.length; i++) {
+                addToStore(performers[i])
+              }
+              resolve('Success')
+            }
+          } catch (error) {
+            console.log(error)
+            reject(error)
           }
-          resolve('Success')
         })
         onError((error) => {
           reject(console.log(error))

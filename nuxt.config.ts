@@ -4,6 +4,9 @@ import { fileURLToPath } from 'node:url'
 import process from 'node:process'
 
 export default defineNuxtConfig({
+  devServer: {
+    port: 3001,
+  },
   alias: {
     '@': resolve(__dirname, './'),
     images: fileURLToPath(new URL('./public/images', import.meta.url)),
@@ -59,9 +62,9 @@ export default defineNuxtConfig({
     storage: 'sessionStorage',
   },
   runtimeConfig: {
-    baseUrl: process.env.BASE_URL_SERVER,
+    apiBase: process.env.NUXT_API_BASE,
     public: {
-      baseUrl: process.env.BASE_URL_CLIENT,
+      apiBase: process.env.NUXT_API_BASE,
     },
   },
   typescript: {
@@ -70,6 +73,7 @@ export default defineNuxtConfig({
     tsConfig: {
       compilerOptions: {
         moduleResolution: 'bundler',
+        types: [],
       },
     },
   },

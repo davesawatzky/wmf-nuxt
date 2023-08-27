@@ -41,7 +41,7 @@
   const schoolGroups = computed(() => {
     const newArray = []
     for (const schlGroup of schoolGroupStore.schoolGroup)
-      newArray.push({ id: schlGroup.id, name: schlGroup.name })
+      newArray.push({ id: schlGroup.id, name: schlGroup.name ?? undefined })
     return newArray
   })
 
@@ -67,6 +67,7 @@
       schoolGroups: yup.array().of(
         yup.object({
           id: yup.number().integer().required('Please select a group'),
+          name: yup.string(),
         })
       ),
     })

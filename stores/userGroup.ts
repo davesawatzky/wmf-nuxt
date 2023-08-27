@@ -5,7 +5,11 @@ import {
   GroupInfoDocument,
   GroupUpdateDocument,
 } from '~/graphql/gql/graphql'
-import type { Group, GroupInput } from '~/graphql/gql/graphql'
+import type {
+  Group,
+  GroupCreateMutation,
+  GroupInput,
+} from '~/graphql/gql/graphql'
 
 const fieldConfigStore = useFieldConfig()
 
@@ -32,8 +36,8 @@ export const useGroup = defineStore(
      * Adds empty Group properties or Group object to the store
      * @param grp Group object, must include id property value
      */
-    function addToStore(grp: Group): void {
-      group.value.id = grp.id
+    function addToStore(grp: Partial<Group>): void {
+      group.value.id = grp.id!
       group.value.groupType = grp.groupType || ''
       group.value.name = grp.name || ''
       group.value.numberOfPerformers = grp.numberOfPerformers || undefined
@@ -56,9 +60,14 @@ export const useGroup = defineStore(
         } = useMutation(GroupCreateDocument)
         groupCreate({ registrationId }).catch((error) => console.log(error))
         onDone((result) => {
-          const group: Group = result.data.groupCreate.group
-          addToStore(group)
-          resolve('Success')
+          if (result.data?.groupCreate.group) {
+            const group: GroupCreateMutation['groupCreate']['group'] =
+              result.data.groupCreate.group
+            addToStore(group)
+            resolve('Success')
+          } else if (result.data?.groupCreate.userErrors) {
+            console.log(result.data.groupCreate.userErrors)
+          }
         })
         onError((error) => {
           reject(console.log(error))

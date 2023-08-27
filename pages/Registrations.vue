@@ -17,7 +17,6 @@
     soloOpen,
   } from '@/composables/openClosed'
   import { PerformerType, RegistrationsDocument } from '@/graphql/gql/graphql'
-  import type { Registration } from '@/graphql/gql/graphql'
 
   const soloPhoto = '/images/opera-singer-on-stage.png'
   const soloPhotoBW = '/images/opera-singer-on-stage-BW.png'
@@ -78,9 +77,7 @@
   }))
   onError((error) => console.log(error))
 
-  const registrations = computed<Registration[]>(
-    () => result.value?.registrations ?? []
-  )
+  const registrations = computed(() => result.value?.registrations ?? [])
 
   function openEditor(performerType: PerformerType): boolean {
     // eslint-disable-next-line no-eval

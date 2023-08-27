@@ -6,7 +6,11 @@ import {
   TeacherInfoDocument,
   TeacherUpdateDocument,
 } from '~/graphql/gql/graphql'
-import type { Teacher, TeacherInput } from '~/graphql/gql/graphql'
+import type {
+  Teacher,
+  TeacherCreateMutation,
+  TeacherInput,
+} from '~/graphql/gql/graphql'
 
 const fieldConfigStore = useFieldConfig()
 
@@ -77,9 +81,14 @@ export const useTeacher = defineStore(
           },
         }).catch((error) => console.log(error))
         onDone((result) => {
-          const teacher: Teacher = result.data.teacherCreate.teacher
-          addToStore(teacher)
-          resolve('Success')
+          if (result.data?.teacherCreate.teacher) {
+            const teacher: TeacherCreateMutation['teacherCreate']['teacher'] =
+              result.data.teacherCreate.teacher
+            addToStore(teacher)
+            resolve('Success')
+          } else if (result.data?.teacherCreate.userErrors) {
+            reject(console.log(result.data?.teacherCreate.userErrors))
+          }
         })
         onError((error) => {
           reject(console.log(error))

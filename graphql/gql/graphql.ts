@@ -51,7 +51,7 @@ export type CategoryInput = {
 
 export type CategoryPayload = {
   __typename: 'CategoryPayload';
-  category?: Maybe<Category>;
+  category: Category;
   userErrors: Array<UserError>;
 };
 
@@ -81,7 +81,7 @@ export type CommunityInput = {
 
 export type CommunityPayload = {
   __typename: 'CommunityPayload';
-  community?: Maybe<Community>;
+  community: Community;
   userErrors: Array<UserError>;
 };
 
@@ -99,8 +99,8 @@ export type CredentialsSignup = {
 
 export type Discipline = {
   __typename: 'Discipline';
-  id?: Maybe<Scalars['Int']['output']>;
-  name?: Maybe<Scalars['String']['output']>;
+  id: Scalars['Int']['output'];
+  name: Scalars['String']['output'];
   subdisciplines?: Maybe<Array<Subdiscipline>>;
 };
 
@@ -115,7 +115,7 @@ export type DisciplineInput = {
 
 export type DisciplinePayload = {
   __typename: 'DisciplinePayload';
-  discipline?: Maybe<Discipline>;
+  discipline: Discipline;
   userErrors: Array<UserError>;
 };
 
@@ -192,8 +192,8 @@ export type GroupInput = {
 
 export type GroupPayload = {
   __typename: 'GroupPayload';
-  group?: Maybe<Group>;
-  userErrors?: Maybe<Array<UserError>>;
+  group: Group;
+  userErrors: Array<UserError>;
 };
 
 export type Instrument = {
@@ -410,6 +410,7 @@ export type MutationlevelUpdateArgs = {
 
 
 export type MutationperformerCreateArgs = {
+  performerInput?: InputMaybe<PerformerInput>;
   registrationID: Scalars['Int']['input'];
 };
 
@@ -426,6 +427,7 @@ export type MutationperformerUpdateArgs = {
 
 
 export type MutationregisteredClassCreateArgs = {
+  registeredClass?: InputMaybe<RegisteredClassInput>;
   registrationID: Scalars['Int']['input'];
 };
 
@@ -460,6 +462,7 @@ export type MutationregistrationUpdateArgs = {
 
 export type MutationschoolCreateArgs = {
   registrationID: Scalars['Int']['input'];
+  schoolInput?: InputMaybe<SchoolInput>;
 };
 
 
@@ -619,7 +622,7 @@ export type PerformerInput = {
 
 export type PerformerPayload = {
   __typename: 'PerformerPayload';
-  performer?: Maybe<Performer>;
+  performer: Performer;
   userErrors: Array<UserError>;
 };
 
@@ -873,7 +876,7 @@ export type RegisteredClassInput = {
 
 export type RegisteredClassPayload = {
   __typename: 'RegisteredClassPayload';
-  registeredClass?: Maybe<RegisteredClass>;
+  registeredClass: RegisteredClass;
   userErrors: Array<UserError>;
 };
 
@@ -910,8 +913,8 @@ export type RegistrationInput = {
 
 export type RegistrationPayload = {
   __typename: 'RegistrationPayload';
-  registration?: Maybe<Registration>;
-  userErrors?: Maybe<Array<UserError>>;
+  registration: Registration;
+  userErrors: Array<UserError>;
 };
 
 export type School = {
@@ -954,7 +957,7 @@ export type SchoolGroupInput = {
 
 export type SchoolGroupPayload = {
   __typename: 'SchoolGroupPayload';
-  schoolGroup?: Maybe<SchoolGroup>;
+  schoolGroup: SchoolGroup;
   userErrors: Array<UserError>;
 };
 
@@ -971,7 +974,7 @@ export type SchoolInput = {
 
 export type SchoolPayload = {
   __typename: 'SchoolPayload';
-  school?: Maybe<School>;
+  school: School;
   userErrors: Array<UserError>;
 };
 
@@ -995,7 +998,7 @@ export type SelectionInput = {
 
 export type SelectionPayload = {
   __typename: 'SelectionPayload';
-  selection?: Maybe<Selection>;
+  selection: Selection;
   userErrors: Array<UserError>;
 };
 
@@ -1044,8 +1047,8 @@ export type Submission = {
 
 export type SubmissionPayload = {
   __typename: 'SubmissionPayload';
-  submission?: Maybe<Submission>;
-  userErrors?: Maybe<Array<UserError>>;
+  submission: Submission;
+  userErrors: Array<UserError>;
 };
 
 export type Teacher = {
@@ -1080,7 +1083,7 @@ export type TeacherInput = {
 
 export type TeacherPayload = {
   __typename: 'TeacherPayload';
-  teacher?: Maybe<Teacher>;
+  teacher: Teacher;
   userErrors: Array<UserError>;
 };
 
@@ -1129,23 +1132,24 @@ export type UserError = {
 
 export type UserPayload = {
   __typename: 'UserPayload';
-  user?: Maybe<User>;
+  user: User;
   userErrors: Array<UserError>;
 };
 
 export type ClassCreateMutationVariables = Exact<{
   registrationId: Scalars['Int']['input'];
+  registeredClass?: InputMaybe<RegisteredClassInput>;
 }>;
 
 
-export type ClassCreateMutation = { __typename: 'Mutation', registeredClassCreate: { __typename: 'RegisteredClassPayload', registeredClass?: { __typename: 'RegisteredClass', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
+export type ClassCreateMutation = { __typename: 'Mutation', registeredClassCreate: { __typename: 'RegisteredClassPayload', registeredClass: { __typename: 'RegisteredClass', id: number }, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type ClassDeleteMutationVariables = Exact<{
   registeredClassId: Scalars['Int']['input'];
 }>;
 
 
-export type ClassDeleteMutation = { __typename: 'Mutation', registeredClassDelete: { __typename: 'RegisteredClassPayload', registeredClass?: { __typename: 'RegisteredClass', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
+export type ClassDeleteMutation = { __typename: 'Mutation', registeredClassDelete: { __typename: 'RegisteredClassPayload', registeredClass: { __typename: 'RegisteredClass', id: number }, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type ClassUpdateMutationVariables = Exact<{
   registeredClassId: Scalars['Int']['input'];
@@ -1153,21 +1157,21 @@ export type ClassUpdateMutationVariables = Exact<{
 }>;
 
 
-export type ClassUpdateMutation = { __typename: 'Mutation', registeredClassUpdate: { __typename: 'RegisteredClassPayload', registeredClass?: { __typename: 'RegisteredClass', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
+export type ClassUpdateMutation = { __typename: 'Mutation', registeredClassUpdate: { __typename: 'RegisteredClassPayload', registeredClass: { __typename: 'RegisteredClass', id: number }, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type CommunityCreateMutationVariables = Exact<{
   registrationId: Scalars['Int']['input'];
 }>;
 
 
-export type CommunityCreateMutation = { __typename: 'Mutation', communityCreate: { __typename: 'CommunityPayload', community?: { __typename: 'Community', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
+export type CommunityCreateMutation = { __typename: 'Mutation', communityCreate: { __typename: 'CommunityPayload', community: { __typename: 'Community', id: number }, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type CommunityDeleteMutationVariables = Exact<{
   communityId: Scalars['Int']['input'];
 }>;
 
 
-export type CommunityDeleteMutation = { __typename: 'Mutation', communityDelete: { __typename: 'CommunityPayload', community?: { __typename: 'Community', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
+export type CommunityDeleteMutation = { __typename: 'Mutation', communityDelete: { __typename: 'CommunityPayload', community: { __typename: 'Community', id: number }, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type CommunityUpdateMutationVariables = Exact<{
   communityId: Scalars['Int']['input'];
@@ -1175,21 +1179,21 @@ export type CommunityUpdateMutationVariables = Exact<{
 }>;
 
 
-export type CommunityUpdateMutation = { __typename: 'Mutation', communityUpdate: { __typename: 'CommunityPayload', community?: { __typename: 'Community', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
+export type CommunityUpdateMutation = { __typename: 'Mutation', communityUpdate: { __typename: 'CommunityPayload', community: { __typename: 'Community', id: number }, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type GroupCreateMutationVariables = Exact<{
   registrationId: Scalars['Int']['input'];
 }>;
 
 
-export type GroupCreateMutation = { __typename: 'Mutation', groupCreate: { __typename: 'GroupPayload', group?: { __typename: 'Group', id: number } | null, userErrors?: Array<{ __typename: 'UserError', message: string }> | null } };
+export type GroupCreateMutation = { __typename: 'Mutation', groupCreate: { __typename: 'GroupPayload', group: { __typename: 'Group', id: number }, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type GroupDeleteMutationVariables = Exact<{
   groupId: Scalars['Int']['input'];
 }>;
 
 
-export type GroupDeleteMutation = { __typename: 'Mutation', groupDelete: { __typename: 'GroupPayload', group?: { __typename: 'Group', id: number } | null, userErrors?: Array<{ __typename: 'UserError', message: string }> | null } };
+export type GroupDeleteMutation = { __typename: 'Mutation', groupDelete: { __typename: 'GroupPayload', group: { __typename: 'Group', id: number }, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type GroupUpdateMutationVariables = Exact<{
   groupId: Scalars['Int']['input'];
@@ -1197,21 +1201,22 @@ export type GroupUpdateMutationVariables = Exact<{
 }>;
 
 
-export type GroupUpdateMutation = { __typename: 'Mutation', groupUpdate: { __typename: 'GroupPayload', group?: { __typename: 'Group', id: number } | null, userErrors?: Array<{ __typename: 'UserError', message: string }> | null } };
+export type GroupUpdateMutation = { __typename: 'Mutation', groupUpdate: { __typename: 'GroupPayload', group: { __typename: 'Group', id: number }, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type PerformerCreateMutationVariables = Exact<{
   registrationId: Scalars['Int']['input'];
+  performer: PerformerInput;
 }>;
 
 
-export type PerformerCreateMutation = { __typename: 'Mutation', performerCreate: { __typename: 'PerformerPayload', performer?: { __typename: 'Performer', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
+export type PerformerCreateMutation = { __typename: 'Mutation', performerCreate: { __typename: 'PerformerPayload', performer: { __typename: 'Performer', id: number }, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type PerformerDeleteMutationVariables = Exact<{
   performerId: Scalars['Int']['input'];
 }>;
 
 
-export type PerformerDeleteMutation = { __typename: 'Mutation', performerDelete: { __typename: 'PerformerPayload', performer?: { __typename: 'Performer', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
+export type PerformerDeleteMutation = { __typename: 'Mutation', performerDelete: { __typename: 'PerformerPayload', performer: { __typename: 'Performer', id: number }, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type PerformerUpdateMutationVariables = Exact<{
   performerId: Scalars['Int']['input'];
@@ -1219,7 +1224,7 @@ export type PerformerUpdateMutationVariables = Exact<{
 }>;
 
 
-export type PerformerUpdateMutation = { __typename: 'Mutation', performerUpdate: { __typename: 'PerformerPayload', performer?: { __typename: 'Performer', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
+export type PerformerUpdateMutation = { __typename: 'Mutation', performerUpdate: { __typename: 'PerformerPayload', performer: { __typename: 'Performer', id: number }, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type RegistrationCreateMutationVariables = Exact<{
   performerType: PerformerType;
@@ -1227,14 +1232,14 @@ export type RegistrationCreateMutationVariables = Exact<{
 }>;
 
 
-export type RegistrationCreateMutation = { __typename: 'Mutation', registrationCreate: { __typename: 'RegistrationPayload', registration?: { __typename: 'Registration', id: number, label?: string | null, performerType: PerformerType } | null, userErrors?: Array<{ __typename: 'UserError', message: string }> | null } };
+export type RegistrationCreateMutation = { __typename: 'Mutation', registrationCreate: { __typename: 'RegistrationPayload', registration: { __typename: 'Registration', id: number, label?: string | null, performerType: PerformerType }, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type RegistrationDeleteMutationVariables = Exact<{
   registrationId: Scalars['Int']['input'];
 }>;
 
 
-export type RegistrationDeleteMutation = { __typename: 'Mutation', registrationDelete: { __typename: 'RegistrationPayload', registration?: { __typename: 'Registration', id: number } | null, userErrors?: Array<{ __typename: 'UserError', message: string }> | null } };
+export type RegistrationDeleteMutation = { __typename: 'Mutation', registrationDelete: { __typename: 'RegistrationPayload', registration: { __typename: 'Registration', id: number }, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type RegistrationUpdateMutationVariables = Exact<{
   registrationId: Scalars['Int']['input'];
@@ -1242,35 +1247,36 @@ export type RegistrationUpdateMutationVariables = Exact<{
 }>;
 
 
-export type RegistrationUpdateMutation = { __typename: 'Mutation', registrationUpdate: { __typename: 'RegistrationPayload', registration?: { __typename: 'Registration', id: number } | null, userErrors?: Array<{ __typename: 'UserError', message: string }> | null } };
+export type RegistrationUpdateMutation = { __typename: 'Mutation', registrationUpdate: { __typename: 'RegistrationPayload', registration: { __typename: 'Registration', id: number }, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type SchoolCreateMutationVariables = Exact<{
   registrationId: Scalars['Int']['input'];
+  school: SchoolInput;
 }>;
 
 
-export type SchoolCreateMutation = { __typename: 'Mutation', schoolCreate: { __typename: 'SchoolPayload', school?: { __typename: 'School', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
+export type SchoolCreateMutation = { __typename: 'Mutation', schoolCreate: { __typename: 'SchoolPayload', school: { __typename: 'School', id: number }, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type SchoolDeleteMutationVariables = Exact<{
   schoolId: Scalars['Int']['input'];
 }>;
 
 
-export type SchoolDeleteMutation = { __typename: 'Mutation', schoolDelete: { __typename: 'SchoolPayload', school?: { __typename: 'School', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
+export type SchoolDeleteMutation = { __typename: 'Mutation', schoolDelete: { __typename: 'SchoolPayload', school: { __typename: 'School', id: number }, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type SchoolGroupCreateMutationVariables = Exact<{
   schoolId: Scalars['Int']['input'];
 }>;
 
 
-export type SchoolGroupCreateMutation = { __typename: 'Mutation', schoolGroupCreate: { __typename: 'SchoolGroupPayload', schoolGroup?: { __typename: 'SchoolGroup', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
+export type SchoolGroupCreateMutation = { __typename: 'Mutation', schoolGroupCreate: { __typename: 'SchoolGroupPayload', schoolGroup: { __typename: 'SchoolGroup', id: number }, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type SchoolGroupDeleteMutationVariables = Exact<{
   schoolGroupId: Scalars['Int']['input'];
 }>;
 
 
-export type SchoolGroupDeleteMutation = { __typename: 'Mutation', schoolGroupDelete: { __typename: 'SchoolGroupPayload', schoolGroup?: { __typename: 'SchoolGroup', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
+export type SchoolGroupDeleteMutation = { __typename: 'Mutation', schoolGroupDelete: { __typename: 'SchoolGroupPayload', schoolGroup: { __typename: 'SchoolGroup', id: number }, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type SchoolGroupUpdateMutationVariables = Exact<{
   schoolGroupId: Scalars['Int']['input'];
@@ -1278,7 +1284,7 @@ export type SchoolGroupUpdateMutationVariables = Exact<{
 }>;
 
 
-export type SchoolGroupUpdateMutation = { __typename: 'Mutation', schoolGroupUpdate: { __typename: 'SchoolGroupPayload', schoolGroup?: { __typename: 'SchoolGroup', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
+export type SchoolGroupUpdateMutation = { __typename: 'Mutation', schoolGroupUpdate: { __typename: 'SchoolGroupPayload', schoolGroup: { __typename: 'SchoolGroup', id: number }, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type SchoolUpdateMutationVariables = Exact<{
   schoolId: Scalars['Int']['input'];
@@ -1286,21 +1292,21 @@ export type SchoolUpdateMutationVariables = Exact<{
 }>;
 
 
-export type SchoolUpdateMutation = { __typename: 'Mutation', schoolUpdate: { __typename: 'SchoolPayload', school?: { __typename: 'School', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
+export type SchoolUpdateMutation = { __typename: 'Mutation', schoolUpdate: { __typename: 'SchoolPayload', school: { __typename: 'School', id: number }, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type SelectionCreateMutationVariables = Exact<{
   registeredClassId: Scalars['Int']['input'];
 }>;
 
 
-export type SelectionCreateMutation = { __typename: 'Mutation', selectionCreate: { __typename: 'SelectionPayload', selection?: { __typename: 'Selection', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
+export type SelectionCreateMutation = { __typename: 'Mutation', selectionCreate: { __typename: 'SelectionPayload', selection: { __typename: 'Selection', id: number }, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type SelectionDeleteMutationVariables = Exact<{
   selectionId: Scalars['Int']['input'];
 }>;
 
 
-export type SelectionDeleteMutation = { __typename: 'Mutation', selectionDelete: { __typename: 'SelectionPayload', selection?: { __typename: 'Selection', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
+export type SelectionDeleteMutation = { __typename: 'Mutation', selectionDelete: { __typename: 'SelectionPayload', selection: { __typename: 'Selection', id: number }, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type SelectionUpdateMutationVariables = Exact<{
   selectionId: Scalars['Int']['input'];
@@ -1308,7 +1314,7 @@ export type SelectionUpdateMutationVariables = Exact<{
 }>;
 
 
-export type SelectionUpdateMutation = { __typename: 'Mutation', selectionUpdate: { __typename: 'SelectionPayload', selection?: { __typename: 'Selection', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
+export type SelectionUpdateMutation = { __typename: 'Mutation', selectionUpdate: { __typename: 'SelectionPayload', selection: { __typename: 'Selection', id: number }, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type TeacherCreateMutationVariables = Exact<{
   registrationId: Scalars['Int']['input'];
@@ -1316,14 +1322,14 @@ export type TeacherCreateMutationVariables = Exact<{
 }>;
 
 
-export type TeacherCreateMutation = { __typename: 'Mutation', teacherCreate: { __typename: 'TeacherPayload', teacher?: { __typename: 'Teacher', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
+export type TeacherCreateMutation = { __typename: 'Mutation', teacherCreate: { __typename: 'TeacherPayload', teacher: { __typename: 'Teacher', id: number }, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type TeacherDeleteMutationVariables = Exact<{
   teacherId: Scalars['Int']['input'];
 }>;
 
 
-export type TeacherDeleteMutation = { __typename: 'Mutation', teacherDelete: { __typename: 'TeacherPayload', teacher?: { __typename: 'Teacher', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
+export type TeacherDeleteMutation = { __typename: 'Mutation', teacherDelete: { __typename: 'TeacherPayload', teacher: { __typename: 'Teacher', id: number }, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type TeacherUpdateMutationVariables = Exact<{
   teacherId: Scalars['Int']['input'];
@@ -1331,7 +1337,7 @@ export type TeacherUpdateMutationVariables = Exact<{
 }>;
 
 
-export type TeacherUpdateMutation = { __typename: 'Mutation', teacherUpdate: { __typename: 'TeacherPayload', teacher?: { __typename: 'Teacher', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
+export type TeacherUpdateMutation = { __typename: 'Mutation', teacherUpdate: { __typename: 'TeacherPayload', teacher: { __typename: 'Teacher', id: number }, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type SignInMutationVariables = Exact<{
   credentials: CredentialsSignin;
@@ -1359,7 +1365,7 @@ export type DisciplinesByTypeQueryVariables = Exact<{
 }>;
 
 
-export type DisciplinesByTypeQuery = { __typename: 'Query', disciplines: Array<{ __typename: 'Discipline', id?: number | null, name?: string | null }> };
+export type DisciplinesByTypeQuery = { __typename: 'Query', disciplines: Array<{ __typename: 'Discipline', id: number, name: string }> };
 
 export type GroupInfoQueryVariables = Exact<{
   registrationId: Scalars['Int']['input'];
@@ -1416,7 +1422,7 @@ export type ClassByNumberQueryVariables = Exact<{
 }>;
 
 
-export type ClassByNumberQuery = { __typename: 'Query', festivalClassByNumber: { __typename: 'FestivalClass', id: number, classNumber: string, maxSelections: number, minSelections: number, requiredSelection?: string | null, performerType: PerformerType, price?: any | null, category: { __typename: 'Category', id: number, name: string, description?: string | null, requiredComposer?: string | null }, level: { __typename: 'Level', id: number, name: string, description?: string | null }, subdiscipline: { __typename: 'Subdiscipline', id: number, name: string, description?: string | null, discipline?: { __typename: 'Discipline', id?: number | null, name?: string | null } | null }, trophies?: Array<{ __typename: 'Trophy', id: number, name: string, description?: string | null }> | null } };
+export type ClassByNumberQuery = { __typename: 'Query', festivalClassByNumber: { __typename: 'FestivalClass', id: number, classNumber: string, maxSelections: number, minSelections: number, requiredSelection?: string | null, performerType: PerformerType, price?: any | null, category: { __typename: 'Category', id: number, name: string, description?: string | null, requiredComposer?: string | null }, level: { __typename: 'Level', id: number, name: string, description?: string | null }, subdiscipline: { __typename: 'Subdiscipline', id: number, name: string, description?: string | null, discipline?: { __typename: 'Discipline', id: number, name: string } | null }, trophies?: Array<{ __typename: 'Trophy', id: number, name: string, description?: string | null }> | null } };
 
 export type FestivalClassSearchQueryVariables = Exact<{
   festivalClassSearch: FestivalClassSearchArgs;
@@ -1435,7 +1441,7 @@ export type FestivalClassesQuery = { __typename: 'Query', festivalClasses: Array
 export type DisciplinesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type DisciplinesQuery = { __typename: 'Query', disciplines: Array<{ __typename: 'Discipline', id?: number | null, name?: string | null }> };
+export type DisciplinesQuery = { __typename: 'Query', disciplines: Array<{ __typename: 'Discipline', id: number, name: string }> };
 
 export type FieldConfigQueryVariables = Exact<{
   fieldName: Scalars['String']['input'];
@@ -1448,7 +1454,7 @@ export type FieldConfigQuery = { __typename: 'Query', fieldConfig: { __typename:
 export type FieldConfigsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type FieldConfigsQuery = { __typename: 'Query', fieldConfigs: Array<{ __typename: 'FieldConfig', id: number, tableName: string, fieldName: string, communityRequired: boolean, groupRequired: boolean, schoolRequired: boolean, soloRequired: boolean, customField: boolean, customFieldType?: string | null }> };
+export type FieldConfigsQuery = { __typename: 'Query', fieldConfigs: Array<{ __typename: 'FieldConfig', tableName: string, fieldName: string, communityRequired: boolean, groupRequired: boolean, schoolRequired: boolean, soloRequired: boolean, customField: boolean, customFieldType?: string | null }> };
 
 export type InstrumentsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1468,7 +1474,7 @@ export type RegistrationsQueryVariables = Exact<{
 }>;
 
 
-export type RegistrationsQuery = { __typename: 'Query', registrations: Array<{ __typename: 'Registration', id: number, createdAt?: any | null, label?: string | null, performerType: PerformerType, submittedAt?: any | null, payedAmt?: any | null, totalAmt?: any | null, transactionInfo?: string | null, confirmation?: string | null }> };
+export type RegistrationsQuery = { __typename: 'Query', registrations: Array<{ __typename: 'Registration', id: number, createdAt?: any | null, label?: string | null, performerType: PerformerType, submittedAt?: any | null, payedAmt?: any | null, totalAmt?: any | null, transactionInfo?: string | null, confirmation?: string | null, updatedAt?: any | null }> };
 
 export type SubDisciplinesQueryVariables = Exact<{
   disciplineId: Scalars['Int']['input'];
@@ -1487,7 +1493,7 @@ export type SubdisciplinesByTypeQueryVariables = Exact<{
 export type SubdisciplinesByTypeQuery = { __typename: 'Query', subdisciplines: Array<{ __typename: 'Subdiscipline', id: number, name: string, description?: string | null, maxPerformers?: number | null, minPerformers?: number | null, performerType: PerformerType }> };
 
 
-export const ClassCreateDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ClassCreate"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"registrationId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registeredClassCreate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"registrationID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"registrationId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registeredClass"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"userErrors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]} as unknown as DocumentNode<ClassCreateMutation, ClassCreateMutationVariables>;
+export const ClassCreateDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ClassCreate"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"registrationId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"registeredClass"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"RegisteredClassInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registeredClassCreate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"registrationID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"registrationId"}}},{"kind":"Argument","name":{"kind":"Name","value":"registeredClass"},"value":{"kind":"Variable","name":{"kind":"Name","value":"registeredClass"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registeredClass"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"userErrors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]} as unknown as DocumentNode<ClassCreateMutation, ClassCreateMutationVariables>;
 export const ClassDeleteDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ClassDelete"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"registeredClassId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registeredClassDelete"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"registeredClassID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"registeredClassId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registeredClass"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"userErrors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]} as unknown as DocumentNode<ClassDeleteMutation, ClassDeleteMutationVariables>;
 export const ClassUpdateDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ClassUpdate"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"registeredClassId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"registeredClass"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"RegisteredClassInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registeredClassUpdate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"registeredClassID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"registeredClassId"}}},{"kind":"Argument","name":{"kind":"Name","value":"registeredClassInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"registeredClass"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registeredClass"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"userErrors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]} as unknown as DocumentNode<ClassUpdateMutation, ClassUpdateMutationVariables>;
 export const CommunityCreateDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CommunityCreate"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"registrationId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"communityCreate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"registrationID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"registrationId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"community"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"userErrors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]} as unknown as DocumentNode<CommunityCreateMutation, CommunityCreateMutationVariables>;
@@ -1496,13 +1502,13 @@ export const CommunityUpdateDocument = {"kind":"Document","definitions":[{"kind"
 export const GroupCreateDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"GroupCreate"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"registrationId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"groupCreate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"registrationID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"registrationId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"userErrors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]} as unknown as DocumentNode<GroupCreateMutation, GroupCreateMutationVariables>;
 export const GroupDeleteDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"GroupDelete"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"groupId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"groupDelete"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"groupID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"groupId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"userErrors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]} as unknown as DocumentNode<GroupDeleteMutation, GroupDeleteMutationVariables>;
 export const GroupUpdateDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"GroupUpdate"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"groupId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"group"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"GroupInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"groupUpdate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"groupID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"groupId"}}},{"kind":"Argument","name":{"kind":"Name","value":"groupInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"group"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"userErrors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]} as unknown as DocumentNode<GroupUpdateMutation, GroupUpdateMutationVariables>;
-export const PerformerCreateDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"PerformerCreate"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"registrationId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"performerCreate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"registrationID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"registrationId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"performer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"userErrors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]} as unknown as DocumentNode<PerformerCreateMutation, PerformerCreateMutationVariables>;
+export const PerformerCreateDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"PerformerCreate"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"registrationId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"performer"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PerformerInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"performerCreate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"registrationID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"registrationId"}}},{"kind":"Argument","name":{"kind":"Name","value":"performerInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"performer"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"performer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"userErrors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]} as unknown as DocumentNode<PerformerCreateMutation, PerformerCreateMutationVariables>;
 export const PerformerDeleteDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"PerformerDelete"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"performerId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"performerDelete"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"performerID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"performerId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"performer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"userErrors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]} as unknown as DocumentNode<PerformerDeleteMutation, PerformerDeleteMutationVariables>;
 export const PerformerUpdateDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"PerformerUpdate"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"performerId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"performer"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PerformerInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"performerUpdate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"performerID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"performerId"}}},{"kind":"Argument","name":{"kind":"Name","value":"performerInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"performer"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"performer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"userErrors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]} as unknown as DocumentNode<PerformerUpdateMutation, PerformerUpdateMutationVariables>;
 export const RegistrationCreateDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RegistrationCreate"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"performerType"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PerformerType"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"label"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registrationCreate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"performerType"},"value":{"kind":"Variable","name":{"kind":"Name","value":"performerType"}}},{"kind":"Argument","name":{"kind":"Name","value":"label"},"value":{"kind":"Variable","name":{"kind":"Name","value":"label"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registration"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"performerType"}}]}},{"kind":"Field","name":{"kind":"Name","value":"userErrors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]} as unknown as DocumentNode<RegistrationCreateMutation, RegistrationCreateMutationVariables>;
 export const RegistrationDeleteDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RegistrationDelete"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"registrationId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registrationDelete"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"registrationID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"registrationId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registration"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"userErrors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]} as unknown as DocumentNode<RegistrationDeleteMutation, RegistrationDeleteMutationVariables>;
 export const RegistrationUpdateDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RegistrationUpdate"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"registrationId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"registrationInput"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"RegistrationInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registrationUpdate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"registrationID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"registrationId"}}},{"kind":"Argument","name":{"kind":"Name","value":"registrationInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"registrationInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registration"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"userErrors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]} as unknown as DocumentNode<RegistrationUpdateMutation, RegistrationUpdateMutationVariables>;
-export const SchoolCreateDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SchoolCreate"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"registrationId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schoolCreate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"registrationID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"registrationId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"school"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"userErrors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]} as unknown as DocumentNode<SchoolCreateMutation, SchoolCreateMutationVariables>;
+export const SchoolCreateDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SchoolCreate"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"registrationId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"school"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SchoolInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schoolCreate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"registrationID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"registrationId"}}},{"kind":"Argument","name":{"kind":"Name","value":"schoolInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"school"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"school"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"userErrors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]} as unknown as DocumentNode<SchoolCreateMutation, SchoolCreateMutationVariables>;
 export const SchoolDeleteDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SchoolDelete"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"schoolId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schoolDelete"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"schoolID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"schoolId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"school"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"userErrors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]} as unknown as DocumentNode<SchoolDeleteMutation, SchoolDeleteMutationVariables>;
 export const SchoolGroupCreateDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SchoolGroupCreate"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"schoolId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schoolGroupCreate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"schoolID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"schoolId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schoolGroup"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"userErrors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]} as unknown as DocumentNode<SchoolGroupCreateMutation, SchoolGroupCreateMutationVariables>;
 export const SchoolGroupDeleteDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SchoolGroupDelete"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"schoolGroupId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schoolGroupDelete"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"schoolGroupID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"schoolGroupId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schoolGroup"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"userErrors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]} as unknown as DocumentNode<SchoolGroupDeleteMutation, SchoolGroupDeleteMutationVariables>;
@@ -1530,9 +1536,9 @@ export const FestivalClassSearchDocument = {"kind":"Document","definitions":[{"k
 export const FestivalClassesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FestivalClasses"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"performerType"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"PerformerType"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"festivalClasses"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"performerType"},"value":{"kind":"Variable","name":{"kind":"Name","value":"performerType"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"subdiscipline"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]} as unknown as DocumentNode<FestivalClassesQuery, FestivalClassesQueryVariables>;
 export const DisciplinesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Disciplines"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"disciplines"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]} as unknown as DocumentNode<DisciplinesQuery, DisciplinesQueryVariables>;
 export const FieldConfigDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FieldConfig"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"fieldName"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"tableName"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldConfig"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"fieldName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"fieldName"}}},{"kind":"Argument","name":{"kind":"Name","value":"tableName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"tableName"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"tableName"}},{"kind":"Field","name":{"kind":"Name","value":"fieldName"}},{"kind":"Field","name":{"kind":"Name","value":"customField"}},{"kind":"Field","name":{"kind":"Name","value":"customFieldType"}},{"kind":"Field","name":{"kind":"Name","value":"submissionRequired"}},{"kind":"Field","name":{"kind":"Name","value":"__typename"}}]}}]}}]} as unknown as DocumentNode<FieldConfigQuery, FieldConfigQueryVariables>;
-export const FieldConfigsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FieldConfigs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldConfigs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"tableName"}},{"kind":"Field","name":{"kind":"Name","value":"fieldName"}},{"kind":"Field","name":{"kind":"Name","value":"communityRequired"}},{"kind":"Field","name":{"kind":"Name","value":"groupRequired"}},{"kind":"Field","name":{"kind":"Name","value":"schoolRequired"}},{"kind":"Field","name":{"kind":"Name","value":"soloRequired"}},{"kind":"Field","name":{"kind":"Name","value":"customField"}},{"kind":"Field","name":{"kind":"Name","value":"customFieldType"}},{"kind":"Field","name":{"kind":"Name","value":"__typename"}}]}}]}}]} as unknown as DocumentNode<FieldConfigsQuery, FieldConfigsQueryVariables>;
+export const FieldConfigsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FieldConfigs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldConfigs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tableName"}},{"kind":"Field","name":{"kind":"Name","value":"fieldName"}},{"kind":"Field","name":{"kind":"Name","value":"communityRequired"}},{"kind":"Field","name":{"kind":"Name","value":"groupRequired"}},{"kind":"Field","name":{"kind":"Name","value":"schoolRequired"}},{"kind":"Field","name":{"kind":"Name","value":"soloRequired"}},{"kind":"Field","name":{"kind":"Name","value":"customField"}},{"kind":"Field","name":{"kind":"Name","value":"customFieldType"}}]}}]}}]} as unknown as DocumentNode<FieldConfigsQuery, FieldConfigsQueryVariables>;
 export const InstrumentsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Instruments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"instruments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]} as unknown as DocumentNode<InstrumentsQuery, InstrumentsQueryVariables>;
 export const LevelsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Levels"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"subdisciplineId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"categoryId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"levels"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"categoryID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"categoryId"}}},{"kind":"Argument","name":{"kind":"Name","value":"subdisciplineID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"subdisciplineId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}}]}}]} as unknown as DocumentNode<LevelsQuery, LevelsQueryVariables>;
-export const RegistrationsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Registrations"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"performerType"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"PerformerType"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registrations"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"performerType"},"value":{"kind":"Variable","name":{"kind":"Name","value":"performerType"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"performerType"}},{"kind":"Field","name":{"kind":"Name","value":"submittedAt"}},{"kind":"Field","name":{"kind":"Name","value":"payedAmt"}},{"kind":"Field","name":{"kind":"Name","value":"totalAmt"}},{"kind":"Field","name":{"kind":"Name","value":"transactionInfo"}},{"kind":"Field","name":{"kind":"Name","value":"confirmation"}}]}}]}}]} as unknown as DocumentNode<RegistrationsQuery, RegistrationsQueryVariables>;
+export const RegistrationsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Registrations"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"performerType"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"PerformerType"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registrations"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"performerType"},"value":{"kind":"Variable","name":{"kind":"Name","value":"performerType"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"performerType"}},{"kind":"Field","name":{"kind":"Name","value":"submittedAt"}},{"kind":"Field","name":{"kind":"Name","value":"payedAmt"}},{"kind":"Field","name":{"kind":"Name","value":"totalAmt"}},{"kind":"Field","name":{"kind":"Name","value":"transactionInfo"}},{"kind":"Field","name":{"kind":"Name","value":"confirmation"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<RegistrationsQuery, RegistrationsQueryVariables>;
 export const SubDisciplinesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SubDisciplines"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"disciplineId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"performerType"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PerformerType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"subdisciplines"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"disciplineID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"disciplineId"}}},{"kind":"Argument","name":{"kind":"Name","value":"performerType"},"value":{"kind":"Variable","name":{"kind":"Name","value":"performerType"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}}]}}]} as unknown as DocumentNode<SubDisciplinesQuery, SubDisciplinesQueryVariables>;
 export const SubdisciplinesByTypeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SubdisciplinesByType"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"disciplineId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"performerType"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PerformerType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"subdisciplines"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"disciplineID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"disciplineId"}}},{"kind":"Argument","name":{"kind":"Name","value":"performerType"},"value":{"kind":"Variable","name":{"kind":"Name","value":"performerType"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"maxPerformers"}},{"kind":"Field","name":{"kind":"Name","value":"minPerformers"}},{"kind":"Field","name":{"kind":"Name","value":"performerType"}}]}}]}}]} as unknown as DocumentNode<SubdisciplinesByTypeQuery, SubdisciplinesByTypeQueryVariables>;

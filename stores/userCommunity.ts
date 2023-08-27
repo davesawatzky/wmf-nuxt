@@ -5,7 +5,11 @@ import {
   CommunityInfoDocument,
   CommunityUpdateDocument,
 } from '~/graphql/gql/graphql'
-import type { Community, CommunityInput } from '~/graphql/gql/graphql'
+import type {
+  Community,
+  CommunityCreateMutation,
+  CommunityInput,
+} from '~/graphql/gql/graphql'
 
 const fieldConfigStore = useFieldConfig()
 
@@ -61,9 +65,14 @@ export const useCommunity = defineStore(
         } = useMutation(CommunityCreateDocument, { fetchPolicy: 'no-cache' })
         communityCreate({ registrationId }).catch((error) => console.log(error))
         onDone((result) => {
-          const community: Community = result.data.communityCreate.community
-          addToStore(community)
-          resolve('Success')
+          if (result.data?.communityCreate.community) {
+            const community: CommunityCreateMutation['communityCreate']['community'] =
+              result.data.communityCreate.community
+            addToStore(community)
+            resolve('Success')
+          } else if (result.data?.communityCreate.userErrors) {
+            console.log(result.data.communityCreate.userErrors)
+          }
         })
         onError((error) => {
           reject(console.log(error))

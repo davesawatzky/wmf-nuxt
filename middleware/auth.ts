@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 export default defineNuxtRouteMiddleware((to) => {
   if (to.path !== '/') {
     const { onResult, onError } = useQuery(gql`
@@ -6,7 +7,7 @@ export default defineNuxtRouteMiddleware((to) => {
       }
     `)
     onResult((result) => {
-      if (result.data.tokenCheck === true) {
+      if (!!result.data.tokenCheck === true) {
         navigateTo(to.path)
       } else {
         navigateTo('/login')

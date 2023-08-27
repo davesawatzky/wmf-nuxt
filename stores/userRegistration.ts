@@ -6,6 +6,7 @@ import {
 import type {
   PerformerType,
   Registration,
+  RegistrationCreateMutation,
   RegistrationInput,
 } from '~/graphql/gql/graphql'
 
@@ -33,10 +34,10 @@ export const useRegistration = defineStore(
      * Adds Registration Object to the store.  Can only be one.
      * @param reg Registration Object, must have valid id property value
      */
-    function addToStore(reg: Registration): void {
-      registrationId.value = reg.id
-      registration.value.id = reg.id
-      registration.value.performerType = reg.performerType
+    function addToStore(reg: Partial<Registration>): void {
+      registrationId.value = reg.id!
+      registration.value.id = reg.id!
+      registration.value.performerType = reg.performerType!
       registration.value.label = reg.label || ''
       registration.value.confirmation = reg.confirmation || ''
       registration.value.createdAt = reg.createdAt || ''
@@ -45,7 +46,7 @@ export const useRegistration = defineStore(
       registration.value.payedAmt = reg.payedAmt || 0
       registration.value.totalAmt = reg.totalAmt || 0
       registration.value.updatedAt = reg.updatedAt || ''
-      registration.value.user = reg.user
+      // registration.value.user = reg.user || ''
       registration.value.__typename = 'Registration'
     }
 
@@ -69,10 +70,14 @@ export const useRegistration = defineStore(
           console.log(error)
         )
         onDone((result) => {
-          const registration: Registration =
-            result.data.registrationCreate.registration
-          addToStore(registration)
-          resolve('Success')
+          if (result.data?.registrationCreate.registration) {
+            const registration: RegistrationCreateMutation['registrationCreate']['registration'] =
+              result.data.registrationCreate.registration
+            addToStore(registration)
+            resolve('Success')
+          } else if (result.data?.registrationCreate.userErrors) {
+            console.log(result.data.registrationCreate.userErrors)
+          }
         })
         onError((error) => {
           reject(console.log(error))

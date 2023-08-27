@@ -11,8 +11,8 @@
   const { values, handleSubmit } = useForm({
     validationSchema: toTypedSchema(
       yup.object({
-        firstName: yup.string().trim().label('First Name'),
-        lastName: yup.string().trim().label('Last Name'),
+        firstName: yup.string().trim().required().label('First Name'),
+        lastName: yup.string().trim().required().label('Last Name'),
         email: yup.string().trim().email().required().label('Email'),
         password: yup.string().trim().password().required().label('Password'),
         password2: yup
@@ -35,7 +35,7 @@
       credentials: { email: values.email, password: values.password },
     })
     doneSignin((result) => {
-      if (result.data.signin.diatonicToken) {
+      if (result.data!.signin.diatonicToken) {
         navigateTo('/registrations')
       } else {
         error.value = 'Incorrect email or password.'
@@ -59,7 +59,7 @@
       },
     })
     doneSignup((result) => {
-      if (result.data.signup.diatonicToken) {
+      if (result.data!.signup.diatonicToken) {
         navigateTo('/registrations')
       } else {
         error.value = 'Error occured'
