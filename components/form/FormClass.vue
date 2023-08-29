@@ -102,13 +102,11 @@
   })
   const disciplines = computed(() => disciplineQuery.value?.disciplines ?? [])
   const chosenDiscipline = computed(() => {
-    if (!!disciplines) {
-      return disciplines.value.find((item: Discipline) => {
+    return (
+      disciplines.value.find((item: Discipline) => {
         return item.name === selectedClasses.value.discipline
-      })
-    } else {
-      return <Discipline>{}
-    }
+      }) ?? <Discipline>{}
+    )
   })
 
   /**
@@ -121,7 +119,7 @@
   } = useLazyQuery(
     SubdisciplinesByTypeDocument,
     () => ({
-      disciplineId: chosenDiscipline.value!.id!,
+      disciplineId: chosenDiscipline.value.id,
       performerType: appStore.performerType,
     }),
     { fetchPolicy: 'network-only' }
@@ -133,13 +131,11 @@
     return subdisc.value?.subdisciplines ?? []
   })
   const chosenSubdiscipline = computed(() => {
-    if (!!subdisciplines) {
-      return subdisciplines.value.find((item: Subdiscipline) => {
+    return (
+      subdisciplines.value.find((item: Subdiscipline) => {
         return item.name === selectedClasses.value.subdiscipline
-      })
-    } else {
-      return <Subdiscipline>{}
-    }
+      }) ?? <Subdiscipline>{}
+    )
   })
 
   /**
@@ -152,20 +148,18 @@
   } = useLazyQuery(
     LevelsDocument,
     () => ({
-      subdisciplineId: chosenSubdiscipline.value!.id,
+      subdisciplineId: chosenSubdiscipline.value.id,
     }),
     { fetchPolicy: 'network-only' }
   )
   errorLevel((error) => console.log(error))
   const levels = computed(() => gradeLevels.value?.levels ?? [])
   const chosenGradeLevel = computed(() => {
-    if (!!levels) {
-      return levels.value.find((item: Level) => {
+    return (
+      levels.value.find((item: Level) => {
         return item.name === selectedClasses.value.level
-      })
-    } else {
-      return <Level>{}
-    }
+      }) ?? <Level>{}
+    )
   })
 
   /**
@@ -178,21 +172,19 @@
   } = useLazyQuery(
     CategoriesDocument,
     () => ({
-      subdisciplineId: chosenSubdiscipline.value!.id,
-      levelId: chosenGradeLevel.value!.id,
+      subdisciplineId: chosenSubdiscipline.value.id,
+      levelId: chosenGradeLevel.value.id,
     }),
     { fetchPolicy: 'network-only' }
   )
   errorCategories((error) => console.log(error))
   const categories = computed(() => cat.value?.categories ?? [])
   const chosenCategory = computed(() => {
-    if (!!categories) {
-      return categories.value.find((item: Category) => {
+    return (
+      categories.value.find((item: Category) => {
         return item.name === selectedClasses.value.category
-      })
-    } else {
-      return <Category>{}
-    }
+      }) ?? <Category>{}
+    )
   })
 
   /**
@@ -223,9 +215,9 @@
     FestivalClassSearchDocument,
     () => ({
       festivalClassSearch: {
-        subdisciplineID: chosenSubdiscipline.value!.id,
-        levelID: chosenGradeLevel.value!.id,
-        categoryID: chosenCategory.value!.id,
+        subdisciplineID: chosenSubdiscipline.value.id,
+        levelID: chosenGradeLevel.value.id,
+        categoryID: chosenCategory.value.id,
       },
     }),
     { fetchPolicy: 'network-only' }

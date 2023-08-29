@@ -1,10 +1,12 @@
+const process = require('node:process')
+
 process.env.ESLINT_TSCONFIG = 'tsconfig.json'
 
 module.exports = {
   extends: ['@antfu', '@nuxtjs/eslint-config-typescript', 'prettier'],
   rules: {
     'unused-imports/no-unused-vars': 'off',
-    'no-console': process.env.NODE_ENV === 'development' ? 'off' : 'off',
+    'no-console': process.env.NODE_ENV === 'development' ? 'off' : '',
     '@typescript-eslint/no-console':
       process.env.NODE_ENV === 'development' ? 'off' : 'off',
     '@typescript-eslint/no-unsafe-call': 'off',

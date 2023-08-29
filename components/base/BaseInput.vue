@@ -17,7 +17,7 @@
     helpMessage: undefined,
     status: StatusEnum.null,
     placeholder: '',
-    modelValue: '',
+    modelValue: null,
   })
 
   const emit = defineEmits<{
@@ -38,12 +38,12 @@
     blur: (evt: Event) => handleBlur(evt, true),
     change: (evt: Event) => {
       handleChange(evt, true)
-      if (meta.dirty && meta.valid && !!value.value) {
+      if (meta.valid) {
         emit('changeStatus', 'saved')
         resetField({ value: value.value })
-      } else if (meta.dirty && !value.value && !!meta.initialValue) {
+      } else if (!meta.valid && meta.initialValue) {
         emit('changeStatus', 'remove')
-        resetField({ value: '' })
+        resetField({ value: props.type === 'number' ? 0 : null })
       }
     },
     input: (evt: Event) => {
@@ -81,5 +81,10 @@
     <BaseErrorMessage>
       {{ errorMessage }}
     </BaseErrorMessage>
+    <!-- <BaseErrorMessage> Initial Value: {{ meta.initialValue }} </BaseErrorMessage
+    ><BaseErrorMessage>Dirty: {{ meta.dirty }}</BaseErrorMessage
+    ><BaseErrorMessage>Valid: {{ meta.valid }}</BaseErrorMessage
+    ><BaseErrorMessage>Touched: {{ meta.touched }}</BaseErrorMessage
+    ><BaseErrorMessage>Value: {{ value }}</BaseErrorMessage> -->
   </div>
 </template>

@@ -61,8 +61,8 @@
     </div>
     <textarea
       v-bind="{ ...$attrs }"
-      type="string"
       :id="uuid"
+      type="string"
       :value="value ?? ''"
       :name="name"
       :aria-describedby="errorMessage ? `${uuid}-error` : ''"

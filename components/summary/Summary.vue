@@ -36,8 +36,6 @@
     window.print()
   }
 
-  console.log('FormErrors: ', formErrors.value.value)
-
   const totalErrors = computed(() => {
     const errors: number[] = Object.values(formErrors.value.value)
     return errors.reduce((a, b) => {

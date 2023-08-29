@@ -220,8 +220,6 @@ export const usePerformers = defineStore(
             (item) => item.id === performerId
           )
           performers.value.splice(performerIndex, 1)
-          console.log(performers.value)
-
           resolve(performerIndex)
         })
         onError((error) => {

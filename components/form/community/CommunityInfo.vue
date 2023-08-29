@@ -7,15 +7,21 @@
 
   const status = reactive<Status>({
     name: communityStore.community.name ? StatusEnum.saved : StatusEnum.null,
-    groupSize: communityStore.community.groupSize
-      ? StatusEnum.saved
-      : StatusEnum.null,
-    chaperones: communityStore.community.chaperones
-      ? StatusEnum.saved
-      : StatusEnum.null,
-    wheelchairs: communityStore.community.wheelchairs
-      ? StatusEnum.saved
-      : StatusEnum.null,
+    groupSize:
+      communityStore.community.groupSize ||
+      communityStore.community.groupSize === 0
+        ? StatusEnum.saved
+        : StatusEnum.null,
+    chaperones:
+      communityStore.community.chaperones ||
+      communityStore.community.chaperones === 0
+        ? StatusEnum.saved
+        : StatusEnum.null,
+    wheelchairs:
+      communityStore.community.wheelchairs ||
+      communityStore.community.wheelchairs === 0
+        ? StatusEnum.saved
+        : StatusEnum.null,
     conflictPerformers: communityStore.community.conflictPerformers
       ? StatusEnum.saved
       : StatusEnum.null,
@@ -43,19 +49,22 @@
         .number()
         .min(2)
         .max(300)
+        .typeError('Please enter a valid number')
         .integer()
-        .required('Give the size of the group'),
+        .required('Please enter the size of the group'),
       numberOfChaperones: yup
         .number()
         .min(0)
         .max(100)
         .integer()
+        .typeError('Please enter a valid number')
         .required('Indicate the number of chaperones'),
       numberOfWheelchairs: yup
         .number()
         .min(0)
         .max(100)
         .integer()
+        .typeError('Please enter a valid number')
         .required('Indicate the number of wheelchairs'),
       conflictPerformers: yup.string().trim().nullable(),
     })
@@ -89,10 +98,13 @@
         <div class="col-span-12 sm:col-span-4">
           <BaseInput
             v-model.number="communityStore.community.groupSize"
+            v-maska
             :status="status.groupSize"
             min="2"
             max="300"
             step="1"
+            data-maska="###"
+            data-maska-eager
             name="groupSize"
             type="number"
             label="Group Size"
@@ -101,11 +113,14 @@
         <div class="col-span-12 sm:col-span-4">
           <BaseInput
             v-model.number="communityStore.community.chaperones"
+            v-maska
             :status="status.chaperones"
             name="numberOfChaperones"
             min="0"
             max="100"
             step="1"
+            data-maska="###"
+            data-maska-eager
             type="number"
             label="Number of chaperones"
             @change-status="
@@ -115,11 +130,14 @@
         <div class="col-span-12 sm:col-span-4">
           <BaseInput
             v-model.number="communityStore.community.wheelchairs"
+            v-maska
             :status="status.wheelchairs"
             name="numberOfWheelchairs"
             min="0"
             max="100"
             step="1"
+            data-maska="###"
+            data-maska-eager
             type="number"
             label="Number of wheelchairs"
             @change-status="

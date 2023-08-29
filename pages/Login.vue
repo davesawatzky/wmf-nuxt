@@ -11,8 +11,8 @@
   const { values, handleSubmit } = useForm({
     validationSchema: toTypedSchema(
       yup.object({
-        firstName: yup.string().trim().required().label('First Name'),
-        lastName: yup.string().trim().required().label('Last Name'),
+        firstName: yup.string().trim().label('First Name'),
+        lastName: yup.string().trim().label('Last Name'),
         email: yup.string().trim().email().required().label('Email'),
         password: yup.string().trim().password().required().label('Password'),
         password2: yup
@@ -34,9 +34,9 @@
     signinMutation({
       credentials: { email: values.email, password: values.password },
     })
-    doneSignin((result) => {
+    doneSignin(async (result) => {
       if (result.data!.signin.diatonicToken) {
-        navigateTo('/registrations')
+        await navigateTo('/registrations')
       } else {
         error.value = 'Incorrect email or password.'
         resetFields()
@@ -58,9 +58,9 @@
         password: values.password,
       },
     })
-    doneSignup((result) => {
+    doneSignup(async (result) => {
       if (result.data!.signup.diatonicToken) {
-        navigateTo('/registrations')
+        await navigateTo('/registrations')
       } else {
         error.value = 'Error occured'
         resetFields()

@@ -26,7 +26,10 @@ export const useCommunity = defineStore(
       const communityKeys = fieldConfigStore.performerTypeFields('Community')
       let count = 0
       for (const key of communityKeys) {
-        if (!!community.value[key as keyof Community] === false) {
+        if (
+          !!community.value[key as keyof Community] === false &&
+          community.value[key as keyof Community] !== 0
+        ) {
           count++
         }
       }
@@ -41,9 +44,12 @@ export const useCommunity = defineStore(
     function addToStore(comm: Community) {
       community.value.id = comm.id
       community.value.name = comm.name || ''
-      community.value.groupSize = comm.groupSize || undefined
-      community.value.chaperones = comm.chaperones || undefined
-      community.value.wheelchairs = comm.wheelchairs || undefined
+      community.value.groupSize =
+        comm.groupSize !== null ? comm.groupSize : null
+      community.value.chaperones =
+        comm.chaperones !== null ? comm.chaperones : null
+      community.value.wheelchairs =
+        comm.wheelchairs !== null ? comm.wheelchairs : null
       community.value.earliestTime = comm.earliestTime || ''
       community.value.latestTime = comm.latestTime || ''
       community.value.unavailable = comm.unavailable || ''
@@ -99,6 +105,7 @@ export const useCommunity = defineStore(
         )
         load()
         onResult((result) => {
+          console.log(result)
           addToStore(<Community>result.data.registration.community)
           resolve('Success')
         })
@@ -129,7 +136,6 @@ export const useCommunity = defineStore(
               Object.entries(communityProps).find((item) => item[0] === field)!
             )
           )
-          console.log(communityField)
         }
         communityUpdate({
           communityId: community.value.id,
