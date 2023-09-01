@@ -152,7 +152,7 @@
     <div
       v-else
       class="border border-spacing-1 shadow-md rounded-lg border-sky-500 p-6 mb-6">
-      <Summary @submitForm="" />
+      <Summary></Summary>
     </div>
   </div>
 </template>

@@ -27,6 +27,14 @@ export const usePerformers = defineStore(
       return performers.value.length
     })
 
+    const averageAge = computed(() => {
+      let totalAge = 0
+      for (let i = 0; i < performers.value.length; i++) {
+        totalAge += performers.value[i].age ?? 0
+      }
+      return Math.round(totalAge / performers.value.length)
+    })
+
     const performerErrors = computed(() => {
       const performerKeys = fieldConfigStore.performerTypeFields('Performer')
       let count = 0
@@ -232,6 +240,7 @@ export const usePerformers = defineStore(
       performers,
       $reset,
       numberOfPerformers,
+      averageAge,
       performerErrors,
       fullName,
       addToStore,

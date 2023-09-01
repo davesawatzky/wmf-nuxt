@@ -210,27 +210,38 @@
         <h3>Submitted and In-Process Applications</h3>
         <table
           v-auto-animate
-          class="bg-white table_auto border-collapse w-full text-xs sm:text-base mt-3">
-          <thead class="bg-sky-600 text-white">
+          class="table_auto border-separate border-spacing-0 w-full text-xs sm:text-base mt-3">
+          <thead class="text-white">
             <tr class="py-2 px-2">
-              <th class="rounded-tl-lg">View</th>
-              <th v-if="sm">ID</th>
-              <th>Label</th>
-              <th v-if="lg">Created</th>
-              <th>Type</th>
-              <th v-if="md">Submitted</th>
-              <th>Total</th>
-              <th>Conf. #</th>
-              <th class="rounded-tr-lg">Del</th>
+              <th class="rounded-tl-lg bg-sky-700">View</th>
+              <th
+                v-if="sm"
+                class="bg-sky-700">
+                ID
+              </th>
+              <th class="bg-sky-700">Label</th>
+              <th
+                v-if="lg"
+                class="bg-sky-700">
+                Created
+              </th>
+              <th class="bg-sky-700">Type</th>
+              <th
+                v-if="md"
+                class="bg-sky-700">
+                Submitted
+              </th>
+              <th class="bg-sky-700">Total</th>
+              <th class="bg-sky-700">Conf. #</th>
+              <th class="rounded-tr-lg bg-sky-700">Del</th>
             </tr>
           </thead>
           <tbody>
             <tr
               v-for="registration in registrations"
               :key="registration.id"
-              class="">
+              class="bg-white">
               <td class="">
-                {{ registration.confirmation }}
                 <BaseButton
                   class="text-sky-600 text-xl md:ml-4 ml-3"
                   @click="
@@ -348,6 +359,6 @@
   }
 
   td {
-    @apply px-2 py-1 border-b border-slate-300;
+    @apply px-2 py-1 border-b border-sky-600;
   }
 </style>

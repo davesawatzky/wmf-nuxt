@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import * as yup from 'yup'
   import { useGroup } from '@/stores/userGroup'
+  import { usePerformers } from '@/stores/userPerformer'
   import type { Status } from '@/composables/types'
 
   const groupStore = useGroup()
@@ -73,10 +74,7 @@
           :status="status.name"
           @change-status="(stat: string) => fieldStatus(stat, 'name')" />
 
-        <p>Number of Performers</p>
-        <p>
-          {{ groupStore.group.numberOfPerformers }}
-        </p>
+        <p>Number of Performers: {{ groupStore.group.numberOfPerformers }}</p>
       </div>
       <div
         class="col-span-6 md:col-span-3 border border-spacing-1 border-sky-500 shadow-md rounded-lg px-6 pt-6">

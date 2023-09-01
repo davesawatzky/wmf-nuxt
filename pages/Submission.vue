@@ -7,6 +7,7 @@
 
   const confirmationNumber = ref('')
   const submissionComplete = ref(false)
+  const readConfirmation = ref(false)
 
   function printWindow() {
     window.print()
@@ -34,7 +35,9 @@
   <div>
     <h1 class="my-8">Registration Submission</h1>
     <SummaryTable />
-
+    <p class="text-center font-bold text-xl">
+      Please read to the bottom before submitting
+    </p>
     <p>
       The Festival reserves the right to redirect entries to a more appropriate
       class. These redirections will be listed in the studio registration
@@ -66,9 +69,20 @@
     <p>
       Payment may be made by cheque or e-transfer to the Winnipeg Music Festival
       (<a href="mailto:wmf@mts.net"><strong>wmf@mts.net</strong></a
-      >). Please include the confirmation number as a memo when submitting
-      payment. Entry fees are non-refundable.
+      >).
     </p>
+    <p class="text-center font-bold text-xl">
+      Please include the confirmation number as a memo when submitting payment.
+    </p>
+    <p class="text-center font-bold text-xl">Entry fees are non-refundable.</p>
+    <div
+      class="text-center mx-auto max-w-[400px] border border-sky-600 rounded-lg p-4 bg-white">
+      <BaseCheckbox
+        v-model="readConfirmation"
+        label="I have read and understand the preceding text."></BaseCheckbox>
+    </div>
+    <br />
+
     <h4 class="pt-6 text-center">
       We look forward to having you participate in the this year's
     </h4>
@@ -77,6 +91,7 @@
       <BaseButton
         v-if="!submissionComplete"
         class="btn btn-blue"
+        :disabled="!readConfirmation"
         @click="submitRegistration">
         Submit Application
       </BaseButton>

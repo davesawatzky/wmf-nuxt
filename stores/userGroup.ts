@@ -1,4 +1,5 @@
 import { useFieldConfig } from '@/stores/useFieldConfig'
+import { usePerformers } from './userPerformer'
 import {
   GroupCreateDocument,
   GroupDeleteDocument,
@@ -17,7 +18,7 @@ export const useGroup = defineStore(
   'group',
   () => {
     const group = ref(<Group>{})
-
+    const performerStore = usePerformers()
     function $reset() {
       group.value = <Group>{}
     }
@@ -32,6 +33,23 @@ export const useGroup = defineStore(
       }
       return count
     })
+
+    watch(
+      () => performerStore.numberOfPerformers,
+      (newValue, oldValue) => {
+        group.value.numberOfPerformers = newValue
+      },
+      { immediate: true }
+    )
+
+    watch(
+      () => performerStore.averageAge,
+      (newValue, oldValue) => {
+        group.value.age = newValue
+      },
+      { immediate: true }
+    )
+
     /**
      * Adds empty Group properties or Group object to the store
      * @param grp Group object, must include id property value

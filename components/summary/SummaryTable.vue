@@ -20,43 +20,41 @@
     v-auto-animate
     class="w-full mb-4">
     <table
-      class="table-auto border-b border-sky-500 divide-y divide-sky-600 w-full border-collapse text-xs sm:text-base">
+      class="table-auto border-separate border-spacing-0 w-full text-xs sm:text-base">
       <thead class="">
-        <tr class="bg-sky-500 text-white print:text-xs">
+        <tr class="text-white print:text-xs">
           <th
-            class="rounded-tl-lg text-left"
+            class="text-left border border-sky-700 bg-sky-700 rounded-tl-lg"
             scope="col">
             Class Number
           </th>
           <th
-            class="text-left"
+            class="text-left border border-sky-700 bg-sky-700"
             scope="col">
             Class Name
           </th>
           <th
-            class="text-left"
+            class="text-left border border-sky-700 bg-sky-700"
             scope="col">
             Level
           </th>
           <th
-            class="text-left"
+            class="text-left border border-sky-700 bg-sky-700"
             scope="col">
             Category
           </th>
           <th
-            class="rounded-tr-lg text-left"
+            class="text-left border border-sky-700 bg-sky-700 rounded-tr-lg"
             scope="col">
             Price
           </th>
         </tr>
       </thead>
-      <tbody
-        v-auto-animate
-        class="bg-white divide-y divide-sky-600 border-b border-sky-500 rounded-bl-lg rounded-br-lg">
+      <tbody v-auto-animate>
         <tr
           v-for="registeredClass in classesStore.registeredClasses"
           :key="registeredClass.id"
-          class="border-b border-r border-l border-sky-500 print:text-xs">
+          class="print:text-xs bg-white">
           <td class="p-8">
             {{ registeredClass.classNumber }}
           </td>
@@ -71,17 +69,23 @@
           </td>
           <td class="p-8">${{ registeredClass.price }}.00</td>
         </tr>
+        <tr class="font-bold">
+          <td></td>
+          <td></td>
+          <td></td>
+          <td class="text-right">Total:</td>
+          <td>${{ total }}.00</td>
+        </tr>
       </tbody>
     </table>
-    <div class="container p-2 font-bold flex justify-end">
-      <p class="">Total: ${{ total }}.00</p>
-    </div>
   </div>
 </template>
 
 <style scoped>
-  th,
+  th {
+    padding: 8px 6px;
+  }
   td {
-    padding: 0.25rem;
+    padding: 8px 6px;
   }
 </style>

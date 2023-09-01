@@ -3,19 +3,18 @@
 @tailwind utilities;
 
 .btn {
-  @apply rounded-lg h-10 w-40 m-2 text-center align-middle hover:ring-2;
+  @apply text-white rounded-lg h-10 w-40 m-2 text-center align-middle hover:ring-2 disabled:bg-gray-400 disabled:hover:ring-0 disabled:hover:bg-gray-400 disabled:text-gray-300;
 }
 
 .btn-blue {
-  @apply bg-sky-700 text-white hover:bg-sky-600 hover:ring-sky-500 active:bg-sky-500 print:hidden;
+  @apply bg-sky-700 hover:bg-sky-600 hover:ring-sky-500 active:bg-sky-500 print:hidden;
 }
-
 .btn-green {
-  @apply bg-green-700 text-white hover:bg-green-500 hover:ring-green-400 active:bg-green-400 print:hidden;
+  @apply bg-green-700 hover:bg-green-500 hover:ring-green-400 active:bg-green-400 print:hidden;
 }
 
 .btn-red {
-  @apply bg-rose-800 text-white hover:bg-red-700 hover:ring-rose-400 active:bg-red-600 print:hidden;
+  @apply bg-rose-800 hover:bg-red-700 hover:ring-rose-400 active:bg-red-600 print:hidden;
 }
 
 @tailwind utilities;

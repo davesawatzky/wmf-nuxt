@@ -147,7 +147,7 @@
 
       <div v-if="isLogin">
         <BaseButton
-          class="w-full my-4 p-3 rounded-lg btn-blue"
+          class="w-full m-0 btn btn-blue"
           @click="signin()">
           Log In
         </BaseButton>
@@ -163,7 +163,7 @@
       </div>
       <div v-else>
         <BaseButton
-          class="w-full my-4 p-3 rounded-lg btn-blue"
+          class="w-full m-0 btn btn-blue"
           @click="signup()">
           Register New Account
         </BaseButton>

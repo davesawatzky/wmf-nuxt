@@ -10,13 +10,7 @@
   import { useAppStore } from '@/stores/appStore'
   import { formErrors } from '@/composables/formErrors'
 
-  const emits = defineEmits<{
-    submitForm: [value: any]
-  }>()
-
-  definePageMeta({
-    middleware: 'auth',
-  })
+  const emit = defineEmits(['submitForm'])
 
   const performerStore = usePerformers()
   const teacherStore = useTeacher()
@@ -42,6 +36,12 @@
       return a + b
     }, 0)
   })
+
+  async function finalErrorCheck() {
+    if (!totalErrors.value) {
+      await navigateTo('/Submission')
+    }
+  }
 </script>
 
 <template>
@@ -56,118 +56,240 @@
       </h3>
     </div>
     <div
+      class="px-8"
       v-else
       v-auto-animate>
-      <h1 class="pt-8">Registration Summary</h1>
+      <h1>Registration Summary</h1>
+      <h3
+        v-if="registrationStore.registration.confirmation"
+        class="pt-2">
+        Confirmation Number: {{ registrationStore.registration.confirmation }}
+      </h3>
+      <SummaryTable class="pt-8" />
 
       <!-- Community Groups -->
       <div v-if="appStore.performerType === 'COMMUNITY'">
-        <h2 class="pt-8 pb-4">Community Group Information</h2>
-
-        <div>Community Group Name: {{ communityStore.community.name }}</div>
-        <div>
-          Community Group Size: {{ communityStore.community.groupSize }}
-        </div>
-        <div v-if="communityStore.community.chaperones">
-          Number of Chaperones: {{ communityStore.community.chaperones }}
-        </div>
-        <div v-if="communityStore.community.wheelchairs">
-          Number of Wheelchairs:
-          {{ communityStore.community.wheelchairs }}
-        </div>
-        <div v-if="communityStore.community.conflictPerformers">
-          Performers participating in other classes
-          {{ communityStore.community.conflictPerformers }}
-        </div>
+        <h2 class="pt-4 pb-4">Community Group Information</h2>
+        <BaseSummaryCard>
+          <template #heading1>
+            <h4 class="py-2">
+              Community Group Name: {{ communityStore.community.name }}
+            </h4>
+          </template>
+          <template #details>
+            <table>
+              <tbody>
+                <tr class="border-sky-400">
+                  <td>Community Group Size:</td>
+                  <td>{{ communityStore.community.groupSize }}</td>
+                </tr>
+                <tr class="border-sky-400">
+                  <td>Number of Chaperones:</td>
+                  <td>
+                    {{ communityStore.community.chaperones }}
+                  </td>
+                </tr>
+                <tr class="border-sky-400">
+                  <td>Number of Wheelchairs:</td>
+                  <td>
+                    {{ communityStore.community.wheelchairs }}
+                  </td>
+                </tr>
+                <tr class="border-sky-400">
+                  <td>Performers participating in other classes</td>
+                  <td>
+                    {{ communityStore.community.conflictPerformers }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </template>
+        </BaseSummaryCard>
       </div>
 
       <!-- School Groups -->
       <div v-if="appStore.performerType === 'SCHOOL'">
-        <h2 class="pt-8 pb-4">School Information</h2>
-        <div>School Name: {{ schoolStore.school.name }}</div>
-        <div>School Division: {{ schoolStore.school.division }}</div>
-        <div>Address:</div>
-        {{ schoolStore.school.streetNumber }}
-        {{ schoolStore.school.streetName }}
-        <div>
-          {{ schoolStore.school.city }},
-          {{ schoolStore.school.province }}
-        </div>
-        <div>{{ schoolStore.school.postalCode }}</div>
-        <div>Phone: {{ schoolStore.school.phone }}</div>
-        <h3 class="pt-6 pb-2">School Group(s)</h3>
-        <div
-          v-for="(schlGrp, schlGrpIndex) in schoolGroupStore.schoolGroup"
-          :key="schlGrp.id">
-          <h4>Group {{ schlGrpIndex + 1 }}:</h4>
-          <div>Name: {{ schlGrp.name }}</div>
-          <div>Size: {{ schlGrp.groupSize }}</div>
-          <div v-if="schlGrp.chaperones">
-            Chaperones: {{ schlGrp.chaperones }}
-          </div>
-          <div v-if="schlGrp.wheelchairs">
-            Wheelchairs: {{ schlGrp.wheelchairs }}
-          </div>
-          <div v-if="schlGrp.earliestTime">
-            Earliest Time: {{ schlGrp.earliestTime }}
-          </div>
-          <div v-if="schlGrp.latestTime">
-            Latest Time: {{ schlGrp.latestTime }}
-          </div>
-          <div v-if="schlGrp.unavailable">
-            Unavailable Times: {{ schlGrp.unavailable }}
-          </div>
-          <div v-if="schlGrp.conflictPerformers">
-            Multiple Class Participants: {{ schlGrp.conflictPerformers }}
-          </div>
-        </div>
+        <h2 class="pt-4 pb-4">School Information</h2>
+        <BaseSummaryCard>
+          <template #heading1>
+            <h4 class="py-2">School Name: {{ schoolStore.school.name }}</h4>
+          </template>
+          <template #heading2>
+            <h5>School Division: {{ schoolStore.school.division }}</h5>
+          </template>
+          <template #details>
+            <table>
+              <tbody>
+                <tr>
+                  <td>Address:</td>
+                  <td>
+                    {{ schoolStore.school.streetNumber }}
+                    {{ schoolStore.school.streetName }}
+                  </td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td>
+                    {{ schoolStore.school.city }},
+                    {{ schoolStore.school.province }}
+                  </td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td>{{ schoolStore.school.postalCode }},</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td>
+                    {{ schoolStore.school.phone }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <h3 class="pt-4 pb-2">School Group(s)</h3>
+            <div
+              v-for="(schlGrp, schlGrpIndex) in schoolGroupStore.schoolGroup"
+              :key="schlGrp.id"
+              class="flex">
+              <div>
+                <h4>Group {{ schlGrpIndex + 1 }}:</h4>
+                <table>
+                  <tbody>
+                    <tr>
+                      <td>Name:</td>
+                      <td>{{ schlGrp.name }}</td>
+                    </tr>
+                    <tr>
+                      <td>Size:</td>
+                      <td>{{ schlGrp.groupSize }}</td>
+                    </tr>
+                    <tr>
+                      <td>Chaperones:</td>
+                      <td>{{ schlGrp.chaperones }}</td>
+                    </tr>
+                    <tr>
+                      <td>Wheelchairs:</td>
+                      <td>{{ schlGrp.wheelchairs }}</td>
+                    </tr>
+                    <tr>
+                      <td>Earliest Time:</td>
+                      <td>{{ schlGrp.earliestTime }}</td>
+                    </tr>
+                    <tr>
+                      <td>Latest Time:</td>
+                      <td>{{ schlGrp.latestTime }}</td>
+                    </tr>
+                    <tr>
+                      <td>Unavailable Times:</td>
+                      <td>{{ schlGrp.unavailable }}</td>
+                    </tr>
+                    <tr>
+                      <td>Multiple Class Participants:</td>
+                      <td>
+                        {{ schlGrp.conflictPerformers }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </template>
+        </BaseSummaryCard>
       </div>
 
       <!-- Registered Classes -->
-      <h2 class="pt-8 pb-4">Registered Classes</h2>
+      <h2 class="pt-4 pb-4">Registered Classes</h2>
       <div
         v-for="registeredClass in classesStore.registeredClasses"
         :key="registeredClass.id">
-        <h4 class="py-2">
-          Festival Class Number: {{ registeredClass.classNumber }}
-        </h4>
-        <h5 v-if="appStore.performerType === 'SCHOOL'">
-          {{ schoolClassGroup(registeredClass.schoolGroupID!)?.name }}
-        </h5>
-        <div>Festival Class: {{ registeredClass.classNumber }}</div>
-        <div>{{ registeredClass.discipline }}</div>
-        <div>{{ registeredClass.category }}</div>
-        <div>{{ registeredClass.level }}</div>
-        <div>
-          Number of Selections: {{ registeredClass.numberOfSelections }}
-        </div>
-        <div
-          v-for="(selection, selectionIndex) in registeredClass.selections"
-          :key="selection.id"
-          class="ml-8">
-          <h5 class="py-2">Selection {{ selectionIndex + 1 }}</h5>
-          <div>Title: {{ selection.title }}</div>
-          <div>Composer: {{ selection.composer }}</div>
-          <div v-if="selection.largerWork">
-            from Work: {{ selection.largerWork }}
-          </div>
-          <div v-if="selection.movement">
-            Movement: {{ selection.movement }}
-          </div>
-          <div>Duration: {{ selection.duration }}</div>
-        </div>
+        <BaseSummaryCard class="pb-4">
+          <template #heading1>
+            <h4 class="">
+              Festival Class Number: {{ registeredClass.classNumber }}
+            </h4>
+            <h5 v-if="appStore.performerType === 'SCHOOL'">
+              {{ schoolClassGroup(registeredClass.schoolGroupID!)?.name }}
+            </h5>
+            <div>{{ registeredClass.subdiscipline?.toUpperCase() }}</div>
+          </template>
+          <template #heading2>
+            <div>Category: {{ registeredClass.category }}</div>
+            <div>Level: {{ registeredClass.level }}</div>
+          </template>
+          <!-- <div>
+            Number of Selections: {{ registeredClass.numberOfSelections }}
+          </div> -->
+          <template #details>
+            <div class="flex">
+              <div
+                v-for="(
+                  selection, selectionIndex
+                ) in registeredClass.selections"
+                :key="selection.id"
+                class="px-4">
+                <h5 class="py-2">Selection {{ selectionIndex + 1 }}</h5>
+                <table>
+                  <tbody>
+                    <tr class="border-sky-400">
+                      <td>Title:</td>
+                      <td>{{ selection.title }}</td>
+                    </tr>
+                    <tr class="border-sky-400">
+                      <td>Composer:</td>
+                      <td>{{ selection.composer }}</td>
+                    </tr>
+                    <tr
+                      v-if="selection.largerWork"
+                      class="border-sky-400">
+                      <td>from Work:</td>
+                      <td>{{ selection.largerWork }}</td>
+                    </tr>
+                    <tr
+                      v-if="selection.movement"
+                      class="border-sky-400">
+                      <td>Movement:</td>
+                      <td>{{ selection.movement }}</td>
+                    </tr>
+                    <tr class="border-sky-400">
+                      <td>Duration:</td>
+                      <td>{{ selection.duration }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </template>
+        </BaseSummaryCard>
       </div>
 
       <!-- Solo and Group Performers -->
       <div v-if="appStore.performerType === 'GROUP'">
-        <h2 class="pt-8 pb-4">Group Information</h2>
-        <div>Name: {{ groupStore.group.name }}</div>
-        <div>Type of Group: {{ groupStore.group.groupType }}</div>
-        <div>
-          Number of Performers: {{ groupStore.group.numberOfPerformers }}
-        </div>
-        <div>Age of the Group: {{ groupStore.group.age }}</div>
+        <h2 class="pt-4 pb-4">Group Information</h2>
+        <BaseSummaryCard>
+          <template #heading1>
+            <h4 class="py-2">{{ groupStore.group.name }}</h4>
+          </template>
+          <template #details>
+            <table>
+              <tbody>
+                <tr class="border-sky-400">
+                  <td>Type of Group:</td>
+                  <td>{{ groupStore.group.groupType }}</td>
+                </tr>
+                <tr class="border-sky-400">
+                  <td>Number of Performers:</td>
+                  <td>{{ groupStore.group.numberOfPerformers }}</td>
+                </tr>
+                <tr class="border-sky-400">
+                  <td>Average age:</td>
+                  <td>{{ groupStore.group.age }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </template>
+        </BaseSummaryCard>
       </div>
+
       <div
         v-if="
           appStore.performerType === 'GROUP' ||
@@ -178,6 +300,7 @@
           v-for="(performer, index) in performerStore.performers"
           :key="performer.id">
           <SummaryContactInfo
+            class="pb-4"
             :contact="performer"
             :full-name="performerStore.fullName[index]" />
         </div>
@@ -185,21 +308,19 @@
 
       <!-- Teacher -->
       <div>
-        <h2 class="pt-8 pb-4">Teacher</h2>
+        <h2 class="pt-4 pb-4">Teacher</h2>
         <SummaryContactInfo
           :contact="teacherStore.teacher"
           :full-name="teacherStore.fullName" />
       </div>
-      <h3 class="pt-8 pb-4">Class Summary</h3>
-      <SummaryTable />
     </div>
 
     <!-- Submission -->
-    <div v-if="totalErrors === 0">
+    <div class="pt-4 px-8">
       <BaseButton
         v-if="!registrationStore.registration.confirmation"
         class="btn btn-blue"
-        @click="$emit('submitForm')">
+        @click="finalErrorCheck">
         Prepare to Submit
       </BaseButton>
       <BaseButton
@@ -211,4 +332,17 @@
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+  table {
+    table-layout: auto;
+    border-collapse: collapse;
+  }
+
+  tr {
+    border-bottom-width: 1px;
+  }
+
+  td {
+    padding: 4px 8px;
+  }
+</style>

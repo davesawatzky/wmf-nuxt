@@ -98,7 +98,8 @@ export const useRegistration = defineStore(
         } = useMutation(RegistrationUpdateDocument, {
           fetchPolicy: 'network-only',
         })
-        const { id, __typename, updatedAt, ...regProps } = registration.value
+        const { id, __typename, updatedAt, createdAt, ...regProps } =
+          registration.value
         let registrationField = null
         if (field && Object.keys(regProps).includes(field)) {
           registrationField = Object.fromEntries(
