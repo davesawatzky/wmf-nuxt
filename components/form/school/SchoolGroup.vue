@@ -58,6 +58,7 @@
   })
 
   async function fieldStatus(stat: string, fieldName: string) {
+    await nextTick()
     status[fieldName] = StatusEnum.pending
     await schoolGroupStore.updateSchoolGroup(props.schoolGroupId, fieldName)
     if (stat === 'saved') {
@@ -95,8 +96,8 @@
         .integer()
         .typeError('Please enter a valid number')
         .required('Enter the number of wheelchairs'),
-      unavailable: yup.string().trim(),
-      conflictPerformers: yup.string().trim(),
+      unavailable: yup.string().trim().nullable(),
+      conflictPerformers: yup.string().trim().nullable(),
     })
   )
 

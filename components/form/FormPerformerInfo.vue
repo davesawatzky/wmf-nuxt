@@ -53,6 +53,7 @@
   })
 
   async function fieldStatus(stat: string, fieldName: string) {
+    await nextTick()
     status[fieldName] = StatusEnum.pending
     await performerStore.updatePerformer(props.performerId, fieldName)
     if (stat === 'saved') {

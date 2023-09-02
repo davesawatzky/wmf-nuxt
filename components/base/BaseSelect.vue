@@ -32,18 +32,13 @@
     })
 
   const validationListeners = {
-    blur: (evt: Event) => handleBlur(evt, true),
-    change: (evt: Event) => {
+    change: (evt: any) => {
       handleChange(evt, true)
-      if (meta.valid) {
-        emit('changeStatus', 'saved')
-      }
+      emit('changeStatus', 'saved')
     },
-    input: (evt: Event) => {
+    input: (evt: any) => {
       handleChange(evt, true)
-      if (meta.valid) {
-        emit('changeStatus', 'saved')
-      }
+      emit('changeStatus', 'saved')
     },
   }
 </script>

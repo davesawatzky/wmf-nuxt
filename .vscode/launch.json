@@ -5,11 +5,11 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Attach to Chrome",
+      "name": "Attach to Firefox",
       "port": 3001,
       "request": "attach",
-      "type": "chrome",
-      "webRoot": "${workspaceFolder}"
+      "type": "firefox",
+      "url": "localhost"
     }
   ]
 }

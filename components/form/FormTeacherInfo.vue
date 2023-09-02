@@ -114,6 +114,7 @@
   const currentYear = new Date().getFullYear()
 
   async function fieldStatus(stat: string, fieldName: string) {
+    await nextTick()
     status[fieldName] = StatusEnum.pending
     await teacherStore.updateTeacher(fieldName)
     if (stat === 'saved') {

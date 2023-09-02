@@ -38,6 +38,7 @@
   })
 
   async function fieldStatus(stat: string, fieldName: string) {
+    await nextTick()
     status[fieldName] = StatusEnum.pending
     await groupStore.updateGroup(fieldName)
     if (stat === 'saved') {

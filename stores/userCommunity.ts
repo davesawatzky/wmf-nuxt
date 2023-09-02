@@ -105,7 +105,6 @@ export const useCommunity = defineStore(
         )
         load()
         onResult((result) => {
-          console.log(result)
           addToStore(<Community>result.data.registration.community)
           resolve('Success')
         })

@@ -56,8 +56,8 @@
       </h3>
     </div>
     <div
-      class="px-8"
       v-else
+      class="px-8"
       v-auto-animate>
       <h1>Registration Summary</h1>
       <h3

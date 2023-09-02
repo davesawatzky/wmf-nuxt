@@ -57,6 +57,7 @@
   )
 
   async function fieldStatus(stat: string, fieldName: string) {
+    await nextTick()
     status[fieldName] = StatusEnum.pending
     await schoolStore.updateSchool(fieldName)
     if (stat === 'saved') {

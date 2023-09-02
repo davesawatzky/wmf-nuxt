@@ -34,6 +34,7 @@
   })
 
   async function fieldStatus(stat: string, fieldName: string) {
+    await nextTick()
     status[fieldName] = StatusEnum.pending
     await classesStore.updateSelection(
       props.classId,

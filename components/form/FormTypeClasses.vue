@@ -61,6 +61,7 @@
     classId: number,
     classIndex: number
   ) {
+    await nextTick()
     console.log('from TypeClasses: ', classId, fieldName)
     status[classIndex][fieldName] = StatusEnum.pending
     await classesStore.updateClass(classId, fieldName)
@@ -75,7 +76,7 @@
 
   // Class error counts
 
-  const { errors, validate } = useForm({
+  const { errors, meta, validate } = useForm({
     validationSchema,
     validateOnMount: true,
   })
@@ -94,9 +95,6 @@
       <div class="py-4">
         <h3 class="pb-4">Class {{ classIndex + 1 }}</h3>
         <div v-if="appStore.performerType === PerformerType.SCHOOL">
-          {{ selectedClass.id }} {{ classIndex }}
-          {{ classesStore.registeredClasses[classIndex].schoolGroupID }}
-          {{ status }}
           <BaseSelect
             v-model.number="
               classesStore.registeredClasses[classIndex].schoolGroupID
@@ -107,8 +105,9 @@
             label="Select a school Group"
             :options="schoolGroupsList"
             @change-status="
-              (stat: string) =>
+              (stat: string) => {
                 fieldStatus(stat, 'schoolGroupID', selectedClass.id, classIndex)
+              }
             " />
         </div>
         <FormClass

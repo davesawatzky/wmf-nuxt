@@ -28,6 +28,7 @@
   })
 
   async function fieldStatus(stat: string, fieldName: string) {
+    await nextTick()
     status[fieldName] = StatusEnum.pending
     await communityStore.updateCommunity(fieldName)
     if (stat === 'saved') {
@@ -52,14 +53,14 @@
         .typeError('Please enter a valid number')
         .integer()
         .required('Please enter the size of the group'),
-      numberOfChaperones: yup
+      chaperones: yup
         .number()
         .min(0)
         .max(100)
         .integer()
         .typeError('Please enter a valid number')
         .required('Indicate the number of chaperones'),
-      numberOfWheelchairs: yup
+      wheelchairs: yup
         .number()
         .min(0)
         .max(100)
@@ -115,7 +116,7 @@
             v-model.number="communityStore.community.chaperones"
             v-maska
             :status="status.chaperones"
-            name="numberOfChaperones"
+            name="chaperones"
             min="0"
             max="100"
             step="1"
@@ -132,7 +133,7 @@
             v-model.number="communityStore.community.wheelchairs"
             v-maska
             :status="status.wheelchairs"
-            name="numberOfWheelchairs"
+            name="wheelchairs"
             min="0"
             max="100"
             step="1"

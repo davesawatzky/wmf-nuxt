@@ -28,7 +28,10 @@ export const useSchoolGroup = defineStore(
       let count = 0
       for (const group of schoolGroup.value) {
         for (const key of schoolGroupKeys) {
-          if (!!group[key as keyof SchoolGroup] === false) {
+          if (
+            !!group[key as keyof SchoolGroup] === false &&
+            group[key as keyof SchoolGroup] !== 0
+          ) {
             count++
           }
         }
@@ -44,9 +47,10 @@ export const useSchoolGroup = defineStore(
       schoolGroup.value.push({
         id: schoolGrp.id,
         name: schoolGrp.name || '',
-        groupSize: schoolGrp.groupSize || undefined,
-        chaperones: schoolGrp.chaperones || undefined,
-        wheelchairs: schoolGrp.wheelchairs || undefined,
+        groupSize: schoolGrp.groupSize !== null ? schoolGrp.groupSize : null,
+        chaperones: schoolGrp.chaperones !== null ? schoolGrp.chaperones : null,
+        wheelchairs:
+          schoolGrp.wheelchairs !== null ? schoolGrp.wheelchairs : null,
         earliestTime: schoolGrp.earliestTime || '',
         latestTime: schoolGrp.latestTime || '',
         unavailable: schoolGrp.unavailable || '',
