@@ -194,6 +194,7 @@ export const useClasses = defineStore(
      */
     function updateClass(classId: number, field?: string): Promise<unknown> {
       return new Promise((resolve, reject) => {
+        console.log(classId, field)
         const {
           mutate: classUpdate,
           onDone,

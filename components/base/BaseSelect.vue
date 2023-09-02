@@ -33,8 +33,14 @@
 
   const validationListeners = {
     blur: (evt: Event) => handleBlur(evt, true),
-    input: async (evt: Event) => {
-      await handleChange(evt, true)
+    change: (evt: Event) => {
+      handleChange(evt, true)
+      if (meta.valid) {
+        emit('changeStatus', 'saved')
+      }
+    },
+    input: (evt: Event) => {
+      handleChange(evt, true)
       if (meta.valid) {
         emit('changeStatus', 'saved')
       }
@@ -69,7 +75,7 @@
       <option
         v-for="option in options"
         :key="option.id"
-        :value="!!returnId ? option.id : option.name"
+        :value="returnId ? option.id : option.name"
         :selected="option.name === modelValue">
         {{ option.name }}
       </option>

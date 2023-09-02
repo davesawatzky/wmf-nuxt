@@ -38,12 +38,22 @@
 
   // SchoolGroup status validation
 
-  const schoolGroups = computed(() => {
+  const schoolGroupsList = computed(() => {
     const newArray = []
     for (const schlGroup of schoolGroupStore.schoolGroup)
       newArray.push({ id: schlGroup.id, name: schlGroup.name ?? undefined })
     return newArray
   })
+
+  const validationSchema = toTypedSchema(
+    yup.object({
+      schoolGroups: yup.array().of(
+        yup.object({
+          id: yup.number().integer().required('Please select a group'),
+        })
+      ),
+    })
+  )
 
   async function fieldStatus(
     stat: string,
@@ -51,6 +61,7 @@
     classId: number,
     classIndex: number
   ) {
+    console.log('from TypeClasses: ', classId, fieldName)
     status[classIndex][fieldName] = StatusEnum.pending
     await classesStore.updateClass(classId, fieldName)
     if (stat === 'saved') {
@@ -61,17 +72,6 @@
       status[classIndex][fieldName] = StatusEnum.null
     }
   }
-
-  const validationSchema = toTypedSchema(
-    yup.object({
-      schoolGroups: yup.array().of(
-        yup.object({
-          id: yup.number().integer().required('Please select a group'),
-          name: yup.string(),
-        })
-      ),
-    })
-  )
 
   // Class error counts
 
@@ -90,23 +90,26 @@
     <h2 class="pt-8">Class Information</h2>
     <div
       v-for="(selectedClass, classIndex) in classesStore.registeredClasses"
-      :key="selectedClass.id">
+      :key="classIndex">
       <div class="py-4">
         <h3 class="pb-4">Class {{ classIndex + 1 }}</h3>
         <div v-if="appStore.performerType === PerformerType.SCHOOL">
+          {{ selectedClass.id }} {{ classIndex }}
+          {{ classesStore.registeredClasses[classIndex].schoolGroupID }}
+          {{ status }}
           <BaseSelect
             v-model.number="
               classesStore.registeredClasses[classIndex].schoolGroupID
             "
-            :status="status[classIndex].schoolGroupID ?? StatusEnum.null"
+            :status="status[classIndex].schoolGroupID"
             :name="`schoolGroups[${classIndex}].id`"
             return-id
             label="Select a school Group"
-            :options="schoolGroups"
+            :options="schoolGroupsList"
             @change-status="
               (stat: string) =>
                 fieldStatus(stat, 'schoolGroupID', selectedClass.id, classIndex)
-            "></BaseSelect>
+            " />
         </div>
         <FormClass
           v-model="classesStore.registeredClasses[classIndex]"
