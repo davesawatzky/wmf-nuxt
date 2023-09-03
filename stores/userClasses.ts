@@ -40,7 +40,7 @@ export const useClasses = defineStore(
               count++
             }
           } else {
-            for (const select of festclass.selections ?? <Selection[]>[]) {
+            for (const select of festclass.selections!) {
               for (const key2 of selectionKeys) {
                 if (!!select[key2 as keyof Selection] === false) {
                   count++

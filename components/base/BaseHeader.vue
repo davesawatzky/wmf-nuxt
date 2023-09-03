@@ -56,7 +56,7 @@
       v-if="$route.name !== 'Login'"
       id="mobile-menu"
       :class="showMenu ? 'flex' : 'hidden'"
-      class="absolute top-84 bg-sky-800 z-10 w-full text-4xl flex-col justify-content-center origin-top animate-open-menu">
+      class="absolute top-84 bg-sky-800 z-30 w-full text-4xl flex-col justify-content-center origin-top animate-open-menu">
       <nav
         class="flex flex-col min-h-screen items-center py-16"
         aria-label="mobile">

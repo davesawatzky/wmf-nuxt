@@ -13,6 +13,7 @@ query TeacherInfo($registrationId: Int!) {
       postalCode
       phone
       email
+      instrument
     }
   }
 }

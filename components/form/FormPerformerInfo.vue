@@ -67,12 +67,13 @@
 
   const validationSchema = toTypedSchema(
     yup.object({
-      firstName: yup.string().trim().required(),
+      firstName: yup.string().trim().required('First name is required'),
       lastName: yup.string().trim().required('Last name is required'),
       age: yup
         .number()
         .positive('Enter age')
         .integer('Enter age')
+        .min(1)
         .max(100, 'Enter age')
         .required('Enter age'),
       apartment: yup
@@ -80,7 +81,7 @@
         .notRequired()
         .trim()
         .nullable()
-        .max(5, '5 characters maximum'),
+        .max(10, '10 characters maximum'),
       streetNumber: yup
         .string()
         .trim()
@@ -90,11 +91,12 @@
       city: yup
         .string()
         .trim()
-        .max(15, 'Too many characters')
+        .max(20, 'Too many characters')
         .required('Enter a city name'),
       province: yup.string().max(3).required(),
       postalCode: yup
         .string()
+        .trim()
         .matches(
           /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i,
           'Enter a valid postal code'
@@ -102,10 +104,12 @@
         .required('Enter a valid postal code'),
       phone: yup
         .string()
+        .trim()
         .phone('CA', 'Please enter a valid phone number')
         .required('A phone number is required'),
       email: yup
         .string()
+        .trim()
         .email('Must be a valid email address')
         .required('Email address is required'),
       instrument: yup.string().trim().required('Please indicate an instrument'),
@@ -150,7 +154,7 @@
         label="Last Name"
         @change-status="(stat: string) => fieldStatus(stat, 'lastName')" />
     </div>
-    <div class="col-span-12 sm:col-span-3">
+    <div class="col-span-3 sm:col-span-2">
       <BaseInput
         v-model.number="contact.age"
         :status="status.age"
@@ -163,7 +167,7 @@
         :help-message="`Age as of December 31, ${currentYear}`"
         @change-status="(stat: string) => fieldStatus(stat, 'age')" />
     </div>
-    <div class="col-span-6 sm:col-span-3">
+    <div class="col-span-4 sm:col-span-3">
       <BaseInput
         v-model.trim="contact.apartment"
         :status="status.apartment"
@@ -172,7 +176,7 @@
         label="Apt."
         @change-status="(stat: string) => fieldStatus(stat, 'apartment')" />
     </div>
-    <div class="col-span-6 sm:col-span-3">
+    <div class="col-span-5 sm:col-span-3">
       <BaseInput
         v-model.trim="contact.streetNumber"
         :status="status.streetNumber"
@@ -208,7 +212,7 @@
         :options="provinces"
         @change-status="(stat: string) => fieldStatus(stat, 'province')" />
     </div>
-    <div class="col-span-12 sm:col-span-3">
+    <div class="col-span-6 sm:col-span-3">
       <BaseInput
         v-model.trim="contact.postalCode"
         v-maska:[maskaUcaseOption]
@@ -222,7 +226,7 @@
         label="Postal Code"
         @change-status="(stat: string) => fieldStatus(stat, 'postalCode')" />
     </div>
-    <div class="col-span-12 sm:col-span-5">
+    <div class="col-span-6 sm:col-span-5">
       <BaseInput
         v-model.trim="contact.phone"
         v-maska
@@ -247,7 +251,7 @@
     </div>
     <div
       v-if="groupperformer"
-      class="col-span-12 sm:col-span-6">
+      class="col-span-6 sm:col-span-6">
       <BaseInput
         v-model.trim="contact.instrument"
         :status="status.instrument"
@@ -258,7 +262,7 @@
     </div>
     <div
       v-if="groupperformer"
-      class="col-span-12 sm:col-span-6">
+      class="col-span-6 sm:col-span-6">
       <BaseInput
         v-model.trim="contact.level"
         :status="status.level"
@@ -270,11 +274,16 @@
     <div
       v-if="groupperformer"
       class="col-span-12">
+      <p>
+        To avoid scheduling conflicts, please list all other festival classes
+        entered but not included on this form. Use only class numbers separated
+        by commas.
+      </p>
       <BaseTextarea
         v-model.trim="contact.otherClasses"
         :status="status.otherClasses"
         name="otherClasses"
-        :label="textAreaLabel"
+        label="Other festival classes entered"
         @change-status="(stat: string) => fieldStatus(stat, 'otherClasses')" />
     </div>
   </div>

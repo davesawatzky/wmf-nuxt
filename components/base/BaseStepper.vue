@@ -27,7 +27,7 @@
 <template>
   <div
     id="stepperGridContainer"
-    class="grid grid-flow-col auto-cols-fr mx-28 my-4 z-20">
+    class="grid grid-flow-col auto-cols-fr md:mx-28 my-4 z-20">
     <div
       v-for="(tab, index) in tabs"
       :key="tab"

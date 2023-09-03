@@ -58,7 +58,7 @@
         .notRequired()
         .trim()
         .nullable()
-        .max(5, '5 characters maximum'),
+        .max(10, '10 characters maximum'),
       streetNumber: yup
         .string()
         .trim()
@@ -68,11 +68,12 @@
       city: yup
         .string()
         .trim()
-        .max(15, 'Too many characters')
+        .max(20, 'Too many characters')
         .required('Enter a city name'),
       province: yup.string().max(3).required(),
       postalCode: yup
         .string()
+        .trim()
         .matches(
           /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i,
           'Enter a valid postal code'
@@ -80,10 +81,12 @@
         .required('Enter a valid postal code'),
       phone: yup
         .string()
+        .trim()
         .phone('CA', 'Please enter a valid phone number')
         .required('A phone number is required'),
       email: yup
         .string()
+        .trim()
         .email('Must be a valid email address')
         .required('Email address is required'),
     })
@@ -142,7 +145,7 @@
 
 <template>
   <div class="grid grid-cols-12 gap-x-3 gap-y-1 items-end">
-    <div class="col-span-12 sm:col-span-2 self-start">
+    <div class="col-span-3 sm:col-span-2 self-start">
       <BaseSelect
         v-model.trim="contact.prefix"
         :status="status.prefix"
@@ -151,7 +154,7 @@
         :options="prefixes"
         @change-status="(stat: string) => fieldStatus(stat, 'prefix')" />
     </div>
-    <div class="col-span-12 sm:col-span-5">
+    <div class="col-span-9 sm:col-span-5">
       <BaseInput
         v-model.trim="contact.firstName"
         :status="status.firstName"
@@ -169,9 +172,6 @@
         label="Last Name"
         @change-status="(stat: string) => fieldStatus(stat, 'lastName')" />
     </div>
-
-    <!-- <div v-else class="col-span-12 sm:col-span-3"></div> -->
-
     <div
       v-if="!schoolteacher"
       class="col-span-6 sm:col-span-3">
@@ -229,11 +229,12 @@
     </div>
     <div
       v-if="!schoolteacher"
-      class="col-span-12 sm:col-span-3">
+      class="col-span-6 sm:col-span-3">
       <BaseInput
         v-model.trim="contact.postalCode"
         v-maska:[maskaUcaseOption]
         :status="status.postalCode"
+        placeholder="A0A 0A0"
         data-maska="A#A #A#"
         data-maska-tokens="A:[A-Z]"
         data-maska-eager
@@ -242,12 +243,12 @@
         label="Postal Code"
         @change-status="(stat: string) => fieldStatus(stat, 'postalCode')" />
     </div>
-    <div class="col-span-12 sm:col-span-5">
+    <div class="col-span-6 sm:col-span-5">
       <BaseInput
         v-model.trim="contact.phone"
         v-maska
         :status="status.phone"
-        placeholder="(###) ###-####"
+        placeholder="(___) ___-____"
         data-maska="(###) ###-####"
         data-maska-eager
         name="phone"

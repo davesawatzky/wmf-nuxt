@@ -49,7 +49,7 @@
         <label
           v-if="label"
           :for="uuid"
-          class="w-full">
+          class="break-normal">
           {{ label }}
           <BaseHelpButton :help-message="helpMessage" />
         </label>

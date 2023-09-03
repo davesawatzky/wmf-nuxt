@@ -1,0 +1,17 @@
+query Teachers {
+  teachers {
+    id
+    prefix
+    firstName
+    lastName
+    instrument
+    apartment
+    streetNumber
+    streetName
+    city
+    province
+    postalCode
+    phone
+    email
+  }
+}

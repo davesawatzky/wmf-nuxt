@@ -33,17 +33,18 @@
       streetNumber: yup
         .string()
         .trim()
-        .max(5, '5 characters maximum')
+        .max(7, '7 characters maximum')
         .required('Enter a valid street number'),
       streetName: yup.string().trim().required('Enter a valid street name'),
       city: yup
         .string()
         .trim()
-        .max(15, 'Too many characters')
+        .max(20, 'Too many characters')
         .required('Enter a city name'),
       province: yup.string().max(3).required(),
       postalCode: yup
         .string()
+        .trim()
         .matches(
           /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i,
           'Enter a valid postal code'
@@ -51,6 +52,7 @@
         .required('Enter a valid postal code'),
       phone: yup
         .string()
+        .trim()
         .phone('CA', 'Please enter a valid phone number')
         .required('A phone number is required'),
     })
@@ -107,75 +109,77 @@
           type="text"
           @change-status="(stat: string) => fieldStatus(stat, 'division')" />
       </div>
-    </div>
-    <div class="col-span-12 sm:col-span-4 mt-6 sm:mt-0">
-      <BaseInput
-        v-model.trim="schoolStore.school.streetNumber"
-        :status="status.streetNumber"
-        required
-        name="streetNumber"
-        type="text"
-        label="Street #"
-        @change-status="(stat: string) => fieldStatus(stat, 'streetNumber')" />
-    </div>
-    <div class="col-span-12 sm:col-span-8">
-      <BaseInput
-        v-model.trim="schoolStore.school.streetName"
-        :status="status.streetName"
-        requried
-        name="streetName"
-        type="text"
-        label="Street Name"
-        @change-status="(stat: string) => fieldStatus(stat, 'streetName')" />
-    </div>
-    <div class="col-span-8 sm:col-span-7">
-      <BaseInput
-        v-model.trim="schoolStore.school.city"
-        :status="status.city"
-        required
-        name="city"
-        type="text"
-        label="City/Town"
-        @change-status="(stat: string) => fieldStatus(stat, 'city')" />
-    </div>
-    <div class="col-span-4 sm:col-span-2 self-start">
-      <BaseSelect
-        v-model.trim="schoolStore.school.province"
-        :status="status.province"
-        required
-        name="province"
-        label="Province"
-        :options="provinces"
-        @change-status="(stat: string) => fieldStatus(stat, 'province')" />
-    </div>
-    <div class="col-span-12 sm:col-span-3">
-      <BaseInput
-        v-model.trim="schoolStore.school.postalCode"
-        v-maska:[maskaUcaseOption]
-        :status="status.postalCode"
-        required
-        placeholder="A0A 0A0"
-        data-maska="A#A #A#"
-        data-maska-tokens="A:[A-Z]"
-        data-maska-eager
-        name="postalCode"
-        type="text"
-        label="Postal Code"
-        @change-status="(stat: string) => fieldStatus(stat, 'postalCode')" />
-    </div>
-    <div class="col-span-12 sm:col-span-5">
-      <BaseInput
-        v-model.trim="schoolStore.school.phone"
-        v-maska
-        :status="status.phone"
-        required
-        placeholder="(###) ###-####"
-        data-maska="(###) ###-####"
-        data-maska-eager
-        name="phone"
-        type="tel"
-        label="Phone Number"
-        @change-status="(stat: string) => fieldStatus(stat, 'phone')" />
+      <div class="col-span-4 sm:col-span-3">
+        <BaseInput
+          v-model.trim="schoolStore.school.streetNumber"
+          :status="status.streetNumber"
+          required
+          name="streetNumber"
+          type="text"
+          label="Street #"
+          @change-status="
+            (stat: string) => fieldStatus(stat, 'streetNumber')
+          " />
+      </div>
+      <div class="col-span-8 sm:col-span-5">
+        <BaseInput
+          v-model.trim="schoolStore.school.streetName"
+          :status="status.streetName"
+          requried
+          name="streetName"
+          type="text"
+          label="Street Name"
+          @change-status="(stat: string) => fieldStatus(stat, 'streetName')" />
+      </div>
+      <div class="col-span-12 sm:col-span-4">
+        <BaseInput
+          v-model.trim="schoolStore.school.city"
+          :status="status.city"
+          required
+          name="city"
+          type="text"
+          label="City/Town"
+          @change-status="(stat: string) => fieldStatus(stat, 'city')" />
+      </div>
+      <div class="col-span-6 sm:col-span-3">
+        <BaseSelect
+          v-model.trim="schoolStore.school.province"
+          :status="status.province"
+          required
+          name="province"
+          label="Province"
+          :options="provinces"
+          @change-status="(stat: string) => fieldStatus(stat, 'province')" />
+      </div>
+      <div class="col-span-6 sm:col-span-4">
+        <BaseInput
+          v-model.trim="schoolStore.school.postalCode"
+          v-maska:[maskaUcaseOption]
+          :status="status.postalCode"
+          required
+          placeholder="A0A 0A0"
+          data-maska="A#A #A#"
+          data-maska-tokens="A:[A-Z]"
+          data-maska-eager
+          name="postalCode"
+          type="text"
+          label="Postal Code"
+          @change-status="(stat: string) => fieldStatus(stat, 'postalCode')" />
+      </div>
+      <div class="col-span-12 sm:col-span-5">
+        <BaseInput
+          v-model.trim="schoolStore.school.phone"
+          v-maska
+          :status="status.phone"
+          required
+          placeholder="(___) ___-____"
+          data-maska="(###) ###-####"
+          data-maska-eager
+          name="phone"
+          type="tel"
+          label="Phone Number"
+          @change-status="(stat: string) => fieldStatus(stat, 'phone')" />
+      </div>
     </div>
   </div>
 </template>

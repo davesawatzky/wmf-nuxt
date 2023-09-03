@@ -96,7 +96,10 @@
         .integer()
         .typeError('Please enter a valid number')
         .required('Enter the number of wheelchairs'),
-      unavailable: yup.string().trim().nullable(),
+      unavailable: yup
+        .string()
+        .trim()
+        .required('Please indicate unavailable dates/times.'),
       conflictPerformers: yup.string().trim().nullable(),
     })
   )
