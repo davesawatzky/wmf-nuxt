@@ -456,6 +456,7 @@
       <div
         v-if="instrumentRequired"
         class="col-span-12">
+        <!-- TODO: This shouldn't go to the performer info -->
         <BaseSelect
           id="instrument"
           v-model="performerStore.performers[0].instrument"

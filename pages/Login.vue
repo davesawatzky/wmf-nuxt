@@ -126,6 +126,7 @@
       </h3>
       <BaseInput
         v-model="values.email"
+        autocomplete="off"
         autofocus
         name="email"
         type="email"
@@ -133,6 +134,7 @@
         @keyup.enter="isLogin ? signin() : signup()" />
       <BaseInput
         v-model="values.password"
+        autocomplete="off"
         name="password"
         type="password"
         label="Password"
@@ -140,6 +142,7 @@
       <BaseInput
         v-if="!isLogin"
         v-model="values.password2"
+        autocomplete="off"
         name="password2"
         type="password"
         label="Re-enter Password"

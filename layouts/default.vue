@@ -1,8 +1,8 @@
 <script setup lang="ts">
-  import {
-    useGlobalMutationLoading,
-    useGlobalQueryLoading,
-  } from '@vue/apollo-composable'
+  // import {
+  //   useGlobalMutationLoading,
+  //   useGlobalQueryLoading,
+  // } from '@vue/apollo-composable'
   import { useAppStore } from '@/stores/appStore'
 
   const appStore = useAppStore()

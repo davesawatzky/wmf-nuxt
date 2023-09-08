@@ -1,19 +1,17 @@
-query TeacherInfo($registrationId: Int!) {
-  registration(id: $registrationId) {
-    teacher {
-      id
-      prefix
-      firstName
-      lastName
-      apartment
-      streetNumber
-      streetName
-      city
-      province
-      postalCode
-      phone
-      email
-      instrument
-    }
+query TeacherInfo($teacherID: Int!) {
+  teacher(teacherID: $teacherID) {
+    id
+    prefix
+    firstName
+    lastName
+    apartment
+    streetNumber
+    streetName
+    city
+    province
+    postalCode
+    phone
+    email
+    instrument
   }
 }

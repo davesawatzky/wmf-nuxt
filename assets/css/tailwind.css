@@ -79,7 +79,8 @@
   }
 
   .off {
-    @apply disabled:bg-slate-100 disabled:text-slate-500 disabled:border-slate-400 disabled:shadow-md;
+    @apply disabled:bg-slate-200 disabled:text-slate-500 disabled:border-slate-400
+    disabled:shadow-md disabled:focus:ring-0 disabled:checked:bg-slate-200 disabled:checked:border-slate-400;
   }
 
   label {

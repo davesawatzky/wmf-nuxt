@@ -1,3 +1,4 @@
+import { useTeacher } from './userTeacher'
 import {
   RegistrationCreateDocument,
   RegistrationDeleteDocument,
@@ -20,7 +21,8 @@ export const useRegistration = defineStore(
   'registrations',
   () => {
     const registrationId = ref(0)
-    const registration = ref(<Registration>{})
+    const registration = ref(<Registration & RegistrationInput>{})
+    const teacherStore = useTeacher()
 
     /**
      * Resets the registration store
@@ -34,7 +36,7 @@ export const useRegistration = defineStore(
      * Adds Registration Object to the store.  Can only be one.
      * @param reg Registration Object, must have valid id property value
      */
-    function addToStore(reg: Partial<Registration>): void {
+    function addToStore(reg: Partial<Registration & RegistrationInput>): void {
       registrationId.value = reg.id!
       registration.value.id = reg.id!
       registration.value.performerType = reg.performerType!
@@ -46,7 +48,7 @@ export const useRegistration = defineStore(
       registration.value.payedAmt = reg.payedAmt || 0
       registration.value.totalAmt = reg.totalAmt || 0
       registration.value.updatedAt = reg.updatedAt || ''
-      // registration.value.user = reg.user || ''
+      registration.value.teacherID = reg.teacher?.id || null
       registration.value.__typename = 'Registration'
     }
 

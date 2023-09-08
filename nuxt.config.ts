@@ -41,6 +41,9 @@ export default defineNuxtConfig({
   experimental: {
     typedPages: true,
   },
+  headlessui: {
+    prefix: 'UI',
+  },
   modules: [
     '@nuxtjs/tailwindcss',
     '@nuxtjs/eslint-module',
@@ -53,6 +56,7 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     '@nuxt/image-edge',
     'nuxt-icon',
+    'nuxt-headlessui',
   ],
   pinia: {
     autoImports: ['defineStore'],

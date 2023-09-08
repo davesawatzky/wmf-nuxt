@@ -5,6 +5,7 @@ import {
   TeacherDeleteDocument,
   TeacherInfoDocument,
   TeacherUpdateDocument,
+  TeachersDocument,
 } from '~/graphql/gql/graphql'
 import type {
   Teacher,
@@ -12,20 +13,33 @@ import type {
   TeacherInput,
 } from '~/graphql/gql/graphql'
 
+export interface AllTeachers {
+  id: number
+  firstName: string
+  lastName: string
+  instrument: string
+  __typename: 'Teacher'
+}
+
 const fieldConfigStore = useFieldConfig()
 
 export const useTeacher = defineStore(
   'teacher',
   () => {
     const teacher = ref(<Teacher>{})
+    const allTeachers = ref<AllTeachers[]>([])
 
-    function $reset() {
+    function $resetTeacher() {
       teacher.value = <Teacher>{}
+    }
+    function $resetAllTeachers() {
+      allTeachers.value = <AllTeachers[]>[]
     }
 
     const teacherErrors = computed(() => {
       const teacherKeys = fieldConfigStore.performerTypeFields('Teacher')
       let count = 0
+      console.log(teacherKeys)
       for (const key of teacherKeys) {
         if (!!teacher.value[key as keyof Teacher] === false) {
           count++
@@ -58,6 +72,7 @@ export const useTeacher = defineStore(
       teacher.value.postalCode = teach.postalCode || ''
       teacher.value.email = teach.email || ''
       teacher.value.phone = teach.phone || ''
+      teacher.value.instrument = teach.instrument || ''
       teacher.value.__typename = teach.__typename || 'Teacher'
     }
 
@@ -66,7 +81,7 @@ export const useTeacher = defineStore(
      * @param registrationId ID of Registration form
      * @returns
      */
-    function createTeacher(registrationId: number): Promise<unknown> {
+    function createTeacher(): Promise<unknown> {
       return new Promise((resolve, reject) => {
         const {
           mutate: teacherCreate,
@@ -74,7 +89,6 @@ export const useTeacher = defineStore(
           onError,
         } = useMutation(TeacherCreateDocument)
         teacherCreate({
-          registrationId,
           teacher: <TeacherInput>{
             city: 'Winnipeg',
             province: 'MB',
@@ -101,7 +115,7 @@ export const useTeacher = defineStore(
      * @param registrationId ID of Registration Form
      * @returns
      */
-    function loadTeacher(registrationId: number): Promise<unknown> {
+    function loadTeacher(teacherID: number): Promise<unknown> {
       return new Promise((resolve, reject) => {
         const {
           result: resultTeachers,
@@ -110,12 +124,32 @@ export const useTeacher = defineStore(
           onResult,
         } = useLazyQuery(
           TeacherInfoDocument,
-          { registrationId },
+          { teacherID },
           { fetchPolicy: 'network-only' }
         )
         load()
         onResult((result) => {
-          addToStore(<Teacher>result.data.registration.teacher)
+          addToStore(<Teacher>result.data.teacher)
+          resolve('Success')
+        })
+        onError((error) => {
+          reject(console.log(error))
+        })
+      })
+    }
+
+    function loadAllTeachers(): Promise<unknown> {
+      return new Promise((resolve, reject) => {
+        const { result, load, onError, onResult } = useLazyQuery(
+          TeachersDocument,
+          undefined,
+          { fetchPolicy: 'network-only' }
+        )
+        load()
+        onResult((result) => {
+          allTeachers.value = <AllTeachers[]>(
+            result.data.teachers.map((el) => el)
+          )
           resolve('Success')
         })
         onError((error) => {
@@ -171,7 +205,7 @@ export const useTeacher = defineStore(
         } = useMutation(TeacherDeleteDocument)
         teacherDelete({ teacherId }).catch((error) => console.log(error))
         onDone(() => {
-          $reset()
+          $resetTeacher()
           resolve('Success')
         })
         onError((error) => {
@@ -181,12 +215,15 @@ export const useTeacher = defineStore(
     }
     return {
       teacher,
-      $reset,
+      allTeachers,
+      $resetTeacher,
+      $resetAllTeachers,
       teacherErrors,
       deleteTeacher,
       updateTeacher,
       createTeacher,
       loadTeacher,
+      loadAllTeachers,
       addToStore,
       fullName,
     }

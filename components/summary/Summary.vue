@@ -57,8 +57,8 @@
     </div>
     <div
       v-else
-      class="px-8"
-      v-auto-animate>
+      v-auto-animate
+      class="px-8">
       <h1>Registration Summary</h1>
       <h3
         v-if="registrationStore.registration.confirmation"

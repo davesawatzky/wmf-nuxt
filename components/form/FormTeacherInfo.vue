@@ -2,7 +2,9 @@
   import * as yup from 'yup'
   import 'yup-phone-lite'
   import { useTeacher } from '@/stores/userTeacher'
+  import { useRegistration } from '~/stores/userRegistration'
   import type { ContactInfo, Status } from '@/composables/types'
+  import type { AllTeachers } from '@/stores/userTeacher'
 
   const props = defineProps<{
     modelValue: ContactInfo
@@ -10,7 +12,7 @@
     schoolteacher?: boolean
     school?: boolean
     groupperformer?: boolean
-    teacherId: number
+    teacherId?: number
   }>()
 
   const emits = defineEmits<{
@@ -28,6 +30,7 @@
   })
 
   const teacherStore = useTeacher()
+  const registrationStore = useRegistration()
 
   const status = reactive<Status>({
     prefix: props.modelValue.prefix ? StatusEnum.saved : StatusEnum.null,
@@ -47,6 +50,9 @@
       : StatusEnum.null,
     email: props.modelValue.email ? StatusEnum.saved : StatusEnum.null,
     phone: props.modelValue.phone ? StatusEnum.saved : StatusEnum.null,
+    instrument: props.modelValue.instrument
+      ? StatusEnum.saved
+      : StatusEnum.null,
   })
 
   const teacherSchema = toTypedSchema(
@@ -89,6 +95,7 @@
         .trim()
         .email('Must be a valid email address')
         .required('Email address is required'),
+      instrument: yup.string().trim().required('Instrument is required'),
     })
   )
 
@@ -119,7 +126,10 @@
   async function fieldStatus(stat: string, fieldName: string) {
     await nextTick()
     status[fieldName] = StatusEnum.pending
-    await teacherStore.updateTeacher(fieldName)
+    await teacherStore.updateTeacher(fieldName).catch((err) => {
+      console.log('Trying to remove non-existant teacher', err)
+      stat = ''
+    })
     if (stat === 'saved') {
       status[fieldName] = StatusEnum.saved
     } else if (stat === 'remove') {
@@ -141,130 +151,354 @@
   onActivated(() => {
     validate()
   })
+
+  // Working with the new Teacher ComboBox
+
+  const teacherRadio = ref('existing')
+  const editingDisabled = ref(true)
+  const duplicateCheck = ref<AllTeachers>()
+
+  watch(teacherRadio, async (newValue) => {
+    console.log('TeacherRadio Watcher')
+    if (newValue === 'new') {
+      teacherStore.$resetTeacher()
+      registrationStore.registration.teacherID = null
+      await teacherStore.createTeacher()
+      registrationStore.registration.teacherID = teacherStore.teacher.id
+    } else if (newValue === 'existing' && !duplicateCheck.value?.id) {
+      if (registrationStore.registration.teacherID) {
+        await teacherStore.deleteTeacher(
+          registrationStore.registration.teacherID
+        )
+      }
+      registrationStore.registration.teacherID = null
+      await registrationStore.updateRegistration('teacherID')
+    }
+  })
+
+  watch(
+    () => registrationStore.registration.teacherID,
+    async (newID, oldID) => {
+      console.log('TeacherID Watcher')
+      if (newID !== oldID && newID) {
+        if (teacherRadio.value === 'existing') {
+          await teacherStore.loadTeacher(newID)
+        }
+        await registrationStore.updateRegistration('teacherID')
+      }
+    }
+  )
+
+  watch(
+    () =>
+      (teacherStore.teacher.firstName ?? '') +
+      (teacherStore.teacher.lastName ?? ''),
+    async (fullname) => {
+      console.log('Duplicate Watcher')
+      if (teacherRadio.value === 'new') {
+        duplicateCheck.value = teacherStore.allTeachers.find((item) => {
+          return (
+            (item.firstName + item.lastName).toLowerCase() ===
+            fullname.toLowerCase()
+          )
+        })
+        if (duplicateCheck.value?.id) {
+          alert('Duplicate Found')
+          console.log('Duplicate id: ', duplicateCheck.value.id)
+          await teacherStore
+            .deleteTeacher(teacherStore.teacher.id)
+            .then()
+            .catch((error) => console.log("Can't delete teacher", error))
+
+          console.log('2 Duplicate id: ', duplicateCheck.value.id)
+          teacherRadio.value = 'existing'
+          registrationStore.registration.teacherID = duplicateCheck.value.id
+          await teacherStore
+            .loadTeacher(duplicateCheck.value.id)
+            .catch((error) => {
+              console.log('Error loading teacher from duplicate id', error)
+            })
+          await registrationStore
+            .updateRegistration('teacherID')
+            .catch((error) => {
+              console.log('Error updating registration from teacherID', error)
+            })
+        }
+      }
+    }
+  )
+
+  const query = ref('')
+  const filteredTeachers = computed(() => {
+    return query.value === ''
+      ? teacherStore.allTeachers
+      : teacherStore.allTeachers.filter((teacher) => {
+          return (teacher.firstName + ' ' + teacher.lastName)
+            .toLowerCase()
+            .includes(query.value.toLowerCase())
+        })
+  })
+  function displayValue(id: number) {
+    const teacher = teacherStore.allTeachers.find((item) => item.id === id)
+    if (teacher) {
+      return `${teacher?.firstName} ${teacher?.lastName}, ${teacher?.instrument}`
+    }
+  }
+  const fieldsDisabled = computed(() => {
+    return teacherRadio.value === 'existing' ? true : false
+  })
 </script>
 
 <template>
-  <div class="grid grid-cols-12 gap-x-3 gap-y-1 items-end">
-    <div class="col-span-3 sm:col-span-2 self-start">
-      <BaseSelect
-        v-model.trim="contact.prefix"
-        :status="status.prefix"
-        name="prefix"
-        label="Title"
-        :options="prefixes"
-        @change-status="(stat: string) => fieldStatus(stat, 'prefix')" />
+  <div>
+    <div class="grid grid-cols-12 gap-x-3 gap-y-1 items-end">
+      <div class="col-span-12">
+        <BaseRadio
+          class="pb-3"
+          :class="!editingDisabled ? 'off' : ''"
+          v-model="teacherRadio"
+          label="Choose a teacher from the list"
+          name="teacherRadio"
+          :disabled="!editingDisabled"
+          value="existing"></BaseRadio>
+        <UICombobox
+          v-model="registrationStore.registration.teacherID"
+          :disabled="!fieldsDisabled || !editingDisabled">
+          <UIComboboxInput
+            :class="!fieldsDisabled || !editingDisabled ? 'off' : ''"
+            @change="query = $event.target.value"
+            :displayValue="(id) => displayValue(id)" />
+          <UITransitionRoot
+            leave="transition ease-in duration-100"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+            @after-leave="query = ''">
+            <UIComboboxOptions
+              class="absolute z-90 w-[600px] overflow-hidden mt-1 max-h-60 rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+              <!-- Use the `active` state to conditionally style the active option. -->
+              <!-- Use the `selected` state to conditionally style the selected option. -->
+              <div
+                v-if="filteredTeachers.length === 0 && query !== ''"
+                class="relative cursor-default select-none py-2 px-4 text-gray-700">
+                Nothing found.
+              </div>
+              <UIComboboxOption
+                v-for="teacher in filteredTeachers"
+                as="template"
+                :key="teacher.id"
+                :value="teacher.id"
+                v-slot="{ active, selected }">
+                <li
+                  class="relative cursor-default select-none py-2 pl-10 pr-4"
+                  :class="{
+                    'bg-sky-500 text-white': active,
+                    'text-gray-900': !active,
+                  }">
+                  <span
+                    class="block truncate"
+                    :class="{
+                      'font-medium': selected,
+                      'font-normal': !selected,
+                    }">
+                    <!-- <CheckIcon v-show="selected" /> -->
+                    {{ teacher.firstName }}
+                    {{ teacher.lastName }},
+                    {{ teacher.instrument }}
+                  </span>
+                  <span
+                    v-if="selected"
+                    class="absolute inset-y-0 left-0 flex items-center pl-3"
+                    :class="{
+                      'text-white': active,
+                      'text-sky-600': !active,
+                    }"></span>
+                </li>
+              </UIComboboxOption>
+            </UIComboboxOptions>
+          </UITransitionRoot>
+        </UICombobox>
+      </div>
     </div>
-    <div class="col-span-9 sm:col-span-5">
-      <BaseInput
-        v-model.trim="contact.firstName"
-        :status="status.firstName"
-        name="firstName"
-        type="text"
-        label="First Name"
-        @change-status="(stat: string) => fieldStatus(stat, 'firstName')" />
-    </div>
-    <div class="col-span-12 sm:col-span-5">
-      <BaseInput
-        v-model.trim="contact.lastName"
-        :status="status.lastName"
-        name="lastName"
-        type="text"
-        label="Last Name"
-        @change-status="(stat: string) => fieldStatus(stat, 'lastName')" />
-    </div>
-    <div
-      v-if="!schoolteacher"
-      class="col-span-6 sm:col-span-3">
-      <BaseInput
-        v-model.trim="contact.apartment"
-        :status="status.apartment"
-        name="apartment"
-        type="text"
-        label="Apt."
-        @change-status="(stat: string) => fieldStatus(stat, 'apartment')" />
-    </div>
-    <div
-      v-if="!schoolteacher"
-      class="col-span-6 sm:col-span-3">
-      <BaseInput
-        v-model.trim="contact.streetNumber"
-        :status="status.streetNumber"
-        name="streetNumber"
-        type="text"
-        label="Street #"
-        @change-status="(stat: string) => fieldStatus(stat, 'streetNumber')" />
-    </div>
-    <div
-      v-if="!schoolteacher"
-      class="col-span-12 sm:col-span-6">
-      <BaseInput
-        v-model.trim="contact.streetName"
-        :status="status.streetName"
-        name="streetName"
-        type="text"
-        label="Street Name"
-        @change-status="(stat: string) => fieldStatus(stat, 'streetName')" />
-    </div>
-    <div
-      v-if="!schoolteacher"
-      class="col-span-8 sm:col-span-7">
-      <BaseInput
-        v-model.trim="contact.city"
-        :status="status.city"
-        name="city"
-        type="text"
-        label="City/Town"
-        @change-status="(stat: string) => fieldStatus(stat, 'city')" />
-    </div>
-    <div
-      v-if="!schoolteacher"
-      class="col-span-4 sm:col-span-2 self-start">
-      <BaseSelect
-        v-model.trim="contact.province"
-        :status="status.province"
-        name="province"
-        label="Province"
-        :options="provinces"
-        @change-status="(stat: string) => fieldStatus(stat, 'province')" />
-    </div>
-    <div
-      v-if="!schoolteacher"
-      class="col-span-6 sm:col-span-3">
-      <BaseInput
-        v-model.trim="contact.postalCode"
-        v-maska:[maskaUcaseOption]
-        :status="status.postalCode"
-        placeholder="A0A 0A0"
-        data-maska="A#A #A#"
-        data-maska-tokens="A:[A-Z]"
-        data-maska-eager
-        name="postalCode"
-        type="text"
-        label="Postal Code"
-        @change-status="(stat: string) => fieldStatus(stat, 'postalCode')" />
-    </div>
-    <div class="col-span-6 sm:col-span-5">
-      <BaseInput
-        v-model.trim="contact.phone"
-        v-maska
-        :status="status.phone"
-        placeholder="(___) ___-____"
-        data-maska="(###) ###-####"
-        data-maska-eager
-        name="phone"
-        type="tel"
-        label="Phone Number"
-        @change-status="(stat: string) => fieldStatus(stat, 'phone')" />
-    </div>
-    <div class="col-span-12 sm:col-span-7">
-      <BaseInput
-        v-model.trim="contact.email"
-        :status="status.email"
-        placeholder="example@email.com"
-        name="email"
-        type="email"
-        label="Email"
-        @change-status="(stat: string) => fieldStatus(stat, 'email')" />
+    <div class="grid grid-cols-12 gap-x-3 gap-y-1 items-end">
+      <div class="grid col-span-12 items-center grid-cols-2">
+        <div clas="col-span-1">
+          <BaseRadio
+            v-model="teacherRadio"
+            :class="!editingDisabled ? 'off' : ''"
+            label="OR enter a new teacher"
+            name="teacherRadio"
+            :disabled="!editingDisabled"
+            value="new" />
+        </div>
+        <div class="col-span-1 z-10">
+          <BaseToggleB
+            v-if="
+              teacherRadio === 'existing' &&
+              !!registrationStore.registration.teacherID
+            "
+            v-model="editingDisabled"
+            label="Edit Information">
+          </BaseToggleB>
+        </div>
+      </div>
+      <div class="col-span-3 sm:col-span-2 self-start">
+        <BaseSelect
+          v-model.trim="contact.prefix"
+          :class="fieldsDisabled && editingDisabled ? 'off' : ''"
+          :status="status.prefix"
+          name="prefix"
+          label="Title"
+          :options="prefixes"
+          :disabled="fieldsDisabled && editingDisabled"
+          @change-status="(stat: string) => fieldStatus(stat, 'prefix')" />
+      </div>
+      <div class="col-span-9 sm:col-span-5">
+        <BaseInput
+          v-model.trim="contact.firstName"
+          :class="fieldsDisabled ? 'off' : ''"
+          :status="status.firstName"
+          name="firstName"
+          type="text"
+          label="First Name"
+          :disabled="fieldsDisabled"
+          @change-status="(stat: string) => fieldStatus(stat, 'firstName')" />
+      </div>
+      <div class="col-span-12 sm:col-span-5">
+        <BaseInput
+          v-model.trim="contact.lastName"
+          :class="fieldsDisabled ? 'off' : ''"
+          :status="status.lastName"
+          name="lastName"
+          type="text"
+          label="Last Name"
+          :disabled="fieldsDisabled"
+          @change-status="(stat: string) => fieldStatus(stat, 'lastName')" />
+      </div>
+      <div
+        v-if="!schoolteacher"
+        class="col-span-6 sm:col-span-3">
+        <BaseInput
+          v-model.trim="contact.apartment"
+          :class="fieldsDisabled && editingDisabled ? 'off' : ''"
+          :status="status.apartment"
+          name="apartment"
+          type="text"
+          label="Apt."
+          :disabled="fieldsDisabled && editingDisabled"
+          @change-status="(stat: string) => fieldStatus(stat, 'apartment')" />
+      </div>
+      <div
+        v-if="!schoolteacher"
+        class="col-span-6 sm:col-span-3">
+        <BaseInput
+          v-model.trim="contact.streetNumber"
+          :class="fieldsDisabled && editingDisabled ? 'off' : ''"
+          :status="status.streetNumber"
+          name="streetNumber"
+          type="text"
+          label="Street #"
+          :disabled="fieldsDisabled && editingDisabled"
+          @change-status="
+            (stat: string) => fieldStatus(stat, 'streetNumber')
+          " />
+      </div>
+      <div
+        v-if="!schoolteacher"
+        class="col-span-12 sm:col-span-6">
+        <BaseInput
+          v-model.trim="contact.streetName"
+          :class="fieldsDisabled && editingDisabled ? 'off' : ''"
+          :status="status.streetName"
+          name="streetName"
+          type="text"
+          label="Street Name"
+          :disabled="fieldsDisabled && editingDisabled"
+          @change-status="(stat: string) => fieldStatus(stat, 'streetName')" />
+      </div>
+      <div
+        v-if="!schoolteacher"
+        class="col-span-8 sm:col-span-7">
+        <BaseInput
+          v-model.trim="contact.city"
+          :class="fieldsDisabled && editingDisabled ? 'off' : ''"
+          :status="status.city"
+          name="city"
+          type="text"
+          label="City/Town"
+          :disabled="fieldsDisabled && editingDisabled"
+          @change-status="(stat: string) => fieldStatus(stat, 'city')" />
+      </div>
+      <div
+        v-if="!schoolteacher"
+        class="col-span-4 sm:col-span-2 self-start">
+        <BaseSelect
+          v-model.trim="contact.province"
+          :class="fieldsDisabled && editingDisabled ? 'off' : ''"
+          :status="status.province"
+          name="province"
+          label="Province"
+          :options="provinces"
+          :disabled="fieldsDisabled && editingDisabled"
+          @change-status="(stat: string) => fieldStatus(stat, 'province')" />
+      </div>
+      <div
+        v-if="!schoolteacher"
+        class="col-span-6 sm:col-span-3">
+        <BaseInput
+          v-model.trim="contact.postalCode"
+          :class="fieldsDisabled && editingDisabled ? 'off' : ''"
+          v-maska:[maskaUcaseOption]
+          :status="status.postalCode"
+          placeholder="A0A 0A0"
+          data-maska="A#A #A#"
+          data-maska-tokens="A:[A-Z]"
+          data-maska-eager
+          name="postalCode"
+          type="text"
+          label="Postal Code"
+          :disabled="fieldsDisabled && editingDisabled"
+          @change-status="(stat: string) => fieldStatus(stat, 'postalCode')" />
+      </div>
+      <div class="col-span-6 sm:col-span-4">
+        <BaseInput
+          v-model.trim="contact.phone"
+          :class="fieldsDisabled && editingDisabled ? 'off' : ''"
+          v-maska
+          :status="status.phone"
+          placeholder="(___) ___-____"
+          data-maska="(###) ###-####"
+          data-maska-eager
+          name="phone"
+          type="tel"
+          label="Phone Number"
+          :disabled="fieldsDisabled && editingDisabled"
+          @change-status="(stat: string) => fieldStatus(stat, 'phone')" />
+      </div>
+      <div class="col-span-12 sm:col-span-4">
+        <BaseInput
+          v-model.trim="contact.email"
+          :class="fieldsDisabled && editingDisabled ? 'off' : ''"
+          :status="status.email"
+          placeholder="example@email.com"
+          name="email"
+          type="email"
+          label="Email"
+          :disabled="fieldsDisabled && editingDisabled"
+          @change-status="(stat: string) => fieldStatus(stat, 'email')" />
+      </div>
+      <div
+        v-if="!schoolteacher && teacher"
+        class="col-span-12 sm:col-span-4">
+        <BaseInput
+          v-model.trim="contact.instrument"
+          :class="fieldsDisabled && editingDisabled ? 'off' : ''"
+          :status="status.instrument"
+          name="instrument"
+          type="text"
+          label="Instrument"
+          :disabled="fieldsDisabled && editingDisabled"
+          @change-status="(stat: string) => fieldStatus(stat, 'instrument')" />
+      </div>
     </div>
   </div>
 </template>

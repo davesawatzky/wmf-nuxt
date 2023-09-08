@@ -59,7 +59,8 @@
     registrationStore.$reset()
     appStore.$reset()
     performerStore.$reset()
-    teacherStore.$reset()
+    teacherStore.$resetTeacher()
+    teacherStore.$resetAllTeachers()
     groupStore.$reset()
     communityStore.$reset()
     schoolStore.$reset()
@@ -131,7 +132,10 @@
     }
 
     appStore.dataLoading = true
-    await teacherStore.loadTeacher(registrationId)
+    await teacherStore.loadAllTeachers()
+    if (registration?.teacher) {
+      await teacherStore.loadTeacher(registration.teacher.id)
+    }
     await classesStore.loadClasses(registrationId)
     await fieldConfigStore.loadRequiredFields()
     appStore.dataLoading = false
@@ -161,31 +165,25 @@
         appStore.performerType = PerformerType.SOLO
         appStore.dataLoading = true
         await performerStore.createPerformer(registrationId.value)
-        appStore.dataLoading = false
         break
       case 'GROUP':
         appStore.performerType = PerformerType.GROUP
         appStore.dataLoading = true
         await groupStore.createGroup(registrationId.value)
         await performerStore.createPerformer(registrationId.value)
-        appStore.dataLoading = false
         break
       case 'SCHOOL':
         appStore.performerType = PerformerType.SCHOOL
         appStore.dataLoading = true
         await schoolStore.createSchool(registrationId.value)
         await schoolGroupStore.createSchoolGroup(schoolStore.school.id!)
-        appStore.dataLoading = false
         break
       case 'COMMUNITY':
         appStore.performerType = PerformerType.COMMUNITY
         appStore.dataLoading = true
         await communityStore.createCommunity(registrationId.value)
-        appStore.dataLoading = false
     }
-
-    appStore.dataLoading = true
-    await teacherStore.createTeacher(registrationId.value)
+    await teacherStore.loadAllTeachers()
     await classesStore.createClass(registrationId.value)
     await fieldConfigStore.loadRequiredFields()
     appStore.dataLoading = false

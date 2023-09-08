@@ -1,14 +1,17 @@
 query Registrations($performerType: PerformerType) {
   registrations(performerType: $performerType) {
     id
-    createdAt
+    confirmation
     label
+    payedAmt
     performerType
     submittedAt
-    payedAmt
+    teacher {
+      id
+    }
     totalAmt
     transactionInfo
-    confirmation
+    createdAt
     updatedAt
   }
 }

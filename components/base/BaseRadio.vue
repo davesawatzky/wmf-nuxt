@@ -15,6 +15,7 @@
 <template>
   <div>
     <input
+      class="cursor-pointer"
       :id="String(value)"
       type="radio"
       :checked="modelValue === value"
