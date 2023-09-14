@@ -1,11 +1,14 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div>
+  <div class="mb-4">
     <div
       class="flex align-bottom p-2 text-white bg-sky-700 border border-sky-700 shadow-md rounded-t-lg">
-      <slot name="heading1"> </slot>
-      <div class="px-8">
+      <div>
+        <h4><slot name="heading1"> </slot></h4>
+        <div><slot name="heading3"></slot></div>
+      </div>
+      <div class="px-10">
         <slot name="heading2"> </slot>
       </div>
     </div>

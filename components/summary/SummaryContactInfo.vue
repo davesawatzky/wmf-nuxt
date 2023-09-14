@@ -1,10 +1,13 @@
 <script setup lang="ts">
   import type { ContactInfo } from '~/composables/types'
+  import { useAppStore } from '~/stores/appStore'
 
   defineProps<{
     contact: ContactInfo
     fullName: string
   }>()
+
+  const appStore = useAppStore()
 </script>
 
 <template>
@@ -16,19 +19,21 @@
       <div>Phone: {{ contact.phone }}</div>
       <div>Email: {{ contact.email }}</div>
     </template>
-    <template #details>
+    <template
+      v-if="appStore.performerType !== 'SCHOOL'"
+      #details>
       <div class="flex">
         <table>
           <tbody>
             <tr
               v-if="contact.age"
-              class="border-sky-400">
+              class="">
               <td>Age:</td>
               <td>{{ contact.age }}</td>
               <td v-if="contact.instrument">Instrument:</td>
               <td v-if="contact.instrument">{{ contact?.instrument }}</td>
             </tr>
-            <tr class="border-sky-400">
+            <tr class="">
               <td>Address:</td>
               <td v-if="contact.apartment">
                 {{ contact.apartment }} - {{ contact?.streetNumber }}
@@ -40,7 +45,7 @@
               <td v-if="contact.level">Grade Level:</td>
               <td v-if="contact.level">{{ contact.level }}</td>
             </tr>
-            <tr class="border-sky-400">
+            <tr class="">
               <td></td>
               <td>
                 {{ contact.city }},
@@ -51,7 +56,7 @@
               </td>
               <td v-if="contact.otherClasses">{{ contact.otherClasses }}</td>
             </tr>
-            <tr class="border-sky-400">
+            <tr class="">
               <td></td>
               <td>{{ contact.postalCode }}</td>
             </tr>
@@ -68,11 +73,7 @@
     border-collapse: collapse;
   }
 
-  tr {
-    border-bottom-width: 1px;
-  }
-
   td {
-    padding: 4px 8px;
+    padding: 0px 8px;
   }
 </style>

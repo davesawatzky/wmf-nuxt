@@ -31,5 +31,6 @@
   "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": false,
   "files.refactoring.autoSave": false,
   "eslint.run": "onSave",
-  "vitest.enable": true
+  "vitest.enable": true,
+  "vitest.commandLine": "npx vitest run"
 }

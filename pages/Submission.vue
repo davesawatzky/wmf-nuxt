@@ -20,13 +20,12 @@
     middleware: 'auth',
   })
 
-  async function submitRegistration() {
+  function submitRegistration() {
     confirmationNumber.value = `WMF-${
       registrationStore.registrationId
     }-${_.random(1000, 9999)}`
     registrationStore.registration.submittedAt = date
     registrationStore.registration.confirmation = confirmationNumber.value
-    await registrationStore.updateRegistration()
     submissionComplete.value = true
   }
 </script>
@@ -35,44 +34,47 @@
   <div>
     <h1 class="my-8">Registration Submission</h1>
     <SummaryTable />
-    <p class="text-center font-bold text-xl">
-      Please read to the bottom before submitting
-    </p>
-    <p>
-      The Festival reserves the right to redirect entries to a more appropriate
-      class. These redirections will be listed in the studio registration
-      confirmation mailing sent to teachers.
-    </p>
-    <p>
-      If you have not done so already, please print the summary page for your
-      own records. You may return to this site in the future to view the summary
-      of your submission. In case of any discrepencies between the information
-      in this registration form and the official syllabus, the official syllabus
-      will always be considered correct.
-    </p>
-    <p>
-      Once submitted, a confirmation number will be displayed on the screen.
-      Please take note of this for your records. This number may be requested
-      with any communication regarding your application. No changes will be
-      permitted once the entry has been submitted. Incomplete entries will not
-      be accepted.
-    </p>
-    <p>
-      Notification, including date, time and location of each class will be
-      forwarded to the participant's teacher prior to the publication of the
-      program. Teachers are responsible to advise their students of this
-      information and to notify the office of any errors. Participants and
-      teachers are to notify the Festival office of any change of personal
-      information following submission of entry form. Participants who wish to
-      withdraw must notify the Festival office in writing as early as possible.
-    </p>
-    <p>
-      Payment may be made by cheque or e-transfer to the Winnipeg Music Festival
-      (<a href="mailto:wmf@mts.net"><strong>wmf@mts.net</strong></a
-      >).
-    </p>
-    <p class="text-center font-bold text-xl">
-      Please include the confirmation number as a memo when submitting payment.
+    <section class="p-4 border-sky-700 bg-white border rounded-xl">
+      <p class="text-center font-bold text-xl">Important Notes</p>
+
+      <p>
+        The Festival reserves the right to redirect entries to a more
+        appropriate class. These redirections will be listed in the studio
+        registration confirmation mailing sent to teachers.
+      </p>
+      <p>
+        If you have not done so already, please print the summary page for your
+        own records. You may return to this site in the future to view the
+        summary of your submission. In case of any discrepencies between the
+        information in this registration form and the official syllabus, the
+        official syllabus will always be considered correct.
+      </p>
+      <p>
+        Once submitted, a confirmation number will be displayed on the screen.
+        Please take note of this for your records. This number may be requested
+        with any communication regarding your application. No changes will be
+        permitted once the entry has been submitted. Incomplete entries will not
+        be accepted.
+      </p>
+      <p>
+        Notification, including date, time and location of each class will be
+        forwarded to the participant's teacher prior to the publication of the
+        program. Teachers are responsible to advise their students of this
+        information and to notify the office of any errors. Participants and
+        teachers are to notify the Festival office of any change of personal
+        information following submission of entry form. Participants who wish to
+        withdraw must notify the Festival office in writing as early as
+        possible.
+      </p>
+      <p>
+        Payment may be made by cheque or e-transfer to the Winnipeg Music
+        Festival (<a href="mailto:wmf@mts.net"><strong>wmf@mts.net</strong></a
+        >).
+      </p>
+    </section>
+    <p
+      class="m-4 p-3 text-center font-bold text-xl bg-red-600 rounded-xl text-white">
+      Please include the confirmation number when submitting payment.
     </p>
     <p class="text-center font-bold text-xl">Entry fees are non-refundable.</p>
     <div
@@ -82,7 +84,6 @@
         label="I have read and understand the preceding text."></BaseCheckbox>
     </div>
     <br />
-
     <h4 class="pt-6 text-center">
       We look forward to having you participate in the this year's
     </h4>

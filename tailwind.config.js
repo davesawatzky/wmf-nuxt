@@ -22,5 +22,8 @@ module.exports = {
       },
     },
   },
+  fontFamily: {
+    sans: ['Roboto'],
+  },
   plugins: [require('@tailwindcss/forms'), require('@headlessui/tailwindcss')],
 }

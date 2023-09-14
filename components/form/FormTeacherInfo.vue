@@ -254,9 +254,9 @@
     <div class="grid grid-cols-12 gap-x-3 gap-y-1 items-end">
       <div class="col-span-12">
         <BaseRadio
+          v-model="teacherRadio"
           class="pb-3"
           :class="!editingDisabled ? 'off' : ''"
-          v-model="teacherRadio"
           label="Choose a teacher from the list"
           name="teacherRadio"
           :disabled="!editingDisabled"
@@ -266,12 +266,12 @@
           :disabled="!fieldsDisabled || !editingDisabled">
           <UIComboboxInput
             :class="!fieldsDisabled || !editingDisabled ? 'off' : ''"
-            @change="query = $event.target.value"
-            :displayValue="(id) => displayValue(id)" />
+            :display-value="(id) => displayValue(id)"
+            @change="query = $event.target.value" />
           <UITransitionRoot
             leave="transition ease-in duration-100"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
+            leave-from="opacity-100"
+            leave-to="opacity-0"
             @after-leave="query = ''">
             <UIComboboxOptions
               class="absolute z-90 w-[600px] overflow-hidden mt-1 max-h-60 rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
@@ -284,10 +284,10 @@
               </div>
               <UIComboboxOption
                 v-for="teacher in filteredTeachers"
-                as="template"
                 :key="teacher.id"
-                :value="teacher.id"
-                v-slot="{ active, selected }">
+                as="template"
+                v-slot="{ active, selected }"
+                :value="teacher.id">
                 <li
                   class="relative cursor-default select-none py-2 pl-10 pr-4"
                   :class="{
@@ -332,7 +332,7 @@
         </div>
         <div class="col-span-1 z-10">
           <BaseToggleB
-            v-if="
+            v-show="
               teacherRadio === 'existing' &&
               !!registrationStore.registration.teacherID
             "
@@ -446,8 +446,8 @@
         class="col-span-6 sm:col-span-3">
         <BaseInput
           v-model.trim="contact.postalCode"
-          :class="fieldsDisabled && editingDisabled ? 'off' : ''"
           v-maska:[maskaUcaseOption]
+          :class="fieldsDisabled && editingDisabled ? 'off' : ''"
           :status="status.postalCode"
           placeholder="A0A 0A0"
           data-maska="A#A #A#"
@@ -462,8 +462,8 @@
       <div class="col-span-6 sm:col-span-4">
         <BaseInput
           v-model.trim="contact.phone"
-          :class="fieldsDisabled && editingDisabled ? 'off' : ''"
           v-maska
+          :class="fieldsDisabled && editingDisabled ? 'off' : ''"
           :status="status.phone"
           placeholder="(___) ___-____"
           data-maska="(###) ###-####"

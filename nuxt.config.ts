@@ -50,13 +50,14 @@ export default defineNuxtConfig({
     '@nuxtjs/apollo',
     '@pinia/nuxt',
     '@pinia-plugin-persistedstate/nuxt',
-    // '@nuxt/devtools',
+    '@nuxt/devtools',
     'nuxt-vitest',
     '@vee-validate/nuxt',
     '@vueuse/nuxt',
     '@nuxt/image-edge',
     'nuxt-icon',
     'nuxt-headlessui',
+    'vue-email/nuxt',
   ],
   pinia: {
     autoImports: ['defineStore'],
@@ -70,6 +71,8 @@ export default defineNuxtConfig({
       apiBase: process.env.NUXT_API_BASE,
     },
   },
+  spaLoadingTemplate: true,
+  ssr: false,
   typescript: {
     strict: true,
     typeCheck: true,
@@ -90,5 +93,8 @@ export default defineNuxtConfig({
         propsDestructure: true,
       },
     },
+  },
+  vueEmail: {
+    baseUrl: 'https://diatonic.io',
   },
 })

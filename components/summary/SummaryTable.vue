@@ -20,54 +20,86 @@
     v-auto-animate
     class="w-full mb-4">
     <table
-      class="table-auto border-separate border-spacing-0 w-full text-xs sm:text-base">
+      class="table-auto w-full text-xs sm:text-base border-separate border-spacing-0">
       <thead class="">
         <tr class="text-white print:text-xs">
           <th
-            class="text-left border border-sky-700 bg-sky-700 rounded-tl-lg"
+            class="text-left bg-sky-700 rounded-tl-lg"
             scope="col">
             Class Number
           </th>
           <th
-            class="text-left border border-sky-700 bg-sky-700"
+            class="text-left bg-sky-700"
             scope="col">
             Class Name
           </th>
           <th
-            class="text-left border border-sky-700 bg-sky-700"
+            class="text-left bg-sky-700"
             scope="col">
             Level
           </th>
           <th
-            class="text-left border border-sky-700 bg-sky-700"
+            class="text-left bg-sky-700"
             scope="col">
             Category
           </th>
           <th
-            class="text-left border border-sky-700 bg-sky-700 rounded-tr-lg"
+            class="text-left bg-sky-700 rounded-tr-lg"
             scope="col">
             Price
           </th>
         </tr>
       </thead>
-      <tbody v-auto-animate>
+      <tbody class="">
         <tr
-          v-for="registeredClass in classesStore.registeredClasses"
+          v-for="(registeredClass, index) in classesStore.registeredClasses"
           :key="registeredClass.id"
-          class="print:text-xs bg-white">
-          <td class="p-8">
+          class="print:text-xs">
+          <td
+            class="p-8 border-l border-sky-700 bg-white"
+            :class="
+              index === classesStore.registeredClasses.length - 1
+                ? 'border-b rounded-bl-lg'
+                : ''
+            ">
             {{ registeredClass.classNumber }}
           </td>
-          <td class="p-8">
+          <td
+            class="p-8 bg-white"
+            :class="
+              index === classesStore.registeredClasses.length - 1
+                ? 'border-b border-sky-700'
+                : ''
+            ">
             {{ registeredClass.subdiscipline }}
           </td>
-          <td class="p-8">
+          <td
+            class="p-8 bg-white"
+            :class="
+              index === classesStore.registeredClasses.length - 1
+                ? 'border-b border-sky-700'
+                : ''
+            ">
             {{ registeredClass.level }}
           </td>
-          <td class="p-8">
+          <td
+            class="p-8 bg-white"
+            :class="
+              index === classesStore.registeredClasses.length - 1
+                ? 'border-b border-sky-700'
+                : ''
+            ">
             {{ registeredClass.category }}
           </td>
-          <td class="p-8">${{ registeredClass.price }}.00</td>
+          <td
+            class="p-8 border-r border-sky-700 bg-white"
+            :class="
+              index === classesStore.registeredClasses.length - 1
+                ? 'border-b rounded-br-lg'
+                : ''
+            ">
+            ${{ registeredClass.price }}.00
+          </td>
         </tr>
         <tr class="font-bold">
           <td></td>

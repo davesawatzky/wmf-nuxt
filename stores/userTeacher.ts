@@ -39,7 +39,6 @@ export const useTeacher = defineStore(
     const teacherErrors = computed(() => {
       const teacherKeys = fieldConfigStore.performerTypeFields('Teacher')
       let count = 0
-      console.log(teacherKeys)
       for (const key of teacherKeys) {
         if (!!teacher.value[key as keyof Teacher] === false) {
           count++

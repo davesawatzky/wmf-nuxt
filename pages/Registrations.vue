@@ -270,25 +270,27 @@
               </td>
               <td
                 v-if="sm"
-                class="">
+                class="text-sm">
                 {{ registration.id }}
               </td>
-              <td class="">
+              <td class="text-sm">
                 {{ registration.label }}
               </td>
               <td
                 v-if="lg"
-                class="">
+                class="text-sm">
                 {{ dateFunction(registration.createdAt) }}
               </td>
-              <td class="">
+              <td class="text-sm">
                 {{ registration.performerType }}
               </td>
-              <td v-if="md">
-                {{ dateFunction(registration.submittedAt) }}
+              <td
+                v-if="md"
+                class="text-sm">
+                {{ dateFunction(registration.submittedAt) ?? 'No' }}
               </td>
-              <td>${{ registration.totalAmt }}.00</td>
-              <td>{{ registration.confirmation }}</td>
+              <td class="text-sm">${{ registration.totalAmt }}.00</td>
+              <td class="text-sm">{{ registration.confirmation ?? '----' }}</td>
               <td>
                 <BaseButton
                   v-if="!registration.confirmation"

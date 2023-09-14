@@ -5,6 +5,7 @@ import { defineVitestConfig } from 'nuxt-vitest/config'
 export default defineVitestConfig({
   test: {
     environment: 'nuxt',
+    globals: true,
     // you can optionally set nuxt-specific environment options
     environmentOptions: {
       nuxt: {
