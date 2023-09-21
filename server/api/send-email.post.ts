@@ -1,44 +1,47 @@
 // server/api/send-email.post.ts
 import nodemailer from 'nodemailer'
-import { useCompiler } from '#vue-email'
-
-let template: any
+import fs from 'node:fs'
+import path from 'node:path'
+import { renderHtmlEmail } from '../utils/renderer'
 
 export default defineEventHandler(async (event) => {
-  try {
-    template = await useCompiler('summaryEmail.vue')
-    console.log('Template: ', template)
-    if (!template) {
-      throw createError({
-        statusCode: 404,
-        statusMessage: 'Not Found',
-      })
-    }
+  const body = await readBody(event)
+  console.log('Body: ', body)
+  const html = await renderHtmlEmail(body)
 
-    const transporter = nodemailer.createTransport({
-      host: process.env.HOST || 'mail.davesawatzky.com',
-      port: 465,
-      secure: true,
-      auth: {
-        user: 'info@davesawatzky.com',
-        pass: 'MGs$)W6n(3O;',
-      },
-    })
+  console.log('HTML: ', html)
 
-    const options = {
-      from: 'info@davesawatzky.com',
-      to: 'dave.sawatzky@gmail.com',
-      subject: 'Email Test',
-      html: template,
-    }
-    await transporter.sendMail(options)
-    return { message: 'Email sent' }
-  } catch (error) {
-    console.error(error)
-    console.log(template)
-    throw createError({
-      statusCode: 500,
-      statusMessage: 'Internal Server Error',
-    })
+  // TODO: This needs to be removed when done.
+  if (!!html) {
+    fs.writeFile(
+      path.join(process.cwd(), 'htmlEmail.html'),
+      html,
+      (err: any) => {
+        if (err) {
+          console.log(err)
+        } else {
+          console.log('File written successfully\n')
+        }
+      }
+    )
   }
+
+  // const transporter = nodemailer.createTransport({
+  //   host: process.env.HOST || 'mail.davesawatzky.com',
+  //   port: 465,
+  //   secure: true,
+  //   auth: {
+  //     user: 'info@davesawatzky.com',
+  //     pass: process.env.EMAIL_PASSWORD,
+  //   },
+  // })
+
+  // const options = {
+  //   from: 'info@davesawatzky.com',
+  //   to: 'david@diatonic.io',
+  //   subject: 'Email Test',
+  //   html: html,
+  // }
+  // await transporter.sendMail(options)
+  return { message: 'Email sent' }
 })

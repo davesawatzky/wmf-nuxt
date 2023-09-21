@@ -40,6 +40,7 @@ export default defineNuxtConfig({
   },
   experimental: {
     typedPages: true,
+    componentIslands: true,
   },
   headlessui: {
     prefix: 'UI',
@@ -57,7 +58,6 @@ export default defineNuxtConfig({
     '@nuxt/image-edge',
     'nuxt-icon',
     'nuxt-headlessui',
-    'vue-email/nuxt',
   ],
   pinia: {
     autoImports: ['defineStore'],
@@ -93,8 +93,5 @@ export default defineNuxtConfig({
         propsDestructure: true,
       },
     },
-  },
-  vueEmail: {
-    baseUrl: 'https://diatonic.io',
   },
 })

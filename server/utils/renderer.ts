@@ -1,37 +1,26 @@
-<script setup lang="ts">
-  import { usePerformers } from '../stores/userPerformer'
-  import { useTeacher } from '../stores/userTeacher'
-  import { useGroup } from '../stores/userGroup'
-  import { useSchool } from '../stores/userSchool'
-  import { useSchoolGroup } from '../stores/userSchoolGroup'
-  import { useCommunity } from '../stores/userCommunity'
-  import { useClasses } from '../stores/userClasses'
-  import { useRegistration } from '../stores/userRegistration'
-  import { useAppStore } from '../stores/appStore'
-  import { formErrors } from '../composables/formErrors'
+import mjml2html from 'mjml'
+import { createSSRApp } from 'vue'
+import { renderToString } from '@vue/server-renderer'
 
-  const performerStore = usePerformers()
-  const teacherStore = useTeacher()
-  const groupStore = useGroup()
-  const schoolStore = useSchool()
-  const schoolGroupStore = useSchoolGroup()
-  const communityStore = useCommunity()
-  const classesStore = useClasses()
-  const appStore = useAppStore()
-  const registrationStore = useRegistration()
+export async function renderHtmlEmail(payload: any) {
+  // Create an instance of vue
+  try {
+    const app = createSSRApp({
+      data() {
+        return {
+          performers: payload.performers,
+          teacher: payload.teacher,
+          group: payload.group,
+          school: payload.school,
+          schoolGroups: payload.schoolGroup,
+          community: payload.community,
+          festivalClasses: payload.registeredClasses,
+          performerType: payload.performerType,
+          registration: payload.registration,
+        }
+      },
 
-  const performers = performerStore.performers
-  const teacher = teacherStore.teacher
-  const group = groupStore.group
-  const school = schoolStore.school
-  const schoolGroups = schoolGroupStore.schoolGroup
-  const community = communityStore.community
-  const festivalClasses = classesStore.registeredClasses
-  const performerType = appStore.performerType
-  const registration = registrationStore.registration
-</script>
-
-<template>
+      template: `
   <mjml>
     <mj-body>
       <!-- Company Header -->
@@ -52,11 +41,12 @@
       <mj-section background-color="#fafafa"></mj-section>
 
       <!-- Performer Info -->
-      <mj-section background-color="#f0f0f0">
+      <mj-section v-if="performerType === 'GROUP' || performerType === 'SOLO'" background-color="#f0f0f0">
         <mj-column>
-          <mj-text
-            v-for="(performer, perfidx) in performers"
-            v-bind:key="performer.id">
+          <mj-text>
+            <h1>Performer(s)</h1>
+          </mj-text>
+          <mj-text v-for="(performer, perfidx) in performers" v-bind:key="performer.id">
             <div>{{ performer.firstName }} {{ performer.lastName }}</div>
             <div v-if="performer.apartment">
               {{ performer.apartment }} -
@@ -94,7 +84,7 @@
       </mj-section>
 
       <!-- School Info -->
-      <mj-section background-color="#f4f4f4">
+      <mj-section v-if="performerType === 'SCHOOL'" background-color="#f4f4f4">
         <mj-column>
           <mj-text>
             <h1>School</h1>
@@ -103,7 +93,7 @@
       </mj-section>
 
       <!-- Community Info -->
-      <mj-section background-color="#fcfcfc">
+      <mj-section v-if="performerType === 'COMMUNITY'" background-color="#fcfcfc">
         <mj-column>
           <mj-text>
             <h1>Community</h1>
@@ -144,24 +134,23 @@
         <mj-column>
           <mj-text>
             <h1>Registered Classes</h1>
+            <h2>Class Number: {{ festivalClasses[0].classNumber }}</h2>
           </mj-text>
-          <mj-text
-            v-for="(registeredClass, regidx) in festivalClasses"
-            v-bind:key="registeredClass.id">
+          <mj-text v-for="(registeredClass, regidx) in festivalClasses"
+              v-bind:key="registeredClass.id">
             <h2>Festival Class Number: {{ registeredClass.classNumber }}</h2>
             <h3 v-if="performerType === 'SCHOOL'">
               School Group:
-              {{
-                schoolGroups.find(
-                  (item) => item.id === registeredClass.schoolGroupID!
-                )?.name
-              }}
             </h3>
-            <div>Class: {{ registeredClass.subdiscipline }}</div>
+            <div>
+              Class: {{ registeredClass.subdiscipline }}
+            </div>
             <div>Category: {{ registeredClass.category }}</div>
             <div>Level: {{ registeredClass.level }}</div>
             <div
-              v-for="(selection, selectionIndex) in registeredClass.selections"
+              v-for="(
+                selection, selectionIndex
+              ) in registeredClass.selections"
               v-bind:key="selection.id">
               <h4>Selection {{ selectionIndex + 1 }}</h4>
               <div>Title: {{ selection.title }}</div>
@@ -179,4 +168,23 @@
       </mj-section>
     </mj-body>
   </mjml>
-</template>
+      `,
+    })
+
+    // Tell Vue to recognize mjml components.  See Vue docs
+    app.config.compilerOptions.isCustomElement = (tag) => {
+      return tag === 'mjml' || tag.startsWith('mj-')
+    }
+
+    // Render the Vue instance to a variable
+    let html = await renderToString(app)
+
+    // Remove <!--[--> and <!--]--> added by the server renderer.
+    html = html.replace('<!--[-->', '').replace('<!--]-->', '')
+
+    // Let mjml do its magic
+    return mjml2html(html).html
+  } catch (error) {
+    console.log('Error: ', error)
+  }
+}

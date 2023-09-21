@@ -27,8 +27,25 @@
   }
 
   async function printWindow() {
-    // await useFetch('/api/send-email', { method: 'POST' })
-    window.print()
+    let dataSending = true
+    const payload = Object.assign(
+      {},
+      {
+        performers: toRaw(performerStore.performers),
+        teacher: toRaw(teacherStore.teacher),
+        group: toRaw(groupStore.group),
+        school: toRaw(schoolStore.school),
+        schoolGroups: toRaw(schoolGroupStore.schoolGroup),
+        community: toRaw(communityStore.community),
+        festivalClasses: toRaw(classesStore.registeredClasses),
+        performerType: toRaw(appStore.performerType),
+        registration: toRaw(registrationStore.registration),
+      }
+    )
+    console.log('Payload: ', payload)
+    await useFetch('/api/send-email', { method: 'POST', body: payload })
+    dataSending = false
+    // window.print()
   }
 
   const totalErrors = computed(() => {
