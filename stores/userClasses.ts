@@ -17,14 +17,12 @@ import type {
   SelectionInput,
 } from '~/graphql/gql/graphql'
 
-const fieldConfigStore = useFieldConfig()
-
 export const useClasses = defineStore(
   'registeredClasses',
   () => {
     const registeredClasses = ref<RegisteredClass[]>([])
     const MOZART_CLASSES = ['7700', '7701', '7702', '7703', '7704']
-
+    const fieldConfigStore = useFieldConfig()
     function $reset() {
       registeredClasses.value = <RegisteredClass[]>[]
     }

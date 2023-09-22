@@ -37,7 +37,7 @@
         school: toRaw(schoolStore.school),
         schoolGroups: toRaw(schoolGroupStore.schoolGroup),
         community: toRaw(communityStore.community),
-        festivalClasses: toRaw(classesStore.registeredClasses),
+        registeredClasses: toRaw(classesStore.registeredClasses),
         performerType: toRaw(appStore.performerType),
         registration: toRaw(registrationStore.registration),
       }

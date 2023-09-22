@@ -6,22 +6,21 @@ import { useSchool } from '@/stores/userSchool'
 import { useSchoolGroup } from '@/stores/userSchoolGroup'
 import { useTeacher } from '@/stores/userTeacher'
 import { useAppStore } from '@/stores/appStore'
-
 interface FormErrors {
   [key: string]: number
 }
 
-const performerStore = usePerformers()
-const classesStore = useClasses()
-const communityStore = useCommunity()
-const groupStore = useGroup()
-const schoolStore = useSchool()
-const schoolGroupStore = useSchoolGroup()
-const teacherStore = useTeacher()
-const appStore = useAppStore()
-const tabName = ref({} as FormErrors)
-
 export const formErrors = computed(() => {
+  const performerStore = usePerformers()
+  const classesStore = useClasses()
+  const communityStore = useCommunity()
+  const groupStore = useGroup()
+  const schoolStore = useSchool()
+  const schoolGroupStore = useSchoolGroup()
+  const teacherStore = useTeacher()
+  const appStore = useAppStore()
+  const tabName = ref({} as FormErrors)
+
   switch (appStore.performerType) {
     case 'SOLO':
       tabName.value = {

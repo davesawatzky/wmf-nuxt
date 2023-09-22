@@ -12,13 +12,12 @@ import type {
   GroupInput,
 } from '~/graphql/gql/graphql'
 
-const fieldConfigStore = useFieldConfig()
-
 export const useGroup = defineStore(
   'group',
   () => {
     const group = ref(<Group>{})
     const performerStore = usePerformers()
+    const fieldConfigStore = useFieldConfig()
     function $reset() {
       group.value = <Group>{}
     }

@@ -12,13 +12,11 @@ import type {
   PerformerInput,
 } from '~/graphql/gql/graphql'
 
-const fieldConfigStore = useFieldConfig()
-
 export const usePerformers = defineStore(
   'performers',
   () => {
     const performers = ref([] as Performer[])
-
+    const fieldConfigStore = useFieldConfig()
     function $reset() {
       performers.value = <Performer[]>[]
     }

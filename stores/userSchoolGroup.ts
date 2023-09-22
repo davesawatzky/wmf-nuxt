@@ -11,13 +11,11 @@ import type {
   SchoolGroupInput,
 } from '~/graphql/gql/graphql'
 
-const fieldConfigStore = useFieldConfig()
-
 export const useSchoolGroup = defineStore(
   'schoolGroup',
   () => {
     const schoolGroup = ref([] as SchoolGroup[])
-
+    const fieldConfigStore = useFieldConfig()
     function $reset() {
       schoolGroup.value = <SchoolGroup[]>[]
     }

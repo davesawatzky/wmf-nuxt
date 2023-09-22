@@ -52,10 +52,15 @@
       <mj-section background-color="#fafafa"></mj-section>
 
       <!-- Performer Info -->
-      <mj-section background-color="#f0f0f0">
+      <mj-section
+        v-if="performerType === 'GROUP' || performerType === 'SOLO'"
+        background-color="#f0f0f0">
         <mj-column>
+          <mj-text>
+            <h1>Performer(s)</h1>
+          </mj-text>
           <mj-text
-            v-for="(performer, perfidx) in performers"
+            v-for="performer in performers"
             v-bind:key="performer.id">
             <div>{{ performer.firstName }} {{ performer.lastName }}</div>
             <div v-if="performer.apartment">
@@ -94,7 +99,9 @@
       </mj-section>
 
       <!-- School Info -->
-      <mj-section background-color="#f4f4f4">
+      <mj-section
+        v-if="performerType === 'SCHOOL'"
+        background-color="#f4f4f4">
         <mj-column>
           <mj-text>
             <h1>School</h1>
@@ -103,7 +110,9 @@
       </mj-section>
 
       <!-- Community Info -->
-      <mj-section background-color="#fcfcfc">
+      <mj-section
+        v-if="performerType === 'COMMUNITY'"
+        background-color="#fcfcfc">
         <mj-column>
           <mj-text>
             <h1>Community</h1>
@@ -146,17 +155,10 @@
             <h1>Registered Classes</h1>
           </mj-text>
           <mj-text
-            v-for="(registeredClass, regidx) in festivalClasses"
+            v-for="registeredClass in festivalClasses"
             v-bind:key="registeredClass.id">
             <h2>Festival Class Number: {{ registeredClass.classNumber }}</h2>
-            <h3 v-if="performerType === 'SCHOOL'">
-              School Group:
-              {{
-                schoolGroups.find(
-                  (item) => item.id === registeredClass.schoolGroupID!
-                )?.name
-              }}
-            </h3>
+            <h3 v-if="performerType === 'SCHOOL'">School Group:</h3>
             <div>Class: {{ registeredClass.subdiscipline }}</div>
             <div>Category: {{ registeredClass.category }}</div>
             <div>Level: {{ registeredClass.level }}</div>

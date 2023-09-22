@@ -4,6 +4,7 @@
   import { useAppStore } from '@/stores/appStore'
   import { useRegistration } from '@/stores/userRegistration'
   import type { Status } from '@/composables/types'
+  import { useStorage } from '@vueuse/core'
 
   interface DynamicComponent {
     [key: string]: Component
@@ -31,6 +32,7 @@
   const registrationStore = useRegistration()
   const appStore = useAppStore()
   const performerType = toRef(appStore.performerType)
+
   const currentTab = ref('')
   const tabIndex = ref(0)
   const slideDirection = ref('slide-left')
@@ -111,12 +113,6 @@
   const { values, errors, meta, handleSubmit } = useForm({
     validationSchema,
   })
-
-  function onInvalidSubmit({ values, errors, results }: any) {
-    console.log(values)
-    console.log(errors)
-    console.log(results)
-  }
 </script>
 
 <template>

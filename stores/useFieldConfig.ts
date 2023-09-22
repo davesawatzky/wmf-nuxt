@@ -19,13 +19,11 @@ type ColumnKey =
   | 'schoolRequired'
   | 'communityRequired'
 
-const appStore = useAppStore()
-
 export const useFieldConfig = defineStore(
   'fieldConfig',
   () => {
     const requiredFields = ref<FieldConfig[]>([])
-
+    const appStore = useAppStore()
     function $reset() {
       requiredFields.value = []
     }
@@ -80,6 +78,7 @@ export const useFieldConfig = defineStore(
     }
 
     return {
+      requiredFields,
       $reset,
       loadRequiredFields,
       performerTypeFields,

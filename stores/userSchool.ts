@@ -11,13 +11,11 @@ import type {
   SchoolInput,
 } from '~/graphql/gql/graphql'
 
-const fieldConfigStore = useFieldConfig()
-
 export const useSchool = defineStore(
   'school',
   () => {
     const school = ref(<School>{})
-
+    const fieldConfigStore = useFieldConfig()
     function $reset() {
       school.value = <School>{}
     }

@@ -134,34 +134,35 @@ export async function renderHtmlEmail(payload: any) {
         <mj-column>
           <mj-text>
             <h1>Registered Classes</h1>
-            <h2>Class Number: {{ festivalClasses[0].classNumber }}</h2>
           </mj-text>
-          <mj-text v-for="(registeredClass, regidx) in festivalClasses"
+          <mj-text>
+            <div v-for="registeredClass in festivalClasses"
               v-bind:key="registeredClass.id">
-            <h2>Festival Class Number: {{ registeredClass.classNumber }}</h2>
-            <h3 v-if="performerType === 'SCHOOL'">
-              School Group:
-            </h3>
-            <div>
-              Class: {{ registeredClass.subdiscipline }}
-            </div>
-            <div>Category: {{ registeredClass.category }}</div>
-            <div>Level: {{ registeredClass.level }}</div>
-            <div
-              v-for="(
-                selection, selectionIndex
-              ) in registeredClass.selections"
-              v-bind:key="selection.id">
-              <h4>Selection {{ selectionIndex + 1 }}</h4>
-              <div>Title: {{ selection.title }}</div>
-              <div>Composer: {{ selection.composer }}</div>
-              <div v-if="selection.largerWork">
-                from Work: {{ selection.largerWork }}
+              <h2>Festival Class Number: {{ registeredClass.classNumber }}</h2>
+              <h3 v-if="performerType === 'SCHOOL'">
+                School Group:
+              </h3>
+              <div>
+                Class: {{ registeredClass.subdiscipline }}
               </div>
-              <div v-if="selection.movement">
-                Movement: {{ selection.movement }}
+              <div>Category: {{ registeredClass.category }}</div>
+              <div>Level: {{ registeredClass.level }}</div>
+              <div
+                v-for="(
+                  selection, selectionIndex
+                ) in registeredClass.selections"
+                v-bind:key="selection.id">
+                <h4>Selection {{ selectionIndex + 1 }}</h4>
+                <div>Title: {{ selection.title }}</div>
+                <div>Composer: {{ selection.composer }}</div>
+                <div v-if="selection.largerWork">
+                  from Work: {{ selection.largerWork }}
+                </div>
+                <div v-if="selection.movement">
+                  Movement: {{ selection.movement }}
+                </div>
+                <div>Duration: {{ selection.duration }}</div>
               </div>
-              <div>Duration: {{ selection.duration }}</div>
             </div>
           </mj-text>
         </mj-column>
@@ -172,7 +173,7 @@ export async function renderHtmlEmail(payload: any) {
     })
 
     // Tell Vue to recognize mjml components.  See Vue docs
-    app.config.compilerOptions.isCustomElement = (tag) => {
+    app.config.compilerOptions.isCustomElement = (tag: any) => {
       return tag === 'mjml' || tag.startsWith('mj-')
     }
 

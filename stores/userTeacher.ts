@@ -21,14 +21,12 @@ export interface AllTeachers {
   __typename: 'Teacher'
 }
 
-const fieldConfigStore = useFieldConfig()
-
 export const useTeacher = defineStore(
   'teacher',
   () => {
     const teacher = ref(<Teacher>{})
     const allTeachers = ref<AllTeachers[]>([])
-
+    const fieldConfigStore = useFieldConfig()
     function $resetTeacher() {
       teacher.value = <Teacher>{}
     }

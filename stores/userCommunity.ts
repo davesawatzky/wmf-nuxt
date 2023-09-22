@@ -11,13 +11,11 @@ import type {
   CommunityInput,
 } from '~/graphql/gql/graphql'
 
-const fieldConfigStore = useFieldConfig()
-
 export const useCommunity = defineStore(
   'community',
   () => {
     const community = ref(<Community>{})
-
+    const fieldConfigStore = useFieldConfig()
     function $reset() {
       community.value = <Community>{}
     }
