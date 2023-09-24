@@ -1,5 +1,5 @@
 import { setActivePinia, createPinia } from 'pinia'
-import { useTeacher } from '../userTeacher'
+import { useTeacher } from '@/stores/userTeacher'
 
 describe('Teacher Store', () => {
   beforeEach(() => {

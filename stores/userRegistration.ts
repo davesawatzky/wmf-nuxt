@@ -9,6 +9,7 @@ import type {
   Registration,
   RegistrationCreateMutation,
   RegistrationInput,
+  User,
 } from '~/graphql/gql/graphql'
 
 /**
@@ -22,7 +23,7 @@ export const useRegistration = defineStore(
   () => {
     const registrationId = ref(0)
     const registration = ref(<Registration & RegistrationInput>{})
-    const teacherStore = useTeacher()
+    const user = ref(<User>{})
 
     /**
      * Resets the registration store
@@ -50,6 +51,9 @@ export const useRegistration = defineStore(
       registration.value.updatedAt = reg.updatedAt || ''
       registration.value.teacherID = reg.teacher?.id || null
       registration.value.__typename = 'Registration'
+      user.value.firstName = reg.user?.firstName || ''
+      user.value.lastName = reg.user?.lastName || ''
+      user.value.email = reg.user?.email || ''
     }
 
     /**
@@ -149,6 +153,7 @@ export const useRegistration = defineStore(
     return {
       registrationId,
       registration,
+      user,
       $reset,
       addToStore,
       createRegistration,

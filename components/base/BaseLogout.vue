@@ -31,7 +31,6 @@
       }
     `)
     onResult((result) => {
-      console.log(result)
       navigateTo('/login')
     })
     onError((error) => {

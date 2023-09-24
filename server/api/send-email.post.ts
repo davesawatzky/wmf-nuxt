@@ -4,44 +4,50 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { renderHtmlEmail } from '../utils/renderer'
 
-export default defineEventHandler(async (event) => {
-  const body = await readBody(event)
-  console.log('Body: ', body)
+export default defineEventHandler(async (payload) => {
+  const body = await readBody(payload)
   const html = await renderHtmlEmail(body)
-
-  console.log('HTML: ', html)
+  const userFirstName = body.userFirstName
+  const userLastName = body.userLastName
+  const userEmail = body.userEmail
+  const confirmation = body.registration.confirmation
+  console.log('userFirstName: ', userFirstName)
+  console.log('userLastName: ', userLastName)
+  console.log('userEmail: ', userEmail)
 
   // TODO: This needs to be removed when done.
-  if (!!html) {
-    fs.writeFile(
-      path.join(process.cwd(), 'htmlEmail.html'),
-      html,
-      (err: any) => {
-        if (err) {
-          console.log(err)
-        } else {
-          console.log('File written successfully\n')
-        }
-      }
-    )
-  }
-
-  // const transporter = nodemailer.createTransport({
-  //   host: process.env.HOST || 'mail.davesawatzky.com',
-  //   port: 465,
-  //   secure: true,
-  //   auth: {
-  //     user: 'info@davesawatzky.com',
-  //     pass: process.env.EMAIL_PASSWORD,
-  //   },
-  // })
-
-  // const options = {
-  //   from: 'info@davesawatzky.com',
-  //   to: 'david@diatonic.io',
-  //   subject: 'Email Test',
-  //   html: html,
+  // if (!!html) {
+  //   fs.writeFile(
+  //     path.join(process.cwd(), 'htmlEmail.html'),
+  //     html,
+  //     (err: any) => {
+  //       if (err) {
+  //         console.log(err)
+  //       } else {
+  //         console.log('File written successfully\n')
+  //       }
+  //     }
+  //   )
   // }
-  // await transporter.sendMail(options)
+
+  const transporter = nodemailer.createTransport({
+    host: process.env.SENDING_EMAIL_SERVER || 'mail.davesawatzky.com',
+    port: process.env.SENDING_SMTP_PORT || 465,
+    secure: true,
+    auth: {
+      user: process.env.EMAIL_SERVER_USER_ACCOUNT || 'info@davesawatzky.com',
+      pass: process.env.SENDING_EMAIL_PASSWORD,
+    },
+  })
+
+  const options = {
+    from: process.env.SENDING_EMAIL_ADDRESS || 'info@davesawatzky.com',
+    to: userEmail,
+    bcc: 'info@exaudi.ca',
+    subject: `WMFestival Registration - ${confirmation}`,
+    text: 'Testing out the text portion of the email',
+    html: html,
+  }
+  await transporter.sendMail(options)
   return { message: 'Email sent' }
 })

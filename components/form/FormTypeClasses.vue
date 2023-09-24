@@ -62,7 +62,6 @@
     classIndex: number
   ) {
     await nextTick()
-    console.log('from TypeClasses: ', classId, fieldName)
     status[classIndex][fieldName] = StatusEnum.pending
     await classesStore.updateClass(classId, fieldName)
     if (stat === 'saved') {

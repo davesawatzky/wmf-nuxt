@@ -13,5 +13,10 @@ query Registrations($performerType: PerformerType) {
     transactionInfo
     createdAt
     updatedAt
+    user {
+      firstName
+      lastName
+      email
+    }
   }
 }

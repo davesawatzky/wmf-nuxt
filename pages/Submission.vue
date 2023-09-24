@@ -1,8 +1,25 @@
 <script setup lang="ts">
   import { DateTime } from 'luxon'
   import _ from 'lodash'
+  import { usePerformers } from '@/stores/userPerformer'
+  import { useTeacher } from '@/stores/userTeacher'
+  import { useGroup } from '@/stores/userGroup'
+  import { useSchool } from '@/stores/userSchool'
+  import { useSchoolGroup } from '@/stores/userSchoolGroup'
+  import { useCommunity } from '@/stores/userCommunity'
+  import { useClasses } from '@/stores/userClasses'
   import { useRegistration } from '@/stores/userRegistration'
+  import { useAppStore } from '@/stores/appStore'
+  import { formErrors } from '@/composables/formErrors'
 
+  const performerStore = usePerformers()
+  const teacherStore = useTeacher()
+  const groupStore = useGroup()
+  const schoolStore = useSchool()
+  const schoolGroupStore = useSchoolGroup()
+  const communityStore = useCommunity()
+  const classesStore = useClasses()
+  const appStore = useAppStore()
   const registrationStore = useRegistration()
 
   const confirmationNumber = ref('')
@@ -20,13 +37,38 @@
     middleware: 'auth',
   })
 
-  function submitRegistration() {
-    confirmationNumber.value = `WMF-${
-      registrationStore.registrationId
-    }-${_.random(1000, 9999)}`
-    registrationStore.registration.submittedAt = date
-    registrationStore.registration.confirmation = confirmationNumber.value
-    submissionComplete.value = true
+  async function submitRegistration() {
+    try {
+      let dataSending = true
+      confirmationNumber.value = `WMF-${
+        registrationStore.registrationId
+      }-${_.random(1000, 9999)}`
+      registrationStore.registration.submittedAt = date
+      registrationStore.registration.confirmation = confirmationNumber.value
+      await registrationStore.updateRegistration()
+      const payload = Object.assign(
+        {},
+        {
+          performers: toRaw(performerStore.performers),
+          teacher: toRaw(teacherStore.teacher),
+          group: toRaw(groupStore.group),
+          school: toRaw(schoolStore.school),
+          schoolGroups: toRaw(schoolGroupStore.schoolGroup),
+          community: toRaw(communityStore.community),
+          registeredClasses: toRaw(classesStore.registeredClasses),
+          performerType: toRaw(appStore.performerType),
+          registration: toRaw(registrationStore.registration),
+          userFirstName: toRaw(registrationStore.user.firstName),
+          userLastName: toRaw(registrationStore.user.lastName),
+          userEmail: toRaw(registrationStore.user.email),
+        }
+      )
+      await useFetch('/api/send-email', { method: 'POST', body: payload })
+      submissionComplete.value = true
+      dataSending = false
+    } catch (err) {
+      console.log(err)
+    }
   }
 </script>
 

@@ -204,7 +204,7 @@
 
   /**
    * Class Search for details incl. Number
-   * Full result it copied to classSelection.
+   * Full result is copied to classSelection.
    * Run after category is selected in festival class
    */
   const {
@@ -226,7 +226,7 @@
     classSelection.value = <FestivalClass>result.data.festivalClassSearch[0]
     selectedClasses.value.minSelections = classSelection.value.minSelections
     selectedClasses.value.maxSelections = classSelection.value.maxSelections
-
+    selectedClasses.value.price = classSelection.value.price
     if (
       loadInfoFirstRun.value === true &&
       !selectedClasses.value.numberOfSelections

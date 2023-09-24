@@ -16,6 +16,7 @@
     schoolOpen,
     soloOpen,
   } from '@/composables/openClosed'
+  import type { Registration, RegistrationInput } from '@/graphql/gql/graphql'
   import { PerformerType, RegistrationsDocument } from '@/graphql/gql/graphql'
 
   const soloPhoto = '/images/opera-singer-on-stage.png'
@@ -101,7 +102,9 @@
     })
 
     registrationStore.registrationId = registrationId
-    registrationStore.addToStore(registration!)
+    registrationStore.addToStore(
+      registration as Partial<Registration & RegistrationInput>
+    )
     switch (performerType) {
       case 'SOLO':
         appStore.performerType = PerformerType.SOLO
@@ -289,7 +292,9 @@
                 class="text-sm">
                 {{ dateFunction(registration.submittedAt) ?? 'No' }}
               </td>
-              <td class="text-sm">${{ registration.totalAmt }}.00</td>
+              <td class="text-sm">
+                ${{ Number(registration.totalAmt).toFixed(2) }}
+              </td>
               <td class="text-sm">{{ registration.confirmation ?? '----' }}</td>
               <td>
                 <BaseButton

@@ -1,4 +1,5 @@
 import mjml2html from 'mjml'
+import { DateTime } from 'luxon'
 import { createSSRApp } from 'vue'
 import { renderToString } from '@vue/server-renderer'
 
@@ -17,7 +18,25 @@ export async function renderHtmlEmail(payload: any) {
           festivalClasses: payload.registeredClasses,
           performerType: payload.performerType,
           registration: payload.registration,
+          userFirstName: payload.userFirstName,
+          userLastName: payload.userLastName,
+          userEmail: payload.userEmail,
         }
+      },
+
+      methods: {
+        schoolClassGroup(id: number) {
+          return this.schoolGroups.find((item: any) => item.id === id)
+        },
+
+        dateFunction(date: Date | undefined) {
+          if (date) {
+            const dateString = date.toString()
+            return DateTime.fromISO(dateString).toLocaleString(
+              DateTime.DATETIME_MED
+            )
+          }
+        },
       },
 
       template: `
@@ -33,12 +52,29 @@ export async function renderHtmlEmail(payload: any) {
               Confirmation Number:
               {{ registration.confirmation }}
             </h3>
+            <div>Submitted by:</div>
+            <div>{{ userFirstName }} {{ userLastName }}</div>
+            <div>{{ userEmail }}</div>
+            <div>{{ dateFunction(registration.submittedAt) }}</div>
           </mj-text>
         </mj-column>
       </mj-section>
 
       <!-- Group Info -->
-      <mj-section background-color="#fafafa"></mj-section>
+      <mj-section
+        v-if="performerType === 'GROUP'"
+        background-color="#fafafa">
+        <mj-column>
+          <mj-text>
+            <h1>Group Information</h1>
+            <h2>Name: {{ group.name }}</h2>
+            <div>Group Type: {{ group.groupType }}</div>
+            <div>Number of Performers: {{ group.numberOfPerformers }}</div>
+            <div>Average age: {{ group.age }}</div>
+            <div>Instruments: {{ group.instruments }}</div>
+          </mj-text>
+        </mj-column>
+      </mj-section>
 
       <!-- Performer Info -->
       <mj-section v-if="performerType === 'GROUP' || performerType === 'SOLO'" background-color="#f0f0f0">
@@ -47,7 +83,7 @@ export async function renderHtmlEmail(payload: any) {
             <h1>Performer(s)</h1>
           </mj-text>
           <mj-text v-for="(performer, perfidx) in performers" v-bind:key="performer.id">
-            <div>{{ performer.firstName }} {{ performer.lastName }}</div>
+            <h2>{{ performer.firstName }} {{ performer.lastName }}</h2>
             <div v-if="performer.apartment">
               {{ performer.apartment }} -
               {{ performer.streetNumber }}
@@ -84,19 +120,60 @@ export async function renderHtmlEmail(payload: any) {
       </mj-section>
 
       <!-- School Info -->
-      <mj-section v-if="performerType === 'SCHOOL'" background-color="#f4f4f4">
+      <mj-section
+        v-if="performerType === 'SCHOOL'"
+        background-color="#f4f4f4">
         <mj-column>
           <mj-text>
             <h1>School</h1>
+            <h2>{{ school.name }}</h2>
+            <h3>Division: {{ school.division }}</h3>
+            <div>
+              {{ school.streetNumber }}, {{ school.streetName }},
+              {{ school.city }}, {{ school.province }}
+            </div>
+            <div>{{ school.postalCode }}</div>
+            <div>Phone: {{ school.phone }}</div>
+          </mj-text>
+          <mj-text>School Groups</mj-text>
+          <mj-text
+            v-for="group in school.schoolGroups"
+            v-bind:key="group.id">
+            <div>Group: {{ group.name }}</div>
+            <br />
+            <div>Chaperones: {{ group.chaperones }}</div>
+            <div>Wheelchairs: {{ group.wheelchairs }}</div>
+            <div>Total Group Size: {{ group.groupSize }}</div>
+            <br />
+            <div>Earliest Time: {{ group.earliestTime }}</div>
+            <div>Latest Time: {{ group.latestTime }}</div>
+            <div>Unavailable Time {{ group.unavailable }}</div>
+            <div>
+              Performers in other classes: {{ group.conflictPerformers }}
+            </div>
           </mj-text>
         </mj-column>
       </mj-section>
 
       <!-- Community Info -->
-      <mj-section v-if="performerType === 'COMMUNITY'" background-color="#fcfcfc">
+      <mj-section
+        v-if="performerType === 'COMMUNITY'"
+        background-color="#fcfcfc">
         <mj-column>
           <mj-text>
             <h1>Community</h1>
+            <h2>Group Name: {{ community.name }}</h2>
+            <br />
+            <div>Chaperones: {{ community.chaperones }}</div>
+            <div>Wheelchairs: {{ community.wheelchairs }}</div>
+            <div>Total Group Size: {{ community.groupSize }}</div>
+            <br />
+            <div>Earliest Time: {{ community.earliestTime }}</div>
+            <div>Latest Time: {{ community.latestTime }}</div>
+            <div>Unavailable Time:{{ community.unavailable }}</div>
+            <div>
+              Performers in other classes: {{ community.conflictPerformers }}
+            </div>
           </mj-text>
         </mj-column>
       </mj-section>
@@ -108,7 +185,7 @@ export async function renderHtmlEmail(payload: any) {
             <h1>Teacher</h1>
           </mj-text>
           <mj-text>
-            <div>{{ teacher.firstName }} {{ teacher.lastName }}</div>
+            <h2>{{ teacher.firstName }} {{ teacher.lastName }}</h2>
             <div v-if="teacher.apartment">
               {{ teacher.apartment }} -
               {{ teacher.streetNumber }}
@@ -141,7 +218,9 @@ export async function renderHtmlEmail(payload: any) {
               <h2>Festival Class Number: {{ registeredClass.classNumber }}</h2>
               <h3 v-if="performerType === 'SCHOOL'">
                 School Group:
+                {{ schoolClassGroup(registeredClass.schoolGroupID).name }}
               </h3>
+              <h4>Amount: \${{ Number(registeredClass.price).toFixed(2) }}</h4>
               <div>
                 Class: {{ registeredClass.subdiscipline }}
               </div>
@@ -164,6 +243,15 @@ export async function renderHtmlEmail(payload: any) {
                 <div>Duration: {{ selection.duration }}</div>
               </div>
             </div>
+          </mj-text>
+        </mj-column>
+      </mj-section>
+
+      <!-- Total Payment -->
+      <mj-section>
+        <mj-column>
+          <mj-text>
+            <h2>Total Amount - \${{ Number(registration.totalAmt).toFixed(2) }}</h2>
           </mj-text>
         </mj-column>
       </mj-section>

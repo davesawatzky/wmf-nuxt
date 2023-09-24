@@ -27,25 +27,7 @@
   }
 
   async function printWindow() {
-    let dataSending = true
-    const payload = Object.assign(
-      {},
-      {
-        performers: toRaw(performerStore.performers),
-        teacher: toRaw(teacherStore.teacher),
-        group: toRaw(groupStore.group),
-        school: toRaw(schoolStore.school),
-        schoolGroups: toRaw(schoolGroupStore.schoolGroup),
-        community: toRaw(communityStore.community),
-        registeredClasses: toRaw(classesStore.registeredClasses),
-        performerType: toRaw(appStore.performerType),
-        registration: toRaw(registrationStore.registration),
-      }
-    )
-    console.log('Payload: ', payload)
-    await useFetch('/api/send-email', { method: 'POST', body: payload })
-    dataSending = false
-    // window.print()
+    window.print()
   }
 
   const totalErrors = computed(() => {
@@ -67,7 +49,8 @@
     <div
       v-if="totalErrors > 0"
       v-auto-animate>
-      <h2>Errors were found in the registration form</h2>
+      <h2 class="m-auto">Errors were found in the registration form</h2>
+      <br />
       <h3>
         Please fix any errors on this registration. Incomplete registrations
         will not be submitted.

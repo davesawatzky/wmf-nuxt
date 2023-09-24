@@ -6,11 +6,11 @@
   const registrationStore = useRegistration()
 
   const total = computed(() => {
-    let cost = 0
+    let cost = 0.0
     for (const registeredClass of classesStore.registeredClasses) {
-      cost += registeredClass.price
+      cost += Number(registeredClass.price)
     }
-    return +cost
+    return cost.toFixed(2)
   })
   registrationStore.registration.totalAmt = total.value ?? 0.0
 </script>
@@ -98,7 +98,7 @@
                 ? 'border-b rounded-br-lg'
                 : ''
             ">
-            ${{ registeredClass.price }}.00
+            ${{ Number(registeredClass.price).toFixed(2) }}
           </td>
         </tr>
         <tr class="font-bold">
@@ -106,7 +106,7 @@
           <td></td>
           <td></td>
           <td class="text-right">Total:</td>
-          <td>${{ total }}.00</td>
+          <td>${{ total }}</td>
         </tr>
       </tbody>
     </table>

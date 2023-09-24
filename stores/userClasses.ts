@@ -69,7 +69,7 @@ export const useClasses = defineStore(
           minSelections: regClass.minSelections || 1,
           maxSelections: regClass.maxSelections || 1,
           numberOfSelections: regClass.numberOfSelections || 1,
-          price: regClass.price || 0.0,
+          price: (regClass.price as number) || 0.0,
           schoolGroupID: regClass.schoolGroupID || null,
           selections: regClass.selections || <Selection[]>[],
           __typename: regClass.__typename || 'RegisteredClass',
