@@ -10,7 +10,6 @@
   import { useClasses } from '@/stores/userClasses'
   import { useRegistration } from '@/stores/userRegistration'
   import { useAppStore } from '@/stores/appStore'
-  import { formErrors } from '@/composables/formErrors'
 
   const performerStore = usePerformers()
   const teacherStore = useTeacher()

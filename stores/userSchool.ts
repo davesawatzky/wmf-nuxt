@@ -85,7 +85,7 @@ export const useSchool = defineStore(
     /**
      * Loads School information from db and adds it to the store.
      * @param registrationId ID of Registration Form
-     * @returns
+     * @returns Promise with school details
      */
     function loadSchool(registrationId: number) {
       return new Promise((resolve, reject) => {
@@ -148,7 +148,7 @@ export const useSchool = defineStore(
     /**
      * Removes the School record from the db.
      * @param schoolId ID of the School record
-     * @returns
+     * @returns Promise
      */
     function deleteSchool(schoolId: number) {
       return new Promise((resolve, reject) => {

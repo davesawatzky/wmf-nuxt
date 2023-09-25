@@ -91,7 +91,7 @@ export const useSchoolGroup = defineStore(
     /**
      * Loads SchoolGroups from db into store.
      * @param registrationId ID of Registration Form
-     * @returns
+     * @returns Promise and school group results
      */
     function loadSchoolGroups(registrationId: number): Promise<unknown> {
       return new Promise((resolve, reject) => {

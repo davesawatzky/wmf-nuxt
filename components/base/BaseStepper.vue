@@ -1,6 +1,6 @@
 <script setup lang="ts">
-  import { formErrors } from '@/composables/formErrors'
   import { useStorage } from '@vueuse/core'
+  import { formErrors } from '@/composables/formErrors'
 
   const props = defineProps<{
     tabs: string[]
@@ -24,9 +24,9 @@
   }
 
   onMounted(() => {
-    !currentTab.value
-      ? (currentTab.value = props.tabs[0])
-      : (currentTab.value = currentTab.value)
+    if (!currentTab.value) {
+      currentTab.value = props.tabs[0]
+    }
     emit('setTab', currentTab.value, tabIndex.value)
   })
 

@@ -1,4 +1,3 @@
-import { useTeacher } from './userTeacher'
 import {
   RegistrationCreateDocument,
   RegistrationDeleteDocument,
@@ -60,7 +59,7 @@ export const useRegistration = defineStore(
      * Creates a new registration form in the store and db
      * @param performerType Type of registration according to performer type
      * @param label Specific label for the registration
-     * @returns
+     * @returns Promise
      */
     function createRegistration(
       performerType: PerformerType,
@@ -128,7 +127,7 @@ export const useRegistration = defineStore(
     /**
      * Removes registration from db
      * @param registrationId ID of Registration Form
-     * @returns
+     * @returns Promise
      */
     function deleteRegistration(registrationId: number): Promise<unknown> {
       return new Promise((resolve, reject) => {

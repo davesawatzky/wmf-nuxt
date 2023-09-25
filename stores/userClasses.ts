@@ -295,7 +295,7 @@ export const useClasses = defineStore(
      * @param classId ID of Registered Class
      * @param selectionId ID of selection
      * @param field selection field
-     * @returns
+     * @returns Promise
      */
     function updateSelection(
       classId: number,
@@ -360,7 +360,7 @@ export const useClasses = defineStore(
      *
      * @param classId ID of Registered Class
      * @param selectionId ID of Selection item
-     * @returns
+     * @returns Promise
      */
     function deleteSelection(classId: number, selectionId: number) {
       return new Promise((resolve, reject) => {

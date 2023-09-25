@@ -75,8 +75,7 @@ export const useTeacher = defineStore(
 
     /**
      * Creates a new Teacher record on the db and in the store.
-     * @param registrationId ID of Registration form
-     * @returns
+     * @returns Promise
      */
     function createTeacher(): Promise<unknown> {
       return new Promise((resolve, reject) => {
@@ -109,8 +108,8 @@ export const useTeacher = defineStore(
 
     /**
      * Loads Teacher information from db into store.
-     * @param registrationId ID of Registration Form
-     * @returns
+     * @param teacherID teacher ID number
+     * @returns Promise and teacher results
      */
     function loadTeacher(teacherID: number): Promise<unknown> {
       return new Promise((resolve, reject) => {
@@ -191,7 +190,7 @@ export const useTeacher = defineStore(
     /**
      * Removes a Teacher record from the db.
      * @param teacherId ID of Teacher record
-     * @returns
+     * @returns Promise
      */
     function deleteTeacher(teacherId: number): Promise<unknown> {
       return new Promise((resolve, reject) => {

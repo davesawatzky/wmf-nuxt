@@ -62,7 +62,7 @@ export const usePerformers = defineStore(
     /**
      * Add one or more performer objects to the store as an array
      * Multiple performers may be included in group registrations
-     * @param perform at minimum, must include valid id property value
+     * @param performer At minimum, must include valid id property value
      */
     function addToStore(performer: Partial<Performer>): void {
       performers.value.push(<Performer>{
@@ -159,7 +159,7 @@ export const usePerformers = defineStore(
      * Updates an individual performer from store to db
      * @param performerId ID of performer to update
      * @param field Optional single fieldname to update
-     * @returns
+     * @returns Promise
      */
     function updatePerformer(
       performerId: number,

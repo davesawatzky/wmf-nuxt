@@ -36,7 +36,6 @@ export const useCommunity = defineStore(
 
     /**
      * Adds empty Community properties or a Community object into the store
-     *
      * @param comm Community object must include an id property value
      */
     function addToStore(comm: Community) {
@@ -87,7 +86,7 @@ export const useCommunity = defineStore(
     /**
      * Loads the Community information from the db and saves it in the store
      * @param registrationId ID of the Registration form
-     * @returns Promise
+     * @returns Promise and loads community ensemble data
      */
     function loadCommunity(registrationId: number) {
       return new Promise((resolve, reject) => {
@@ -158,7 +157,7 @@ export const useCommunity = defineStore(
     /**
      * Removes the Community from the store and the db
      * @param communityId ID of the Community Record
-     * @returns
+     * @returns Promise
      */
     function deleteCommunity(communityId: number) {
       return new Promise((resolve, reject) => {

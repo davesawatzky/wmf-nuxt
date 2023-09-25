@@ -91,7 +91,6 @@
    *
    * @param registrationId The ID of the registration form
    * @param performerType SOLO, GROUP, SCHOOL, or COMMUNITY
-   * @param index Array Index of retrieved registrations
    */
   async function loadRegistration(
     registrationId: number,

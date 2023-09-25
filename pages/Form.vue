@@ -4,7 +4,6 @@
   import { useAppStore } from '@/stores/appStore'
   import { useRegistration } from '@/stores/userRegistration'
   import type { Status } from '@/composables/types'
-  import { useStorage } from '@vueuse/core'
 
   interface DynamicComponent {
     [key: string]: Component

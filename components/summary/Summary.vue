@@ -26,7 +26,7 @@
     return schoolGroupStore.schoolGroup.find((item) => item.id === id)
   }
 
-  async function printWindow() {
+  function printWindow() {
     window.print()
   }
 

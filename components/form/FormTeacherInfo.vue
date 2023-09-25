@@ -12,7 +12,7 @@
     schoolteacher?: boolean
     school?: boolean
     groupperformer?: boolean
-    teacherId?: number
+    teacherId: number
   }>()
 
   const emits = defineEmits<{
@@ -233,7 +233,7 @@
     return query.value === ''
       ? teacherStore.allTeachers
       : teacherStore.allTeachers.filter((teacher) => {
-          return (teacher.firstName + ' ' + teacher.lastName)
+          return `${teacher.firstName} ${teacher.lastName}`
             .toLowerCase()
             .includes(query.value.toLowerCase())
         })
@@ -245,7 +245,7 @@
     }
   }
   const fieldsDisabled = computed(() => {
-    return teacherRadio.value === 'existing' ? true : false
+    return !!(teacherRadio.value === 'existing')
   })
 </script>
 
@@ -266,7 +266,7 @@
           :disabled="!fieldsDisabled || !editingDisabled">
           <UIComboboxInput
             :class="!fieldsDisabled || !editingDisabled ? 'off' : ''"
-            :display-value="(id) => displayValue(id)"
+            :display-value="(id: number) => displayValue(id)"
             @change="query = $event.target.value" />
           <UITransitionRoot
             leave="transition ease-in duration-100"
@@ -283,11 +283,11 @@
                 Nothing found.
               </div>
               <UIComboboxOption
-                v-for="teacher in filteredTeachers"
-                :key="teacher.id"
-                as="template"
+                v-for="teach in filteredTeachers"
+                :key="teach.id"
                 v-slot="{ active, selected }"
-                :value="teacher.id">
+                as="template"
+                :value="teach.id">
                 <li
                   class="relative cursor-default select-none py-2 pl-10 pr-4"
                   :class="{
@@ -301,9 +301,9 @@
                       'font-normal': !selected,
                     }">
                     <!-- <CheckIcon v-show="selected" /> -->
-                    {{ teacher.firstName }}
-                    {{ teacher.lastName }},
-                    {{ teacher.instrument }}
+                    {{ teach.firstName }}
+                    {{ teach.lastName }},
+                    {{ teach.instrument }}
                   </span>
                   <span
                     v-if="selected"

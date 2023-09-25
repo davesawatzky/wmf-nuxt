@@ -6,6 +6,7 @@ import { useSchool } from '@/stores/userSchool'
 import { useSchoolGroup } from '@/stores/userSchoolGroup'
 import { useTeacher } from '@/stores/userTeacher'
 import { useAppStore } from '@/stores/appStore'
+
 interface FormErrors {
   [key: string]: number
 }
