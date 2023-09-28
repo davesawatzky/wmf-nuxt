@@ -34,10 +34,6 @@ export default defineNuxtConfig({
       },
     },
   },
-  eslint: {
-    lintOnStart: false,
-    emitWarning: false,
-  },
   experimental: {
     typedPages: true,
     componentIslands: true,
@@ -47,7 +43,7 @@ export default defineNuxtConfig({
   },
   modules: [
     '@nuxtjs/tailwindcss',
-    '@nuxtjs/eslint-module',
+    // '@nuxtjs/eslint-module',
     '@nuxtjs/apollo',
     '@pinia/nuxt',
     '@pinia-plugin-persistedstate/nuxt',

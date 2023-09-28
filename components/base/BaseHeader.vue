@@ -25,7 +25,8 @@
       </div>
 
       <!-- Toggle Button -->
-      <div v-if="$route.name !== 'Login'">
+      <div
+        v-if="$route.name !== 'Login' && $route.name !== 'EmailConfirmation'">
         <button
           id="hamburger-button"
           type="button"
@@ -43,7 +44,7 @@
             <li
               v-if="$route.name !== 'Registrations'"
               class="px-3 py-1 mx-1 hover:bg-sky-500 hover:ring-2 rounded-md">
-              <router-link to="Registrations"> Registration Forms </router-link>
+              <nuxt-link to="Registrations"> Registration Forms </nuxt-link>
             </li>
             <li class="px-3 py-1 mx-1 hover:bg-sky-500 hover:ring-2 rounded-md">
               <BaseLogout />
@@ -53,7 +54,7 @@
       </div>
     </section>
     <section
-      v-if="$route.name !== 'Login'"
+      v-if="$route.name !== 'Login' && $route.name !== 'EmailConfirmation'"
       id="mobile-menu"
       :class="showMenu ? 'flex' : 'hidden'"
       class="absolute top-84 bg-sky-800 z-30 w-full text-4xl flex-col justify-content-center origin-top animate-open-menu">
@@ -64,11 +65,11 @@
           <li
             v-if="$route.name !== 'Registrations'"
             class="px-3 py-4 mx-1 hover:bg-sky-500 hover:ring-2 rounded-md text-center">
-            <router-link
+            <nuxt-link
               to="Registrations"
               @click="toggleNav">
               Registration Forms
-            </router-link>
+            </nuxt-link>
           </li>
           <li
             class="px-3 py-4 mx-1 hover:bg-sky-500 hover:ring-2 rounded-md text-center">

@@ -3,7 +3,7 @@ import { DateTime } from 'luxon'
 import { createSSRApp } from 'vue'
 import { renderToString } from '@vue/server-renderer'
 
-export async function renderHtmlEmail(payload: any) {
+export async function renderSubmissionEmail(payload: any) {
   // Create an instance of vue
   try {
     const app = createSSRApp({

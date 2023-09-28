@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-  <router-link
+  <nuxt-link
     v-slot="{ navigate }"
     to=""
     custom>
@@ -11,7 +11,7 @@
       @click="navigate">
       <slot />
     </button>
-  </router-link>
+  </nuxt-link>
 </template>
 
 <style scoped></style>

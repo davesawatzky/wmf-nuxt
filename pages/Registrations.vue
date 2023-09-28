@@ -172,6 +172,8 @@
         appStore.performerType = PerformerType.GROUP
         appStore.dataLoading = true
         await groupStore.createGroup(registrationId.value)
+        // require at least 2 performers for groups
+        await performerStore.createPerformer(registrationId.value)
         await performerStore.createPerformer(registrationId.value)
         break
       case 'SCHOOL':
@@ -328,6 +330,7 @@
           </li>
           <li>A copy can be printed for your records.</li>
         </ul>
+        <h3 class="pb-3">Begin New Registration Form</h3>
       </div>
       <div class="grid grid-cols-2 lg:grid-cols-4">
         <BaseCard

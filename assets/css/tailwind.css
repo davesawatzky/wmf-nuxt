@@ -5,7 +5,7 @@
 @tailwind utilities;
 
 .btn {
-  @apply text-white rounded-lg h-10 w-40 m-2 text-center align-middle hover:ring-2 disabled:bg-gray-400 disabled:hover:ring-0 disabled:hover:bg-gray-400 disabled:text-gray-300;
+  @apply text-white rounded-lg py-2 w-40 m-2 text-center align-middle hover:ring-2 disabled:bg-gray-400 disabled:hover:ring-0 disabled:hover:bg-gray-400 disabled:text-gray-300;
 }
 
 .btn-blue {

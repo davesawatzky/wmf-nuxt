@@ -49,12 +49,16 @@
     <div
       v-if="totalErrors > 0"
       v-auto-animate>
-      <h2 class="m-auto">Errors were found in the registration form</h2>
-      <br />
-      <h3>
-        Please fix any errors on this registration. Incomplete registrations
-        will not be submitted.
+      <h3 class="text-center py-4 bg-red-600 text-white rounded-lg">
+        Incomplete registration form
       </h3>
+      <br />
+      <h4 class="text-center">
+        All information is saved and can be returned to later.
+      </h4>
+      <h4 class="text-center">
+        However only complete registrations can be submitted.
+      </h4>
     </div>
     <div
       v-else
@@ -330,6 +334,7 @@
       <BaseButton
         v-if="!registrationStore.registration.confirmation"
         class="btn btn-blue"
+        :disabled="totalErrors !== 0"
         @click="finalErrorCheck">
         Prepare to Submit
       </BaseButton>

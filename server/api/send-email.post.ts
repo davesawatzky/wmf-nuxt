@@ -2,11 +2,11 @@
 import nodemailer from 'nodemailer'
 import fs from 'node:fs'
 import path from 'node:path'
-import { renderHtmlEmail } from '../utils/renderer'
+import { renderSubmissionEmail } from '../utils/submissionEmail'
 
 export default defineEventHandler(async (payload) => {
   const body = await readBody(payload)
-  const html = await renderHtmlEmail(body)
+  const html = await renderSubmissionEmail(body)
   const userFirstName = body.userFirstName
   const userLastName = body.userLastName
   const userEmail = body.userEmail

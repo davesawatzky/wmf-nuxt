@@ -20,7 +20,7 @@
           .trim()
           .password()
           .label('Password 2')
-          .oneOf([yup.ref('password')]),
+          .oneOf([yup.ref('password')], 'Passwords must match'),
       })
     ),
   })
@@ -28,8 +28,11 @@
   /**
    * Sign in and retrieve Token after authenticating
    */
-  const { mutate: signinMutation, onDone: doneSignin } =
-    useMutation(SignInDocument)
+  const {
+    mutate: signinMutation,
+    onError: signinError,
+    onDone: doneSignin,
+  } = useMutation(SignInDocument)
   const signin = handleSubmit((values) => {
     signinMutation({
       credentials: { email: values.email, password: values.password },
@@ -37,23 +40,27 @@
     doneSignin(async (result) => {
       if (result.data!.signin.diatonicToken) {
         await navigateTo('/registrations')
-      } else {
-        error.value = 'Incorrect email or password.'
-        resetFields()
       }
+    })
+    signinError(() => {
+      error.value = 'Incorrect email or password.'
+      resetFields()
     })
   })
 
   /**
    * Register new account and receive Token
    */
-  const { mutate: signupMutation, onDone: doneSignup } =
-    useMutation(SignUpDocument)
+  const {
+    mutate: signupMutation,
+    onError: registerError,
+    onDone: doneSignup,
+  } = useMutation(SignUpDocument)
   const signup = handleSubmit((values) => {
     signupMutation({
       credentials: {
-        firstName: <string>values.firstName,
-        lastName: <string>values.lastName,
+        firstName: values.firstName,
+        lastName: values.lastName,
         email: values.email,
         password: values.password,
       },
@@ -61,10 +68,12 @@
     doneSignup(async (result) => {
       if (result.data!.signup.diatonicToken) {
         await navigateTo('/registrations')
-      } else {
-        error.value = 'Error occured'
-        resetFields()
       }
+    })
+    registerError((err) => {
+      error.value = 'Error occured'
+      console.log(err)
+      resetFields()
     })
   })
 
@@ -154,6 +163,11 @@
           @click="signin()">
           Log In
         </BaseButton>
+        <BaseErrorMessage
+          v-if="error"
+          class="text-center text-lg"
+          >{{ error }}</BaseErrorMessage
+        >
         <br />
         <p class="text-center">
           <a
@@ -170,6 +184,12 @@
           @click="signup()">
           Register New Account
         </BaseButton>
+        <BaseErrorMessage
+          v-if="error"
+          class="text-center text-lg"
+          >{{ error }}</BaseErrorMessage
+        >
+        <br />
         <p class="text-center">
           <a
             class="hover:text-blue-600"

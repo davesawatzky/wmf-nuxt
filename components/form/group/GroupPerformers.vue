@@ -42,7 +42,7 @@
           Add Another Performer
         </BaseButton>
         <BaseButton
-          v-if="performerStore.performers.length > 1 ? true : false"
+          v-if="performerStore.performers.length > 2 ? true : false"
           class="btn btn-red mb-6"
           @click="removePerformer(performer.id)">
           Remove This Performer
