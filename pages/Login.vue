@@ -44,12 +44,12 @@
     })
     signinError(() => {
       error.value = 'Incorrect email or password.'
-      resetFields()
+      setTimeout(() => resetFields(), 2500)
     })
   })
 
   /**
-   * Register new account and receive Token
+   * Register new account.  Sends confirmation email.
    */
   const {
     mutate: signupMutation,
@@ -66,14 +66,14 @@
       },
     })
     doneSignup(async (result) => {
-      if (result.data!.signup.diatonicToken) {
-        await navigateTo('/registrations')
-      }
+      console.log('Check Email for account verification link')
+      isLogin.value = true
+      resetFields()
     })
     registerError((err) => {
       error.value = 'Error occured'
       console.log(err)
-      resetFields()
+      setTimeout(() => resetFields(), 2500)
     })
   })
 
@@ -81,14 +81,12 @@
    * Reset Email and Password Fields
    */
   function resetFields() {
-    setTimeout(() => {
-      values.firstName = ''
-      values.lastName = ''
-      error.value = ''
-      values.email = ''
-      values.password = ''
-      values.password2 = ''
-    }, 2500)
+    values.firstName = ''
+    values.lastName = ''
+    error.value = ''
+    values.email = ''
+    values.password = ''
+    values.password2 = ''
   }
 </script>
 

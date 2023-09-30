@@ -1,5 +1,6 @@
 <script lang="ts" setup>
   import { DateTime } from 'luxon'
+  import process from 'node:process'
   import { useRegistration } from '@/stores/userRegistration'
   import { useAppStore } from '@/stores/appStore'
   import { usePerformers } from '@/stores/userPerformer'
@@ -17,7 +18,11 @@
     soloOpen,
   } from '@/composables/openClosed'
   import type { Registration, RegistrationInput } from '@/graphql/gql/graphql'
-  import { PerformerType, RegistrationsDocument } from '@/graphql/gql/graphql'
+  import {
+    PerformerType,
+    RegistrationsDocument,
+    MyUserDocument,
+  } from '@/graphql/gql/graphql'
 
   const soloPhoto = '/images/opera-singer-on-stage.png'
   const soloPhotoBW = '/images/opera-singer-on-stage-BW.png'
@@ -38,6 +43,7 @@
   const communityStore = useCommunity()
   const classesStore = useClasses()
   const fieldConfigStore = useFieldConfig()
+  const config = useRuntimeConfig()
 
   const registrationId = ref(0)
 
@@ -70,6 +76,26 @@
     fieldConfigStore.$reset()
   })
 
+  /**
+   * Load User details
+   */
+  onMounted(() => {
+    const {
+      result,
+      onResult: onUserResult,
+      onError: userError,
+    } = useQuery(MyUserDocument, null, () => ({
+      fetchPolicy: 'no-cache',
+    }))
+    onUserResult((result) => {
+      registrationStore.addUserToStore(result.data.myUser)
+    })
+    userError((error) => console.log(error))
+  })
+
+  /**
+   * Load all registrations for user
+   */
   const {
     result,
     refetch: refetchRegistrations,
@@ -84,6 +110,26 @@
   function openEditor(performerType: PerformerType): boolean {
     // eslint-disable-next-line no-eval
     return !!eval(`${performerType.toLowerCase()}Open`)
+  }
+
+  /**
+   * Resend confirmation link
+   */
+  async function resend() {
+    try {
+      const { error } = await useFetch(config.public.resendConfirmation, {
+        method: 'POST',
+        body: {
+          user: {
+            firstName: registrationStore.user.firstName,
+            lastName: registrationStore.user.lastName,
+            email: registrationStore.user.email,
+          },
+        },
+      })
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   /**
@@ -209,129 +255,157 @@
     <h2>Registration Forms</h2>
     <div class="border border-sky-500 rounded-lg text-left mt-10 md:mt-15">
       <div class="p-4">
-        <h3>Submitted and In-Process Applications</h3>
-        <table
-          v-auto-animate
-          class="table_auto border-separate border-spacing-0 w-full text-xs sm:text-base mt-3">
-          <thead class="text-white">
-            <tr class="py-2 px-2">
-              <th class="rounded-tl-lg bg-sky-700">View</th>
-              <th
-                v-if="sm"
-                class="bg-sky-700">
-                ID
-              </th>
-              <th class="bg-sky-700">Label</th>
-              <th
-                v-if="lg"
-                class="bg-sky-700">
-                Created
-              </th>
-              <th class="bg-sky-700">Type</th>
-              <th
-                v-if="md"
-                class="bg-sky-700">
-                Submitted
-              </th>
-              <th class="bg-sky-700">Total</th>
-              <th class="bg-sky-700">Conf. #</th>
-              <th class="rounded-tr-lg bg-sky-700">Del</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              v-for="registration in registrations"
-              :key="registration.id"
-              class="bg-white">
-              <td class="">
-                <BaseButton
-                  class="text-sky-600 text-xl md:ml-4 ml-3"
-                  @click="
-                    registration.confirmation ||
-                    openEditor(registration.performerType)
-                      ? loadRegistration(
-                          registration.id,
-                          registration.performerType
-                        )
-                      : ''
-                  ">
-                  <Icon
-                    v-if="
-                      !registration.confirmation &&
+        <div class="pb-6">
+          <h3>Submitted and In-Process Applications</h3>
+          <table
+            v-auto-animate
+            class="table_auto border-separate border-spacing-0 w-full text-xs sm:text-base mt-3">
+            <thead class="text-white">
+              <tr class="py-2 px-2">
+                <th class="rounded-tl-lg bg-sky-700">View</th>
+                <th
+                  v-if="sm"
+                  class="bg-sky-700">
+                  ID
+                </th>
+                <th class="bg-sky-700">Label</th>
+                <th
+                  v-if="lg"
+                  class="bg-sky-700">
+                  Created
+                </th>
+                <th class="bg-sky-700">Type</th>
+                <th
+                  v-if="md"
+                  class="bg-sky-700">
+                  Submitted
+                </th>
+                <th class="bg-sky-700">Total</th>
+                <th class="bg-sky-700">Conf. #</th>
+                <th class="rounded-tr-lg bg-sky-700">Del</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="registration in registrations"
+                :key="registration.id"
+                class="bg-white">
+                <td class="">
+                  <BaseButton
+                    class="text-sky-600 text-xl md:ml-4 ml-3"
+                    @click="
+                      registration.confirmation ||
                       openEditor(registration.performerType)
-                    "
-                    name="fa-solid:pen" />
-                  <Icon
-                    v-else-if="
-                      !registration.confirmation &&
-                      !openEditor(registration.performerType)
-                    "
-                    name="fa-solid:ban" />
-                  <Icon
-                    v-else
-                    name="fa-solid:eye" />
-                </BaseButton>
-              </td>
-              <td
-                v-if="sm"
-                class="text-sm">
-                {{ registration.id }}
-              </td>
-              <td class="text-sm">
-                {{ registration.label }}
-              </td>
-              <td
-                v-if="lg"
-                class="text-sm">
-                {{ dateFunction(registration.createdAt) }}
-              </td>
-              <td class="text-sm">
-                {{ registration.performerType }}
-              </td>
-              <td
-                v-if="md"
-                class="text-sm">
-                {{ dateFunction(registration.submittedAt) ?? 'No' }}
-              </td>
-              <td class="text-sm">
-                ${{ Number(registration.totalAmt).toFixed(2) }}
-              </td>
-              <td class="text-sm">{{ registration.confirmation ?? '----' }}</td>
-              <td>
-                <BaseButton
-                  v-if="!registration.confirmation"
-                  class="text-red-600 text-xl md:ml-4 ml-3 my-3"
-                  @click="deleteRegistration(registration.id)">
-                  <Icon name="fa-solid:trash-alt" />
-                </BaseButton>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+                        ? loadRegistration(
+                            registration.id,
+                            registration.performerType
+                          )
+                        : ''
+                    ">
+                    <Icon
+                      v-if="
+                        !registration.confirmation &&
+                        openEditor(registration.performerType)
+                      "
+                      name="fa-solid:pen" />
+                    <Icon
+                      v-else-if="
+                        !registration.confirmation &&
+                        !openEditor(registration.performerType)
+                      "
+                      name="fa-solid:ban" />
+                    <Icon
+                      v-else
+                      name="fa-solid:eye" />
+                  </BaseButton>
+                </td>
+                <td
+                  v-if="sm"
+                  class="text-sm">
+                  {{ registration.id }}
+                </td>
+                <td class="text-sm">
+                  {{ registration.label }}
+                </td>
+                <td
+                  v-if="lg"
+                  class="text-sm">
+                  {{ dateFunction(registration.createdAt) }}
+                </td>
+                <td class="text-sm">
+                  {{ registration.performerType }}
+                </td>
+                <td
+                  v-if="md"
+                  class="text-sm">
+                  {{ dateFunction(registration.submittedAt) ?? 'No' }}
+                </td>
+                <td class="text-sm">
+                  ${{ Number(registration.totalAmt).toFixed(2) }}
+                </td>
+                <td class="text-sm">
+                  {{ registration.confirmation ?? '----' }}
+                </td>
+                <td>
+                  <BaseButton
+                    v-if="!registration.confirmation"
+                    class="text-red-600 text-xl md:ml-4 ml-3 my-3"
+                    @click="deleteRegistration(registration.id)">
+                    <Icon name="fa-solid:trash-alt" />
+                  </BaseButton>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
         <br />
-        <h3 class="pb-3">Registering for the Winnipeg Music Festival</h3>
-        <ul class="list-disc pl-5">
-          <li>
-            Begin registration by creating an account (account can be for an
-            individual; a teacher for all their individual students, or for all
-            their choirs; a parent for their family etc.)
-          </li>
-          <li>
-            Only one teacher/discipline allowed per form. Performers with
-            multiple disciplines and/or teachers require separate forms.
-          </li>
-          <li>
-            Applications can be saved and completed/edited later before
-            submission. Once submitted, applications can no longer be edited.
-          </li>
-          <li>
-            You can view submitted entries by clicking on the 'eye' link to the
-            left of the table.
-          </li>
-          <li>A copy can be printed for your records.</li>
-        </ul>
-        <h3 class="pb-3">Begin New Registration Form</h3>
+        <div
+          v-if="!registrationStore.user.emailConfirmed"
+          class="pb-6">
+          <h3>Account Confirmation</h3>
+          <p>
+            This account has not been verified. Please click on the link in the
+            confirmation email, or press the button to send another confirmation
+            email. Once confirmed, please log in again.
+          </p>
+          <p>
+            <strong
+              >All accounts must be confirmed before registrations can be
+              submitted.</strong
+            >
+          </p>
+          <button
+            class="btn btn-blue"
+            @click="resend">
+            Send Email
+          </button>
+        </div>
+        <div class="pb-6">
+          <h3 class="pb-3">Registering for the Winnipeg Music Festival</h3>
+          <ul class="list-disc pl-5">
+            <li>
+              Begin registration by creating an account (account can be for an
+              individual; a teacher for all their individual students, or for
+              all their choirs; a parent for their family etc.)
+            </li>
+            <li>
+              Only one teacher/discipline allowed per form. Performers with
+              multiple disciplines and/or teachers require separate forms.
+            </li>
+            <li>
+              Applications can be saved and completed/edited later before
+              submission. Once submitted, applications can no longer be edited.
+            </li>
+            <li>
+              You can view submitted entries by clicking on the 'eye' link to
+              the left of the table.
+            </li>
+            <li>A copy can be printed for your records.</li>
+          </ul>
+        </div>
+        <h3>Begin New Registration Form</h3>
       </div>
+      <!-- Discipline Cards -->
       <div class="grid grid-cols-2 lg:grid-cols-4">
         <BaseCard
           :label="soloOpen ? 'Solo' : 'Solo - Closed'"

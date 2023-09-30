@@ -60,7 +60,8 @@ const documents = {
     "query FieldConfigs {\n  fieldConfigs {\n    tableName\n    fieldName\n    communityRequired\n    groupRequired\n    schoolRequired\n    soloRequired\n    customField\n    customFieldType\n  }\n}": types.FieldConfigsDocument,
     "query Instruments {\n  instruments {\n    id\n    name\n  }\n}": types.InstrumentsDocument,
     "query Levels($subdisciplineId: Int, $categoryId: Int) {\n  levels(categoryID: $categoryId, subdisciplineID: $subdisciplineId) {\n    id\n    name\n    description\n  }\n}": types.LevelsDocument,
-    "query Registrations($performerType: PerformerType) {\n  registrations(performerType: $performerType) {\n    id\n    confirmation\n    label\n    payedAmt\n    performerType\n    submittedAt\n    teacher {\n      id\n    }\n    totalAmt\n    transactionInfo\n    createdAt\n    updatedAt\n    user {\n      firstName\n      lastName\n      email\n    }\n  }\n}": types.RegistrationsDocument,
+    "query MyUser {\n  myUser {\n    id\n    email\n    emailConfirmed\n    firstName\n    lastName\n  }\n}": types.MyUserDocument,
+    "query Registrations($performerType: PerformerType) {\n  registrations(performerType: $performerType) {\n    id\n    confirmation\n    label\n    payedAmt\n    performerType\n    submittedAt\n    teacher {\n      id\n    }\n    totalAmt\n    transactionInfo\n    createdAt\n    updatedAt\n  }\n}": types.RegistrationsDocument,
     "query SubDisciplines($disciplineId: Int!, $performerType: PerformerType!) {\n  subdisciplines(disciplineID: $disciplineId, performerType: $performerType) {\n    id\n    name\n    description\n  }\n}": types.SubDisciplinesDocument,
     "query SubdisciplinesByType($disciplineId: Int!, $performerType: PerformerType!) {\n  subdisciplines(disciplineID: $disciplineId, performerType: $performerType) {\n    id\n    name\n    description\n    maxPerformers\n    minPerformers\n    performerType\n  }\n}": types.SubdisciplinesByTypeDocument,
 };
@@ -270,7 +271,11 @@ export function graphql(source: "query Levels($subdisciplineId: Int, $categoryId
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "query Registrations($performerType: PerformerType) {\n  registrations(performerType: $performerType) {\n    id\n    confirmation\n    label\n    payedAmt\n    performerType\n    submittedAt\n    teacher {\n      id\n    }\n    totalAmt\n    transactionInfo\n    createdAt\n    updatedAt\n    user {\n      firstName\n      lastName\n      email\n    }\n  }\n}"): (typeof documents)["query Registrations($performerType: PerformerType) {\n  registrations(performerType: $performerType) {\n    id\n    confirmation\n    label\n    payedAmt\n    performerType\n    submittedAt\n    teacher {\n      id\n    }\n    totalAmt\n    transactionInfo\n    createdAt\n    updatedAt\n    user {\n      firstName\n      lastName\n      email\n    }\n  }\n}"];
+export function graphql(source: "query MyUser {\n  myUser {\n    id\n    email\n    emailConfirmed\n    firstName\n    lastName\n  }\n}"): (typeof documents)["query MyUser {\n  myUser {\n    id\n    email\n    emailConfirmed\n    firstName\n    lastName\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "query Registrations($performerType: PerformerType) {\n  registrations(performerType: $performerType) {\n    id\n    confirmation\n    label\n    payedAmt\n    performerType\n    submittedAt\n    teacher {\n      id\n    }\n    totalAmt\n    transactionInfo\n    createdAt\n    updatedAt\n  }\n}"): (typeof documents)["query Registrations($performerType: PerformerType) {\n  registrations(performerType: $performerType) {\n    id\n    confirmation\n    label\n    payedAmt\n    performerType\n    submittedAt\n    teacher {\n      id\n    }\n    totalAmt\n    transactionInfo\n    createdAt\n    updatedAt\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

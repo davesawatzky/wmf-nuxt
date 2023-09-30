@@ -32,6 +32,14 @@ export const useRegistration = defineStore(
       registration.value = <Registration>{}
     }
 
+    function addUserToStore(userDetails: Partial<User>): void {
+      user.value.id = userDetails.id!
+      user.value.firstName = userDetails.firstName || ''
+      user.value.lastName = userDetails.lastName || ''
+      user.value.email = userDetails.email || ''
+      user.value.emailConfirmed = userDetails.emailConfirmed || false
+    }
+
     /**
      * Adds Registration Object to the store.  Can only be one.
      * @param reg Registration Object, must have valid id property value
@@ -50,9 +58,6 @@ export const useRegistration = defineStore(
       registration.value.updatedAt = reg.updatedAt || ''
       registration.value.teacherID = reg.teacher?.id || null
       registration.value.__typename = 'Registration'
-      user.value.firstName = reg.user?.firstName || ''
-      user.value.lastName = reg.user?.lastName || ''
-      user.value.email = reg.user?.email || ''
     }
 
     /**
@@ -154,6 +159,7 @@ export const useRegistration = defineStore(
       registration,
       user,
       $reset,
+      addUserToStore,
       addToStore,
       createRegistration,
       updateRegistration,

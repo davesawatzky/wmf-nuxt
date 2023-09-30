@@ -382,6 +382,7 @@ type Query {
   level(id: Int!): Level!
   levels(categoryID: Int, subdisciplineID: Int): [Level!]!
   logout: String!
+  myUser: User!
   performer(performerID: Int!): Performer!
   performers(registrationID: Int!): [Performer!]!
   registeredClass(registeredClassID: Int!): RegisteredClass!
@@ -659,6 +660,7 @@ type User {
   apartment: String
   city: String
   email: String!
+  emailConfirmed: Boolean
   firstName: String
   id: Int!
   lastName: String

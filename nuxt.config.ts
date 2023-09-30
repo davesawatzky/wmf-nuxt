@@ -63,8 +63,17 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     apiBase: process.env.NUXT_API_BASE,
+    sendingEmailServer: process.env.SENDING_EMAIL_SERVER,
+    sendingEmailAddress: process.env.SENDING_EMAIL_ADDRESS,
+    sendingEmailPassword: process.env.SENDING_EMAIL_PASSWORD,
+    sendingSmtpPort: process.env.SENDING_SMTP_PORT,
+    emailServerUserAccount: process.env.EMAIL_SERVER_USER_ACCOUNT,
+    bccEmailAddress: process.env.BCC_EMAIL_ADDRESS,
+
     public: {
       apiBase: process.env.NUXT_API_BASE,
+      emailConfirmation: process.env.EMAIL_CONFIRMATION,
+      resendConfirmation: process.env.RESEND_CONFIRMATION,
     },
   },
   spaLoadingTemplate: true,
