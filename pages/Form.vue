@@ -4,7 +4,7 @@
   import { useAppStore } from '@/stores/appStore'
   import { useRegistration } from '@/stores/userRegistration'
   import type { Status } from '@/composables/types'
-  import { useStorage, StorageSerializers } from '@vueuse/core'
+  import { useStorage, StorageSerializers, useSwipe } from '@vueuse/core'
 
   interface DynamicComponent {
     [key: string]: Component
@@ -32,6 +32,7 @@
   const registrationStore = useRegistration()
   const appStore = useAppStore()
   const performerType = toRef(appStore.performerType)
+  let tabs = {} as DynamicComponent
 
   const currentTab = useStorage('stepperTab', '', sessionStorage, {
     mergeDefaults: true,
@@ -42,6 +43,18 @@
     serializer: StorageSerializers.number,
   })
   const slideDirection = ref('slide-left')
+  const swipeElement = ref(null)
+  const { isSwiping, direction } = useSwipe(swipeElement)
+  if (isSwiping.value) {
+    if (direction.value === 'right' && tabIndex.value > 0) {
+      previousTab()
+    } else if (
+      direction.value === 'left' &&
+      tabIndex.value < Object.keys(tabs).length - 1
+    ) {
+      nextTab()
+    }
+  }
   const status = reactive<Status>({
     label: registrationStore.registration.label
       ? StatusEnum.saved
@@ -66,8 +79,6 @@
     console.log(tabIndex.value)
     console.log('Before Unmount')
   })
-
-  let tabs = {} as DynamicComponent
 
   function setTab(tab: string, index: number) {
     currentTab.value = tab
@@ -132,11 +143,9 @@
   const tabNames = ref(Object.keys(tabs))
 
   function previousTab() {
-    console.log(Object.keys(tabs)[tabIndex.value - 1], tabIndex.value - 1)
     setTab(Object.keys(tabs)[tabIndex.value - 1], tabIndex.value - 1)
   }
   function nextTab() {
-    console.log(Object.keys(tabs)[tabIndex.value + 1], tabIndex.value + 1)
     setTab(Object.keys(tabs)[tabIndex.value + 1], tabIndex.value + 1)
   }
 
@@ -170,6 +179,7 @@
           @set-tab="setTab" />
       </div>
       <div
+        ref="swipeElement"
         class="border border-spacing-1 shadow-md rounded-lg border-sky-500 p-2 mb-6">
         <Transition
           :name="slideDirection"
