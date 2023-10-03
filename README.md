@@ -1,6 +1,15 @@
-# Nuxt 3 Minimal Starter
-
-Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+# Winnipeg Music Festival Registration Application
+This is a web form application for the Winnipeg Music Festival.  This frontend application requires the backend application, 'wmf-nest', to function.
+This app has several notable features:
+- auto save form inputs with indicator
+- allow for the creation of multiple festival registrations per user.
+- all form content is saved to db before submission.
+- auto festival class search based on criteria selection
+- dynamic form content based on performance types
+- autosearch field for teachers.
+- email verification upon account registration
+- summary emails sent upon submission
+- Built using Nuxt3, Nest, Postgresql, Graphql, Prisma, TailwindCSS, MJML and Nodemailer
 
 ## Setup
 
