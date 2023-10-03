@@ -33,7 +33,17 @@
   const formattedDate = DateTime.now().toLocaleString(DateTime.DATETIME_MED)
 
   definePageMeta({
-    middleware: 'auth',
+    middleware: ['submission'],
+  })
+
+  onBeforeMount(() => {
+    const regExist = registrationStore?.registrationId
+    const confirmed = registrationStore.registration?.confirmation
+    const submitted = registrationStore.registration?.submittedAt
+
+    if (!regExist || confirmed || submitted) {
+      navigateTo('/Registrations')
+    }
   })
 
   async function submitRegistration() {

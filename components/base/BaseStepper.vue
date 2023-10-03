@@ -1,8 +1,8 @@
 <script setup lang="ts">
-  import { useStorage } from '@vueuse/core'
   import { formErrors } from '@/composables/formErrors'
 
   const props = defineProps<{
+    currentTab: string
     tabs: string[]
   }>()
 
@@ -10,30 +10,9 @@
     setTab: [tab: string, index: number]
   }>()
 
-  const currentTab = useStorage('stepperTab', '', sessionStorage, {
-    mergeDefaults: true,
-  })
-  const tabIndex = useStorage('stepperIdx', 0, sessionStorage, {
-    mergeDefaults: true,
-  })
-
   function changeTab(tab: string, index: number) {
-    currentTab.value = tab
-    tabIndex.value = index
-    emit('setTab', currentTab.value, tabIndex.value)
+    emit('setTab', tab, index)
   }
-
-  onMounted(() => {
-    if (!currentTab.value) {
-      currentTab.value = props.tabs[0]
-    }
-    emit('setTab', currentTab.value, tabIndex.value)
-  })
-
-  onBeforeUnmount(() => {
-    currentTab.value = null
-    tabIndex.value = null
-  })
 </script>
 
 <template>

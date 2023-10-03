@@ -339,6 +339,7 @@
         Prepare to Submit
       </BaseButton>
       <BaseButton
+        v-if="totalErrors === 0"
         class="btn btn-blue"
         @click="printWindow">
         Print this page

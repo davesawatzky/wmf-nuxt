@@ -4,13 +4,14 @@
   import { useAppStore } from '@/stores/appStore'
   import { useRegistration } from '@/stores/userRegistration'
   import type { Status } from '@/composables/types'
+  import { useStorage, StorageSerializers } from '@vueuse/core'
 
   interface DynamicComponent {
     [key: string]: Component
   }
 
   definePageMeta({
-    middleware: 'auth',
+    middleware: ['form'],
   })
 
   const FormSoloPerformer = <Component>resolveComponent('FormSoloPerformer')
@@ -32,13 +33,38 @@
   const appStore = useAppStore()
   const performerType = toRef(appStore.performerType)
 
-  const currentTab = ref('')
-  const tabIndex = ref(0)
+  const currentTab = useStorage('stepperTab', '', sessionStorage, {
+    mergeDefaults: true,
+    serializer: StorageSerializers.string,
+  })
+  const tabIndex = useStorage('stepperIdx', 0, sessionStorage, {
+    mergeDefaults: true,
+    serializer: StorageSerializers.number,
+  })
   const slideDirection = ref('slide-left')
   const status = reactive<Status>({
     label: registrationStore.registration.label
       ? StatusEnum.saved
       : StatusEnum.null,
+  })
+
+  onMounted(() => {
+    currentTab.value = tabNames.value[0]
+    tabIndex.value = 0
+  })
+
+  onBeforeMount(async () => {
+    if (!registrationStore.registrationId) {
+      await navigateTo('/registrations')
+    }
+  })
+
+  onDeactivated(() => {
+    currentTab.value = null
+    tabIndex.value = null
+    console.log(currentTab.value)
+    console.log(tabIndex.value)
+    console.log('Before Unmount')
   })
 
   let tabs = {} as DynamicComponent
@@ -105,6 +131,15 @@
 
   const tabNames = ref(Object.keys(tabs))
 
+  function previousTab() {
+    console.log(Object.keys(tabs)[tabIndex.value - 1], tabIndex.value - 1)
+    setTab(Object.keys(tabs)[tabIndex.value - 1], tabIndex.value - 1)
+  }
+  function nextTab() {
+    console.log(Object.keys(tabs)[tabIndex.value + 1], tabIndex.value + 1)
+    setTab(Object.keys(tabs)[tabIndex.value + 1], tabIndex.value + 1)
+  }
+
   const validationSchema = yup.object({
     label: yup.string().trim().required('Please enter a label for this form'),
   })
@@ -130,6 +165,7 @@
     <div v-if="!registrationStore.registration.confirmation">
       <div class="text-left">
         <BaseStepper
+          :currentTab="currentTab"
           :tabs="tabNames"
           @set-tab="setTab" />
       </div>
@@ -143,6 +179,22 @@
             <component :is="tabs[currentTab]" />
           </KeepAlive>
         </Transition>
+      </div>
+      <div
+        class="flex justify-between"
+        :class="tabIndex === 0 ? 'flex-row-reverse' : ''">
+        <BaseButton
+          v-show="tabIndex > 0"
+          class="btn btn-blue justify-start"
+          @click="previousTab">
+          <Icon name="bxs:left-arrow" />Previous
+        </BaseButton>
+        <BaseButton
+          v-show="tabIndex < Object.keys(tabs).length - 1"
+          class="btn btn-blue justify-end"
+          @click="nextTab">
+          Next<Icon name="bxs:right-arrow" />
+        </BaseButton>
       </div>
     </div>
     <div

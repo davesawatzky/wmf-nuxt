@@ -17,7 +17,7 @@ export default defineNuxtConfig({
     tokenStorage: 'cookie',
     clients: {
       default: {
-        httpEndpoint: 'http://localhost:3000/graphql',
+        httpEndpoint: process.env.GRAPHQL_SERVER!,
         tokenName: 'diatonicToken',
         authHeader: 'Authorization',
         authType: 'Bearer',
@@ -25,13 +25,13 @@ export default defineNuxtConfig({
         httpLinkOptions: {
           credentials: 'include',
         },
-        // cookieAttributes: {
-        //   sameSite: 'none',
-        //   domain: 'localhost:3000',
-        //   path: '/graphql',
-        //   maxAge: 1000 * 60 * 1, // 1 hour
-        // },
       },
+      //     // cookieAttributes: {
+      //     //   sameSite: 'none',
+      //     //   domain: 'localhost:3000',
+      //     //   path: '/graphql',
+      //     //   maxAge: 1000 * 60 * 1, // 1 hour
+      //     // },
     },
   },
   experimental: {
@@ -62,6 +62,7 @@ export default defineNuxtConfig({
     storage: 'sessionStorage',
   },
   runtimeConfig: {
+    graphqlServer: process.env.GRAPHQL_SERVER,
     apiBase: process.env.NUXT_API_BASE,
     sendingEmailServer: process.env.SENDING_EMAIL_SERVER,
     sendingEmailAddress: process.env.SENDING_EMAIL_ADDRESS,

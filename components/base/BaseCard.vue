@@ -1,23 +1,14 @@
 <script setup lang="ts">
-  defineProps({
-    label: {
-      type: String,
-      required: true,
-    },
-    photo: {
-      type: String,
-      required: true,
-    },
-    altText: {
-      type: String,
-      required: true,
-    },
-  })
+  defineProps<{
+    label: string
+    photo: string
+    altText: string
+  }>()
 </script>
 
 <template>
   <div class="border border-sky-500 rounded-lg m-2 text-center cursor-pointer">
-    <nuxt-img
+    <img
       :src="photo"
       :alt="altText"
       class="mx-auto p-2" />

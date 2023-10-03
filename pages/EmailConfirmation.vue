@@ -12,8 +12,6 @@
       const tokenParam = route.query.token
       const tokenBody = { token: tokenParam }
 
-      console.log('Token: ', tokenBody)
-
       const { data, pending, error } = await useFetch(
         config.public.emailConfirmation,
         {
@@ -32,6 +30,7 @@
     } catch (err) {
       console.log('Error in Email Verification')
       console.log(err)
+      await navigateTo('/login')
     }
   })
 

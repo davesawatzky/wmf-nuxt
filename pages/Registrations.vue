@@ -1,6 +1,5 @@
 <script lang="ts" setup>
   import { DateTime } from 'luxon'
-  import process from 'node:process'
   import { useRegistration } from '@/stores/userRegistration'
   import { useAppStore } from '@/stores/appStore'
   import { usePerformers } from '@/stores/userPerformer'
@@ -50,10 +49,6 @@
   const sm = useMediaQuery('(min-width: 640px)')
   const md = useMediaQuery('(min-width: 768px)')
   const lg = useMediaQuery('(min-width: 1024px)')
-
-  definePageMeta({
-    middleware: 'auth',
-  })
 
   function dateFunction(date: Date | undefined) {
     if (date) {
