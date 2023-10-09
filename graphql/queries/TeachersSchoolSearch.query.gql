@@ -1,0 +1,8 @@
+query SchoolTeacherSearch {
+  teachers(privateTeacher: false, schoolTeacher: true) {
+    id
+    firstName
+    lastName
+    instrument
+  }
+}

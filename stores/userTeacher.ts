@@ -5,15 +5,20 @@ import {
   TeacherDeleteDocument,
   TeacherInfoDocument,
   TeacherUpdateDocument,
-  TeachersDocument,
-} from '~/graphql/gql/graphql'
-import type {
   Teacher,
-  TeacherCreateMutation,
-  TeacherInput,
+  PrivateTeacherSearchDocument,
+  SchoolTeacherSearchDocument,
 } from '~/graphql/gql/graphql'
+import type { TeacherCreateMutation, TeacherInput } from '~/graphql/gql/graphql'
 
-export interface AllTeachers {
+export interface PrivateTeachers {
+  id: number
+  firstName: string
+  lastName: string
+  instrument: string
+  __typename: 'Teacher'
+}
+export interface SchoolTeachers {
   id: number
   firstName: string
   lastName: string
@@ -25,13 +30,15 @@ export const useTeacher = defineStore(
   'teacher',
   () => {
     const teacher = ref(<Teacher>{})
-    const allTeachers = ref<AllTeachers[]>([])
+    const privateTeachers = ref<PrivateTeachers[]>([])
+    const schoolTeachers = ref<SchoolTeachers[]>([])
     const fieldConfigStore = useFieldConfig()
     function $resetTeacher() {
       teacher.value = <Teacher>{}
     }
     function $resetAllTeachers() {
-      allTeachers.value = <AllTeachers[]>[]
+      privateTeachers.value = <PrivateTeachers[]>[]
+      schoolTeachers.value = <SchoolTeachers[]>[]
     }
 
     const teacherErrors = computed(() => {
@@ -58,9 +65,10 @@ export const useTeacher = defineStore(
      */
     function addToStore(teach: Teacher): void {
       teacher.value.id = teach.id
-      teacher.value.prefix = teach.prefix || ''
       teacher.value.firstName = teach.firstName || ''
       teacher.value.lastName = teach.lastName || ''
+      teacher.value.privateTeacher = teach.privateTeacher || true
+      teacher.value.schoolTeacher = teach.schoolTeacher || false
       teacher.value.apartment = teach.apartment || ''
       teacher.value.streetNumber = teach.streetNumber || ''
       teacher.value.streetName = teach.streetName || ''
@@ -77,7 +85,10 @@ export const useTeacher = defineStore(
      * Creates a new Teacher record on the db and in the store.
      * @returns Promise
      */
-    function createTeacher(): Promise<unknown> {
+    function createTeacher(
+      privateTeacher: boolean,
+      schoolTeacher: boolean
+    ): Promise<unknown> {
       return new Promise((resolve, reject) => {
         const {
           mutate: teacherCreate,
@@ -85,7 +96,9 @@ export const useTeacher = defineStore(
           onError,
         } = useMutation(TeacherCreateDocument)
         teacherCreate({
-          teacher: <TeacherInput>{
+          privateTeacher,
+          schoolTeacher,
+          teacherInput: <TeacherInput>{
             city: 'Winnipeg',
             province: 'MB',
           },
@@ -134,16 +147,36 @@ export const useTeacher = defineStore(
       })
     }
 
-    function loadAllTeachers(): Promise<unknown> {
+    function loadAllPrivateTeachers(): Promise<unknown> {
       return new Promise((resolve, reject) => {
         const { result, load, onError, onResult } = useLazyQuery(
-          TeachersDocument,
+          PrivateTeacherSearchDocument,
           undefined,
           { fetchPolicy: 'network-only' }
         )
         load()
         onResult((result) => {
-          allTeachers.value = <AllTeachers[]>(
+          privateTeachers.value = <PrivateTeachers[]>(
+            result.data.teachers.map((el) => el)
+          )
+          resolve('Success')
+        })
+        onError((error) => {
+          reject(console.log(error))
+        })
+      })
+    }
+
+    function loadAllSchoolTeachers(): Promise<unknown> {
+      return new Promise((resolve, reject) => {
+        const { result, load, onError, onResult } = useLazyQuery(
+          SchoolTeacherSearchDocument,
+          undefined,
+          { fetchPolicy: 'network-only' }
+        )
+        load()
+        onResult((result) => {
+          schoolTeachers.value = <SchoolTeachers[]>(
             result.data.teachers.map((el) => el)
           )
           resolve('Success')
@@ -211,7 +244,8 @@ export const useTeacher = defineStore(
     }
     return {
       teacher,
-      allTeachers,
+      privateTeachers,
+      schoolTeachers,
       $resetTeacher,
       $resetAllTeachers,
       teacherErrors,
@@ -219,7 +253,8 @@ export const useTeacher = defineStore(
       updateTeacher,
       createTeacher,
       loadTeacher,
-      loadAllTeachers,
+      loadAllPrivateTeachers,
+      loadAllSchoolTeachers,
       addToStore,
       fullName,
     }

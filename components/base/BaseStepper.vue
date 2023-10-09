@@ -24,7 +24,7 @@
       :key="tab"
       class="flex flex-col relative z-20">
       <button
-        class="text-white justify-self-center mx-auto w-[50px] h-[50px] rounded-full font-bold text-lg z-20 relative"
+        class="text-white justify-self-center mx-auto w-[40px] h-[40px] sm:w-[50px] sm:h-[50px] rounded-full font-bold sm:text-lg z-20 relative"
         :class="[
           { active: currentTab === tab },
           currentTab === tab
@@ -44,7 +44,9 @@
       <div
         v-if="tab !== 'Summary'"
         class="absolute z-10 h-1 bg-sky-900 top-[23px] w-full left-[50%]"></div>
-      <div class="text-center font-semibold text-lg z-20">{{ tab }}</div>
+      <div class="text-center font-semibold text-sm sm:text-lg z-20">
+        {{ tab }}
+      </div>
     </div>
   </div>
 </template>

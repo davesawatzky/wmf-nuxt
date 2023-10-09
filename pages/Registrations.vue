@@ -175,7 +175,8 @@
     }
 
     appStore.dataLoading = true
-    await teacherStore.loadAllTeachers()
+    await teacherStore.loadAllPrivateTeachers()
+    await teacherStore.loadAllSchoolTeachers()
     if (registration?.teacher) {
       await teacherStore.loadTeacher(registration.teacher.id)
     }
@@ -228,7 +229,8 @@
         appStore.dataLoading = true
         await communityStore.createCommunity(registrationId.value)
     }
-    await teacherStore.loadAllTeachers()
+    await teacherStore.loadAllPrivateTeachers()
+    await teacherStore.loadAllSchoolTeachers()
     await classesStore.createClass(registrationId.value)
     await fieldConfigStore.loadRequiredFields()
     appStore.dataLoading = false
@@ -284,7 +286,16 @@
               <tr
                 v-for="registration in registrations"
                 :key="registration.id"
-                class="bg-white">
+                class="bg-white cursor-pointer"
+                @click="
+                  registration.confirmation ||
+                  openEditor(registration.performerType)
+                    ? loadRegistration(
+                        registration.id,
+                        registration.performerType
+                      )
+                    : ''
+                ">
                 <td class="">
                   <BaseButton
                     class="text-sky-600 text-xl md:ml-4 ml-3"

@@ -1,7 +1,19 @@
-mutation TeacherCreate($teacher: TeacherInput!) {
-  teacherCreate(teacherInput: $teacher) {
+mutation TeacherCreate(
+  $privateTeacher: Boolean!
+  $schoolTeacher: Boolean!
+  $teacherInput: TeacherInput!
+) {
+  teacherCreate(
+    privateTeacher: $privateTeacher
+    schoolTeacher: $schoolTeacher
+    teacherInput: $teacherInput
+  ) {
     teacher {
       id
+      email
+      firstName
+      lastName
+      privateTeacher
     }
     userErrors {
       message

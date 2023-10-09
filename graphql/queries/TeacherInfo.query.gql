@@ -1,7 +1,6 @@
 query TeacherInfo($teacherID: Int!) {
   teacher(teacherID: $teacherID) {
     id
-    prefix
     firstName
     lastName
     apartment

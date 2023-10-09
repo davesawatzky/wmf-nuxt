@@ -4,7 +4,13 @@
   import { useAppStore } from '@/stores/appStore'
   import { useRegistration } from '@/stores/userRegistration'
   import type { Status } from '@/composables/types'
-  import { useStorage, StorageSerializers, useSwipe } from '@vueuse/core'
+  import {
+    useStorage,
+    StorageSerializers,
+    useSwipe,
+    breakpointsTailwind,
+    useBreakpoints,
+  } from '@vueuse/core'
 
   interface DynamicComponent {
     [key: string]: Component
@@ -33,6 +39,8 @@
   const appStore = useAppStore()
   const performerType = toRef(appStore.performerType)
   let tabs = {} as DynamicComponent
+  const breakpoints = useBreakpoints(breakpointsTailwind)
+  const mobile = breakpoints.smaller('sm')
 
   const currentTab = useStorage('stepperTab', '', sessionStorage, {
     mergeDefaults: true,
@@ -55,6 +63,7 @@
       nextTab()
     }
   }
+
   const status = reactive<Status>({
     label: registrationStore.registration.label
       ? StatusEnum.saved
@@ -191,20 +200,44 @@
         </Transition>
       </div>
       <div
-        class="flex justify-between"
+        v-if="!mobile"
+        class="sm:flex sm:justify-between"
         :class="tabIndex === 0 ? 'flex-row-reverse' : ''">
         <BaseButton
           v-show="tabIndex > 0"
-          class="btn btn-blue justify-start"
+          class="btn btn-blue"
           @click="previousTab">
           <Icon name="bxs:left-arrow" />Previous
         </BaseButton>
         <BaseButton
           v-show="tabIndex < Object.keys(tabs).length - 1"
-          class="btn btn-blue justify-end"
+          class="btn btn-blue"
           @click="nextTab">
           Next<Icon name="bxs:right-arrow" />
         </BaseButton>
+      </div>
+      <div v-else>
+        <KeepAlive>
+          <BaseBottomBar class="flex justify-around">
+            <BaseButton
+              :disabled="!(tabIndex > 0)"
+              @click="previousTab"
+              class="text-sky-700 text-3xl disabled:text-slate-300">
+              <Icon name="bxs:left-arrow" />
+            </BaseButton>
+            <BaseButton @click="navigateTo('/registrations')">
+              <Icon
+                name="ic:outline-app-registration"
+                class="text-sky-700 text-4xl" />
+            </BaseButton>
+            <BaseButton
+              :disabled="!(tabIndex < Object.keys(tabs).length - 1)"
+              @click="nextTab"
+              class="text-sky-700 text-3xl disabled:text-slate-300">
+              <Icon name="bxs:right-arrow" />
+            </BaseButton>
+          </BaseBottomBar>
+        </KeepAlive>
       </div>
     </div>
     <div

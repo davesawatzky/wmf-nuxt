@@ -179,7 +179,6 @@
   watch(
     () => registrationStore.registration.teacherID,
     async (newID, oldID) => {
-      console.log('TeacherID Watcher')
       if (newID !== oldID && newID) {
         if (teacherRadio.value === 'existing') {
           await teacherStore.loadTeacher(newID)
@@ -194,7 +193,6 @@
       (teacherStore.teacher.firstName ?? '') +
       (teacherStore.teacher.lastName ?? ''),
     async (fullname) => {
-      console.log('Duplicate Watcher')
       if (teacherRadio.value === 'new') {
         duplicateCheck.value = teacherStore.allTeachers.find((item) => {
           return (

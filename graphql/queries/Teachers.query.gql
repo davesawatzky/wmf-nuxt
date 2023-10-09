@@ -1,8 +1,0 @@
-query Teachers {
-  teachers {
-    id
-    firstName
-    lastName
-    instrument
-  }
-}

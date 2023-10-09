@@ -7,8 +7,15 @@
 
   const error = ref('')
   const isLogin = ref(true)
+  const firstName = ref('')
+  const lastName = ref('')
+  const email = ref('')
+  const password = ref('')
+  const password2 = ref('')
+  const privateTeacher = ref(false)
+  const schoolTeacher = ref(false)
 
-  const { values, handleSubmit } = useForm({
+  const { handleSubmit } = useForm({
     validationSchema: toTypedSchema(
       yup.object({
         firstName: yup.string().trim().label('First Name'),
@@ -21,6 +28,8 @@
           .password()
           .label('Password 2')
           .oneOf([yup.ref('password')], 'Passwords must match'),
+        privateTeacher: yup.boolean().default(false),
+        schoolTeacher: yup.boolean().default(false),
       })
     ),
   })
@@ -57,12 +66,15 @@
     onDone: doneSignup,
   } = useMutation(SignUpDocument)
   const signup = handleSubmit((values) => {
+    console.log(values)
     signupMutation({
       credentials: {
         firstName: values.firstName,
         lastName: values.lastName,
         email: values.email,
         password: values.password,
+        privateTeacher: values.privateTeacher,
+        schoolTeacher: values.schoolTeacher,
       },
     })
     doneSignup(async (result) => {
@@ -81,12 +93,14 @@
    * Reset Email and Password Fields
    */
   function resetFields() {
-    values.firstName = ''
-    values.lastName = ''
     error.value = ''
-    values.email = ''
-    values.password = ''
-    values.password2 = ''
+    firstName.value = ''
+    lastName.value = ''
+    email.value = ''
+    password.value = ''
+    password2.value = ''
+    privateTeacher.value = false
+    schoolTeacher.value = false
   }
 </script>
 
@@ -115,13 +129,28 @@
       class="w-full sm:w-3/4 max-w-sm border rounded-lg border-sky-500 p-4 mx-auto mt-8">
       <div v-if="!isLogin">
         <h3 class="loginheading">Sign up</h3>
+        <fieldset class="my-4 p-1 border-sky-500 border rounded-lg">
+          <legend class="ml-2">
+            <label>Select teacher type if applicable</label>
+          </legend>
+          <BaseCheckbox
+            v-model="privateTeacher"
+            name="privateTeacher"
+            label="Private Teacher"
+            class="py-2 px-4"></BaseCheckbox>
+          <BaseCheckbox
+            v-model="schoolTeacher"
+            name="schoolTeacher"
+            label="Grade School Teacher"
+            class="py-2 px-4"></BaseCheckbox>
+        </fieldset>
         <BaseInput
-          v-model="values.firstName"
+          v-model="firstName"
           name="firstName"
           type="text"
           label="First Name" />
         <BaseInput
-          v-model="values.lastName"
+          v-model="lastName"
           name="lastName"
           type="text"
           label="Last Name" />
@@ -132,7 +161,7 @@
         Sign in
       </h3>
       <BaseInput
-        v-model="values.email"
+        v-model="email"
         autocomplete="off"
         autofocus
         name="email"
@@ -140,7 +169,7 @@
         label="Email"
         @keyup.enter="isLogin ? signin() : signup()" />
       <BaseInput
-        v-model="values.password"
+        v-model="password"
         autocomplete="off"
         name="password"
         type="password"
@@ -148,7 +177,7 @@
         @keyup.enter="isLogin ? signin() : signup()" />
       <BaseInput
         v-if="!isLogin"
-        v-model="values.password2"
+        v-model="password2"
         autocomplete="off"
         name="password2"
         type="password"
