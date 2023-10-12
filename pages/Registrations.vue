@@ -42,7 +42,6 @@
   const communityStore = useCommunity()
   const classesStore = useClasses()
   const fieldConfigStore = useFieldConfig()
-  const config = useRuntimeConfig()
 
   const registrationId = ref(0)
 
@@ -108,26 +107,6 @@
   }
 
   /**
-   * Resend confirmation link
-   */
-  async function resend() {
-    try {
-      const { error } = await useFetch(config.public.resendConfirmation, {
-        method: 'POST',
-        body: {
-          user: {
-            firstName: registrationStore.user.firstName,
-            lastName: registrationStore.user.lastName,
-            email: registrationStore.user.email,
-          },
-        },
-      })
-    } catch (err) {
-      console.log(err)
-    }
-  }
-
-  /**
    * Load and Edit Existing Registration
    *
    * @param registrationId The ID of the registration form
@@ -150,6 +129,7 @@
         appStore.performerType = PerformerType.SOLO
         appStore.dataLoading = true
         await performerStore.loadPerformers(registrationId)
+        await teacherStore.loadAllTeachers(true, false)
         appStore.dataLoading = false
         break
       case 'GROUP':
@@ -157,6 +137,7 @@
         appStore.dataLoading = true
         await groupStore.loadGroup(registrationId)
         await performerStore.loadPerformers(registrationId)
+        await teacherStore.loadAllTeachers(true, false)
         appStore.dataLoading = false
         break
       case 'SCHOOL':
@@ -164,19 +145,18 @@
         appStore.dataLoading = true
         await schoolStore.loadSchool(registrationId)
         await schoolGroupStore.loadSchoolGroups(registrationId)
+        await teacherStore.loadAllTeachers(false, true)
         appStore.dataLoading = false
         break
       case 'COMMUNITY':
         appStore.performerType = PerformerType.COMMUNITY
         appStore.dataLoading = true
         await communityStore.loadCommunity(registrationId)
+        await teacherStore.loadAllTeachers(true, true)
         appStore.dataLoading = false
         break
     }
-
     appStore.dataLoading = true
-    await teacherStore.loadAllPrivateTeachers()
-    await teacherStore.loadAllSchoolTeachers()
     if (registration?.teacher) {
       await teacherStore.loadTeacher(registration.teacher.id)
     }
@@ -209,6 +189,7 @@
         appStore.performerType = PerformerType.SOLO
         appStore.dataLoading = true
         await performerStore.createPerformer(registrationId.value)
+        await teacherStore.loadAllTeachers(true, false)
         break
       case 'GROUP':
         appStore.performerType = PerformerType.GROUP
@@ -217,20 +198,21 @@
         // require at least 2 performers for groups
         await performerStore.createPerformer(registrationId.value)
         await performerStore.createPerformer(registrationId.value)
+        await teacherStore.loadAllTeachers(true, false)
         break
       case 'SCHOOL':
         appStore.performerType = PerformerType.SCHOOL
         appStore.dataLoading = true
         await schoolStore.createSchool(registrationId.value)
         await schoolGroupStore.createSchoolGroup(schoolStore.school.id!)
+        await teacherStore.loadAllTeachers(false, true)
         break
       case 'COMMUNITY':
         appStore.performerType = PerformerType.COMMUNITY
         appStore.dataLoading = true
         await communityStore.createCommunity(registrationId.value)
+        await teacherStore.loadAllTeachers(true, true)
     }
-    await teacherStore.loadAllPrivateTeachers()
-    await teacherStore.loadAllSchoolTeachers()
     await classesStore.createClass(registrationId.value)
     await fieldConfigStore.loadRequiredFields()
     appStore.dataLoading = false
@@ -365,27 +347,6 @@
           </table>
         </div>
         <br />
-        <div
-          v-if="!registrationStore.user.emailConfirmed"
-          class="pb-6">
-          <h3>Account Confirmation</h3>
-          <p>
-            This account has not been verified. Please click on the link in the
-            confirmation email, or press the button to send another confirmation
-            email. Once confirmed, please log in again.
-          </p>
-          <p>
-            <strong
-              >All accounts must be confirmed before registrations can be
-              submitted.</strong
-            >
-          </p>
-          <button
-            class="btn btn-blue"
-            @click="resend">
-            Send Email
-          </button>
-        </div>
         <div class="pb-6">
           <h3 class="pb-3">Registering for the Winnipeg Music Festival</h3>
           <ul class="list-disc pl-5">

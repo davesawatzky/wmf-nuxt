@@ -1,0 +1,8 @@
+query AllTeachersSearch($privateTeacher: Boolean!, $schoolTeacher: Boolean!) {
+  teachers(privateTeacher: $privateTeacher, schoolTeacher: $schoolTeacher) {
+    id
+    firstName
+    lastName
+    instrument
+  }
+}

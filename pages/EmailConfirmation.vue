@@ -44,7 +44,7 @@
     v-auto-animate
     class="text-center">
     <div v-if="confirming">
-      <h3>Confirming Email</h3>
+      <h3>Account Verification Page</h3>
       <br />
       <div>
         <Icon
@@ -53,26 +53,26 @@
       </div>
     </div>
     <div v-if="!confirming && !verificationError">
-      <h3>Congratulations, your account is confirmed.</h3>
+      <h3>Congratulations, your account is verified.</h3>
       <br />
       <button
         class="btn btn-blue"
         @click="login">
-        Proceed to Login
+        Proceed to Sign In
       </button>
     </div>
     <div v-if="errorMessage === 'Email confirmation token expired'">
       <h3>{{ errorMessage }}</h3>
       <p class="max-w-[400px] mx-auto">
-        Login to your account and click the 'Re-send verification link" button.
-        This will send another link to your email address. Email addresses must
-        be verified before registrations can be submitted.
+        Sign in to your account and click the 'Re-send link' button in the
+        dialog box. This will send another link to your email address. Accounts
+        must be verified before sign in is possible.
       </p>
       <br />
       <button
         class="btn btn-blue"
         @click="login">
-        Proceed to Login
+        Proceed to Sign In
       </button>
     </div>
     <div v-if="errorMessage === 'Email already confirmed'">
@@ -84,22 +84,22 @@
       <button
         class="btn btn-blue"
         @click="login">
-        Proceed to Login
+        Proceed to Sign In
       </button>
     </div>
     <div v-if="errorMessage === 'Bad confirmation token'">
       <h3>{{ errorMessage }}</h3>
       <p class="max-w-[400px] mx-auto">
-        Click the link in the email again. If this fails, login to your account
-        and click the 'Re-send verification link" button. This will send another
-        link to your email address. Email addresses must be verified before
-        registrations can be submitted.
+        Click the verification link in the email again. If this fails, sign in
+        to your account and click the 'Re-send link" button in the dialog box.
+        This will send another link to your email address. Email addresses must
+        be verified before sign in is possible.
       </p>
       <br />
       <button
         class="btn btn-blue"
         @click="login">
-        Proceed to Login
+        Proceed to Sign In
       </button>
     </div>
     <div v-if="verificationError && !errorMessage">
@@ -112,7 +112,7 @@
       <button
         class="btn btn-blue"
         @click="login">
-        Proceed to Login
+        Proceed to Sign In
       </button>
     </div>
   </div>

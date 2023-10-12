@@ -14,6 +14,18 @@
   const password2 = ref('')
   const privateTeacher = ref(false)
   const schoolTeacher = ref(false)
+  const config = useRuntimeConfig()
+  const isOpen = ref(false)
+  const user = ref({
+    email: '',
+    firstName: '',
+    lastName: '',
+  })
+
+  function setIsOpen(value: boolean) {
+    isOpen.value = value
+  }
+  // const teacherExists = ref({})
 
   const { handleSubmit } = useForm({
     validationSchema: toTypedSchema(
@@ -47,8 +59,18 @@
       credentials: { email: values.email, password: values.password },
     })
     doneSignin(async (result) => {
-      if (result.data!.signin.diatonicToken) {
+      if (result.data?.signin.diatonicToken) {
         await navigateTo('/registrations')
+      }
+      if (
+        result.data?.signin.userErrors[0].message.includes(
+          'Account not confirmed.'
+        )
+      ) {
+        user.value.email = result.data!.signin.user.email!
+        user.value.firstName = result.data!.signin.user.firstName!
+        user.value.lastName = result.data!.signin.user.lastName!
+        isOpen.value = true
       }
     })
     signinError(() => {
@@ -58,6 +80,93 @@
   })
 
   /**
+   * Check if this is a teacher account
+   */
+  async function signup() {
+    // teacher type is checked
+    if (!!privateTeacher.value || !!schoolTeacher.value) {
+      await doesTeacherExist(email.value)
+        .then((user) => {
+          // user email exists in db
+          console.log(user.id)
+          // check to see if user has a password
+          return hasPassword(user.id)
+        })
+        .then((checkPassword) => {
+          console.log('Has Password: ', checkPassword.pass)
+          // If YES - kick out.  User already exists and no
+          // changes can be made from here.
+          if (checkPassword.pass) {
+            alert('User already exists')
+            return null
+          } else if (checkPassword.pass === false) {
+            signupAccount()
+          }
+
+          // If NO -  add password and teaching details to
+          // existing account. Then send confirmation email
+        })
+
+        // teacher is brand new
+        .catch((error) => {
+          console.log('User does not exist')
+          console.log(error)
+          signupAccount()
+        })
+
+      // no teacher type is checked
+    } else {
+      await signupAccount()
+    }
+  }
+
+  async function doesTeacherExist(emailCheck: string): Promise<any> {
+    return new Promise((resolve, reject) => {
+      const { result, loading, onResult, onError } = useQuery(
+        gql`
+          query DoesTeacherExist($email: String!) {
+            checkUser(email: $email) {
+              id
+            }
+          }
+        `,
+        { email: emailCheck },
+        { fetchPolicy: 'network-only' }
+      )
+      onResult((result) => {
+        resolve(result.data.checkUser)
+      })
+      onError((error) => {
+        reject(error)
+      })
+    })
+  }
+
+  async function hasPassword(userID: number): Promise<any> {
+    return new Promise((resolve, reject) => {
+      const { result, loading, onResult, onError } = useQuery(
+        gql`
+          query HasPassword($checkIfPasswordExistsId: Int!) {
+            checkIfPasswordExists(id: $checkIfPasswordExistsId) {
+              id
+              pass
+            }
+          }
+        `,
+        { checkIfPasswordExistsId: userID },
+        { fetchPolicy: 'network-only' }
+      )
+      onResult((result) => {
+        resolve(result.data.checkIfPasswordExists)
+      })
+      onError((error) => {
+        console.log(error)
+        reject(error)
+      })
+    })
+  }
+
+  /**
    * Register new account.  Sends confirmation email.
    */
   const {
@@ -65,8 +174,7 @@
     onError: registerError,
     onDone: doneSignup,
   } = useMutation(SignUpDocument)
-  const signup = handleSubmit((values) => {
-    console.log(values)
+  const signupAccount = handleSubmit((values) => {
     signupMutation({
       credentials: {
         firstName: values.firstName,
@@ -90,6 +198,28 @@
   })
 
   /**
+   * Resend confirmation link
+   */
+  async function resendEmail() {
+    try {
+      await useFetch(config.public.resendConfirmation, {
+        method: 'POST',
+        body: {
+          user: {
+            firstName: user.value.firstName,
+            lastName: user.value.lastName,
+            email: user.value.email,
+          },
+        },
+      })
+      isOpen.value = false
+      resetFields()
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  /**
    * Reset Email and Password Fields
    */
   function resetFields() {
@@ -101,6 +231,9 @@
     password2.value = ''
     privateTeacher.value = false
     schoolTeacher.value = false
+    user.value.email = ''
+    user.value.firstName = ''
+    user.value.lastName = ''
   }
 </script>
 
@@ -188,7 +321,7 @@
         <BaseButton
           class="w-full m-0 btn btn-blue"
           @click="signin()">
-          Log In
+          Sign In
         </BaseButton>
         <BaseErrorMessage
           v-if="error"
@@ -228,6 +361,64 @@
       </div>
     </form>
   </div>
+  <UITransitionRoot
+    :show="isOpen"
+    as="template"
+    enter="duration-1000 ease-out"
+    enter-from="opacity-0"
+    enter-to="opacity-100"
+    leave="duration-1000 ease-in"
+    leave-from="opacity-100"
+    leave-to="opacity-0">
+    <UIDialog
+      @close="setIsOpen"
+      class="relative z-50">
+      <UITransitionChild
+        enter="duration-300 ease-out"
+        enter-from="opacity-0"
+        enter-to="opacity-100"
+        leave="duration-200 ease-in"
+        leave-from="opacity-100"
+        leave-to="opacity-0">
+        <div
+          class="fixed inset-0 bg-black/30"
+          aria-hidden="true"></div>
+      </UITransitionChild>
+      <div class="fixed inset-0 flex w-screen items-center justify-center p-4">
+        <UITransitionChild
+          enter="duration-300 ease-out"
+          enter-from="opacity-0 scale-95"
+          enter-to="opacity-100 scale-100"
+          leave="duration-200 ease-in"
+          leave-from="opacity-100 scale-100"
+          leave-to="opacity-0 scale-95">
+          <UIDialogPanel
+            class="p-4 w-full max-w-sm rounded-lg bg-white shadow-lg">
+            <UIDialogTitle class="text-center text-xl font-bold"
+              >Account not verified</UIDialogTitle
+            >
+            <UIDialogDescription class="text-center">
+              This account needs to be verified before signing in. Check your
+              email inbox and spam folders for a verification link. You may also
+              request another email. Check you spam folder as well.
+            </UIDialogDescription>
+            <div>
+              <BaseButton
+                class="btn btn-blue"
+                @click="setIsOpen(false)">
+                Close
+              </BaseButton>
+              <BaseButton
+                class="btn btn-blue"
+                @click="resendEmail()">
+                Re-Send Verificaton
+              </BaseButton>
+            </div>
+          </UIDialogPanel>
+        </UITransitionChild>
+      </div>
+    </UIDialog>
+  </UITransitionRoot>
 </template>
 
 <style scoped>

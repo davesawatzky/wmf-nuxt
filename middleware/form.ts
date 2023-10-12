@@ -1,11 +1,9 @@
 //Form Middleware
 
-import { useRegistration } from '~/stores/userRegistration'
-
 export default defineNuxtRouteMiddleware(async (to, from) => {
-  const registrationStore = useRegistration()
   const regExist = sessionStorage.getItem('registrations')
-  if (!regExist.registrationId) {
+  const reg = JSON.parse(regExist ?? '')
+  if (!reg.registrationId) {
     abortNavigation()
     navigateTo('/Registrations')
   }

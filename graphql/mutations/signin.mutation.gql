@@ -4,5 +4,10 @@ mutation SignIn($credentials: CredentialsSignin!) {
       message
     }
     diatonicToken
+    user {
+      email
+      firstName
+      lastName
+    }
   }
 }

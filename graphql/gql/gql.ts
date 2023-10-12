@@ -40,7 +40,7 @@ const documents = {
     "mutation TeacherCreate($privateTeacher: Boolean!, $schoolTeacher: Boolean!, $teacherInput: TeacherInput!) {\n  teacherCreate(\n    privateTeacher: $privateTeacher\n    schoolTeacher: $schoolTeacher\n    teacherInput: $teacherInput\n  ) {\n    teacher {\n      id\n      email\n      firstName\n      lastName\n      privateTeacher\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.TeacherCreateDocument,
     "mutation TeacherDelete($teacherId: Int!) {\n  teacherDelete(teacherID: $teacherId) {\n    teacher {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.TeacherDeleteDocument,
     "mutation TeacherUpdate($teacherId: Int!, $teacher: TeacherInput!) {\n  teacherUpdate(teacherID: $teacherId, teacherInput: $teacher) {\n    teacher {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.TeacherUpdateDocument,
-    "mutation SignIn($credentials: CredentialsSignin!) {\n  signin(credentials: $credentials) {\n    userErrors {\n      message\n    }\n    diatonicToken\n  }\n}": types.SignInDocument,
+    "mutation SignIn($credentials: CredentialsSignin!) {\n  signin(credentials: $credentials) {\n    userErrors {\n      message\n    }\n    diatonicToken\n    user {\n      email\n      firstName\n      lastName\n    }\n  }\n}": types.SignInDocument,
     "mutation SignUp($credentials: CredentialsSignup!) {\n  signup(credentials: $credentials) {\n    userErrors {\n      message\n    }\n    diatonicToken\n  }\n}": types.SignUpDocument,
     "query CommunityInfo($registrationId: Int!) {\n  registration(id: $registrationId) {\n    community {\n      id\n      name\n      groupSize\n      chaperones\n      wheelchairs\n      earliestTime\n      latestTime\n      unavailable\n      conflictPerformers\n    }\n  }\n}": types.CommunityInfoDocument,
     "query DisciplinesByType($performerType: PerformerType!) {\n  disciplines(performerType: $performerType) {\n    id\n    name\n  }\n}": types.DisciplinesByTypeDocument,
@@ -50,8 +50,7 @@ const documents = {
     "query SchoolGroupInfo($registrationId: Int!) {\n  registration(id: $registrationId) {\n    school {\n      schoolGroups {\n        id\n        name\n        groupSize\n        chaperones\n        wheelchairs\n        earliestTime\n        latestTime\n        unavailable\n        conflictPerformers\n      }\n    }\n  }\n}": types.SchoolGroupInfoDocument,
     "query SchoolInfo($registrationId: Int!) {\n  registration(id: $registrationId) {\n    school {\n      id\n      name\n      division\n      streetNumber\n      streetName\n      city\n      province\n      postalCode\n      phone\n    }\n  }\n}": types.SchoolInfoDocument,
     "query TeacherInfo($teacherID: Int!) {\n  teacher(teacherID: $teacherID) {\n    id\n    firstName\n    lastName\n    apartment\n    streetNumber\n    streetName\n    city\n    province\n    postalCode\n    phone\n    email\n    instrument\n  }\n}": types.TeacherInfoDocument,
-    "query PrivateTeacherSearch {\n  teachers(privateTeacher: true, schoolTeacher: false) {\n    id\n    firstName\n    lastName\n    instrument\n  }\n}": types.PrivateTeacherSearchDocument,
-    "query SchoolTeacherSearch {\n  teachers(privateTeacher: false, schoolTeacher: true) {\n    id\n    firstName\n    lastName\n    instrument\n  }\n}": types.SchoolTeacherSearchDocument,
+    "query AllTeachersSearch($privateTeacher: Boolean!, $schoolTeacher: Boolean!) {\n  teachers(privateTeacher: $privateTeacher, schoolTeacher: $schoolTeacher) {\n    id\n    firstName\n    lastName\n    instrument\n  }\n}": types.AllTeachersSearchDocument,
     "query Categories($levelId: Int, $subdisciplineId: Int) {\n  categories(levelID: $levelId, subdisciplineID: $subdisciplineId) {\n    id\n    name\n    description\n    requiredComposer\n  }\n}": types.CategoriesDocument,
     "query ClassByNumber($festivalClassNumber: String!) {\n  festivalClassByNumber(festivalClassNumber: $festivalClassNumber) {\n    id\n    classNumber\n    maxSelections\n    minSelections\n    requiredSelection\n    performerType\n    price\n    category {\n      id\n      name\n      description\n      requiredComposer\n    }\n    level {\n      id\n      name\n      description\n    }\n    subdiscipline {\n      id\n      name\n      description\n      discipline {\n        id\n        name\n      }\n    }\n    trophies {\n      id\n      name\n      description\n    }\n  }\n}": types.ClassByNumberDocument,
     "query FestivalClassSearch($festivalClassSearch: FestivalClassSearchArgs!) {\n  festivalClassSearch(festivalClassSearch: $festivalClassSearch) {\n    id\n    classNumber\n    maxSelections\n    minSelections\n    requiredSelection\n    performerType\n    price\n    subdiscipline {\n      name\n    }\n    level {\n      name\n    }\n    category {\n      name\n    }\n    trophies {\n      id\n      name\n      description\n    }\n  }\n}": types.FestivalClassSearchDocument,
@@ -192,7 +191,7 @@ export function graphql(source: "mutation TeacherUpdate($teacherId: Int!, $teach
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "mutation SignIn($credentials: CredentialsSignin!) {\n  signin(credentials: $credentials) {\n    userErrors {\n      message\n    }\n    diatonicToken\n  }\n}"): (typeof documents)["mutation SignIn($credentials: CredentialsSignin!) {\n  signin(credentials: $credentials) {\n    userErrors {\n      message\n    }\n    diatonicToken\n  }\n}"];
+export function graphql(source: "mutation SignIn($credentials: CredentialsSignin!) {\n  signin(credentials: $credentials) {\n    userErrors {\n      message\n    }\n    diatonicToken\n    user {\n      email\n      firstName\n      lastName\n    }\n  }\n}"): (typeof documents)["mutation SignIn($credentials: CredentialsSignin!) {\n  signin(credentials: $credentials) {\n    userErrors {\n      message\n    }\n    diatonicToken\n    user {\n      email\n      firstName\n      lastName\n    }\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -232,11 +231,7 @@ export function graphql(source: "query TeacherInfo($teacherID: Int!) {\n  teache
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "query PrivateTeacherSearch {\n  teachers(privateTeacher: true, schoolTeacher: false) {\n    id\n    firstName\n    lastName\n    instrument\n  }\n}"): (typeof documents)["query PrivateTeacherSearch {\n  teachers(privateTeacher: true, schoolTeacher: false) {\n    id\n    firstName\n    lastName\n    instrument\n  }\n}"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "query SchoolTeacherSearch {\n  teachers(privateTeacher: false, schoolTeacher: true) {\n    id\n    firstName\n    lastName\n    instrument\n  }\n}"): (typeof documents)["query SchoolTeacherSearch {\n  teachers(privateTeacher: false, schoolTeacher: true) {\n    id\n    firstName\n    lastName\n    instrument\n  }\n}"];
+export function graphql(source: "query AllTeachersSearch($privateTeacher: Boolean!, $schoolTeacher: Boolean!) {\n  teachers(privateTeacher: $privateTeacher, schoolTeacher: $schoolTeacher) {\n    id\n    firstName\n    lastName\n    instrument\n  }\n}"): (typeof documents)["query AllTeachersSearch($privateTeacher: Boolean!, $schoolTeacher: Boolean!) {\n  teachers(privateTeacher: $privateTeacher, schoolTeacher: $schoolTeacher) {\n    id\n    firstName\n    lastName\n    instrument\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

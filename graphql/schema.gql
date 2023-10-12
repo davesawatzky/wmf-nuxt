@@ -312,6 +312,11 @@ type Mutation {
   userUpdate(userID: Int!, userInput: UserInput!): UserPayload!
 }
 
+type PasswordExists {
+  id: Int!
+  pass: Boolean!
+}
+
 type Performer {
   age: Int
   apartment: String
@@ -365,6 +370,8 @@ enum PerformerType {
 type Query {
   categories(levelID: Int, subdisciplineID: Int): [Category!]!
   category(id: Int!): Category!
+  checkIfPasswordExists(id: Int!): PasswordExists!
+  checkUser(email: String!): User!
   communities: [Community!]!
   community(registrationID: Int!): Community!
   discipline(id: Int!): Discipline!

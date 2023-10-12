@@ -1,8 +1,0 @@
-query PrivateTeacherSearch {
-  teachers(privateTeacher: true, schoolTeacher: false) {
-    id
-    firstName
-    lastName
-    instrument
-  }
-}

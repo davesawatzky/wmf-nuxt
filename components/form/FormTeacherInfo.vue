@@ -3,6 +3,7 @@
   import 'yup-phone-lite'
   import { useTeacher } from '@/stores/userTeacher'
   import { useRegistration } from '~/stores/userRegistration'
+  import { useAppStore } from '~/stores/appStore'
   import type { ContactInfo, Status } from '@/composables/types'
   import type { AllTeachers } from '@/stores/userTeacher'
 
@@ -28,12 +29,24 @@
     get: () => props.modelValue,
     set: (value) => emits('update:modelValue', value),
   })
+  const privateTeacher = ref(false)
+  const schoolTeacher = ref(false)
 
   const teacherStore = useTeacher()
   const registrationStore = useRegistration()
+  const appStore = useAppStore()
+
+  onMounted(() => {
+    if (appStore.performerType === 'SCHOOL') {
+      privateTeacher.value = false
+      schoolTeacher.value = true
+    } else {
+      privateTeacher.value = true
+      schoolTeacher.value = false
+    }
+  })
 
   const status = reactive<Status>({
-    prefix: props.modelValue.prefix ? StatusEnum.saved : StatusEnum.null,
     firstName: props.modelValue.firstName ? StatusEnum.saved : StatusEnum.null,
     lastName: props.modelValue.lastName ? StatusEnum.saved : StatusEnum.null,
     apartment: props.modelValue.apartment ? StatusEnum.saved : StatusEnum.null,
@@ -158,13 +171,20 @@
   const editingDisabled = ref(true)
   const duplicateCheck = ref<AllTeachers>()
 
+  // Creates a new teacher account when the radio button is pressed.
   watch(teacherRadio, async (newValue) => {
     console.log('TeacherRadio Watcher')
     if (newValue === 'new') {
       teacherStore.$resetTeacher()
       registrationStore.registration.teacherID = null
-      await teacherStore.createTeacher()
+      await teacherStore.createTeacher(
+        privateTeacher.value,
+        schoolTeacher.value
+      )
       registrationStore.registration.teacherID = teacherStore.teacher.id
+
+      // Removes the newly created teacher account if the performer changes
+      // their mind on the radio buttons.
     } else if (newValue === 'existing' && !duplicateCheck.value?.id) {
       if (registrationStore.registration.teacherID) {
         await teacherStore.deleteTeacher(
@@ -176,6 +196,7 @@
     }
   })
 
+  // Watches for a changes in the teacher
   watch(
     () => registrationStore.registration.teacherID,
     async (newID, oldID) => {
@@ -189,14 +210,12 @@
   )
 
   watch(
-    () =>
-      (teacherStore.teacher.firstName ?? '') +
-      (teacherStore.teacher.lastName ?? ''),
+    () => teacherStore.teacher.firstName + ' ' + teacherStore.teacher.lastName,
     async (fullname) => {
       if (teacherRadio.value === 'new') {
         duplicateCheck.value = teacherStore.allTeachers.find((item) => {
           return (
-            (item.firstName + item.lastName).toLowerCase() ===
+            (item.firstName + ' ' + item.lastName).toLowerCase() ===
             fullname.toLowerCase()
           )
         })
@@ -338,17 +357,6 @@
             label="Edit Information">
           </BaseToggleB>
         </div>
-      </div>
-      <div class="col-span-3 sm:col-span-2 self-start">
-        <BaseSelect
-          v-model.trim="contact.prefix"
-          :class="fieldsDisabled && editingDisabled ? 'off' : ''"
-          :status="status.prefix"
-          name="prefix"
-          label="Title"
-          :options="prefixes"
-          :disabled="fieldsDisabled && editingDisabled"
-          @change-status="(stat: string) => fieldStatus(stat, 'prefix')" />
       </div>
       <div class="col-span-9 sm:col-span-5">
         <BaseInput

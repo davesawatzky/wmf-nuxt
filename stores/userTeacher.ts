@@ -5,40 +5,30 @@ import {
   TeacherDeleteDocument,
   TeacherInfoDocument,
   TeacherUpdateDocument,
+  AllTeachersSearchDocument,
   Teacher,
-  PrivateTeacherSearchDocument,
-  SchoolTeacherSearchDocument,
 } from '~/graphql/gql/graphql'
 import type { TeacherCreateMutation, TeacherInput } from '~/graphql/gql/graphql'
 
-export interface PrivateTeachers {
+export interface AllTeachers {
   id: number
   firstName: string
   lastName: string
   instrument: string
-  __typename: 'Teacher'
-}
-export interface SchoolTeachers {
-  id: number
-  firstName: string
-  lastName: string
-  instrument: string
-  __typename: 'Teacher'
 }
 
 export const useTeacher = defineStore(
   'teacher',
   () => {
     const teacher = ref(<Teacher>{})
-    const privateTeachers = ref<PrivateTeachers[]>([])
-    const schoolTeachers = ref<SchoolTeachers[]>([])
+    const allTeachers = ref<AllTeachers[]>([])
     const fieldConfigStore = useFieldConfig()
     function $resetTeacher() {
       teacher.value = <Teacher>{}
     }
     function $resetAllTeachers() {
-      privateTeachers.value = <PrivateTeachers[]>[]
-      schoolTeachers.value = <SchoolTeachers[]>[]
+      teacher.value = <Teacher>{}
+      allTeachers.value = <AllTeachers[]>[]
     }
 
     const teacherErrors = computed(() => {
@@ -82,7 +72,10 @@ export const useTeacher = defineStore(
     }
 
     /**
-     * Creates a new Teacher record on the db and in the store.
+     * Creates a new Teacher record on the db and in the store. One
+     * of the following params must be true.
+     * @param privateTeacher boolean - Whether this is a private teacher
+     * @param schoolTeacher boolean - Whether this is a school teacher
      * @returns Promise
      */
     function createTeacher(
@@ -147,36 +140,19 @@ export const useTeacher = defineStore(
       })
     }
 
-    function loadAllPrivateTeachers(): Promise<unknown> {
+    function loadAllTeachers(
+      privateTeacher: boolean,
+      schoolTeacher: boolean
+    ): Promise<unknown> {
       return new Promise((resolve, reject) => {
         const { result, load, onError, onResult } = useLazyQuery(
-          PrivateTeacherSearchDocument,
-          undefined,
+          AllTeachersSearchDocument,
+          { privateTeacher, schoolTeacher },
           { fetchPolicy: 'network-only' }
         )
         load()
         onResult((result) => {
-          privateTeachers.value = <PrivateTeachers[]>(
-            result.data.teachers.map((el) => el)
-          )
-          resolve('Success')
-        })
-        onError((error) => {
-          reject(console.log(error))
-        })
-      })
-    }
-
-    function loadAllSchoolTeachers(): Promise<unknown> {
-      return new Promise((resolve, reject) => {
-        const { result, load, onError, onResult } = useLazyQuery(
-          SchoolTeacherSearchDocument,
-          undefined,
-          { fetchPolicy: 'network-only' }
-        )
-        load()
-        onResult((result) => {
-          schoolTeachers.value = <SchoolTeachers[]>(
+          allTeachers.value = <AllTeachers[]>(
             result.data.teachers.map((el) => el)
           )
           resolve('Success')
@@ -244,8 +220,7 @@ export const useTeacher = defineStore(
     }
     return {
       teacher,
-      privateTeachers,
-      schoolTeachers,
+      allTeachers,
       $resetTeacher,
       $resetAllTeachers,
       teacherErrors,
@@ -253,8 +228,7 @@ export const useTeacher = defineStore(
       updateTeacher,
       createTeacher,
       loadTeacher,
-      loadAllPrivateTeachers,
-      loadAllSchoolTeachers,
+      loadAllTeachers,
       addToStore,
       fullName,
     }
