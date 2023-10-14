@@ -10,6 +10,14 @@
   import { useAppStore } from '@/stores/appStore'
   import { formErrors } from '@/composables/formErrors'
 
+  interface TeacherSummary {
+    teacherSummary?: boolean
+  }
+
+  const props = withDefaults(defineProps<TeacherSummary>(), {
+    teacherSummary: false,
+  })
+
   const emit = defineEmits(['submitForm'])
 
   const performerStore = usePerformers()
@@ -38,7 +46,7 @@
   })
 
   async function finalErrorCheck() {
-    if (!totalErrors.value) {
+    if (!totalErrors.value && !props.teacherSummary) {
       await navigateTo('/Submission')
     }
   }
@@ -47,7 +55,7 @@
 <template>
   <div>
     <div
-      v-if="totalErrors > 0"
+      v-if="totalErrors > 0 && !props.teacherSummary"
       v-auto-animate>
       <h3 class="text-center py-4 bg-red-600 text-white rounded-lg">
         Incomplete registration form
@@ -72,8 +80,52 @@
       </h3>
       <SummaryTable class="pt-8" />
 
+      <!-- Solo and Group Performers -->
+      <div v-if="appStore.performerType === 'GROUP'">
+        <h3 class="pt-4 pb-4">Group Information</h3>
+        <BaseSummaryCard>
+          <template #heading1>
+            <h4 class="py-2">{{ groupStore.group.name }}</h4>
+          </template>
+          <template #details>
+            <table>
+              <tbody>
+                <tr class="">
+                  <td>Type of Group:</td>
+                  <td>{{ groupStore.group.groupType }}</td>
+                </tr>
+                <tr class="">
+                  <td>Number of Performers:</td>
+                  <td>{{ groupStore.group.numberOfPerformers }}</td>
+                </tr>
+                <tr class="">
+                  <td>Average age:</td>
+                  <td>{{ groupStore.group.age }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </template>
+        </BaseSummaryCard>
+      </div>
+
+      <div
+        v-if="
+          appStore.performerType === 'GROUP' ||
+          appStore.performerType === 'SOLO'
+        ">
+        <h3 class="pt-4 pb-4">Performer(s)</h3>
+        <div
+          v-for="(performer, index) in performerStore.performers"
+          :key="performer.id">
+          <SummaryContactInfo
+            class="pb-4"
+            :contact="performer"
+            :full-name="performerStore.fullName[index]" />
+        </div>
+      </div>
+
       <!-- Teacher -->
-      <div>
+      <div v-if="!props.teacherSummary">
         <h3 class="pt-4 pb-4">Teacher</h3>
         <SummaryContactInfo
           :contact="teacherStore.teacher"
@@ -120,7 +172,7 @@
         </BaseSummaryCard>
       </div>
 
-      <!-- School Groups -->
+      <!-- School Information -->
       <div v-if="appStore.performerType === 'SCHOOL'">
         <h3 class="pt-4 pb-4">School Information</h3>
         <BaseSummaryCard>
@@ -283,63 +335,21 @@
           </template>
         </BaseSummaryCard>
       </div>
-
-      <!-- Solo and Group Performers -->
-      <div v-if="appStore.performerType === 'GROUP'">
-        <h3 class="pt-4 pb-4">Group Information</h3>
-        <BaseSummaryCard>
-          <template #heading1>
-            <h4 class="py-2">{{ groupStore.group.name }}</h4>
-          </template>
-          <template #details>
-            <table>
-              <tbody>
-                <tr class="">
-                  <td>Type of Group:</td>
-                  <td>{{ groupStore.group.groupType }}</td>
-                </tr>
-                <tr class="">
-                  <td>Number of Performers:</td>
-                  <td>{{ groupStore.group.numberOfPerformers }}</td>
-                </tr>
-                <tr class="">
-                  <td>Average age:</td>
-                  <td>{{ groupStore.group.age }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </template>
-        </BaseSummaryCard>
-      </div>
-
-      <div
-        v-if="
-          appStore.performerType === 'GROUP' ||
-          appStore.performerType === 'SOLO'
-        ">
-        <h3 class="pt-4 pb-4">Performer(s)</h3>
-        <div
-          v-for="(performer, index) in performerStore.performers"
-          :key="performer.id">
-          <SummaryContactInfo
-            class="pb-4"
-            :contact="performer"
-            :full-name="performerStore.fullName[index]" />
-        </div>
-      </div>
     </div>
 
     <!-- Submission -->
     <div class="pt-4 px-8">
       <BaseButton
-        v-if="!registrationStore.registration.confirmation"
+        v-if="
+          !registrationStore.registration.confirmation && !props.teacherSummary
+        "
         class="btn btn-blue"
         :disabled="totalErrors !== 0"
         @click="finalErrorCheck">
         Prepare to Submit
       </BaseButton>
       <BaseButton
-        v-if="totalErrors === 0"
+        v-if="totalErrors === 0 || props.teacherSummary"
         class="btn btn-blue"
         @click="printWindow">
         Print this page

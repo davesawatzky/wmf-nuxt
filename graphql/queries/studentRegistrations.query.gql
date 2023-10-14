@@ -1,0 +1,26 @@
+query StudentRegistrations {
+  teacher {
+    registrations {
+      confirmation
+      createdAt
+      id
+      label
+      performerType
+      submittedAt
+      updatedAt
+      performers {
+        firstName
+        lastName
+      }
+      group {
+        name
+      }
+      school {
+        name
+      }
+      community {
+        name
+      }
+    }
+  }
+}

@@ -44,9 +44,9 @@
 <template>
   <div>
     <a
-      class="hover:cursor-pointer"
+      class="hover:cursor-pointer w-full"
       @click="signout"
-      >Logout</a
+      ><slot /> Sign out</a
     >
   </div>
 </template>

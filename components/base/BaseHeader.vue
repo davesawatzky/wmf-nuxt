@@ -1,6 +1,11 @@
 <script lang="ts" setup>
   const showMenu = ref(false)
 
+  const props = defineProps<{
+    privateTeacher?: boolean
+    schoolTeacher?: boolean
+  }>()
+
   function toggleNav() {
     showMenu.value = !showMenu.value
   }
@@ -40,16 +45,135 @@
         <nav
           class="hidden md:block"
           aria-label="main">
-          <ul class="md:flex">
-            <li
-              v-if="$route.name !== 'Registrations'"
-              class="px-3 py-1 mx-1 hover:bg-sky-500 hover:ring-2 rounded-md">
-              <nuxt-link to="Registrations"> Registration Forms </nuxt-link>
-            </li>
-            <li class="px-3 py-1 mx-1 hover:bg-sky-500 hover:ring-2 rounded-md">
-              <BaseLogout />
-            </li>
-          </ul>
+          <div class="md:flex">
+            <UIMenu>
+              <UIMenuButton class="px-3 py-1 mx-1 hover:bg-sky-600 rounded-md">
+                <Icon
+                  class="text-2xl"
+                  name="ic:round-app-registration" />
+                Registrations
+              </UIMenuButton>
+              <transition
+                enter-active-class="transition duration-100 ease-out"
+                enter-from-class="transform scale-95 opacity-0"
+                enter-to-class="transform scale-100 opacity-100"
+                leave-active-class="transition duration-75 ease-out"
+                leave-from-class="transform scale-100 opacity-100"
+                leave-to-class="transform scale-95 opacity-0">
+                <UIMenuItems
+                  class="absolute mt-[45px] ml-[-75px] w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg shadow-slate-400 ring-1 ring-black ring-opacity-10 focus:outline-none">
+                  <div class="p-1">
+                    <UIMenuItem
+                      as="template"
+                      v-slot="{ active, close }">
+                      <nuxt-link
+                        @click="close"
+                        :class="[
+                          {
+                            'bg-sky-600 text-white': active,
+                            'bg-white text-black': !active,
+                          },
+                          'group flex w-full items-center rounded-md px-2 py-2 text-sm',
+                        ]"
+                        to="/Registrations">
+                        <Icon
+                          :class="[
+                            { 'bg-white text-sky-600': !active },
+                            'text-2xl w-8 pr-2',
+                          ]"
+                          name="ic:round-app-registration" />
+                        My Registrations</nuxt-link
+                      >
+                    </UIMenuItem>
+                    <UIMenuItem
+                      v-if="privateTeacher"
+                      as="template"
+                      v-slot="{ active }"
+                      ><NuxtLink
+                        :class="[
+                          {
+                            'bg-sky-600 text-white': active,
+                            'bg-white text-black': !active,
+                          },
+                          'group flex w-full items-center rounded-md px-2 py-2 text-sm',
+                        ]"
+                        to="/Students">
+                        <Icon
+                          :class="[
+                            { 'bg-white text-sky-600': !active },
+                            'text-2xl w-8 pr-2',
+                          ]"
+                          name="mdi:account-music" />
+                        My Students
+                      </NuxtLink></UIMenuItem
+                    >
+                  </div>
+                </UIMenuItems>
+              </transition>
+            </UIMenu>
+            <UIMenu>
+              <UIMenuButton class="px-3 py-1 mx-1 hover:bg-sky-600 rounded-md">
+                <Icon
+                  class="text-2xl"
+                  name="fluent:inprivate-account-24-filled" />
+                Account
+              </UIMenuButton>
+              <transition
+                enter-active-class="transition duration-100 ease-out"
+                enter-from-class="transform scale-95 opacity-0"
+                enter-to-class="transform scale-100 opacity-100"
+                leave-active-class="transition duration-75 ease-out"
+                leave-from-class="transform scale-100 opacity-100"
+                leave-to-class="transform scale-95 opacity-0">
+                <UIMenuItems
+                  class="absolute mt-[45px] ml-[42px] w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg shadow-slate-400 ring-1 ring-black ring-opacity-10 focus:outline-none">
+                  <div class="p-1">
+                    <UIMenuItem
+                      as="template"
+                      v-slot="{ active, close }">
+                      <NuxtLink
+                        :class="[
+                          {
+                            'bg-sky-600 text-white': active,
+                            'bg-white text-black': !active,
+                          },
+                          'group flex w-full items-center rounded-md px-2 py-2 text-sm',
+                        ]"
+                        to="/UserInformation"
+                        @click="close">
+                        <Icon
+                          :class="[
+                            { 'bg-white text-sky-600': !active },
+                            'text-2xl w-8 pr-2',
+                          ]"
+                          name="fluent:inprivate-account-24-filled" />
+                        User Account</NuxtLink
+                      >
+                    </UIMenuItem>
+                    <UIMenuItem
+                      as="template"
+                      v-slot="{ active }">
+                      <BaseLogout
+                        :class="[
+                          {
+                            'bg-sky-600 text-white': active,
+                            'bg-white text-black': !active,
+                          },
+                          'group flex w-full items-center rounded-md px-2 py-2 text-sm',
+                        ]">
+                        <Icon
+                          :class="[
+                            { 'bg-white text-sky-600': !active },
+                            'text-2xl w-8 pr-2',
+                          ]"
+                          name="heroicons-outline:logout" />
+                      </BaseLogout>
+                    </UIMenuItem>
+                  </div>
+                </UIMenuItems>
+              </transition>
+            </UIMenu>
+          </div>
         </nav>
       </div>
     </section>

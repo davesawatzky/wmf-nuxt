@@ -2,6 +2,7 @@
   import * as yup from 'yup'
   import YupPassword from 'yup-password'
   import { SignInDocument, SignUpDocument } from '@/graphql/gql/graphql'
+  import { useUser } from '@/stores/useUser'
 
   YupPassword(yup)
 
@@ -10,6 +11,7 @@
   const firstName = ref('')
   const lastName = ref('')
   const email = ref('')
+  const instrument = ref('')
   const password = ref('')
   const password2 = ref('')
   const privateTeacher = ref(false)
@@ -21,6 +23,7 @@
     firstName: '',
     lastName: '',
   })
+  const userStore = useUser()
 
   function setIsOpen(value: boolean) {
     isOpen.value = value
@@ -32,6 +35,7 @@
       yup.object({
         firstName: yup.string().trim().label('First Name'),
         lastName: yup.string().trim().label('Last Name'),
+        instrument: yup.string().trim().label('Instrument(s)'),
         email: yup.string().trim().email().required().label('Email'),
         password: yup.string().trim().password().required().label('Password'),
         password2: yup
@@ -64,6 +68,7 @@
       }
       if (
         result.data?.signin.userErrors[0].message.includes(
+          //TODO: Something wrong here
           'Account not confirmed.'
         )
       ) {
@@ -90,7 +95,7 @@
           // user email exists in db
           console.log(user.id)
           // check to see if user has a password
-          return hasPassword(user.id)
+          return userStore.hasPassword(user.id)
         })
         .then((checkPassword) => {
           console.log('Has Password: ', checkPassword.pass)
@@ -142,30 +147,6 @@
     })
   }
 
-  async function hasPassword(userID: number): Promise<any> {
-    return new Promise((resolve, reject) => {
-      const { result, loading, onResult, onError } = useQuery(
-        gql`
-          query HasPassword($checkIfPasswordExistsId: Int!) {
-            checkIfPasswordExists(id: $checkIfPasswordExistsId) {
-              id
-              pass
-            }
-          }
-        `,
-        { checkIfPasswordExistsId: userID },
-        { fetchPolicy: 'network-only' }
-      )
-      onResult((result) => {
-        resolve(result.data.checkIfPasswordExists)
-      })
-      onError((error) => {
-        console.log(error)
-        reject(error)
-      })
-    })
-  }
-
   /**
    * Register new account.  Sends confirmation email.
    */
@@ -179,6 +160,7 @@
       credentials: {
         firstName: values.firstName,
         lastName: values.lastName,
+        instrument: values.instrument,
         email: values.email,
         password: values.password,
         privateTeacher: values.privateTeacher,
@@ -226,6 +208,7 @@
     error.value = ''
     firstName.value = ''
     lastName.value = ''
+    instrument.value = ''
     email.value = ''
     password.value = ''
     password2.value = ''
@@ -262,7 +245,9 @@
       class="w-full sm:w-3/4 max-w-sm border rounded-lg border-sky-500 p-4 mx-auto mt-8">
       <div v-if="!isLogin">
         <h3 class="loginheading">Sign up</h3>
-        <fieldset class="my-4 p-1 border-sky-500 border rounded-lg">
+        <fieldset
+          v-auto-animate
+          class="my-4 p-1 border-sky-500 border rounded-lg">
           <legend class="ml-2">
             <label>Select teacher type if applicable</label>
           </legend>
@@ -279,14 +264,23 @@
         </fieldset>
         <BaseInput
           v-model="firstName"
+          v-auto-animate
           name="firstName"
           type="text"
           label="First Name" />
         <BaseInput
           v-model="lastName"
+          v-auto-animate
           name="lastName"
           type="text"
           label="Last Name" />
+        <BaseInput
+          v-if="privateTeacher"
+          v-auto-animate
+          v-model="instrument"
+          name="instrument"
+          type="text"
+          label="Instrument(s)" />
       </div>
       <h3
         v-else
@@ -295,6 +289,7 @@
       </h3>
       <BaseInput
         v-model="email"
+        v-auto-animate
         autocomplete="off"
         autofocus
         name="email"
@@ -303,6 +298,7 @@
         @keyup.enter="isLogin ? signin() : signup()" />
       <BaseInput
         v-model="password"
+        v-auto-animate
         autocomplete="off"
         name="password"
         type="password"
@@ -311,6 +307,7 @@
       <BaseInput
         v-if="!isLogin"
         v-model="password2"
+        v-auto-animate
         autocomplete="off"
         name="password2"
         type="password"
@@ -319,12 +316,14 @@
 
       <div v-if="isLogin">
         <BaseButton
+          v-auto-animate
           class="w-full m-0 btn btn-blue"
           @click="signin()">
           Sign In
         </BaseButton>
         <BaseErrorMessage
           v-if="error"
+          v-auto-animate
           class="text-center text-lg"
           >{{ error }}</BaseErrorMessage
         >
@@ -340,12 +339,14 @@
       </div>
       <div v-else>
         <BaseButton
+          v-auto-animate
           class="w-full m-0 btn btn-blue"
           @click="signup()">
           Register New Account
         </BaseButton>
         <BaseErrorMessage
           v-if="error"
+          v-auto-animate
           class="text-center text-lg"
           >{{ error }}</BaseErrorMessage
         >

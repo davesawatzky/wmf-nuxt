@@ -1,8 +1,9 @@
-query MyUser {
-  myUser {
+query Performers($registrationId: Int!) {
+  performers(registrationID: $registrationId) {
     id
     firstName
     lastName
+    age
     apartment
     streetNumber
     streetName
@@ -11,9 +12,7 @@ query MyUser {
     postalCode
     phone
     email
-    emailConfirmed
     instrument
-    privateTeacher
-    schoolTeacher
+    level
   }
 }

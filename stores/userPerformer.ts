@@ -3,7 +3,7 @@ import { useFieldConfig } from '@/stores/useFieldConfig'
 import {
   PerformerCreateDocument,
   PerformerDeleteDocument,
-  PerformerInfoDocument,
+  PerformersDocument,
   PerformerUpdateDocument,
 } from '~/graphql/gql/graphql'
 import type {
@@ -129,16 +129,15 @@ export const usePerformers = defineStore(
           onResult,
           onError,
         } = useLazyQuery(
-          PerformerInfoDocument,
+          PerformersDocument,
           { registrationId },
           { fetchPolicy: 'no-cache' }
         )
         load()
         onResult((result) => {
           try {
-            if (result.data.registration.performers) {
-              const performers: Performer[] =
-                result.data.registration.performers
+            if (result.data.performers) {
+              const performers: Performer[] = result.data.performers
               for (let i = 0; i < performers.length; i++) {
                 addToStore(performers[i])
               }

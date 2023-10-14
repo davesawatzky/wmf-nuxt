@@ -1,7 +1,9 @@
 <script setup lang="ts">
   import { useAppStore } from '@/stores/appStore'
+  import { useUser } from '@/stores/useUser'
 
   const appStore = useAppStore()
+  const userStore = useUser()
   const mutationLoading = useGlobalMutationLoading()
   const queryLoading = useGlobalQueryLoading()
 </script>
@@ -11,7 +13,9 @@
     <base-spinner
       v-if="queryLoading || mutationLoading || appStore.dataLoading" />
 
-    <BaseHeader />
+    <BaseHeader
+      :privateTeacher="userStore.user.privateTeacher ?? false"
+      :schoolTeacher="userStore.user.schoolTeacher ?? false" />
 
     <div class="bg-sky-600 pt-5 pb-8 section-min-height">
       <div

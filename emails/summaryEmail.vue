@@ -9,7 +9,7 @@
   import { useClasses } from '../stores/userClasses'
   import { useRegistration } from '../stores/userRegistration'
   import { useAppStore } from '../stores/appStore'
-  import { formErrors } from '../composables/formErrors'
+  import { useUser } from '../stores/useUser'
 
   const performerStore = usePerformers()
   const teacherStore = useTeacher()
@@ -20,6 +20,7 @@
   const classesStore = useClasses()
   const appStore = useAppStore()
   const registrationStore = useRegistration()
+  const userStore = useUser()
 
   const performers = performerStore.performers
   const teacher = teacherStore.teacher
@@ -30,9 +31,9 @@
   const festivalClasses = classesStore.registeredClasses
   const performerType = appStore.performerType
   const registration = registrationStore.registration
-  const userFirstName = registrationStore.user.firstName
-  const userLastName = registrationStore.user.lastName
-  const userEmail = registrationStore.user.email
+  const userFirstName = userStore.user.firstName
+  const userLastName = userStore.user.lastName
+  const userEmail = userStore.user.email
 
   function schoolClassGroup(id: number) {
     return schoolGroups.find((item) => item.id === id)

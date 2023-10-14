@@ -10,6 +10,7 @@
   import { useSchoolGroup } from '@/stores/userSchoolGroup'
   import { useCommunity } from '@/stores/userCommunity'
   import { useFieldConfig } from '@/stores/useFieldConfig'
+  import { useUser } from '@/stores/useUser'
   import {
     communityOpen,
     groupOpen,
@@ -41,6 +42,7 @@
   const schoolGroupStore = useSchoolGroup()
   const communityStore = useCommunity()
   const classesStore = useClasses()
+  const userStore = useUser()
   const fieldConfigStore = useFieldConfig()
 
   const registrationId = ref(0)
@@ -82,7 +84,7 @@
       fetchPolicy: 'no-cache',
     }))
     onUserResult((result) => {
-      registrationStore.addUserToStore(result.data.myUser)
+      userStore.addToStore(result.data.myUser)
     })
     userError((error) => console.log(error))
   })
@@ -268,16 +270,7 @@
               <tr
                 v-for="registration in registrations"
                 :key="registration.id"
-                class="bg-white cursor-pointer"
-                @click="
-                  registration.confirmation ||
-                  openEditor(registration.performerType)
-                    ? loadRegistration(
-                        registration.id,
-                        registration.performerType
-                      )
-                    : ''
-                ">
+                class="bg-white">
                 <td class="">
                   <BaseButton
                     class="text-sky-600 text-xl md:ml-4 ml-3"

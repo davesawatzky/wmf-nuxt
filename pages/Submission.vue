@@ -9,6 +9,7 @@
   import { useCommunity } from '@/stores/userCommunity'
   import { useClasses } from '@/stores/userClasses'
   import { useRegistration } from '@/stores/userRegistration'
+  import { useUser } from '@/stores/useUser'
   import { useAppStore } from '@/stores/appStore'
 
   const performerStore = usePerformers()
@@ -19,6 +20,7 @@
   const communityStore = useCommunity()
   const classesStore = useClasses()
   const appStore = useAppStore()
+  const userStore = useUser()
   const registrationStore = useRegistration()
 
   const confirmationNumber = ref('')
@@ -67,9 +69,9 @@
           registeredClasses: toRaw(classesStore.registeredClasses),
           performerType: toRaw(appStore.performerType),
           registration: toRaw(registrationStore.registration),
-          userFirstName: toRaw(registrationStore.user.firstName),
-          userLastName: toRaw(registrationStore.user.lastName),
-          userEmail: toRaw(registrationStore.user.email),
+          userFirstName: toRaw(userStore.user.firstName),
+          userLastName: toRaw(userStore.user.lastName),
+          userEmail: toRaw(userStore.user.email),
         }
       )
       await useFetch('/api/send-email', { method: 'POST', body: payload })

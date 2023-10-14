@@ -77,7 +77,11 @@
 
   input[type='checkbox'],
   input[type='radio'] {
-    @apply border-gray-400 text-sky-600 focus:ring-sky-500 shadow-md rounded;
+    @apply border-gray-400 text-sky-600 focus:ring-sky-500 shadow-md;
+  }
+
+  input[type='checkbox'] {
+    @apply rounded;
   }
 
   .off {
