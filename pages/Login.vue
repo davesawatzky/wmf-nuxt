@@ -66,16 +66,18 @@
       if (result.data?.signin.diatonicToken) {
         await navigateTo('/registrations')
       }
-      if (
-        result.data?.signin.userErrors[0].message.includes(
-          //TODO: Something wrong here
-          'Account not confirmed.'
-        )
-      ) {
-        user.value.email = result.data!.signin.user.email!
-        user.value.firstName = result.data!.signin.user.firstName!
-        user.value.lastName = result.data!.signin.user.lastName!
-        isOpen.value = true
+      if (!!result.data?.signin.userErrors[0]) {
+        if (
+          result.data?.signin.userErrors[0].message.includes(
+            //TODO: Something wrong here
+            'Account not confirmed.'
+          )
+        ) {
+          user.value.email = result.data!.signin.user.email!
+          user.value.firstName = result.data!.signin.user.firstName!
+          user.value.lastName = result.data!.signin.user.lastName!
+          isOpen.value = true
+        }
       }
     })
     signinError(() => {

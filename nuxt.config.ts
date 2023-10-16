@@ -72,11 +72,21 @@ export default defineNuxtConfig({
     bccEmailAddress: process.env.BCC_EMAIL_ADDRESS,
 
     public: {
+      serverAddress: process.env.SERVER_ADDRESS,
       apiBase: process.env.NUXT_API_BASE,
       emailConfirmation: process.env.EMAIL_CONFIRMATION,
       resendConfirmation: process.env.RESEND_CONFIRMATION,
+      stripeKey: process.env.STRIPE_PUB_KEY,
     },
   },
+  // stripe: {
+  //   server: {
+  //     key: process.env.STRIPE_SERVER_KEY,
+  //   },
+  //   client: {
+  //     key: ,
+  //   },
+  // },
   spaLoadingTemplate: true,
   ssr: false,
   typescript: {

@@ -63,7 +63,6 @@
     "@types/mjml": "^4.7.2",
     "@types/node": "^18.18.4",
     "@types/nodemailer": "^6.4.11",
-    "@unlok-co/nuxt-stripe": "^2.0.0",
     "@vue/test-utils": "^2.4.1",
     "@vueuse/core": "^10.5.0",
     "@vueuse/nuxt": "^10.5.0",

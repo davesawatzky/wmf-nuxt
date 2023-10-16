@@ -4,6 +4,7 @@
   import { useTeacher } from '@/stores/userTeacher'
   import { useRegistration } from '~/stores/userRegistration'
   import { useAppStore } from '~/stores/appStore'
+  import { useUser } from '~/stores/useUser'
   import type { ContactInfo, Status } from '@/composables/types'
   import type { AllTeachers } from '@/stores/userTeacher'
 
@@ -32,17 +33,24 @@
   const privateTeacher = ref(false)
   const schoolTeacher = ref(false)
 
+  const userStore = useUser()
   const teacherStore = useTeacher()
   const registrationStore = useRegistration()
   const appStore = useAppStore()
+  const teacherHasPassword = ref(true)
 
-  onMounted(() => {
+  onMounted(async () => {
     if (appStore.performerType === 'SCHOOL') {
       privateTeacher.value = false
       schoolTeacher.value = true
     } else {
       privateTeacher.value = true
       schoolTeacher.value = false
+    }
+    if (!!registrationStore.registration.teacherID) {
+      teacherHasPassword.value = await userStore.hasPassword(
+        registrationStore.registration.teacherID
+      )
     }
   })
 
@@ -351,14 +359,15 @@
           <BaseToggleB
             v-show="
               teacherRadio === 'existing' &&
-              !!registrationStore.registration.teacherID
+              !!registrationStore.registration.teacherID &&
+              teacherHasPassword === false
             "
             v-model="editingDisabled"
             label="Edit Information">
           </BaseToggleB>
         </div>
       </div>
-      <div class="col-span-9 sm:col-span-5">
+      <div class="col-span-12 sm:col-span-6">
         <BaseInput
           v-model.trim="contact.firstName"
           :class="fieldsDisabled ? 'off' : ''"
@@ -369,7 +378,7 @@
           :disabled="fieldsDisabled"
           @change-status="(stat: string) => fieldStatus(stat, 'firstName')" />
       </div>
-      <div class="col-span-12 sm:col-span-5">
+      <div class="col-span-12 sm:col-span-6">
         <BaseInput
           v-model.trim="contact.lastName"
           :class="fieldsDisabled ? 'off' : ''"

@@ -47,44 +47,10 @@
       navigateTo('/Registrations')
     }
   })
-
-  async function submitRegistration() {
-    try {
-      let dataSending = true
-      confirmationNumber.value = `WMF-${
-        registrationStore.registrationId
-      }-${_.random(1000, 9999)}`
-      registrationStore.registration.submittedAt = date
-      registrationStore.registration.confirmation = confirmationNumber.value
-      await registrationStore.updateRegistration()
-      const payload = Object.assign(
-        {},
-        {
-          performers: toRaw(performerStore.performers),
-          teacher: toRaw(teacherStore.teacher),
-          group: toRaw(groupStore.group),
-          school: toRaw(schoolStore.school),
-          schoolGroups: toRaw(schoolGroupStore.schoolGroup),
-          community: toRaw(communityStore.community),
-          registeredClasses: toRaw(classesStore.registeredClasses),
-          performerType: toRaw(appStore.performerType),
-          registration: toRaw(registrationStore.registration),
-          userFirstName: toRaw(userStore.user.firstName),
-          userLastName: toRaw(userStore.user.lastName),
-          userEmail: toRaw(userStore.user.email),
-        }
-      )
-      await useFetch('/api/send-email', { method: 'POST', body: payload })
-      submissionComplete.value = true
-      dataSending = false
-    } catch (err) {
-      console.log(err)
-    }
-  }
 </script>
 
 <template>
-  <div>
+  <div v-auto-animate>
     <h1 class="my-8">Registration Submission</h1>
     <SummaryTable />
     <section class="p-4 border-sky-700 bg-white border rounded-xl">
@@ -125,10 +91,7 @@
         >).
       </p>
     </section>
-    <p
-      class="m-4 p-3 text-center font-bold text-xl bg-red-600 rounded-xl text-white">
-      Please include the confirmation number when submitting payment.
-    </p>
+
     <p class="text-center font-bold text-xl">Entry fees are non-refundable.</p>
     <div
       class="text-center mx-auto max-w-[400px] border border-sky-600 rounded-lg p-4 bg-white">
@@ -137,45 +100,21 @@
         label="I have read and understand the preceding text."></BaseCheckbox>
     </div>
     <br />
-    <h4 class="pt-6 text-center">
-      We look forward to having you participate in the this year's
-    </h4>
-    <h3 class="pb-6 text-center">Winnipeg Music Festival</h3>
+
     <div class="text-center">
-      <BaseButton
+      <BaseRouteButton
         v-if="!submissionComplete"
         class="btn btn-blue"
         :disabled="!readConfirmation"
-        @click="submitRegistration">
-        Submit Application
-      </BaseButton>
+        to="/submission/payment">
+        Proceed to Payment
+      </BaseRouteButton>
       <BaseRouteButton
         v-if="!submissionComplete"
         class="btn btn-blue"
         to="Registrations">
         Cancel
       </BaseRouteButton>
-      <div
-        v-if="submissionComplete"
-        class="pb-8">
-        <strong>
-          <h3 class="mx-auto">Confirmation Number</h3>
-          <h3 class="mx-auto">{{ confirmationNumber }}</h3>
-          <h4 class="mx-auto">{{ formattedDate }}</h4>
-        </strong>
-      </div>
-      <BaseRouteButton
-        v-if="submissionComplete"
-        class="btn btn-blue h-14"
-        to="Registrations">
-        Return to Registrations
-      </BaseRouteButton>
-      <BaseButton
-        v-if="submissionComplete"
-        class="btn btn-blue h-14"
-        @click="printWindow">
-        Print this page
-      </BaseButton>
     </div>
   </div>
 </template>
