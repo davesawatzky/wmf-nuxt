@@ -3,6 +3,7 @@
   import YupPassword from 'yup-password'
   import { SignInDocument, SignUpDocument } from '@/graphql/gql/graphql'
   import { useUser } from '@/stores/useUser'
+  import { useToast } from 'vue-toastification'
 
   YupPassword(yup)
 
@@ -24,6 +25,7 @@
     lastName: '',
   })
   const userStore = useUser()
+  const toast = useToast()
 
   function setIsOpen(value: boolean) {
     isOpen.value = value
@@ -80,9 +82,10 @@
         }
       }
     })
-    signinError(() => {
-      error.value = 'Incorrect email or password.'
-      setTimeout(() => resetFields(), 2500)
+    signinError((error) => {
+      toast.error('Incorrect email or password.')
+      console.log(error)
+      setTimeout(() => resetFields(), 4000)
     })
   })
 
@@ -177,7 +180,7 @@
     registerError((err) => {
       error.value = 'Error occured'
       console.log(err)
-      setTimeout(() => resetFields(), 2500)
+      setTimeout(() => resetFields(), 4000)
     })
   })
 
@@ -323,12 +326,6 @@
           @click="signin()">
           Sign In
         </BaseButton>
-        <BaseErrorMessage
-          v-if="error"
-          v-auto-animate
-          class="text-center text-lg"
-          >{{ error }}</BaseErrorMessage
-        >
         <br />
         <p class="text-center">
           <a
@@ -346,12 +343,6 @@
           @click="signup()">
           Register New Account
         </BaseButton>
-        <BaseErrorMessage
-          v-if="error"
-          v-auto-animate
-          class="text-center text-lg"
-          >{{ error }}</BaseErrorMessage
-        >
         <br />
         <p class="text-center">
           <a

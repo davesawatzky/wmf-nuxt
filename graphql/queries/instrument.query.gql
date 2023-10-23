@@ -1,0 +1,9 @@
+query instrument($instrumentId: Int, $instrumentName: String) {
+  instrument(id: $instrumentId, name: $instrumentName) {
+    name
+    mozart
+    discipline {
+      name
+    }
+  }
+}

@@ -1,6 +1,4 @@
 <script setup lang="ts">
-  import { DateTime } from 'luxon'
-  import _ from 'lodash'
   import {
     loadStripe,
     Stripe,
@@ -8,42 +6,21 @@
     StripePaymentElementOptions,
     StripeElementsOptionsClientSecret,
   } from '@stripe/stripe-js'
-  import { usePerformers } from '@/stores/userPerformer'
-  import { useTeacher } from '@/stores/userTeacher'
-  import { useGroup } from '@/stores/userGroup'
-  import { useSchool } from '@/stores/userSchool'
-  import { useSchoolGroup } from '@/stores/userSchoolGroup'
-  import { useCommunity } from '@/stores/userCommunity'
-  import { useClasses } from '@/stores/userClasses'
+
   import { useRegistration } from '@/stores/userRegistration'
   import { useUser } from '@/stores/useUser'
   import { useAppStore } from '@/stores/appStore'
 
-  const performerStore = usePerformers()
-  const teacherStore = useTeacher()
-  const groupStore = useGroup()
-  const schoolStore = useSchool()
-  const schoolGroupStore = useSchoolGroup()
-  const communityStore = useCommunity()
-  const classesStore = useClasses()
   const appStore = useAppStore()
   const userStore = useUser()
   const registrationStore = useRegistration()
   let clientSec: string = ''
+  // const total = ref(0)
 
-  const confirmationNumber = ref('')
-  const submissionComplete = ref(false)
   const config = useRuntimeConfig()
   let stripe: Stripe | null
   const loading = ref(true)
   let elements: StripeElements
-
-  function printWindow() {
-    window.print()
-  }
-
-  const date = new Date()
-  const formattedDate = DateTime.now().toLocaleString(DateTime.DATETIME_MED)
 
   definePageMeta({
     middleware: ['submission'],
@@ -89,8 +66,15 @@
     } as StripeElementsOptionsClientSecret)
 
     const paymentElementOptions: StripePaymentElementOptions = {
-      // layout: 'tabs',
+      layout: {
+        type: 'accordion',
+        defaultCollapsed: false,
+        radios: false,
+        spacedAccordionItems: true,
+      },
     }
+    const linkAuthenticationElement = elements.create('linkAuthentication')
+    linkAuthenticationElement.mount('#link-authentication-element')
     const paymentElement = elements.create('payment', paymentElementOptions)
     paymentElement.mount('#payment-element')
 
@@ -98,15 +82,21 @@
   }
 
   async function handleSubmit(event: Event) {
+    event.preventDefault()
     if (loading.value) return
     if (!stripe || !elements) {
       return
     }
-    event.preventDefault()
+    if (appStore.stripePayment === 'cash') {
+      loading.value = false
+      await navigateTo('/submission/result')
+      return
+    }
+
     loading.value = true
-    elements.submit()
 
     const {
+      id,
       firstName,
       lastName,
       email,
@@ -118,11 +108,13 @@
       postalCode,
     } = userStore.user
 
+    elements.submit()
+
     const { error } = await stripe!.confirmPayment({
       elements,
       clientSecret: clientSec,
       confirmParams: {
-        return_url: `${config.public.apiBase}/Registrations`, // TODO: Change this to the return page
+        return_url: `${config.public.apiBase}/submission/result`,
       },
     })
 
@@ -131,10 +123,8 @@
     // your `return_url`. For some payment methods like iDEAL, your customer will
     // be redirected to an intermediate site first to authorize the payment, then
     // redirected to the `return_url`.
-    if (error.type === 'card_error' || error.type === 'validation_error') {
+    if (error) {
       console.log(error.message)
-    } else {
-      console.log('An unexpected error occurred.')
     }
 
     loading.value = false
@@ -168,91 +158,104 @@
     }
   }
 
-  async function submitRegistration() {
-    try {
-      let dataSending = true
-      confirmationNumber.value = `WMF-${
-        registrationStore.registrationId
-      }-${_.random(1000, 9999)}`
-      registrationStore.registration.submittedAt = date
-      registrationStore.registration.confirmation = confirmationNumber.value
-      await registrationStore.updateRegistration()
-      const payload = Object.assign(
-        {},
-        {
-          performers: toRaw(performerStore.performers),
-          teacher: toRaw(teacherStore.teacher),
-          group: toRaw(groupStore.group),
-          school: toRaw(schoolStore.school),
-          schoolGroups: toRaw(schoolGroupStore.schoolGroup),
-          community: toRaw(communityStore.community),
-          registeredClasses: toRaw(classesStore.registeredClasses),
-          performerType: toRaw(appStore.performerType),
-          registration: toRaw(registrationStore.registration),
-          userFirstName: toRaw(userStore.user.firstName),
-          userLastName: toRaw(userStore.user.lastName),
-          userEmail: toRaw(userStore.user.email),
-        }
+  const administrativeCost = computed(() => {
+    return (registrationStore.registration.totalAmt * 0.029 + 0.3).toFixed(2)
+  })
+
+  const total = computed(() => {
+    if (appStore.stripePayment === 'ccard') {
+      return (
+        +registrationStore.registration.totalAmt + +administrativeCost.value
       )
-      await useFetch('/api/send-email', { method: 'POST', body: payload })
-      submissionComplete.value = true
-      dataSending = false
-    } catch (err) {
-      console.log(err)
+    } else if (appStore.stripePayment === 'cash') {
+      return registrationStore.registration.totalAmt
     }
-  }
+  })
 </script>
 
 <template>
   <div v-auto-animate>
-    <form
-      id="payment-form"
-      @submit="handleSubmit">
-      <div id="payment-element">
-        <!--Stripe.js injects the Payment Element-->
-      </div>
-      <button id="submit">
-        <div
-          class="spinner hidden"
-          id="spinner"></div>
-        <span id="button-text">Pay now</span>
-      </button>
-      <div
-        id="payment-message"
-        class="hidden"></div>
-    </form>
-    <p
-      class="m-4 p-3 text-center font-bold text-xl bg-red-600 rounded-xl text-white">
-      After submitting the form, a confirmation number will appear on the
-      screen. <br />
-      Please include this confirmation number when submitting payment.
+    <h1 class="my-8">Payment</h1>
+    <p class="m-4 p-3 text-center font-bold text-xl rounded-xl">
+      Please do not close your browser after submitting!
     </p>
-    <h4 class="pt-6 text-center">
-      We look forward to having you participate in the this year's
-    </h4>
-    <h3 class="pb-6 text-center">Winnipeg Music Festival</h3>
-    <div
-      v-if="submissionComplete"
-      class="pb-8">
-      <strong>
-        <h3 class="mx-auto">Confirmation Number</h3>
-        <h3 class="mx-auto">{{ confirmationNumber }}</h3>
-        <h4 class="mx-auto">{{ formattedDate }}</h4>
-      </strong>
+    <div class="grid grid-cols-2 gap-4">
+      <fieldset>
+        <div class="p-6 border border-sky-700 rounded-lg bg-white">
+          <div class="pb-4">
+            <BaseRadio
+              v-model="appStore.stripePayment"
+              name="paymentType"
+              label="Cash, Cheque, E-Transfer"
+              value="cash" />
+          </div>
+          <ul class="list-disc p-4">
+            <li>
+              Payment may be made by cash, cheque, or e-transfer to the Winnipeg
+              Music Festival (<a href="mailto:wmf@mts.net"
+                ><strong>wmf@mts.net</strong></a
+              >).
+            </li>
+            <li>
+              Registrations will not be considered submitted until payment is
+              received.
+            </li>
+          </ul>
+          <BaseButton class="w-[30vw]">Submit Payment</BaseButton>
+        </div>
+        <div class="text-center font-bold text-xl py-3">OR</div>
+        <div class="p-6 border border-sky-700 rounded-lg bg-white">
+          <div class="pb-8">
+            <BaseRadio
+              v-model="appStore.stripePayment"
+              name="paymentType"
+              label="Pay by Credit Card"
+              value="ccard" />
+          </div>
+          <form
+            id="payment-form"
+            @submit="handleSubmit">
+            <div id="link-authentication-element">
+              <!--Stripe.js injects the Payment Element-->
+            </div>
+            <div id="payment-element">
+              <!--Stripe.js injects the Payment Element-->
+            </div>
+            <button id="submit">
+              <div
+                class="spinner hidden"
+                id="spinner"></div>
+              <span id="button-text">Submit Payment</span>
+            </button>
+            <div
+              id="payment-message"
+              class="hidden"></div>
+          </form>
+        </div>
+      </fieldset>
+      <div>
+        <div class="p-4 border border-sky-700 rounded-lg bg-white">
+          <table class="table-fixed w-full">
+            <tbody>
+              <tr>
+                <td class="">Subtotal</td>
+                <td class="text-right">
+                  ${{ registrationStore.registration.totalAmt }}
+                </td>
+              </tr>
+              <tr v-if="appStore.stripePayment === 'ccard'">
+                <td>Administration</td>
+                <td class="text-right">${{ administrativeCost }}</td>
+              </tr>
+              <tr class="font-bold border-t border-sky-700 pt-5">
+                <td class="pt-3">Total</td>
+                <td class="pt-3 text-right">${{ total }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
-    <BaseRouteButton
-      v-if="submissionComplete"
-      class="btn btn-blue h-14"
-      to="/Registrations">
-      Return to Registrations
-    </BaseRouteButton>
-
-    <BaseButton
-      v-if="submissionComplete"
-      class="btn btn-blue h-14"
-      @click="printWindow">
-      Print this page
-    </BaseButton>
   </div>
 </template>
 
@@ -263,15 +266,8 @@
   }
 
   form {
-    width: 30vw;
-    min-width: 500px;
+    width: full;
     align-self: center;
-    box-shadow:
-      0px 0px 0px 0.5px rgba(50, 50, 93, 0.1),
-      0px 2px 5px 0px rgba(50, 50, 93, 0.1),
-      0px 1px 1.5px 0px rgba(0, 0, 0, 0.07);
-    border-radius: 7px;
-    padding: 40px;
   }
 
   .hidden {

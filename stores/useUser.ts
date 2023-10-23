@@ -78,7 +78,7 @@ export const useUser = defineStore('user', () => {
         { fetchPolicy: 'network-only' }
       )
       onResult((result) => {
-        resolve(result.data.checkIfPasswordExists)
+        resolve(result.data.checkIfPasswordExists.pass)
       })
       onError((error) => {
         console.log(error)

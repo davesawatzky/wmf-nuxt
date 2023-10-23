@@ -21,10 +21,10 @@ export const useClasses = defineStore(
   'registeredClasses',
   () => {
     const registeredClasses = ref<RegisteredClass[]>([])
-    const MOZART_CLASSES = ['7700', '7701', '7702', '7703', '7704']
+    const MOZART_CLASSES = ['7700', '7701', '7702', '7703', '7704', '7705']
     const fieldConfigStore = useFieldConfig()
     function $reset() {
-      registeredClasses.value = <RegisteredClass[]>[]
+      registeredClasses.value.splice(0, registeredClasses.value.length)
     }
 
     const classErrors = computed(() => {
@@ -61,6 +61,7 @@ export const useClasses = defineStore(
       try {
         registeredClasses.value.push(<RegisteredClass>{
           id: regClass.id,
+          classType: regClass.classType || 'CLASS',
           classNumber: regClass.classNumber || '',
           discipline: regClass.discipline || '',
           subdiscipline: regClass.subdiscipline || '',

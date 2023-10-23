@@ -2,6 +2,7 @@ query RegisteredClasses($registrationId: Int!) {
   registration(id: $registrationId) {
     registeredClasses {
       category
+      classType
       classNumber
       discipline
       id

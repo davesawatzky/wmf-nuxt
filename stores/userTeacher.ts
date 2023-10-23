@@ -6,9 +6,12 @@ import {
   TeacherInfoDocument,
   TeacherUpdateDocument,
   AllTeachersSearchDocument,
+} from '~/graphql/gql/graphql'
+import type {
+  TeacherCreateMutation,
+  TeacherInput,
   Teacher,
 } from '~/graphql/gql/graphql'
-import type { TeacherCreateMutation, TeacherInput } from '~/graphql/gql/graphql'
 
 export interface AllTeachers {
   id: number

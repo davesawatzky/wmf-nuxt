@@ -6,6 +6,7 @@ interface TrophyDescriptions {
 }
 
 interface Descriptions {
+  classDescription: string
   subdisciplineDescription: string
   categoryDescription: string
   levelDescription: string
@@ -18,6 +19,7 @@ export const festivalClasses = defineStore(
   () => {
     const descriptions = ref([
       {
+        classDescription: '',
         subdisciplineDescription: '',
         categoryDescription: '',
         levelDescription: '',
@@ -29,6 +31,7 @@ export const festivalClasses = defineStore(
     function $reset() {
       descriptions.value = [
         {
+          classDescription: '',
           subdisciplineDescription: '',
           categoryDescription: '',
           levelDescription: '',

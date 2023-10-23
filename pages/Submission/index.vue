@@ -85,11 +85,6 @@
         withdraw must notify the Festival office in writing as early as
         possible.
       </p>
-      <p>
-        Payment may be made by cheque or e-transfer to the Winnipeg Music
-        Festival (<a href="mailto:wmf@mts.net"><strong>wmf@mts.net</strong></a
-        >).
-      </p>
     </section>
 
     <p class="text-center font-bold text-xl">Entry fees are non-refundable.</p>

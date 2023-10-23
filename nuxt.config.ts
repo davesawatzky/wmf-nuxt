@@ -51,12 +51,11 @@ export default defineNuxtConfig({
     'nuxt-vitest',
     '@vee-validate/nuxt',
     '@vueuse/nuxt',
-    '@nuxt/image-edge',
     'nuxt-icon',
     'nuxt-headlessui',
   ],
   pinia: {
-    autoImports: ['defineStore'],
+    storesDirs: ['stores'],
   },
   piniaPersistedstate: {
     storage: 'sessionStorage',

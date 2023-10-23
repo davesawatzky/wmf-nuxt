@@ -16,6 +16,7 @@ export const useAppStore = defineStore(
     const selectionExists = ref(false) // registered selection is fully loaded into class form
     const classContentLoaded = ref(false) // Existing class content is loaded from db
     const dataLoading = ref(false)
+    const stripePayment = ref('')
 
     function $reset() {
       editExisting.value = false
@@ -30,6 +31,7 @@ export const useAppStore = defineStore(
       selectionExists.value = false
       classContentLoaded.value = false
       dataLoading.value = false
+      stripePayment.value = 'cash'
     }
 
     return {
@@ -46,6 +48,7 @@ export const useAppStore = defineStore(
       selectionExists,
       classContentLoaded,
       dataLoading,
+      stripePayment,
     }
   },
   {

@@ -13,6 +13,7 @@
   import { useClasses } from '@/stores/userClasses'
   import { useAppStore } from '@/stores/appStore'
   import { usePerformers } from '@/stores/userPerformer'
+  import { useGroup } from '@/stores/userGroup'
   import type {
     Category,
     Discipline,
@@ -51,19 +52,30 @@
       : StatusEnum.null,
   })
 
-  const instrumentRequired = ref(false)
+  const instrumentRequired = ref(false) // used to be for mozart classes.  Might not need this anymore.
   const appStore = useAppStore()
   const performerStore = usePerformers()
-  const classesStore = useClasses()
-  const classSelection = ref(<FestivalClass>{}) // component variable
-  const loadInfoFirstRun = ref(true)
+  const groupStore = useGroup()
 
+  // TODO: Bug-prone - used for recording Registered Classes - but also for modelValue !!!!!!!
+  const classesStore = useClasses()
+  const classSelection = ref(<FestivalClass>{}) // Used for Festival Class Searchrd
+  const loadInfoFirstRun = ref(true) // Flag to keep track of when to load extra information.
+
+  // This is the Registered Class varialbe - sent to parent as modelValue
+  // and then on to the classesStore.registeredClasses from there.
   const selectedClasses = computed({
-    // used to emit values back to parent
     get: () => props.modelValue,
     set: (value) => emits('update:modelValue', value),
   })
 
+  /**
+   * Registration first gets loaded form the 'Registration' page
+   * if these values are present in userClasses.registeredClasses,
+   * then the background data is loaded for the attributes
+   * and used on the page.  It allows for filling the comboboxes with
+   * pre-saved data from an existing registration.
+   */
   onMounted(() => {
     if (props.modelValue.subdiscipline) {
       loadSubdisciplines()
@@ -80,6 +92,7 @@
     }
   })
 
+  // Loading the instruments table.
   const { result: instrumentQuery, onError: instrumentsError } =
     useQuery(InstrumentsDocument)
   const instruments = computed(() => instrumentQuery.value?.instruments ?? [])
@@ -88,7 +101,7 @@
   })
 
   /**
-   * Disciplines
+   * Disciplines combobox data
    */
   const { result: disciplineQuery, onError: errorDisciplines } = useQuery(
     DisciplinesByTypeDocument,
@@ -100,17 +113,78 @@
   errorDisciplines((error) => {
     console.log(error)
   })
-  const disciplines = computed(() => disciplineQuery.value?.disciplines ?? [])
+
+  /**
+   * This computed function determines the variety of disciplines that
+   * are displayed in the class page based on what instruments are chosen on
+   * a solo performer page or the type of group on the group info page.
+   */
+  const disciplines = computed(() => {
+    // if this is solo, then return only those instruments equialent to their instrument
+    // and the Mozart class if instrument>mozart is true.
+    if (
+      appStore.performerType === 'SOLO' &&
+      !!performerStore.performers[0].instrument
+    ) {
+      if (performerStore.performers[0].instrument.toLowerCase() === 'voice') {
+        return disciplineQuery.value?.disciplines.filter((item) => {
+          return (
+            item.name.toLowerCase() === 'vocal' ||
+            item.name.toLowerCase() === 'musical theatre' ||
+            item.name.toLowerCase().includes('mozart')
+          )
+        })
+      } else {
+        // TODO:  This block is still problematic.  Mozart shouldn't be on
+        // handbells, pipe organ, or percussion.
+        return disciplineQuery.value?.disciplines.filter((item) => {
+          return (
+            item.instruments?.find(
+              (el) => el.name === performerStore.performers[0].instrument
+            ) || item.name.toLowerCase().includes('MOZART')
+          )
+        })
+      }
+    } else if (appStore.performerType === 'GROUP') {
+      if (groupStore.group.groupType === 'vocal') {
+        return disciplineQuery.value?.disciplines.filter((item) => {
+          return (
+            item.name.toLowerCase().includes('vocal') ||
+            item.name.toLowerCase().includes('musical theatre')
+          )
+        })
+      } else if (groupStore.group.groupType === 'instrumental') {
+        return disciplineQuery.value?.disciplines.filter((item) => {
+          return (
+            item.name.toLowerCase().includes('brass') ||
+            item.name.toLowerCase().includes('classical guitar') ||
+            item.name.toLowerCase().includes('percussion') ||
+            item.name.toLowerCase().includes('piano') ||
+            item.name.toLowerCase().includes('strings') ||
+            item.name.toLowerCase().includes('woodwinds')
+          )
+        })
+      } else if (groupStore.group.groupType === 'mixed') {
+        return disciplineQuery.value?.disciplines.filter((item) => {
+          return item.name.toLowerCase().includes('mixed group')
+        })
+      }
+    } else {
+      return disciplineQuery.value?.disciplines ?? []
+    }
+  })
+  // chosenDiscipline is the discipline chosen from the template
+  // through the vmodel on selectedClasses.discipline
   const chosenDiscipline = computed(() => {
     return (
-      disciplines.value.find((item: Discipline) => {
+      disciplines.value?.find((item) => {
         return item.name === selectedClasses.value.discipline
       }) ?? <Discipline>{}
     )
   })
 
   /**
-   * Subdisciplines
+   * Subdisciplines combobox
    */
   const {
     result: subdisc,
@@ -130,6 +204,8 @@
   const subdisciplines = computed(() => {
     return subdisc.value?.subdisciplines ?? []
   })
+  // chosenSubdiscipline is the subdiscipline chosen from the template
+  // through the vmodel on selectedClasses.subdiscipline
   const chosenSubdiscipline = computed(() => {
     return (
       subdisciplines.value.find((item: Subdiscipline) => {
@@ -139,7 +215,7 @@
   })
 
   /**
-   * Grades / Levels
+   * Grades / Levels combobox
    */
   const {
     result: gradeLevels,
@@ -154,6 +230,8 @@
   )
   errorLevel((error) => console.log(error))
   const levels = computed(() => gradeLevels.value?.levels ?? [])
+  // chosenGradeLevel is the grade/level chosen from the template
+  // through the vmodel on selectedClasses.level
   const chosenGradeLevel = computed(() => {
     return (
       levels.value.find((item: Level) => {
@@ -163,7 +241,7 @@
   })
 
   /**
-   * Categories
+   * Categories combobox
    */
   const {
     result: cat,
@@ -179,6 +257,8 @@
   )
   errorCategories((error) => console.log(error))
   const categories = computed(() => cat.value?.categories ?? [])
+  // chosenCategory is the category chosen from the template
+  // through the vmodel on selectedClasses.category
   const chosenCategory = computed(() => {
     return (
       categories.value.find((item: Category) => {
@@ -188,7 +268,9 @@
   })
 
   /**
-   * ClassName
+   * Class Name
+   * Once all three attributes are selected, the the final
+   * classname can be computed and showed on the page
    */
   const className = computed(() => {
     if (
@@ -203,9 +285,8 @@
   })
 
   /**
-   * Class Search for details incl. Number
+   * Class Search for details from the Festival Class table, incl. classNumber
    * Full result is copied to classSelection.
-   * Run after category is selected in festival class
    */
   const {
     load: loadClassInformation,
@@ -222,6 +303,12 @@
     }),
     { fetchPolicy: 'network-only' }
   )
+  /**
+   * Once the specific class has been retrieved (classSelection), the details
+   * then get emitted to the 'selectedClasses' modelValue and finally stored
+   * in the registered class for updating.
+   * selectedClasses <-- classSelection
+   */
   onClassSearchResult((result) => {
     classSelection.value = <FestivalClass>result.data.festivalClassSearch[0]
     selectedClasses.value.minSelections = classSelection.value.minSelections
@@ -238,10 +325,15 @@
         classSelection.value.minSelections
     }
     selectedClasses.value.classNumber = classSelection.value.classNumber
-    instrumentRequired.value = classesStore.MOZART_CLASSES.includes(
-      classSelection.value.classNumber
-    )
-    classesStore.updateClass(props.classId)
+    selectedClasses.value.classType = classSelection.value.classType.name
+    // instrumentRequired.value = classesStore.MOZART_CLASSES.includes(
+    //   classSelection.value.classNumber
+    // )
+
+    // Once the variables are all filled, then the data gets uploaded
+    //TODO: This line might not be needed anymore since we have automatic saving.
+    // Check it out
+    // classesStore.updateClass(props.classId)
     loadInfoFirstRun.value = false
   })
   errorClass((error) => {
@@ -253,6 +345,7 @@
       chosenSubdiscipline.value?.description ||
       chosenGradeLevel.value?.description ||
       chosenCategory.value?.description ||
+      classSelection.value?.description ||
       (classSelection.value.trophies ?? []).length > 0
     ) {
       return true
@@ -388,7 +481,6 @@
       subdiscipline: yup.string().required('Choose a subdiscipline'),
       level: yup.string().required('Choose a grade/level'),
       category: yup.string().required('Choose a category'),
-      instrument: yup.string().nullable(),
     })
   )
 
@@ -414,7 +506,7 @@
           :status="status.discipline"
           label="Discipline"
           name="discipline"
-          :options="disciplines" />
+          :options="disciplines!" />
       </div>
       <div class="col-span-6 lg:col-span-3">
         <BaseSelect
@@ -450,43 +542,36 @@
     <div v-if="className">
       <div class="col-span-12 md:col-span-12">
         <p class="text-2xl text-center font-bold">
-          Class {{ classSelection.classNumber }} - {{ className }}
+          {{ selectedClasses.classType }}
+          {{ selectedClasses.classNumber }} -
+          {{ className }}
         </p>
-      </div>
-      <div
-        v-if="instrumentRequired"
-        class="col-span-12">
-        <!-- TODO: This shouldn't go to the performer info -->
-        <BaseSelect
-          id="instrument"
-          v-model="performerStore.performers[0].instrument"
-          :status="status.instrument"
-          :options="instruments"
-          label="Instrument"
-          name="instrument" />
-      </div>
-
-      <div
-        v-if="(classSelection.trophies ?? []).length > 0"
-        v-auto-animate>
-        <h4>Trophy Eligibility</h4>
-        <div
-          v-for="trophy in classSelection.trophies"
-          :key="trophy.id">
-          <h6>{{ trophy.name }}:</h6>
-          <p class="text-sm pb-2">
-            {{ trophy.description }}
-          </p>
-        </div>
       </div>
       <div
         v-if="notes"
         class="col-span-12">
         <h4 class="pb-2">Notes</h4>
+        <p v-if="classSelection?.classType?.description">
+          {{ classSelection?.classType?.description }}
+        </p>
+        <div
+          v-if="(classSelection.trophies ?? []).length > 0"
+          v-auto-animate>
+          <h4>Trophy Eligibility</h4>
+          <div
+            v-for="trophy in classSelection.trophies"
+            :key="trophy.id">
+            <h6>{{ trophy.name }}:</h6>
+            <p class="text-sm pb-2">
+              {{ trophy.description }}
+            </p>
+          </div>
+        </div>
+
         <div
           v-if="chosenSubdiscipline?.description"
           v-auto-animate>
-          <h5>Subdiscipline</h5>
+          <h4>Subdiscipline</h4>
           <p class="text-sm pb-2">
             {{ chosenSubdiscipline.description }}
           </p>
@@ -494,7 +579,7 @@
         <div
           v-if="chosenGradeLevel?.description"
           v-auto-animate>
-          <h5>Grade / Level</h5>
+          <h4>Grade / Level</h4>
           <p class="text-sm pb-2">
             {{ chosenGradeLevel.description }}
           </p>
@@ -502,9 +587,17 @@
         <div
           v-if="chosenCategory?.description"
           v-auto-animate>
-          <h5>Category</h5>
+          <h4>Category</h4>
           <p class="text-sm pb-2">
             {{ chosenCategory.description }}
+          </p>
+        </div>
+        <div
+          v-if="classSelection?.description"
+          v-auto-animate>
+          <h4>Class</h4>
+          <p class="text-sm pb-2">
+            {{ classSelection?.description }}
           </p>
         </div>
       </div>

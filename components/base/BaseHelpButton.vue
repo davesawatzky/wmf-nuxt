@@ -1,15 +1,16 @@
 <script setup lang="ts">
+  import { useToast } from 'vue-toastification'
+
   const props = defineProps<{
     helpMessage?: string
   }>()
-
-  const msg = () => alert(props.helpMessage)
+  const toast = useToast()
 </script>
 
 <template>
   <button
     v-if="helpMessage"
-    @click="msg">
+    @click="toast.info(helpMessage)">
     <Icon
       class="text-lg"
       name="fluent:question-circle-12-filled" />

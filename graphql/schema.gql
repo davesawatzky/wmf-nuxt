@@ -31,6 +31,12 @@ type CategoryPayload {
   userErrors: [UserError!]!
 }
 
+type ClassType {
+  description: String
+  id: Int!
+  name: String!
+}
+
 type Community {
   chaperones: Int
   conflictPerformers: String
@@ -85,6 +91,7 @@ scalar Decimal
 
 type Discipline {
   id: Int!
+  instruments: [Instrument!]
   name: String!
   subdisciplines(performerType: PerformerType): [Subdiscipline!]
 }
@@ -101,6 +108,8 @@ type DisciplinePayload {
 type FestivalClass {
   category: Category!
   classNumber: String!
+  classType: ClassType!
+  description: String
   id: Int!
   level: Level!
   maxSelections: Int!
@@ -115,6 +124,8 @@ type FestivalClass {
 input FestivalClassInput {
   categoryID: Int!
   classNumber: String!
+  classTypeID: Int!
+  description: String
   levelID: Int!
   maxSelections: Int!
   minSelections: Int!
@@ -171,7 +182,9 @@ type GroupPayload {
 }
 
 type Instrument {
+  discipline: Discipline!
   id: Int!
+  mozart: Boolean!
   name: String!
 }
 
@@ -224,10 +237,6 @@ type Mutation {
     disciplineInput: DisciplineInput!
     id: Int!
   ): DisciplinePayload!
-  festivalClassCreate(
-    festivalClass: FestivalClassInput!
-    performerType: PerformerType!
-  ): FestivalClassPayload!
   festivalClassDelete(festivalClassID: Int!): FestivalClassPayload!
   festivalClassUpdate(
     festivalClass: FestivalClassInput!
@@ -372,6 +381,7 @@ type Query {
   category(id: Int!): Category!
   checkIfPasswordExists(id: Int!): PasswordExists!
   checkUser(email: String!): User!
+  classType(id: Int!): ClassType!
   communities: [Community!]!
   community(registrationID: Int!): Community!
   discipline(id: Int!): Discipline!
@@ -389,7 +399,7 @@ type Query {
   fieldConfigs: [FieldConfig!]!
   group(registrationID: Int!): Group!
   groups: [Group!]!
-  instrument(id: Int!): Instrument!
+  instrument(id: Int, name: String): Instrument!
   instruments: [Instrument!]!
   level(id: Int!): Level!
   levels(categoryID: Int, subdisciplineID: Int): [Level!]!
@@ -425,6 +435,7 @@ type Query {
 type RegisteredClass {
   category: String
   classNumber: String
+  classType: String
   discipline: String
   id: Int!
   level: String
@@ -440,6 +451,7 @@ type RegisteredClass {
 input RegisteredClassInput {
   category: String
   classNumber: String
+  classType: String
   discipline: String
   level: String
   maxSelections: Int

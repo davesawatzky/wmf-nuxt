@@ -2,5 +2,9 @@ query Instruments {
   instruments {
     id
     name
+    mozart
+    discipline {
+      name
+    }
   }
 }

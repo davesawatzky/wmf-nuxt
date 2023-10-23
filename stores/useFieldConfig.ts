@@ -25,7 +25,7 @@ export const useFieldConfig = defineStore(
     const requiredFields = ref<FieldConfig[]>([])
     const appStore = useAppStore()
     function $reset() {
-      requiredFields.value = []
+      requiredFields.value.splice(0, requiredFields.value.length)
     }
 
     function performerTypeFields(tableName: string): string[] {

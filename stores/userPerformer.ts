@@ -18,7 +18,7 @@ export const usePerformers = defineStore(
     const performers = ref([] as Performer[])
     const fieldConfigStore = useFieldConfig()
     function $reset() {
-      performers.value = <Performer[]>[]
+      performers.value.splice(0, performers.value.length)
     }
 
     const numberOfPerformers = computed(() => {

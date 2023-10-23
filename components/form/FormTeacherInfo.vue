@@ -48,11 +48,13 @@
       schoolTeacher.value = false
     }
     if (!!registrationStore.registration.teacherID) {
-      teacherHasPassword.value = await userStore.hasPassword(
-        registrationStore.registration.teacherID
-      )
+      checkForPassword(registrationStore.registration.teacherID)
     }
   })
+
+  async function checkForPassword(id: number) {
+    teacherHasPassword.value = await userStore.hasPassword(id)
+  }
 
   const status = reactive<Status>({
     firstName: props.modelValue.firstName ? StatusEnum.saved : StatusEnum.null,
@@ -178,9 +180,10 @@
   const teacherRadio = ref('existing')
   const editingDisabled = ref(true)
   const duplicateCheck = ref<AllTeachers>()
+  const teacherCreated = ref(false)
 
   // Creates a new teacher account when the radio button is pressed.
-  watch(teacherRadio, async (newValue) => {
+  watch(teacherRadio, async (newValue, oldValue) => {
     console.log('TeacherRadio Watcher')
     if (newValue === 'new') {
       teacherStore.$resetTeacher()
@@ -190,10 +193,15 @@
         schoolTeacher.value
       )
       registrationStore.registration.teacherID = teacherStore.teacher.id
+      teacherCreated.value = true
 
       // Removes the newly created teacher account if the performer changes
       // their mind on the radio buttons.
-    } else if (newValue === 'existing' && !duplicateCheck.value?.id) {
+    } else if (
+      newValue === 'existing' &&
+      teacherCreated.value === true &&
+      !duplicateCheck.value?.id
+    ) {
       if (registrationStore.registration.teacherID) {
         await teacherStore.deleteTeacher(
           registrationStore.registration.teacherID
@@ -201,6 +209,7 @@
       }
       registrationStore.registration.teacherID = null
       await registrationStore.updateRegistration('teacherID')
+      teacherCreated.value = false
     }
   })
 
@@ -208,10 +217,11 @@
   watch(
     () => registrationStore.registration.teacherID,
     async (newID, oldID) => {
-      if (newID !== oldID && newID) {
+      if (newID !== oldID && !!newID) {
         if (teacherRadio.value === 'existing') {
           await teacherStore.loadTeacher(newID)
         }
+        await checkForPassword(newID)
         await registrationStore.updateRegistration('teacherID')
       }
     }
@@ -266,7 +276,11 @@
   function displayValue(id: number) {
     const teacher = teacherStore.allTeachers.find((item) => item.id === id)
     if (teacher) {
-      return `${teacher?.firstName} ${teacher?.lastName}, ${teacher?.instrument}`
+      if (teacher.instrument) {
+        return `${teacher?.firstName} ${teacher?.lastName}, ${teacher?.instrument}`
+      } else {
+        return `${teacher?.firstName} ${teacher?.lastName}`
+      }
     }
   }
   const fieldsDisabled = computed(() => {
@@ -276,8 +290,8 @@
 
 <template>
   <div>
-    <div class="grid grid-cols-12 gap-x-3 gap-y-1 items-end">
-      <div class="col-span-12">
+    <div class="pb-5 grid grid-cols-12 gap-x-3 gap-y-1 items-end">
+      <div class="z-10 col-span-12">
         <BaseRadio
           v-model="teacherRadio"
           class="pb-3"
@@ -327,8 +341,10 @@
                     }">
                     <!-- <CheckIcon v-show="selected" /> -->
                     {{ teach.firstName }}
-                    {{ teach.lastName }},
-                    {{ teach.instrument }}
+                    {{ teach.lastName }}
+                    <span v-if="teach.instrument"
+                      >, {{ teach.instrument }}</span
+                    >
                   </span>
                   <span
                     v-if="selected"
@@ -355,9 +371,9 @@
             :disabled="!editingDisabled"
             value="new" />
         </div>
-        <div class="col-span-1 z-10">
+        <div class="col-span-1">
           <BaseToggleB
-            v-show="
+            v-if="
               teacherRadio === 'existing' &&
               !!registrationStore.registration.teacherID &&
               teacherHasPassword === false

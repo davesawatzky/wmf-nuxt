@@ -3,6 +3,7 @@
   import 'yup-phone-lite'
   import type { ContactInfo, Status } from '@/composables/types'
   import { usePerformers } from '@/stores/userPerformer'
+  import { InstrumentsDocument } from '~/graphql/gql/graphql'
 
   const props = defineProps<{
     modelValue: ContactInfo
@@ -19,10 +20,18 @@
   }>()
 
   const performerStore = usePerformers()
+  const appStore = useAppStore()
 
   const contact = computed({
     get: () => props.modelValue,
     set: (value) => emits('update:modelValue', value),
+  })
+
+  const { result: instrumentQuery, onError: instrumentsError } =
+    useQuery(InstrumentsDocument)
+  const instruments = computed(() => instrumentQuery.value?.instruments ?? [])
+  instrumentsError((error) => {
+    console.log(error)
   })
 
   const status = reactive<Status>({
@@ -249,14 +258,13 @@
         label="Email"
         @change-status="(stat: string) => fieldStatus(stat, 'email')" />
     </div>
-    <div
-      v-if="groupperformer"
-      class="col-span-6 sm:col-span-6">
-      <BaseInput
-        v-model.trim="contact.instrument"
+    <div class="col-span-6 sm:col-span-6">
+      <BaseSelect
+        id="instrument"
+        v-model="contact.instrument"
         :status="status.instrument"
         name="instrument"
-        type="text"
+        :options="instruments"
         label="Instrument"
         @change-status="(stat: string) => fieldStatus(stat, 'instrument')" />
     </div>

@@ -2,5 +2,10 @@ query DisciplinesByType($performerType: PerformerType!) {
   disciplines(performerType: $performerType) {
     id
     name
+    instruments {
+      id
+      name
+      mozart
+    }
   }
 }
