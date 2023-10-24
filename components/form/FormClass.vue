@@ -285,7 +285,7 @@
   })
 
   /**
-   * Class Search for details from the Festival Class table, incl. classNumber
+   * Class Search for details from the Festival Class db table, incl. classNumber
    * Full result is copied to classSelection.
    */
   const {

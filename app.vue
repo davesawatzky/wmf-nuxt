@@ -4,7 +4,6 @@
   <nuxt-layout>
     <nuxt-page />
   </nuxt-layout>
-  <div id="notifications"></div>
 </template>
 
 <style>

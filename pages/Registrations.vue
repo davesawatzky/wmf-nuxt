@@ -363,7 +363,7 @@
             <li>A copy can be printed for your records.</li>
           </ul>
         </div>
-        <h3>Begin New Registration Form</h3>
+        <h3>Start A New Registration Form</h3>
       </div>
       <!-- Discipline Cards -->
       <div class="grid grid-cols-2 lg:grid-cols-4">
@@ -378,12 +378,12 @@
           alt-text="New Group Registration"
           @click="groupOpen ? newRegistration(PerformerType.GROUP) : ''" />
         <BaseCard
-          :label="schoolOpen ? 'School' : 'School - Closed'"
+          :label="schoolOpen ? 'School' : 'School - Coming Soon'"
           :photo="schoolOpen ? schoolPhoto : schoolPhotoBW"
           alt-text="New School Registration"
           @click="schoolOpen ? newRegistration(PerformerType.SCHOOL) : ''" />
         <BaseCard
-          :label="communityOpen ? 'Community' : 'Community - Closed'"
+          :label="communityOpen ? 'Community' : 'Community - Coming Soon'"
           :photo="communityOpen ? communityPhoto : communityPhotoBW"
           alt-text="New Community Registration"
           @click="
