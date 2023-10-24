@@ -10,7 +10,11 @@
   watch(
     () => performerStore.performers[0].instrument,
     (newInstrument, oldInstrument) => {
-      if (!!oldInstrument && cancelInstChange.value === false) {
+      if (
+        !!oldInstrument &&
+        cancelInstChange.value === false &&
+        !!classesStore.registeredClasses[0].discipline
+      ) {
         previousInstrument.value = oldInstrument
         setIsOpen(true)
       } else if (cancelInstChange.value === true) {

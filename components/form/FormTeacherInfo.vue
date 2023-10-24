@@ -177,17 +177,28 @@
 
   // Working with the new Teacher ComboBox
 
-  const teacherRadio = ref('existing')
+  const teacherRadio = ref('existing') // 'existing' or 'new'
   const editingDisabled = ref(true)
+  // Checks if a newly created record is actually a duplicate
+  // of an existing record.
   const duplicateCheck = ref<AllTeachers>()
+  // Flag to show if this teacher was just created and
+  // did not exist in the user db before now.
   const teacherCreated = ref(false)
 
+  /**
+   * Watching the Teacher page action flow
+   */
   // Creates a new teacher account when the radio button is pressed.
+  // Empty Record is automatically created in the db
   watch(teacherRadio, async (newValue, oldValue) => {
     console.log('TeacherRadio Watcher')
     if (newValue === 'new') {
       teacherStore.$resetTeacher()
       registrationStore.registration.teacherID = null
+      privateTeacher.value = appStore.performerType !== 'SCHOOL' ? true : false
+      schoolTeacher.value = appStore.performerType === 'SCHOOL' ? true : false
+      console.log(privateTeacher.value, schoolTeacher.value)
       await teacherStore.createTeacher(
         privateTeacher.value,
         schoolTeacher.value
@@ -196,12 +207,8 @@
       teacherCreated.value = true
 
       // Removes the newly created teacher account if the performer changes
-      // their mind on the radio buttons.
-    } else if (
-      newValue === 'existing' &&
-      teacherCreated.value === true &&
-      !duplicateCheck.value?.id
-    ) {
+      // their mind on the radio buttons.  Runs if inputs are empty or full.
+    } else if (newValue === 'existing' && teacherCreated.value === true) {
       if (registrationStore.registration.teacherID) {
         await teacherStore.deleteTeacher(
           registrationStore.registration.teacherID
@@ -237,7 +244,7 @@
             fullname.toLowerCase()
           )
         })
-        if (duplicateCheck.value?.id) {
+        if (!!duplicateCheck.value?.id) {
           alert('Duplicate Found')
           console.log('Duplicate id: ', duplicateCheck.value.id)
           await teacherStore

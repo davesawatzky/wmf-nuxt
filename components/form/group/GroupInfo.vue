@@ -14,7 +14,11 @@
   watch(
     () => groupStore.group.groupType,
     async (newGroupType, oldGroupType) => {
-      if (!!oldGroupType && cancelGroupChange.value === false) {
+      if (
+        !!oldGroupType &&
+        cancelGroupChange.value === false &&
+        !!classesStore.registeredClasses[0].discipline
+      ) {
         previousGroupType.value = oldGroupType
         setIsOpen(true)
       } else if (cancelGroupChange.value === true) {
@@ -116,6 +120,7 @@
           @change-status="(stat: string) => fieldStatus(stat, 'name')" />
 
         <p>Number of Performers: {{ groupStore.group.numberOfPerformers }}</p>
+        <p>Average Age: {{ groupStore.group.age }}</p>
       </div>
       <div
         class="col-span-6 md:col-span-3 border border-spacing-1 border-sky-500 shadow-md rounded-lg px-6 pt-6">
@@ -165,7 +170,7 @@
             <UIDialogPanel
               class="p-4 w-full max-w-sm rounded-lg bg-white shadow-lg">
               <UIDialogTitle class="text-center text-xl font-bold"
-                >Change Instrument</UIDialogTitle
+                >Change Musical Group Type</UIDialogTitle
               >
               <UIDialogDescription class="text-center">
                 Are you sure? This will remove any classes already selected for

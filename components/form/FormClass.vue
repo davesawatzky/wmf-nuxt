@@ -141,7 +141,7 @@
           return (
             item.instruments?.find(
               (el) => el.name === performerStore.performers[0].instrument
-            ) || item.name.toLowerCase().includes('MOZART')
+            ) || item.name.toLowerCase().includes('mozart')
           )
         })
       }
@@ -326,14 +326,8 @@
     }
     selectedClasses.value.classNumber = classSelection.value.classNumber
     selectedClasses.value.classType = classSelection.value.classType.name
-    // instrumentRequired.value = classesStore.MOZART_CLASSES.includes(
-    //   classSelection.value.classNumber
-    // )
 
-    // Once the variables are all filled, then the data gets uploaded
-    //TODO: This line might not be needed anymore since we have automatic saving.
-    // Check it out
-    // classesStore.updateClass(props.classId)
+    classesStore.updateClass(props.classId)
     loadInfoFirstRun.value = false
   })
   errorClass((error) => {

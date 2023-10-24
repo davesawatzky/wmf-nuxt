@@ -73,6 +73,7 @@ input CredentialsSignin {
 input CredentialsSignup {
   email: String!
   firstName: String!
+  instrument: String
   lastName: String!
   password: String!
   privateTeacher: Boolean!
@@ -385,7 +386,7 @@ type Query {
   communities: [Community!]!
   community(registrationID: Int!): Community!
   discipline(id: Int!): Discipline!
-  disciplines(performerType: PerformerType): [Discipline!]!
+  disciplines(instrument: String, performerType: PerformerType): [Discipline!]!
   festivalClass(id: Int!): FestivalClass!
   festivalClassByNumber(festivalClassNumber: String!): FestivalClass!
   festivalClassSearch(

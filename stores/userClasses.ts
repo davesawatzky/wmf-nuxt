@@ -67,9 +67,9 @@ export const useClasses = defineStore(
           subdiscipline: regClass.subdiscipline || '',
           level: regClass.level || '',
           category: regClass.category || '',
-          minSelections: regClass.minSelections || 1,
-          maxSelections: regClass.maxSelections || 1,
-          numberOfSelections: regClass.numberOfSelections || 1,
+          minSelections: regClass.minSelections || undefined,
+          maxSelections: regClass.maxSelections || undefined,
+          numberOfSelections: regClass.numberOfSelections || undefined,
           price: (regClass.price as number) || 0.0,
           schoolGroupID: regClass.schoolGroupID || null,
           selections: regClass.selections || <Selection[]>[],
@@ -123,9 +123,6 @@ export const useClasses = defineStore(
         classCreate({
           registrationId,
           registeredClass: {
-            minSelections: 1,
-            maxSelections: 1,
-            numberOfSelections: 1,
             price: 0.0,
           },
         }).catch((error) => console.log(error))

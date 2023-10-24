@@ -1,7 +1,11 @@
 <script setup lang="ts">
   import * as yup from 'yup'
   import YupPassword from 'yup-password'
-  import { SignInDocument, SignUpDocument } from '@/graphql/gql/graphql'
+  import {
+    SignInDocument,
+    SignUpDocument,
+    InstrumentsDocument,
+  } from '@/graphql/gql/graphql'
   import { useUser } from '@/stores/useUser'
   import { useToast } from 'vue-toastification'
 
@@ -30,22 +34,64 @@
   function setIsOpen(value: boolean) {
     isOpen.value = value
   }
-  // const teacherExists = ref({})
+  function isLoggingIn() {
+    isLogin.value = !isLogin.value
+    values.isLogin = isLogin.value
+  }
 
-  const { handleSubmit } = useForm({
+  const { result: instrumentQuery, onError: instrumentsError } =
+    useQuery(InstrumentsDocument)
+  const instruments = computed(() => instrumentQuery.value?.instruments ?? [])
+  instrumentsError((error) => {
+    console.log(error)
+  })
+
+  const { handleSubmit, values } = useForm({
     validationSchema: toTypedSchema(
       yup.object({
-        firstName: yup.string().trim().label('First Name'),
-        lastName: yup.string().trim().label('Last Name'),
-        instrument: yup.string().trim().label('Instrument(s)'),
+        isLogin: yup.boolean(),
+        firstName: yup
+          .string()
+          .trim()
+          .label('First Name')
+          .when('isLogin', {
+            is: false,
+            then: (schema) => schema.required('Please enter your first name'),
+            otherwise: (schema) => schema.notRequired(),
+          }),
+        lastName: yup
+          .string()
+          .trim()
+          .label('Last Name')
+          .when('isLogin', {
+            is: false,
+            then: (schema) => schema.required('Please enter your last name'),
+            otherwise: (schema) => schema.notRequired(),
+          }),
+        instrument: yup
+          .string()
+          .trim()
+          .label('Instrument(s)')
+          .when('privateTeacher', {
+            is: true,
+            then: (schema) => schema.required('Please select an instrument'),
+            otherwise: (schema) => schema.notRequired(),
+          }),
         email: yup.string().trim().email().required().label('Email'),
         password: yup.string().trim().password().required().label('Password'),
         password2: yup
           .string()
           .trim()
-          .password()
-          .label('Password 2')
-          .oneOf([yup.ref('password')], 'Passwords must match'),
+          .when('isLogin', {
+            is: false,
+            then: (schema) =>
+              schema
+                .password()
+                .label('Password 2')
+                .oneOf([yup.ref('password')], 'Passwords must match'),
+            otherwise: (schema) => schema.notRequired(),
+          }),
+
         privateTeacher: yup.boolean().default(false),
         schoolTeacher: yup.boolean().default(false),
       })
@@ -259,7 +305,7 @@
           <BaseCheckbox
             v-model="privateTeacher"
             name="privateTeacher"
-            label="Private Teacher"
+            label="Private Teacher or Community Ensemble Leader"
             class="py-2 px-4"></BaseCheckbox>
           <BaseCheckbox
             v-model="schoolTeacher"
@@ -279,12 +325,12 @@
           name="lastName"
           type="text"
           label="Last Name" />
-        <BaseInput
+        <BaseSelect
           v-if="privateTeacher"
           v-auto-animate
           v-model="instrument"
           name="instrument"
-          type="text"
+          :options="instruments"
           label="Instrument(s)" />
       </div>
       <h3
@@ -326,15 +372,15 @@
           @click="signin()">
           Sign In
         </BaseButton>
-        <br />
-        <p class="text-center">
-          <a
-            class="hover:text-blue-600"
-            href="#"
-            @click="isLogin = !isLogin"
-            >Need to register for an account?</a
-          >
-        </p>
+        <BaseButton
+          v-auto-animate
+          v-model="isLogin"
+          :value="false"
+          class="w-full m-0 mt-4 btn btn-blue"
+          name="isLogin"
+          @click="isLoggingIn()">
+          "Register for an Aaccount
+        </BaseButton>
       </div>
       <div v-else>
         <BaseButton
@@ -343,15 +389,15 @@
           @click="signup()">
           Register New Account
         </BaseButton>
-        <br />
-        <p class="text-center">
-          <a
-            class="hover:text-blue-600"
-            href="#"
-            @click="isLogin = !isLogin"
-            >Already have an account?</a
-          >
-        </p>
+        <BaseButton
+          v-auto-animate
+          v-model="isLogin"
+          :value="true"
+          class="w-full m-0 mt-4 btn btn-blue"
+          name="isLogin"
+          @click="isLoggingIn()">
+          Sign in with Existing Account
+        </BaseButton>
       </div>
     </form>
   </div>

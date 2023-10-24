@@ -126,7 +126,7 @@
         v-model="userStore.user.privateTeacher"
         :status="status.privateTeacher"
         name="privateTeacher"
-        label="Private Teacher"
+        label="Private Teacher or Community Ensemble Leader"
         class="px-4 inline-block"
         @change-status="
           (stat: string) => fieldStatus(stat, 'privateTeacher')
