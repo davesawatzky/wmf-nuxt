@@ -12,6 +12,7 @@ export const useUser = defineStore('user', () => {
     user.value.id = userDetails.id!
     user.value.firstName = userDetails.firstName || ''
     user.value.lastName = userDetails.lastName || ''
+    user.value.hasSignedIn = userDetails.hasSignedIn || false
     user.value.email = userDetails.email || ''
     user.value.emailConfirmed = userDetails.emailConfirmed || false
     user.value.admin = userDetails.admin || false

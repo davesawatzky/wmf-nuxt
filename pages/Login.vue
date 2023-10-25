@@ -112,7 +112,14 @@
     })
     doneSignin(async (result) => {
       if (result.data?.signin.diatonicToken) {
-        await navigateTo('/registrations')
+        if (
+          result.data?.signin.user.privateTeacher &&
+          !result.data?.signin.user.hasSignedIn
+        ) {
+          await navigateTo('/userinformation')
+        } else {
+          await navigateTo('/registrations')
+        }
       }
       if (!!result.data?.signin.userErrors[0]) {
         if (
@@ -155,7 +162,7 @@
           if (checkPassword.pass) {
             alert('User already exists')
             return null
-          } else if (checkPassword.pass === false) {
+          } else if (!checkPassword.pass) {
             signupAccount()
           }
 
@@ -219,12 +226,12 @@
       },
     })
     doneSignup(async (result) => {
-      console.log('Check Email for account verification link')
+      toast.success('Check EMAIL for account verification link')
       isLogin.value = true
       resetFields()
     })
     registerError((err) => {
-      error.value = 'Error occured'
+      toast.error('Error signing up for account')
       console.log(err)
       setTimeout(() => resetFields(), 4000)
     })

@@ -6,7 +6,8 @@
   import { useAppStore } from '~/stores/appStore'
   import { useUser } from '~/stores/useUser'
   import type { ContactInfo, Status } from '@/composables/types'
-  import type { AllTeachers } from '@/stores/userTeacher'
+  import type { Teacher } from '~/graphql/gql/graphql'
+  import { useToast } from 'vue-toastification'
 
   const props = defineProps<{
     modelValue: ContactInfo
@@ -34,10 +35,11 @@
   const schoolTeacher = ref(false)
 
   const userStore = useUser()
+  const toast = useToast()
   const teacherStore = useTeacher()
   const registrationStore = useRegistration()
   const appStore = useAppStore()
-  const teacherHasPassword = ref(true)
+  const emailAlreadyExists = ref(false)
 
   onMounted(async () => {
     if (appStore.performerType === 'SCHOOL') {
@@ -53,7 +55,7 @@
   })
 
   async function checkForPassword(id: number) {
-    teacherHasPassword.value = await userStore.hasPassword(id)
+    appStore.teacherHasPassword = await userStore.hasPassword(id)
   }
 
   const status = reactive<Status>({
@@ -147,19 +149,22 @@
   const currentYear = new Date().getFullYear()
 
   async function fieldStatus(stat: string, fieldName: string) {
-    await nextTick()
-    status[fieldName] = StatusEnum.pending
-    await teacherStore.updateTeacher(fieldName).catch((err) => {
-      console.log('Trying to remove non-existant teacher', err)
-      stat = ''
-    })
-    if (stat === 'saved') {
-      status[fieldName] = StatusEnum.saved
-    } else if (stat === 'remove') {
-      status[fieldName] = StatusEnum.removed
-    } else {
-      status[fieldName] = StatusEnum.null
+    if (!emailAlreadyExists.value) {
+      await nextTick()
+      status[fieldName] = StatusEnum.pending
+      await teacherStore.updateTeacher(fieldName).catch((err) => {
+        console.log('Trying to remove non-existant teacher', err)
+        stat = ''
+      })
+      if (stat === 'saved') {
+        status[fieldName] = StatusEnum.saved
+      } else if (stat === 'remove') {
+        status[fieldName] = StatusEnum.removed
+      } else {
+        status[fieldName] = StatusEnum.null
+      }
     }
+    emailAlreadyExists.value = false
   }
 
   const maskaUcaseOption = {
@@ -181,46 +186,51 @@
   const editingDisabled = ref(true)
   // Checks if a newly created record is actually a duplicate
   // of an existing record.
-  const duplicateCheck = ref<AllTeachers>()
+  const duplicateCheck = ref(<Teacher>{})
   // Flag to show if this teacher was just created and
   // did not exist in the user db before now.
   const teacherCreated = ref(false)
 
   /**
    * Watching the Teacher page action flow
-   */
-  // Creates a new teacher account when the radio button is pressed.
-  // Empty Record is automatically created in the db
+   *
+   * Creates a new teacher account when the radio button is pressed.
+   * Empty Record is automatically created in the db
+   **/
   watch(teacherRadio, async (newValue, oldValue) => {
     console.log('TeacherRadio Watcher')
     if (newValue === 'new') {
       teacherStore.$resetTeacher()
       registrationStore.registration.teacherID = null
+
       privateTeacher.value = appStore.performerType !== 'SCHOOL' ? true : false
       schoolTeacher.value = appStore.performerType === 'SCHOOL' ? true : false
-      console.log(privateTeacher.value, schoolTeacher.value)
+
       await teacherStore.createTeacher(
         privateTeacher.value,
         schoolTeacher.value
       )
       registrationStore.registration.teacherID = teacherStore.teacher.id
       teacherCreated.value = true
-
-      // Removes the newly created teacher account if the performer changes
-      // their mind on the radio buttons.  Runs if inputs are empty or full.
-    } else if (newValue === 'existing' && teacherCreated.value === true) {
-      if (registrationStore.registration.teacherID) {
-        await teacherStore.deleteTeacher(
-          registrationStore.registration.teacherID
-        )
-      }
-      registrationStore.registration.teacherID = null
-      await registrationStore.updateRegistration('teacherID')
-      teacherCreated.value = false
+    } else if (
+      newValue === 'existing' &&
+      teacherCreated.value === true &&
+      !emailAlreadyExists.value
+    ) {
+      removeTeacher()
     }
   })
 
-  // Watches for a changes in the teacher
+  async function removeTeacher() {
+    if (registrationStore.registration.teacherID) {
+      await teacherStore.deleteTeacher(registrationStore.registration.teacherID)
+    }
+    registrationStore.registration.teacherID = null
+    await registrationStore.updateRegistration('teacherID')
+    teacherCreated.value = false
+  }
+
+  // Watches for a change in the teacher
   watch(
     () => registrationStore.registration.teacherID,
     async (newID, oldID) => {
@@ -234,41 +244,35 @@
     }
   )
 
-  watch(
-    () => teacherStore.teacher.firstName + ' ' + teacherStore.teacher.lastName,
-    async (fullname) => {
-      if (teacherRadio.value === 'new') {
-        duplicateCheck.value = teacherStore.allTeachers.find((item) => {
-          return (
-            (item.firstName + ' ' + item.lastName).toLowerCase() ===
-            fullname.toLowerCase()
-          )
-        })
-        if (!!duplicateCheck.value?.id) {
-          alert('Duplicate Found')
-          console.log('Duplicate id: ', duplicateCheck.value.id)
-          await teacherStore
-            .deleteTeacher(teacherStore.teacher.id)
-            .then()
-            .catch((error) => console.log("Can't delete teacher", error))
-
-          console.log('2 Duplicate id: ', duplicateCheck.value.id)
-          teacherRadio.value = 'existing'
-          registrationStore.registration.teacherID = duplicateCheck.value.id
-          await teacherStore
-            .loadTeacher(duplicateCheck.value.id)
-            .catch((error) => {
-              console.log('Error loading teacher from duplicate id', error)
-            })
-          await registrationStore
-            .updateRegistration('teacherID')
-            .catch((error) => {
-              console.log('Error updating registration from teacherID', error)
-            })
-        }
+  async function checkForDuplicate() {
+    emailAlreadyExists.value = false
+    if (teacherRadio.value === 'new' && teacherStore.teacher.email) {
+      duplicateCheck.value = await teacherStore.duplicateTeacherCheck(
+        teacherStore.teacher?.email
+      )
+      if (!!duplicateCheck.value.id) {
+        emailAlreadyExists.value = true
+        toast.warning(
+          'Email already exists. Changing the teacher details to an existing teacher if available'
+        )
+        // TODO: Accidentally runs the watcher
+        teacherRadio.value = 'existing'
+        await removeTeacher()
+        registrationStore.registration.teacherID = duplicateCheck.value.id
+        await teacherStore
+          .loadTeacher(duplicateCheck.value.id)
+          .catch((error) => {
+            console.log('Error loading teacher from duplicate id', error)
+          })
+        await registrationStore
+          .updateRegistration('teacherID')
+          .catch((error) => {
+            console.log('Error updating registration from teacherID', error)
+          })
+        emailAlreadyExists.value = false
       }
     }
-  )
+  }
 
   const query = ref('')
   const filteredTeachers = computed(() => {
@@ -376,14 +380,19 @@
             label="OR enter a new teacher"
             name="teacherRadio"
             :disabled="!editingDisabled"
-            value="new" />
+            value="new" /><br />
+          <p>
+            <strong>First Name, Last Name,</strong> and
+            <strong>Email</strong> must be initially included in a new record,
+            otherwise it will not be saved.
+          </p>
         </div>
         <div class="col-span-1">
           <BaseToggleB
             v-if="
               teacherRadio === 'existing' &&
               !!registrationStore.registration.teacherID &&
-              teacherHasPassword === false
+              appStore.teacherHasPassword === false
             "
             v-model="editingDisabled"
             label="Edit Information">
@@ -515,14 +524,19 @@
       <div class="col-span-12 sm:col-span-4">
         <BaseInput
           v-model.trim="contact.email"
-          :class="fieldsDisabled && editingDisabled ? 'off' : ''"
+          :class="fieldsDisabled ? 'off' : ''"
           :status="status.email"
           placeholder="example@email.com"
           name="email"
           type="email"
           label="Email"
-          :disabled="fieldsDisabled && editingDisabled"
-          @change-status="(stat: string) => fieldStatus(stat, 'email')" />
+          :disabled="fieldsDisabled"
+          @change-status="
+            (stat: string) => {
+              checkForDuplicate()
+              fieldStatus(stat, 'email')
+            }
+          " />
       </div>
       <div
         v-if="!schoolteacher && teacher"

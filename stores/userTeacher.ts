@@ -23,6 +23,7 @@ export interface AllTeachers {
 export const useTeacher = defineStore(
   'teacher',
   () => {
+    const appStore = useAppStore()
     const teacher = ref(<Teacher>{})
     const allTeachers = ref<AllTeachers[]>([])
     const fieldConfigStore = useFieldConfig()
@@ -35,6 +36,9 @@ export const useTeacher = defineStore(
     }
 
     const teacherErrors = computed(() => {
+      if (appStore.teacherHasPassword) {
+        return 0
+      }
       const teacherKeys = fieldConfigStore.performerTypeFields('Teacher')
       let count = 0
       for (const key of teacherKeys) {
@@ -221,6 +225,40 @@ export const useTeacher = defineStore(
         })
       })
     }
+
+    /**
+     * Loads Teacher information from db to check for a duplicate entry.
+     * @param teacherID teacher ID number
+     * @returns Promise and teacher results
+     */
+    function duplicateTeacherCheck(teacherEmail: string): Promise<Teacher> {
+      return new Promise((resolve, reject) => {
+        const {
+          result: resultTeacher,
+          load,
+          onError,
+          onResult,
+        } = useLazyQuery(
+          TeacherInfoDocument,
+          { teacherID: null, teacherEmail },
+          { fetchPolicy: 'network-only' }
+        )
+        load()
+        onResult((result) => {
+          if (!result) {
+            reject('no duplicate')
+          } else {
+            console.log(result)
+            resolve(result.data.teacher)
+          }
+        })
+        onError((error) => {
+          console.log(error)
+          reject('no duplicate')
+        })
+      })
+    }
+
     return {
       teacher,
       allTeachers,
@@ -234,6 +272,7 @@ export const useTeacher = defineStore(
       loadAllTeachers,
       addToStore,
       fullName,
+      duplicateTeacherCheck,
     }
   },
   {

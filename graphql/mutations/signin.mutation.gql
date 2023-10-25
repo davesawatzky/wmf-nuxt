@@ -8,6 +8,9 @@ mutation SignIn($credentials: CredentialsSignin!) {
       email
       firstName
       lastName
+      privateTeacher
+      schoolTeacher
+      hasSignedIn
     }
   }
 }

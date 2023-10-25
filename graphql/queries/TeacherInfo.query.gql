@@ -1,5 +1,5 @@
-query TeacherInfo($teacherID: Int!) {
-  teacher(teacherID: $teacherID) {
+query TeacherInfo($teacherID: Int, $teacherEmail: String) {
+  teacher(teacherID: $teacherID, teacherEmail: $teacherEmail) {
     id
     firstName
     lastName

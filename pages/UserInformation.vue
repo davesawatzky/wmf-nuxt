@@ -4,6 +4,7 @@
   import type { ContactInfo, Status } from '@/composables/types'
   import { useRegistration } from '~/stores/userRegistration'
   import { useUser } from '~/stores/useUser'
+  import { MyUserDocument } from '~/graphql/gql/graphql'
 
   const props = defineProps<{}>()
 
@@ -17,6 +18,28 @@
   const registrationStore = useRegistration()
   const userStore = useUser()
   const teacherView = computed(() => userStore.user.privateTeacher)
+
+  /**
+   * Load User details
+   */
+  onMounted(async () => {
+    if (!userStore.user.email) {
+      const {
+        result,
+        onResult: onUserResult,
+        onError: userError,
+      } = useQuery(MyUserDocument, null, () => ({
+        fetchPolicy: 'no-cache',
+      }))
+      onUserResult(async (result) => {
+        userStore.addToStore(result.data.myUser)
+        userStore.user.hasSignedIn = true
+        await userStore.updateUser('hasSignedIn')
+      })
+      userError((error) => console.log(error))
+    }
+    userStore.user.hasSignedIn = true
+  })
 
   const status = reactive<Status>({
     privateTeacher: userStore.user.privateTeacher
@@ -221,7 +244,8 @@
         :status="status.instrument"
         name="instrument"
         type="text"
-        label="Instrument(s)" />
+        label="Instrument(s)"
+        @change-status="(stat: string) => fieldStatus(stat, 'instrument')" />
     </div>
   </div>
 </template>

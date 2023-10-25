@@ -11,7 +11,7 @@
     helpMessage?: string
     status?: StatusEnum
     name: string
-    options: Options[]
+    options: Options[] | undefined
     modelValue?: string | number | null
     returnId?: boolean
   }>()
