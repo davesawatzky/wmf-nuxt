@@ -42,6 +42,7 @@
   const emailAlreadyExists = ref(false)
 
   onMounted(async () => {
+    console.log('Mounted')
     if (appStore.performerType === 'SCHOOL') {
       privateTeacher.value = false
       schoolTeacher.value = true
@@ -171,13 +172,23 @@
     preProcess: (val: string) => val.toUpperCase(),
   }
 
-  const { errors, validate } = useForm({
+  const { errors, validate, values } = useForm({
     validationSchema,
     validateOnMount: true,
   })
 
   onActivated(() => {
+    console.log('activated')
     validate()
+  })
+  onDeactivated(async () => {
+    if (
+      (!values.email || !values.firstName || values.lastName) &&
+      !!teacherCreated.value
+    ) {
+      // teacherRadio.value = 'existing'
+      await removeTeacher()
+    }
   })
 
   // Working with the new Teacher ComboBox
@@ -217,7 +228,7 @@
       teacherCreated.value === true &&
       !emailAlreadyExists.value
     ) {
-      removeTeacher()
+      await removeTeacher()
     }
   })
 
