@@ -186,8 +186,9 @@
       (!values.email || !values.firstName || values.lastName) &&
       !!teacherCreated.value
     ) {
-      // teacherRadio.value = 'existing'
       await removeTeacher()
+      emailAlreadyExists.value = false
+      teacherRadio.value = 'existing'
     }
   })
 
