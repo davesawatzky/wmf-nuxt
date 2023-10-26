@@ -14,18 +14,18 @@ export default defineEventHandler(async (payload) => {
   const config = useRuntimeConfig()
 
   // TODO: This needs to be removed when done.
-  if (!!html) {
-    try {
-      const fileURL = new URL(
-        `./emails/registrations/${userLastName}_${confirmation}.html`,
-        import.meta.url
-      )
-      await fs.writeFile(fileURL, html)
-      console.log('File written successfully\n')
-    } catch (err) {
-      console.log(err)
-    }
-  }
+  // if (!!html) {
+  //   try {
+  //     const fileURL = new URL(
+  //       `./emails/registrations/${userLastName}_${confirmation}.html`,
+  //       import.meta.url
+  //     )
+  //     await fs.writeFile(fileURL, html)
+  //     console.log('File written successfully\n')
+  //   } catch (err) {
+  //     console.log(err)
+  //   }
+  // }
 
   const transporter = nodemailer.createTransport({
     host: config.sendingEmailServer || 'mail.davesawatzky.com',
