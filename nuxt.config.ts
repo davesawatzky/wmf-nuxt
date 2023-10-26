@@ -43,7 +43,6 @@ export default defineNuxtConfig({
   },
   modules: [
     '@nuxtjs/tailwindcss',
-    // '@nuxtjs/eslint-module',
     '@nuxtjs/apollo',
     '@pinia/nuxt',
     '@pinia-plugin-persistedstate/nuxt',
@@ -78,14 +77,6 @@ export default defineNuxtConfig({
       stripeKey: process.env.STRIPE_PUB_KEY,
     },
   },
-  // stripe: {
-  //   server: {
-  //     key: process.env.STRIPE_SERVER_KEY,
-  //   },
-  //   client: {
-  //     key: ,
-  //   },
-  // },
   spaLoadingTemplate: true,
   ssr: false,
   typescript: {
