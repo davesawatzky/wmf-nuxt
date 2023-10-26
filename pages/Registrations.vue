@@ -58,6 +58,10 @@
     }
   }
 
+  definePageMeta({
+    middleware: ['auth'],
+  })
+
   onBeforeMount(() => {
     registrationStore.$reset()
     appStore.$reset()

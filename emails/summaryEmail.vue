@@ -370,7 +370,11 @@
                   v-if="performerType === 'SCHOOL'"
                   class="h4">
                   School Group:
-                  {{ schoolClassGroup(registeredClass.schoolGroupID).name }}
+                  {{
+                    !!registeredClass.schoolGroupID
+                      ? schoolClassGroup(registeredClass.schoolGroupID)?.name
+                      : undefined
+                  }}
                 </div>
                 <div>
                   Subdiscipline:

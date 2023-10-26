@@ -196,8 +196,8 @@
                 <td
                   v-if="registration.performerType === 'SOLO'"
                   class="text-sm">
-                  {{ registration.performers[0]?.firstName }}
-                  {{ registration.performers[0]?.lastName }}
+                  {{ registration.performers?[0].firstName }}
+                  {{ registration.performers?[0].lastName }}
                 </td>
                 <td
                   v-else-if="registration.performerType === 'GROUP'"

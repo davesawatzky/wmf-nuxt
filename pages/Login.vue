@@ -216,8 +216,8 @@
   const signupAccount = handleSubmit((values) => {
     signupMutation({
       credentials: {
-        firstName: values.firstName,
-        lastName: values.lastName,
+        firstName: values.firstName!,
+        lastName: values.lastName!,
         instrument: values.instrument,
         email: values.email,
         password: values.password,
