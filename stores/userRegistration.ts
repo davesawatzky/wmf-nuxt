@@ -19,6 +19,7 @@ import type {
 export const useRegistration = defineStore(
   'registrations',
   () => {
+    const classesStore = useClasses()
     const registrationId = ref(0)
     const registration = ref(<Registration & RegistrationInput>{})
 
@@ -29,6 +30,22 @@ export const useRegistration = defineStore(
       registrationId.value = 0
       registration.value = <Registration>{}
     }
+
+    const processingFee = computed(() => {
+      return (
+        Number(+registration.value.totalAmt + 0.3) / (1 - 0.029) -
+        +registration.value.totalAmt
+      ).toFixed(2)
+    })
+
+    const totalClassAmt = computed(() => {
+      let cost = 0.0
+      for (let regClass of classesStore.registeredClasses) {
+        cost += Number(regClass.price)
+      }
+      registration.value.totalAmt = cost
+      return cost
+    })
 
     /**
      * Adds Registration Object to the store.  Can only be one.
@@ -43,8 +60,8 @@ export const useRegistration = defineStore(
       registration.value.createdAt = reg.createdAt || ''
       registration.value.submittedAt = reg.submittedAt || ''
       registration.value.transactionInfo = reg.transactionInfo || ''
-      registration.value.payedAmt = reg.payedAmt || null
-      registration.value.totalAmt = reg.totalAmt || null
+      registration.value.payedAmt = Number(reg.payedAmt) || 0.0
+      registration.value.totalAmt = Number(reg.totalAmt) || 0.0
       registration.value.updatedAt = reg.updatedAt || ''
       registration.value.teacherID = reg.teacher?.id || null
       registration.value.__typename = 'Registration'
@@ -147,6 +164,8 @@ export const useRegistration = defineStore(
     return {
       registrationId,
       registration,
+      totalClassAmt,
+      processingFee,
       $reset,
       addToStore,
       createRegistration,

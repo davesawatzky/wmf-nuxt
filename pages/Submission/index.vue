@@ -101,7 +101,7 @@
         v-if="!submissionComplete"
         class="btn btn-blue"
         :disabled="!readConfirmation"
-        to="/submission/payment">
+        to="/Submission/payment">
         Proceed to Payment
       </BaseRouteButton>
       <BaseRouteButton

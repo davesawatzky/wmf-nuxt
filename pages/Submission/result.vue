@@ -84,6 +84,16 @@
       registrationStore.registration.submittedAt = date
       registrationStore.registration.confirmation = confirmationNumber.value
       registrationStore.registration.transactionInfo = 'succeeded'
+      if (appStore.stripePayment === 'ccard') {
+        registrationStore.registration.payedAmt = Number(
+          +registrationStore.registration.totalAmt +
+            +registrationStore.processingFee
+        ).toFixed(2)
+      } else if (appStore.stripePayment === 'cash') {
+        registrationStore.registration.payedAmt = Number(
+          registrationStore.registration.totalAmt
+        )
+      }
       await registrationStore.updateRegistration()
       const payload = Object.assign(
         {},

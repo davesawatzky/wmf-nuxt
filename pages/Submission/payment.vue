@@ -1,6 +1,6 @@
 <script setup lang="ts">
-  import {
-    loadStripe,
+  import { loadStripe } from '@stripe/stripe-js'
+  import type {
     Stripe,
     StripeElements,
     StripePaymentElementOptions,
@@ -36,12 +36,21 @@
     }
   })
 
-  onMounted(async () => {
-    await initialize()
+  onMounted(() => {
+    initialize()
   })
 
   async function initialize() {
-    const items = [{ id: 'xl-tshirt', amount: 12.99, currency: 'cad' }]
+    const items = [
+      {
+        amount:
+          Number(
+            +registrationStore.registration.totalAmt +
+              +registrationStore.processingFee
+          ) * 100,
+        currency: 'cad',
+      },
+    ]
     console.log('Items: ', JSON.stringify({ items }))
     console.log(`${config.public.serverAddress}/payment/create-payment-intent`)
 
@@ -158,24 +167,21 @@
     }
   }
 
-  const administrativeCost = computed(() => {
-    return (registrationStore.registration.totalAmt * 0.029 + 0.3).toFixed(2)
-  })
-
   const total = computed(() => {
     if (appStore.stripePayment === 'ccard') {
       return (
-        +registrationStore.registration.totalAmt + +administrativeCost.value
-      )
+        +registrationStore.registration.totalAmt +
+        +registrationStore.processingFee
+      ).toFixed(2)
     } else if (appStore.stripePayment === 'cash') {
-      return registrationStore.registration.totalAmt
+      return Number(registrationStore.registration.totalAmt).toFixed(2)
     }
   })
 </script>
 
 <template>
   <div v-auto-animate>
-    <h1 class="my-8">Payment</h1>
+    <h1 class="my-8">Payment - Cash or Credit Card</h1>
     <p class="m-4 p-3 text-center font-bold text-xl rounded-xl">
       Please do not close your browser after submitting!
     </p>
@@ -201,7 +207,12 @@
               received.
             </li>
           </ul>
-          <BaseButton class="w-[30vw]">Submit Payment</BaseButton>
+          <BaseButton
+            class="w-[30vw]"
+            :class="appStore.stripePayment !== 'cash' ? 'off' : ''"
+            :disabled="appStore.stripePayment !== 'cash'"
+            >Submit Payment</BaseButton
+          >
         </div>
         <div class="text-center font-bold text-xl py-3">OR</div>
         <div class="p-6 border border-sky-700 rounded-lg bg-white">
@@ -221,7 +232,10 @@
             <div id="payment-element">
               <!--Stripe.js injects the Payment Element-->
             </div>
-            <button id="submit">
+            <button
+              id="submit"
+              :class="appStore.stripePayment !== 'ccard' ? 'off' : ''"
+              :disabled="appStore.stripePayment !== 'ccard'">
               <div
                 class="spinner hidden"
                 id="spinner"></div>
@@ -240,12 +254,16 @@
               <tr>
                 <td class="">Subtotal</td>
                 <td class="text-right">
-                  ${{ registrationStore.registration.totalAmt }}
+                  ${{
+                    Number(registrationStore.registration.totalAmt).toFixed(2)
+                  }}
                 </td>
               </tr>
               <tr v-if="appStore.stripePayment === 'ccard'">
-                <td>Administration</td>
-                <td class="text-right">${{ administrativeCost }}</td>
+                <td>Processing</td>
+                <td class="text-right">
+                  ${{ registrationStore.processingFee }}
+                </td>
               </tr>
               <tr class="font-bold border-t border-sky-700 pt-5">
                 <td class="pt-3">Total</td>

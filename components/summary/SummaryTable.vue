@@ -5,14 +5,9 @@
   const classesStore = useClasses()
   const registrationStore = useRegistration()
 
-  const total = computed(() => {
-    let cost = 0.0
-    for (const registeredClass of classesStore.registeredClasses) {
-      cost += Number(registeredClass.price)
-    }
-    return cost.toFixed(2)
+  onMounted(async () => {
+    await registrationStore.updateRegistration('totalAmt')
   })
-  registrationStore.registration.totalAmt = total.value ?? 0.0
 </script>
 
 <template>
@@ -106,7 +101,9 @@
           <td></td>
           <td></td>
           <td class="text-right">Total:</td>
-          <td>${{ total }}</td>
+          <td>
+            ${{ Number(registrationStore.registration.totalAmt).toFixed(2) }}
+          </td>
         </tr>
       </tbody>
     </table>

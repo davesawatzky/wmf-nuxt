@@ -182,8 +182,9 @@
     validate()
   })
   onDeactivated(async () => {
+    console.log(values.email, values.firstName, values.lastName)
     if (
-      (!values.email || !values.firstName || values.lastName) &&
+      (!values.email || !values.firstName || !values.lastName) &&
       !!teacherCreated.value
     ) {
       await removeTeacher()
