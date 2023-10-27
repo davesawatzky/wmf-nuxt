@@ -297,7 +297,7 @@
             .includes(query.value.toLowerCase())
         })
   })
-  function displayValue(id: number) {
+  function displayName(id: number) {
     const teacher = teacherStore.allTeachers.find((item) => item.id === id)
     if (teacher) {
       if (teacher.instrument) {
@@ -329,7 +329,7 @@
           :disabled="!fieldsDisabled || !editingDisabled">
           <UIComboboxInput
             :class="!fieldsDisabled || !editingDisabled ? 'off' : ''"
-            :display-value="(id: number) => displayValue(id)"
+            :display-value="(id: number) => displayName(id)"
             @change="query = $event.target.value" />
           <UITransitionRoot
             leave="transition ease-in duration-100"

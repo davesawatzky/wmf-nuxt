@@ -12,7 +12,7 @@
   YupPassword(yup)
 
   const error = ref('')
-  const isLogin = ref(true)
+  const isRegister = ref(false)
   const firstName = ref('')
   const lastName = ref('')
   const email = ref('')
@@ -34,10 +34,6 @@
   function setIsOpen(value: boolean) {
     isOpen.value = value
   }
-  function isLoggingIn() {
-    isLogin.value = !isLogin.value
-    values.isLogin = isLogin.value
-  }
 
   const { result: instrumentQuery, onError: instrumentsError } =
     useQuery(InstrumentsDocument)
@@ -49,13 +45,13 @@
   const { handleSubmit, values } = useForm({
     validationSchema: toTypedSchema(
       yup.object({
-        isLogin: yup.boolean(),
+        isRegister: yup.boolean(),
         firstName: yup
           .string()
           .trim()
           .label('First Name')
-          .when('isLogin', {
-            is: false,
+          .when('isRegister', {
+            is: true,
             then: (schema) => schema.required('Please enter your first name'),
             otherwise: (schema) => schema.notRequired(),
           }),
@@ -63,8 +59,8 @@
           .string()
           .trim()
           .label('Last Name')
-          .when('isLogin', {
-            is: false,
+          .when('isRegister', {
+            is: true,
             then: (schema) => schema.required('Please enter your last name'),
             otherwise: (schema) => schema.notRequired(),
           }),
@@ -75,23 +71,22 @@
           .when('privateTeacher', {
             is: true,
             then: (schema) => schema.required('Please select an instrument'),
-            otherwise: (schema) => schema.notRequired(),
+            otherwise: (schema) => schema.default('').notRequired(),
           }),
         email: yup.string().trim().email().required().label('Email'),
         password: yup.string().trim().password().required().label('Password'),
         password2: yup
           .string()
           .trim()
-          .when('isLogin', {
-            is: false,
+          .password()
+          .oneOf([yup.ref('password')], 'Passwords must match')
+          .label('Password 2')
+          .when('isRegister', {
+            is: true,
             then: (schema) =>
-              schema
-                .password()
-                .label('Password 2')
-                .oneOf([yup.ref('password')], 'Passwords must match'),
+              schema.required('Please enter your password again'),
             otherwise: (schema) => schema.notRequired(),
           }),
-
         privateTeacher: yup.boolean().default(false),
         schoolTeacher: yup.boolean().default(false),
       })
@@ -227,7 +222,7 @@
     })
     doneSignup(async (result) => {
       toast.success('Check EMAIL for account verification link')
-      isLogin.value = true
+      isRegister.value = false
       resetFields()
     })
     registerError((err) => {
@@ -301,7 +296,7 @@
     <form
       v-auto-animate
       class="w-full sm:w-3/4 max-w-sm border rounded-lg border-sky-500 p-4 mx-auto mt-8">
-      <div v-if="!isLogin">
+      <div v-if="isRegister">
         <h3 class="loginheading">Sign up</h3>
         <fieldset
           v-auto-animate
@@ -353,7 +348,7 @@
         name="email"
         type="email"
         label="Email"
-        @keyup.enter="isLogin ? signin() : signup()" />
+        @keyup.enter="!isRegister ? signin() : signup()" />
       <BaseInput
         v-model="password"
         v-auto-animate
@@ -361,9 +356,9 @@
         name="password"
         type="password"
         label="Password"
-        @keyup.enter="isLogin ? signin() : signup()" />
+        @keyup.enter="!isRegister ? signin() : signup()" />
       <BaseInput
-        v-if="!isLogin"
+        v-if="isRegister"
         v-model="password2"
         v-auto-animate
         autocomplete="off"
@@ -372,14 +367,14 @@
         label="Re-enter Password"
         @keyup.enter="signup()" />
 
-      <div v-if="isLogin">
+      <div v-if="!isRegister">
         <BaseButton
           v-auto-animate
           class="w-full m-0 btn btn-blue"
           @click="signin()">
           Sign In
         </BaseButton>
-        <BaseButton
+        <!-- <BaseButton
           v-auto-animate
           v-model="isLogin"
           :value="false"
@@ -387,7 +382,7 @@
           name="isLogin"
           @click="isLoggingIn()">
           "Register for an Aaccount
-        </BaseButton>
+        </BaseButton> -->
       </div>
       <div v-else>
         <BaseButton
@@ -396,16 +391,14 @@
           @click="signup()">
           Register New Account
         </BaseButton>
-        <BaseButton
-          v-auto-animate
-          v-model="isLogin"
-          :value="true"
-          class="w-full m-0 mt-4 btn btn-blue"
-          name="isLogin"
-          @click="isLoggingIn()">
-          Sign in with Existing Account
-        </BaseButton>
       </div>
+      <BaseCheckbox
+        v-auto-animate
+        v-model="isRegister"
+        class="mt-3"
+        name="isRegister"
+        label="Register for a New Account">
+      </BaseCheckbox>
     </form>
   </div>
   <UITransitionRoot

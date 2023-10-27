@@ -1,15 +1,15 @@
 <script lang="ts" setup>
   import { DateTime } from 'luxon'
-  // import { useRegistration } from '@/stores/userRegistration'
-  // import { useAppStore } from '@/stores/appStore'
-  // import { usePerformers } from '@/stores/userPerformer'
-  // import { useTeacher } from '@/stores/userTeacher'
-  // import { useClasses } from '@/stores/userClasses'
-  // import { useGroup } from '@/stores/userGroup'
-  // import { useSchool } from '@/stores/userSchool'
-  // import { useSchoolGroup } from '@/stores/userSchoolGroup'
-  // import { useCommunity } from '@/stores/userCommunity'
-  // import { useFieldConfig } from '@/stores/useFieldConfig'
+  import { useRegistration } from '@/stores/userRegistration'
+  import { useAppStore } from '@/stores/appStore'
+  import { usePerformers } from '@/stores/userPerformer'
+  import { useTeacher } from '@/stores/userTeacher'
+  import { useClasses } from '@/stores/userClasses'
+  import { useGroup } from '@/stores/userGroup'
+  import { useSchool } from '@/stores/userSchool'
+  import { useSchoolGroup } from '@/stores/userSchoolGroup'
+  import { useCommunity } from '@/stores/userCommunity'
+  import { useFieldConfig } from '@/stores/useFieldConfig'
   import type { Registration, RegistrationInput } from '@/graphql/gql/graphql'
   import {
     PerformerType,
@@ -83,6 +83,7 @@
     })
 
     registrationStore.registrationId = registrationId
+
     registrationStore.addToStore(
       registration as Partial<Registration & RegistrationInput>
     )
@@ -196,8 +197,8 @@
                 <td
                   v-if="registration.performerType === 'SOLO'"
                   class="text-sm">
-                  {{ registration.performers?[0].firstName }}
-                  {{ registration.performers?[0].lastName }}
+                  {{ registration.performers?.[0].firstName }}
+                  {{ registration.performers?.[0].lastName }}
                 </td>
                 <td
                   v-else-if="registration.performerType === 'GROUP'"
