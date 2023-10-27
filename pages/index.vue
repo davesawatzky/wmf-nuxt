@@ -1,6 +1,6 @@
 <script setup lang="ts">
   onMounted(async () => {
-    await navigateTo('/registrations')
+    await navigateTo('/login')
   })
 </script>
 
