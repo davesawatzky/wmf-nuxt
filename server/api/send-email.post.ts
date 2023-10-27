@@ -28,21 +28,20 @@ export default defineEventHandler(async (payload) => {
   // }
 
   const transporter = nodemailer.createTransport({
-    host: config.sendingEmailServer || 'mail.davesawatzky.com',
-    port: config.sendingSmtpPort || 465,
+    host: config.sendingEmailServer,
+    port: Number(config.sendingSmtpPort),
     secure: true,
     auth: {
-      user: config.emailServerUserAccount || 'info@davesawatzky.com',
+      user: config.emailServerUserAccount,
       pass: config.sendingEmailPassword,
     },
   })
 
   const options = {
-    from: config.sendingEmailAddress || 'info@davesawatzky.com',
+    from: config.sendingEmailAddress,
     to: userEmail,
-    bcc: 'info@exaudi.ca',
+    bcc: config.bccEmailAddress,
     subject: `WMFestival Registration - ${confirmation}`,
-    text: 'Testing out the text portion of the email',
     html: html,
   }
   await transporter.sendMail(options)
