@@ -9,6 +9,13 @@
   import type { Teacher } from '~/graphql/gql/graphql'
   import { useToast } from 'vue-toastification'
 
+  interface FilteredTeacher {
+    id: number
+    firstName: string
+    lastName: string
+    instrument: string
+  }
+
   const props = defineProps<{
     modelValue: ContactInfo
     teacher?: boolean
@@ -288,7 +295,7 @@
   }
 
   const query = ref('')
-  const filteredTeachers = computed(() => {
+  const filteredTeachers = computed<FilteredTeacher[]>(() => {
     return query.value === ''
       ? teacherStore.allTeachers
       : teacherStore.allTeachers.filter((teacher) => {
@@ -297,7 +304,7 @@
             .includes(query.value.toLowerCase())
         })
   })
-  function displayName(id: number) {
+  function displayName(id: number): string {
     const teacher = teacherStore.allTeachers.find((item) => item.id === id)
     if (teacher) {
       if (teacher.instrument) {
@@ -306,6 +313,7 @@
         return `${teacher?.firstName} ${teacher?.lastName}`
       }
     }
+    return ''
   }
   const fieldsDisabled = computed(() => {
     return !!(teacherRadio.value === 'existing')
@@ -326,10 +334,11 @@
           value="existing"></BaseRadio>
         <UICombobox
           v-model="registrationStore.registration.teacherID"
-          :disabled="!fieldsDisabled || !editingDisabled">
+          :disabled="!fieldsDisabled || !editingDisabled"
+          by="id">
           <UIComboboxInput
             :class="!fieldsDisabled || !editingDisabled ? 'off' : ''"
-            :display-value="(id: number) => displayName(id)"
+            :display-value="(id) => displayName(id as number)"
             @change="query = $event.target.value" />
           <UITransitionRoot
             leave="transition ease-in duration-100"
