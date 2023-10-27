@@ -11,7 +11,7 @@
   import { useAppStore } from '@/stores/appStore'
   import { useRegistration } from '@/stores/userRegistration'
   import { useUser } from '@/stores/useUser'
-  import type { LocationQueryValue } from '#vue-router'
+  // import type { LocationQueryValue } from '#vue-router'
 
   const performerStore = usePerformers()
   const teacherStore = useTeacher()
@@ -27,7 +27,7 @@
 
   const confirmationNumber = ref('')
   const stripePayment = appStore.stripePayment
-  const paymentIntentStatus = ref<LocationQueryValue | LocationQueryValue[]>('') // failed, inProcess, succeeded, complete
+  const paymentIntentStatus = ref() // failed, inProcess, succeeded, complete
 
   const date = new Date()
   const formattedDate = DateTime.now().toLocaleString(DateTime.DATETIME_MED)
