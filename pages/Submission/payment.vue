@@ -216,6 +216,7 @@
             class="w-[30vw]"
             :class="appStore.stripePayment !== 'cash' ? 'off' : ''"
             :disabled="appStore.stripePayment !== 'cash'"
+            @click="handleSubmit"
             >Submit Payment</BaseButton
           >
         </div>
