@@ -53,8 +53,6 @@
         currency: 'cad',
       },
     ]
-    console.log('Items: ', JSON.stringify({ items }))
-    console.log(`${config.public.serverAddress}/payment/create-payment-intent`)
 
     const response = await useFetch(
       `${config.public.serverAddress}/payment/create-payment-intent`,
