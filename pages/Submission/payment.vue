@@ -237,13 +237,13 @@
               :class="appStore.stripePayment !== 'ccard' ? 'off' : ''"
               :disabled="appStore.stripePayment !== 'ccard'">
               <div
-                class="spinner hidden"
+                class="spinner"
                 id="spinner"></div>
               <span id="button-text">Submit Payment</span>
             </button>
             <div
               id="payment-message"
-              class="hidden"></div>
+              class=""></div>
           </form>
         </div>
       </fieldset>

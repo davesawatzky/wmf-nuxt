@@ -72,6 +72,10 @@
         registrationStore.registration.transactionInfo = 'failed'
         console.log('Payment failed.  Please try another payment method.')
         break
+      case 'failed':
+        registrationStore.registration.transactionInfo = 'failed'
+        console.log('Payment failed.  Please try another payment method.')
+        break
     }
   }
 
@@ -130,40 +134,46 @@
         <h3 class="mx-auto">{{ confirmationNumber }}</h3>
         <h4 class="mx-auto">{{ formattedDate }}</h4>
       </strong>
+
+      <p
+        v-if="stripePayment === 'cash'"
+        class="m-4 p-3 text-center font-bold text-xl bg-red-600 rounded-xl text-white">
+        Please include this confirmation number when submitting payment. This
+        number will be required with any correspondence with the festival
+        regarding your registration.
+      </p>
+      <p
+        v-else-if="stripePayment === 'ccard'"
+        class="m-4 p-3 text-center font-bold text-xl bg-red-600 rounded-xl text-white">
+        Please mark down this confirmation number. This number will be required
+        with any correspondence with the festival regarding your registration.
+      </p>
+      <p>
+        An email has also been sent to you with a summary of your festival
+        registration details. Make sure you have received this email.
+      </p>
+      <h4 class="pt-6 text-center">
+        We look forward to having you participate in this year's
+      </h4>
+      <h3 class="pb-6 text-center">Winnipeg Music Festival</h3>
+      <BaseRouteButton
+        v-if="paymentIntentStatus === 'succeeded' || stripePayment === 'cash'"
+        class="btn btn-blue h-14"
+        to="/Registrations">
+        Return to Registrations
+      </BaseRouteButton>
+
+      <BaseButton
+        v-if="paymentIntentStatus === 'succeeded' || stripePayment === 'cash'"
+        class="btn btn-blue h-14"
+        @click="printWindow">
+        Print this page
+      </BaseButton>
     </div>
-
-    <p
-      v-if="stripePayment === 'cash'"
-      class="m-4 p-3 text-center font-bold text-xl bg-red-600 rounded-xl text-white">
-      Please include this confirmation number when submitting payment.
-    </p>
-    <p
-      v-else-if="stripePayment === 'ccard'"
-      class="m-4 p-3 text-center font-bold text-xl bg-red-600 rounded-xl text-white">
-      Please mark down this confirmation number. This number will be required
-      with any correspondence with the festival regarding your registration.
-    </p>
-    <p>
-      An email has also been sent to you with a summary of your festival
-      registration details. Make sure you have received this email.
-    </p>
-    <h4 class="pt-6 text-center">
-      We look forward to having you participate in this year's
-    </h4>
-    <h3 class="pb-6 text-center">Winnipeg Music Festival</h3>
-    <BaseRouteButton
-      v-if="paymentIntentStatus === 'succeeded' || stripePayment === 'cash'"
-      class="btn btn-blue h-14"
-      to="/Registrations">
-      Return to Registrations
-    </BaseRouteButton>
-
-    <BaseButton
-      v-if="paymentIntentStatus === 'succeeded' || stripePayment === 'cash'"
-      class="btn btn-blue h-14"
-      @click="printWindow">
-      Print this page
-    </BaseButton>
+    <div v-else-if="paymentIntentStatus === 'failed'">
+      <h4>Payment failed</h4>
+      <p>Please try your payment again with a different card.</p>
+    </div>
   </div>
 </template>
 
