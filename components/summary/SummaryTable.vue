@@ -10,7 +10,7 @@
     for (let regClass of classesStore.registeredClasses) {
       cost += Number(regClass.price)
     }
-    registrationStore.registration.value.totalAmt = cost
+    registrationStore.registration.totalAmt = cost
     return cost
   })
 
