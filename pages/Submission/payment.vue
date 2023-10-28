@@ -6,13 +6,14 @@
     StripePaymentElementOptions,
     StripeElementsOptionsClientSecret,
   } from '@stripe/stripe-js'
-
+  import { useToast } from 'vue-toastification'
   import { useRegistration } from '@/stores/userRegistration'
   import { useUser } from '@/stores/useUser'
   import { useAppStore } from '@/stores/appStore'
 
   const appStore = useAppStore()
   const userStore = useUser()
+  const toast = useToast()
   const registrationStore = useRegistration()
   let clientSec: string = ''
   // const total = ref(0)
@@ -133,6 +134,7 @@
     // be redirected to an intermediate site first to authorize the payment, then
     // redirected to the `return_url`.
     if (error) {
+      toast.error('Error processing payment')
       console.log(error.message)
     }
 
