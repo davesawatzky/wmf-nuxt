@@ -14,6 +14,7 @@
   const appStore = useAppStore()
   const userStore = useUser()
   const toast = useToast()
+  const spinnerHidden = ref(true)
   const registrationStore = useRegistration()
   let clientSec: string = ''
   // const total = ref(0)
@@ -93,6 +94,7 @@
 
   async function handleSubmit(event: Event) {
     event.preventDefault()
+
     if (loading.value) return
     if (!stripe || !elements) {
       return
@@ -104,6 +106,7 @@
     }
 
     loading.value = true
+    spinnerHidden.value = false
 
     const {
       id,
@@ -137,7 +140,7 @@
       toast.error('Error processing payment')
       console.log(error.message)
     }
-
+    spinnerHidden.value = true
     loading.value = false
   }
 
@@ -239,7 +242,7 @@
               :class="appStore.stripePayment !== 'ccard' ? 'off' : ''"
               :disabled="appStore.stripePayment !== 'ccard'">
               <div
-                class="spinner"
+                :class="spinnerHidden ? 'spinner hidden' : 'spinner'"
                 id="spinner"></div>
               <span id="button-text">Submit Payment</span>
             </button>
