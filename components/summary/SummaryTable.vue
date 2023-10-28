@@ -5,8 +5,19 @@
   const classesStore = useClasses()
   const registrationStore = useRegistration()
 
-  onMounted(async () => {
-    await registrationStore.updateRegistration('totalAmt')
+  const totalClassAmt = computed(() => {
+    let cost = 0.0
+    for (let regClass of classesStore.registeredClasses) {
+      cost += Number(regClass.price)
+    }
+    registrationStore.registration.value.totalAmt = cost
+    return cost
+  })
+
+  watch(totalClassAmt, async (newAmount) => {
+    if (newAmount) {
+      await registrationStore.updateRegistration('totalAmt')
+    }
   })
 </script>
 

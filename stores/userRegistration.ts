@@ -38,15 +38,6 @@ export const useRegistration = defineStore(
       ).toFixed(2)
     })
 
-    const totalClassAmt = computed(() => {
-      let cost = 0.0
-      for (let regClass of classesStore.registeredClasses) {
-        cost += Number(regClass.price)
-      }
-      registration.value.totalAmt = cost
-      return cost
-    })
-
     /**
      * Adds Registration Object to the store.  Can only be one.
      * @param reg Registration Object, must have valid id property value
@@ -164,7 +155,6 @@ export const useRegistration = defineStore(
     return {
       registrationId,
       registration,
-      totalClassAmt,
       processingFee,
       $reset,
       addToStore,
