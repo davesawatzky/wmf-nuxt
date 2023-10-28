@@ -58,9 +58,9 @@
     }
   }
 
-  // definePageMeta({
-  //   middleware: ['auth'],
-  // })
+  definePageMeta({
+    middleware: ['auth'],
+  })
 
   onBeforeMount(() => {
     registrationStore.$reset()
