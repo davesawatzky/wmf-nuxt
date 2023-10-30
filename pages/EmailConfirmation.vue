@@ -1,6 +1,4 @@
 <script setup lang="ts">
-  import process from 'node:process'
-
   const route = useRoute()
   const confirming = ref(true)
   const verificationError = ref()

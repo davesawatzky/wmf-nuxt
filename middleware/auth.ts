@@ -7,7 +7,6 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
       }
     `)
     onResult(async (result) => {
-      console.log(result)
       if (result.data.tokenCheck === true) {
         await navigateTo(to.path)
       } else if (result.data.tokenCheck === 'unauthorized') {

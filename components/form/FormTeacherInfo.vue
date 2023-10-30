@@ -49,7 +49,6 @@
   const emailAlreadyExists = ref(false)
 
   onMounted(async () => {
-    console.log('Mounted')
     if (appStore.performerType === 'SCHOOL') {
       privateTeacher.value = false
       schoolTeacher.value = true
@@ -185,11 +184,9 @@
   })
 
   onActivated(() => {
-    console.log('activated')
     validate()
   })
   onDeactivated(async () => {
-    console.log(values.email, values.firstName, values.lastName)
     if (
       (!values.email || !values.firstName || !values.lastName) &&
       !!teacherCreated.value
@@ -218,7 +215,6 @@
    * Empty Record is automatically created in the db
    **/
   watch(teacherRadio, async (newValue, oldValue) => {
-    console.log('TeacherRadio Watcher')
     if (newValue === 'new') {
       teacherStore.$resetTeacher()
       registrationStore.registration.teacherID = null

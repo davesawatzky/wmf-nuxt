@@ -32,6 +32,19 @@
   const date = new Date()
   const formattedDate = DateTime.now().toLocaleString(DateTime.DATETIME_MED)
 
+  const performers = toValue(performerStore.performers)
+  const teacher = toValue(teacherStore.teacher)
+  const group = toValue(groupStore.group)
+  const school = toValue(schoolStore.school)
+  const schoolGroups = toValue(schoolGroupStore.schoolGroup)
+  const community = toValue(communityStore.community)
+  const registeredClasses = toValue(classesStore.registeredClasses)
+  const performerType = toValue(appStore.performerType)
+  const registration = toValue(registrationStore.registration)
+  const userFirstName = toValue(userStore.user.firstName)
+  const userLastName = toValue(userStore.user.lastName)
+  const userEmail = toValue(userStore.user.email)
+
   function printWindow() {
     window.print()
   }
@@ -94,7 +107,8 @@
             +registrationStore.processingFee
         ).toFixed(2)
       } else if (appStore.stripePayment === 'cash') {
-        registrationStore.registration.transactionInfo = 'cash - in process'
+        registrationStore.registration.transactionInfo =
+          'cash/cheque/e-transfer'
         // registrationStore.registration.payedAmt = Number(
         //   registrationStore.registration.totalAmt
         // )
@@ -103,21 +117,25 @@
       const payload = Object.assign(
         {},
         {
-          performers: toRaw(performerStore.performers),
-          teacher: toRaw(teacherStore.teacher),
-          group: toRaw(groupStore.group),
-          school: toRaw(schoolStore.school),
-          schoolGroups: toRaw(schoolGroupStore.schoolGroup),
-          community: toRaw(communityStore.community),
-          registeredClasses: toRaw(classesStore.registeredClasses),
-          performerType: toRaw(appStore.performerType),
-          registration: toRaw(registrationStore.registration),
-          userFirstName: toRaw(userStore.user.firstName),
-          userLastName: toRaw(userStore.user.lastName),
-          userEmail: toRaw(userStore.user.email),
+          performers,
+          teacher,
+          group,
+          school,
+          schoolGroups,
+          community,
+          registeredClasses,
+          performerType,
+          registration,
+          userFirstName,
+          userLastName,
+          userEmail,
         }
       )
-      await useFetch('/api/send-email', { method: 'POST', body: payload })
+      await useFetch('/api/send-email', {
+        watch: false,
+        method: 'POST',
+        body: payload,
+      })
       dataSending = false
     } catch (err) {
       console.log(err)
