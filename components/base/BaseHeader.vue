@@ -181,7 +181,7 @@
       v-if="$route.name !== 'Login' && $route.name !== 'EmailConfirmation'"
       id="mobile-menu"
       :class="showMenu ? 'flex' : 'hidden'"
-      class="absolute top-84 bg-sky-800 z-30 w-full text-4xl flex-col justify-content-center origin-top animate-open-menu">
+      class="absolute top-84 bg-sky-800 z-30 w-full text-2xl flex-col justify-content-center origin-top animate-open-menu">
       <nav
         class="flex flex-col min-h-screen items-center py-16"
         aria-label="mobile">
@@ -192,7 +192,28 @@
             <nuxt-link
               to="Registrations"
               @click="toggleNav">
+              <Icon name="ic:round-app-registration" />
               Registration Forms
+            </nuxt-link>
+          </li>
+          <li
+            v-if="$route.name !== 'Students' && !!privateTeacher"
+            class="px-3 py-4 mx-1 hover:bg-sky-500 hover:ring-2 rounded-md text-center">
+            <nuxt-link
+              to="Students"
+              @click="toggleNav">
+              <Icon name="mdi:account-music" />
+              My Students
+            </nuxt-link>
+          </li>
+          <li
+            v-if="$route.name !== 'UserInformation'"
+            class="px-3 py-4 mx-1 hover:bg-sky-500 hover:ring-2 rounded-md text-center">
+            <nuxt-link
+              to="UserInformation"
+              @click="toggleNav">
+              <Icon name="fluent:inprivate-account-24-filled" />
+              My Account
             </nuxt-link>
           </li>
           <li
