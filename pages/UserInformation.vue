@@ -33,8 +33,10 @@
       }))
       onUserResult(async (result) => {
         userStore.addToStore(result.data.myUser)
-        userStore.user.hasSignedIn = true
-        await userStore.updateUser('hasSignedIn')
+        if (!userStore.user.hasSignedIn) {
+          userStore.user.hasSignedIn = true
+          await userStore.updateUser('hasSignedIn')
+        }
       })
       userError((error) => console.log(error))
     }

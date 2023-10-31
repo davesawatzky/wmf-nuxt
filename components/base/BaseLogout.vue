@@ -14,6 +14,7 @@
   const classStore = useClasses()
   const groupStore = useGroup()
   const schoolStore = useSchool()
+  const userStore = useUser()
 
   function signout() {
     appStore.$reset()
@@ -24,6 +25,7 @@
     classStore.$reset()
     groupStore.$reset()
     schoolStore.$reset()
+    userStore.$reset()
 
     const { onResult, onError } = useQuery(gql`
       query Logout {

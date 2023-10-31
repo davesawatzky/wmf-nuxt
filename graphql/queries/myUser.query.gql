@@ -15,5 +15,6 @@ query MyUser {
     instrument
     privateTeacher
     schoolTeacher
+    hasSignedIn
   }
 }

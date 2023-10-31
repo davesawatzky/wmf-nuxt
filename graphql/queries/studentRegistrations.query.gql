@@ -1,5 +1,5 @@
 query StudentRegistrations {
-  teacher {
+  myStudents {
     registrations {
       confirmation
       createdAt

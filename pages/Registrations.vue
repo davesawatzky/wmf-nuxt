@@ -164,7 +164,10 @@
     }
     appStore.dataLoading = true
     if (registration?.teacher) {
+      console.log('Teacher ID: ', registration.teacher.id)
       await teacherStore.loadTeacher(registration.teacher.id)
+      registrationStore.registration.teacherID = registration.teacher.id
+      console.log(teacherStore.teacher)
     }
     await classesStore.loadClasses(registrationId)
     await fieldConfigStore.loadRequiredFields()

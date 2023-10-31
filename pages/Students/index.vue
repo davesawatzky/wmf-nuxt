@@ -65,7 +65,7 @@
   onError((error) => console.log(error))
 
   const registrations = computed(
-    () => result.value?.teacher.registrations ?? []
+    () => result.value?.myStudents.registrations ?? []
   )
 
   /**

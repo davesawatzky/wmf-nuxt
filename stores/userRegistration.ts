@@ -54,7 +54,7 @@ export const useRegistration = defineStore(
       registration.value.payedAmt = Number(reg.payedAmt) || 0.0
       registration.value.totalAmt = Number(reg.totalAmt) || 0.0
       registration.value.updatedAt = reg.updatedAt || ''
-      registration.value.teacherID = reg.teacher?.id || null
+      registration.value.teacherID = reg.teacherID || null
       registration.value.__typename = 'Registration'
     }
 
