@@ -19,13 +19,13 @@
 
     <div class="bg-sky-600 pt-5 pb-8 section-min-height">
       <div
-        class="container bg-sky-100 py-8 px-4 sm:px-10 lg:max-w-5xl sm:mx-auto rounded-lg shadow-xl">
+        class="container bg-sky-100 py-8 px-2 sm:px-10 lg:max-w-5xl sm:mx-auto rounded-lg shadow-xl">
         <slot />
       </div>
     </div>
     <footer class="bg-sky-800 text-white">
       <div
-        class="container pt-4 px-4 sm:px-10 lg:max-w-5xl mx-auto flex items-center">
+        class="container pt-4 px-2 sm:px-10 lg:max-w-5xl mx-auto flex items-center">
         <div>
           <div class="text-lg font-semibold">Winnipeg Music Festival</div>
           <address class="text-sm">

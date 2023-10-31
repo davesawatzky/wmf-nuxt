@@ -126,6 +126,9 @@
       appStore.performerType === 'SOLO' &&
       !!performerStore.performers[0].instrument
     ) {
+      const Mozart = disciplineQuery.value?.disciplines.filter((item) => {
+        return item.name.toLowerCase().includes('mozart')
+      })
       if (performerStore.performers[0].instrument.toLowerCase() === 'voice') {
         return disciplineQuery.value?.disciplines.filter((item) => {
           return (
@@ -135,15 +138,21 @@
           )
         })
       } else {
-        // TODO:  This block is still problematic.  Mozart shouldn't be on
-        // handbells, pipe organ, or percussion.
-        return disciplineQuery.value?.disciplines.filter((item) => {
-          return (
-            item.instruments?.find(
-              (el) => el.name === performerStore.performers[0].instrument
-            ) || item.name.toLowerCase().includes('mozart')
+        // Adds Mozart Classes to all the other instruments
+        let isMozart = false
+        const discipline = disciplineQuery.value?.disciplines.filter((item) => {
+          const disc = item.instruments?.find(
+            (el) => el.name === performerStore.performers[0].instrument
           )
+          if (!isMozart) {
+            disc?.mozart === true ? (isMozart = true) : (isMozart = false)
+          }
+          return disc
         })
+        if (isMozart && Mozart) {
+          discipline?.push(Mozart[0])
+        }
+        return discipline
       }
     } else if (appStore.performerType === 'GROUP') {
       if (groupStore.group.groupType === 'vocal') {

@@ -117,6 +117,7 @@ export const useClasses = defineStore(
       return new Promise((resolve, reject) => {
         const {
           mutate: classCreate,
+          loading,
           onDone,
           onError,
         } = useMutation(ClassCreateDocument, { fetchPolicy: 'no-cache' })
@@ -192,6 +193,7 @@ export const useClasses = defineStore(
       return new Promise((resolve, reject) => {
         const {
           mutate: classUpdate,
+          loading,
           onDone,
           onError,
         } = useMutation(ClassUpdateDocument, { fetchPolicy: 'no-cache' })
@@ -239,6 +241,7 @@ export const useClasses = defineStore(
       return new Promise((resolve, reject) => {
         const {
           mutate: classDelete,
+          loading,
           onDone,
           onError,
         } = useMutation(ClassDeleteDocument)
@@ -266,6 +269,7 @@ export const useClasses = defineStore(
       return await new Promise((resolve, reject) => {
         const {
           mutate: selectionCreate,
+          loading,
           onDone,
           onError,
         } = useMutation(SelectionCreateDocument, { fetchPolicy: 'no-cache' })
@@ -303,6 +307,7 @@ export const useClasses = defineStore(
       return new Promise((resolve, reject) => {
         const {
           mutate: selectionUpdate,
+          loading,
           onDone,
           onError,
         } = useMutation(SelectionUpdateDocument, { fetchPolicy: 'no-cache' })
@@ -364,6 +369,7 @@ export const useClasses = defineStore(
       return new Promise((resolve, reject) => {
         const {
           mutate: selectionDelete,
+          loading,
           onDone,
           onError,
         } = useMutation(SelectionDeleteDocument)

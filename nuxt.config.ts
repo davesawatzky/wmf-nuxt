@@ -52,6 +52,7 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     'nuxt-icon',
     'nuxt-headlessui',
+    '@nuxtjs/device',
   ],
   pinia: {
     storesDirs: ['stores'],

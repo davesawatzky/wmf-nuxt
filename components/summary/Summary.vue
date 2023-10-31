@@ -57,7 +57,7 @@
     <div
       v-if="totalErrors > 0 && !props.teacherSummary"
       v-auto-animate>
-      <h3 class="text-center py-4 bg-red-600 text-white rounded-lg">
+      <h3 class="text-center py-2 sm:py-4 bg-red-600 text-white rounded-lg">
         Incomplete registration form
       </h3>
       <br />
@@ -71,7 +71,7 @@
     <div
       v-else
       v-auto-animate
-      class="px-8 pt-8">
+      class="p-0 sm:px-8 sm:pt-8">
       <h2>Registration Summary</h2>
       <h3
         v-if="registrationStore.registration.confirmation"
@@ -85,11 +85,11 @@
         <h3 class="pt-4 pb-4">Group Information</h3>
         <BaseSummaryCard>
           <template #heading1>
-            <h4 class="py-2">{{ groupStore.group.name }}</h4>
+            <h4 class="text-lg sm:text-xl py-2">{{ groupStore.group.name }}</h4>
           </template>
           <template #details>
             <table>
-              <tbody>
+              <tbody class="text-sm sm:text-base">
                 <tr class="">
                   <td>Type of Group:</td>
                   <td>{{ groupStore.group.groupType }}</td>
@@ -137,13 +137,13 @@
         <h3 class="pt-4 pb-4">Community Group Information</h3>
         <BaseSummaryCard>
           <template #heading1>
-            <h4 class="py-2">
+            <h4 class="text-lg sm:text-xl py-2">
               Community Group Name: {{ communityStore.community.name }}
             </h4>
           </template>
           <template #details>
             <table>
-              <tbody>
+              <tbody class="text-sm sm:text-base">
                 <tr class="border-sky-400">
                   <td>Community Group Size:</td>
                   <td>{{ communityStore.community.groupSize }}</td>
@@ -177,14 +177,18 @@
         <h3 class="pt-4 pb-4">School Information</h3>
         <BaseSummaryCard>
           <template #heading1>
-            <h4 class="py-2">{{ schoolStore.school.name }}</h4>
+            <h4 class="py-2 text-lg sm:text-xl">
+              {{ schoolStore.school.name }}
+            </h4>
           </template>
-          <template #heading3>
+          <template
+            #heading3
+            class="text-sm sm:text-base">
             School Division: {{ schoolStore.school.division }}
           </template>
           <template #details>
             <table>
-              <tbody>
+              <tbody class="text-sm sm:text-base">
                 <tr>
                   <td>Address:</td>
                   <td>
@@ -224,9 +228,11 @@
                 :key="schlGrp.id"
                 class="">
                 <div>
-                  <h4>Group {{ schlGrpIndex + 1 }}:</h4>
+                  <h4 class="text-lg sm:text-xl">
+                    Group {{ schlGrpIndex + 1 }}:
+                  </h4>
                   <table>
-                    <tbody>
+                    <tbody class="text-sm sm:text-base">
                       <tr>
                         <td>Name:</td>
                         <td>{{ schlGrp.name }}</td>
@@ -276,7 +282,9 @@
         v-for="registeredClass in classesStore.registeredClasses"
         :key="registeredClass.id">
         <BaseSummaryCard class="">
-          <template #heading1>
+          <template
+            #heading1
+            class="text-lg sm:text-xl">
             Festival Class Number: {{ registeredClass.classNumber }}
           </template>
           <template #heading3>
@@ -300,7 +308,7 @@
                   selection, selectionIndex
                 ) in registeredClass.selections"
                 :key="selection.id"
-                class="px-4">
+                class="sm:px-4">
                 <h5 class="py-2">Selection {{ selectionIndex + 1 }}</h5>
                 <table>
                   <tbody>
@@ -338,7 +346,7 @@
     </div>
 
     <!-- Submission -->
-    <div class="pt-4 px-8">
+    <div class="pt-4 px sm:px-8">
       <BaseButton
         v-if="
           !registrationStore.registration.confirmation && !props.teacherSummary

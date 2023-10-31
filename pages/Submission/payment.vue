@@ -92,19 +92,20 @@
 
   async function handleSubmit(event: Event) {
     event.preventDefault()
-
     if (loading.value) return
+
+    loading.value = true
+    spinnerHidden.value = false
+
     if (!stripe || !elements) {
       return
     }
     if (appStore.stripePayment === 'cash') {
       loading.value = false
+      spinnerHidden.value = true
       await navigateTo('/submission/result')
       return
     }
-
-    loading.value = true
-    spinnerHidden.value = false
 
     const {
       id,
@@ -188,96 +189,89 @@
     <p class="m-4 p-3 text-center font-bold text-xl rounded-xl">
       Please do not close your browser after submitting!
     </p>
-    <div class="grid grid-cols-2 gap-4">
-      <fieldset>
-        <div class="p-6 border border-sky-700 rounded-lg bg-white">
-          <div class="pb-4">
-            <BaseRadio
-              v-model="appStore.stripePayment"
-              name="paymentType"
-              label="Cash, Cheque, E-Transfer"
-              value="cash" />
+    <form
+      id="payment-form"
+      @submit="handleSubmit">
+      <div class="grid grid-cols-2 gap-4">
+        <fieldset>
+          <div class="p-6 border border-sky-700 rounded-lg bg-white">
+            <div class="pb-4">
+              <BaseRadio
+                v-model="appStore.stripePayment"
+                name="paymentType"
+                label="Cash, Cheque, E-Transfer"
+                value="cash" />
+            </div>
+            <ul class="list-disc p-4">
+              <li>
+                Payment may be made by cash, cheque, or e-transfer to the
+                Winnipeg Music Festival (<a href="mailto:wmf@mts.net"
+                  ><strong>wmf@mts.net</strong></a
+                >).
+              </li>
+              <li>
+                Registrations will not be considered submitted until payment is
+                received.
+              </li>
+            </ul>
           </div>
-          <ul class="list-disc p-4">
-            <li>
-              Payment may be made by cash, cheque, or e-transfer to the Winnipeg
-              Music Festival (<a href="mailto:wmf@mts.net"
-                ><strong>wmf@mts.net</strong></a
-              >).
-            </li>
-            <li>
-              Registrations will not be considered submitted until payment is
-              received.
-            </li>
-          </ul>
-          <BaseButton
-            class="w-[30vw]"
-            :class="appStore.stripePayment !== 'cash' ? 'off' : ''"
-            :disabled="appStore.stripePayment !== 'cash'"
-            @click="handleSubmit"
-            >Submit Payment</BaseButton
-          >
-        </div>
-        <div class="text-center font-bold text-xl py-3">OR</div>
-        <div class="p-6 border border-sky-700 rounded-lg bg-white">
-          <div class="pb-8">
-            <BaseRadio
-              v-model="appStore.stripePayment"
-              name="paymentType"
-              label="Pay by Credit Card"
-              value="ccard" />
-          </div>
-          <form
-            id="payment-form"
-            @submit="handleSubmit">
+          <div class="text-center font-bold text-xl py-3">OR</div>
+          <div class="p-6 border border-sky-700 rounded-lg bg-white">
+            <div class="pb-8">
+              <BaseRadio
+                v-model="appStore.stripePayment"
+                name="paymentType"
+                label="Pay by Credit Card"
+                value="ccard" />
+            </div>
             <div id="link-authentication-element">
               <!--Stripe.js injects the Payment Element-->
             </div>
             <div id="payment-element">
               <!--Stripe.js injects the Payment Element-->
             </div>
+            <div
+              id="payment-message"
+              class=""></div>
+          </div>
+        </fieldset>
+        <div>
+          <div class="p-4 border border-sky-700 rounded-lg bg-white">
+            <h4 class="mb-6">Final Amount</h4>
+            <table class="table-fixed w-full">
+              <tbody>
+                <tr>
+                  <td class="">Subtotal</td>
+                  <td class="text-right">
+                    ${{
+                      Number(registrationStore.registration.totalAmt).toFixed(2)
+                    }}
+                  </td>
+                </tr>
+                <tr v-if="appStore.stripePayment === 'ccard'">
+                  <td>Processing Fee</td>
+                  <td class="text-right">
+                    ${{ registrationStore.processingFee }}
+                  </td>
+                </tr>
+                <tr class="font-bold border-t border-sky-700 pt-5">
+                  <td class="pt-3">Total</td>
+                  <td class="pt-3 text-right">${{ total }}</td>
+                </tr>
+              </tbody>
+            </table>
             <button
               id="submit"
-              :class="appStore.stripePayment !== 'ccard' ? 'off' : ''"
-              :disabled="appStore.stripePayment !== 'ccard'">
+              class="mt-8">
               <div
                 :class="spinnerHidden ? 'spinner hidden' : 'spinner'"
                 id="spinner"></div>
               <span id="button-text">Submit Payment</span>
             </button>
-            <div
-              id="payment-message"
-              class=""></div>
-          </form>
-        </div>
-      </fieldset>
-      <div>
-        <div class="p-4 border border-sky-700 rounded-lg bg-white">
-          <table class="table-fixed w-full">
-            <tbody>
-              <tr>
-                <td class="">Subtotal</td>
-                <td class="text-right">
-                  ${{
-                    Number(registrationStore.registration.totalAmt).toFixed(2)
-                  }}
-                </td>
-              </tr>
-              <tr v-if="appStore.stripePayment === 'ccard'">
-                <td>Processing</td>
-                <td class="text-right">
-                  ${{ registrationStore.processingFee }}
-                </td>
-              </tr>
-              <tr class="font-bold border-t border-sky-700 pt-5">
-                <td class="pt-3">Total</td>
-                <td class="pt-3 text-right">${{ total }}</td>
-              </tr>
-            </tbody>
-          </table>
+          </div>
         </div>
       </div>
-    </div>
+    </form>
   </div>
 </template>
 

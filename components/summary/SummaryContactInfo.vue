@@ -13,18 +13,18 @@
 <template>
   <BaseSummaryCard>
     <template #heading1>
-      <h4>{{ fullName }}</h4>
+      <h4 class="text-lg sm:text-xl">{{ fullName }}</h4>
     </template>
     <template #heading2>
-      <div>Phone: {{ contact.phone }}</div>
-      <div>Email: {{ contact.email }}</div>
+      <div class="text-sm sm:text-base">Phone: {{ contact.phone }}</div>
+      <div class="text-sm sm:text-base">Email: {{ contact.email }}</div>
     </template>
     <template
       v-if="appStore.performerType !== 'SCHOOL'"
       #details>
       <div class="flex">
         <table>
-          <tbody>
+          <tbody class="text-sm sm:text-base">
             <tr
               v-if="contact.age"
               class="">

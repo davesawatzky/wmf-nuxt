@@ -26,15 +26,19 @@
   )
 
   async function resetClasses() {
-    setIsOpen(false)
-    const regClassIdNumbers = []
-    for (let i = 0; i < classesStore.registeredClasses.length; i++) {
-      regClassIdNumbers.push(classesStore.registeredClasses[i].id)
+    try {
+      setIsOpen(false)
+      const regClassIdNumbers = <number[]>[]
+      for (let i = 0; i < classesStore.registeredClasses.length; i++) {
+        regClassIdNumbers.push(classesStore.registeredClasses[i].id)
+      }
+      for (let number of regClassIdNumbers) {
+        await classesStore.deleteClass(number)
+      }
+      await classesStore.createClass(registrationStore.registration.id)
+    } catch (err) {
+      console.log(err)
     }
-    for (let number of regClassIdNumbers) {
-      await classesStore.deleteClass(number)
-    }
-    await classesStore.createClass(registrationStore.registration.id)
   }
 
   function cancelInstrumentChange() {

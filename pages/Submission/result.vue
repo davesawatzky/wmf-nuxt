@@ -177,7 +177,7 @@
       <h3 class="pb-6 text-center">Winnipeg Music Festival</h3>
       <BaseRouteButton
         v-if="paymentIntentStatus === 'succeeded' || stripePayment === 'cash'"
-        class="btn btn-blue h-14"
+        class="btn btn-blue"
         to="/Registrations">
         Return to Registrations
       </BaseRouteButton>
