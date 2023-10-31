@@ -190,7 +190,7 @@
             v-if="$route.name !== 'Registrations'"
             class="px-3 py-4 mx-1 hover:bg-sky-500 hover:ring-2 rounded-md text-center">
             <nuxt-link
-              to="Registrations"
+              to="/Registrations"
               @click="toggleNav">
               <Icon name="ic:round-app-registration" />
               Registration Forms
@@ -200,7 +200,7 @@
             v-if="$route.name !== 'Students' && !!privateTeacher"
             class="px-3 py-4 mx-1 hover:bg-sky-500 hover:ring-2 rounded-md text-center">
             <nuxt-link
-              to="Students"
+              to="/Students"
               @click="toggleNav">
               <Icon name="mdi:account-music" />
               My Students
@@ -210,7 +210,7 @@
             v-if="$route.name !== 'UserInformation'"
             class="px-3 py-4 mx-1 hover:bg-sky-500 hover:ring-2 rounded-md text-center">
             <nuxt-link
-              to="UserInformation"
+              to="/UserInformation"
               @click="toggleNav">
               <Icon name="fluent:inprivate-account-24-filled" />
               My Account
