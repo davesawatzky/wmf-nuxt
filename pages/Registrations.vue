@@ -239,21 +239,25 @@
     <h1 class="mt-3 mb-2">Winnipeg Music Festival</h1>
     <h2>Registration Forms</h2>
     <div class="border border-sky-500 rounded-lg text-left mt-10 md:mt-15">
-      <div class="p-4">
+      <div class="p-2 sm:p-4">
         <div class="pb-6">
           <h3>Submitted and In-Process Applications</h3>
           <table
             v-auto-animate
             class="table_auto border-separate border-spacing-0 w-full text-xs sm:text-base mt-3">
             <thead class="text-white">
-              <tr class="py-2 px-2">
+              <tr class="py-2 px-0 sm:px-2">
                 <th class="rounded-tl-lg bg-sky-700">View</th>
                 <th
                   v-if="sm"
                   class="bg-sky-700">
                   ID
                 </th>
-                <th class="bg-sky-700">Label</th>
+                <th
+                  v-if="sm"
+                  class="bg-sky-700">
+                  Label
+                </th>
                 <th
                   v-if="lg"
                   class="bg-sky-700">
@@ -274,7 +278,7 @@
               <tr
                 v-for="registration in registrations"
                 :key="registration.id"
-                class="bg-white">
+                class="px-0 sm:px-2 bg-white">
                 <td class="">
                   <BaseButton
                     class="text-sky-600 text-xl md:ml-4 ml-3"
@@ -309,7 +313,9 @@
                   class="text-sm">
                   {{ registration.id }}
                 </td>
-                <td class="text-sm">
+                <td
+                  v-if="sm"
+                  class="text-sm">
                   {{ registration.label }}
                 </td>
                 <td

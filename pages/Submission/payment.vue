@@ -192,9 +192,9 @@
     <form
       id="payment-form"
       @submit="handleSubmit">
-      <div class="grid grid-cols-2 gap-4">
+      <div class="sm:grid sm:grid-cols-2 sm:gap-4">
         <fieldset>
-          <div class="p-6 border border-sky-700 rounded-lg bg-white">
+          <div class="p-4 sm:p-6 border border-sky-700 rounded-lg bg-white">
             <div class="pb-4">
               <BaseRadio
                 v-model="appStore.stripePayment"
@@ -216,7 +216,7 @@
             </ul>
           </div>
           <div class="text-center font-bold text-xl py-3">OR</div>
-          <div class="p-6 border border-sky-700 rounded-lg bg-white">
+          <div class="p-4 sm:p-6 border border-sky-700 rounded-lg bg-white">
             <div class="pb-8">
               <BaseRadio
                 v-model="appStore.stripePayment"
@@ -235,7 +235,7 @@
               class=""></div>
           </div>
         </fieldset>
-        <div>
+        <div class="mt-4 sm:mt-0">
           <div class="p-4 border border-sky-700 rounded-lg bg-white">
             <h4 class="mb-6">Final Amount</h4>
             <table class="table-fixed w-full">
@@ -398,7 +398,7 @@
 
   @media only screen and (max-width: 600px) {
     form {
-      width: 80vw;
+      /* width: 80vw; */
       min-width: initial;
     }
   }
