@@ -127,12 +127,12 @@ export const useClasses = defineStore(
             price: 0.0,
           },
         }).catch((error) => console.log(error))
-        onDone((result) => {
+        onDone(async (result) => {
           if (result.data?.registeredClassCreate.registeredClass) {
             const regClass: RegisteredClass =
               result.data.registeredClassCreate.registeredClass
             addClassToStore(regClass)
-            createSelection(regClass.id).catch((err) => console.log(err))
+            await createSelection(regClass.id).catch((err) => console.log(err))
             resolve('Success')
           } else if (result.data?.registeredClassCreate.userErrors) {
             console.log(result.data.registeredClassCreate.userErrors)

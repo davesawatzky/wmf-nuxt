@@ -21,7 +21,6 @@
 
   const config = useRuntimeConfig()
   let stripe: Stripe | null
-  const loading = ref(true)
   let elements: StripeElements
 
   definePageMeta({
@@ -43,6 +42,7 @@
   })
 
   async function initialize() {
+    appStore.dataLoading = true
     const items = [
       {
         amount:
@@ -87,21 +87,21 @@
     const paymentElement = elements.create('payment', paymentElementOptions)
     paymentElement.mount('#payment-element')
 
-    loading.value = false
+    appStore.dataLoading = false
   }
 
   async function handleSubmit(event: Event) {
     event.preventDefault()
-    if (loading.value) return
+    if (!!appStore.dataLoading) return
 
-    loading.value = true
+    appStore.dataLoading = true
     spinnerHidden.value = false
 
     if (!stripe || !elements) {
       return
     }
     if (appStore.stripePayment === 'cash') {
-      loading.value = false
+      appStore.dataLoading = false
       spinnerHidden.value = true
       await navigateTo('/submission/result')
       return
@@ -140,7 +140,7 @@
       console.log(error.message)
     }
     spinnerHidden.value = true
-    loading.value = false
+    appStore.dataLoading = false
   }
 
   // Fetches the payment intent status after payment submission
