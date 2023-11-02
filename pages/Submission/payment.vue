@@ -14,6 +14,7 @@
   const appStore = useAppStore()
   const userStore = useUser()
   const toast = useToast()
+  const loading = ref(false)
   const spinnerHidden = ref(true)
   const registrationStore = useRegistration()
   let clientSec: string = ''
@@ -42,7 +43,7 @@
   })
 
   async function initialize() {
-    appStore.dataLoading = true
+    loading.value = true
     const items = [
       {
         amount:
@@ -87,21 +88,21 @@
     const paymentElement = elements.create('payment', paymentElementOptions)
     paymentElement.mount('#payment-element')
 
-    appStore.dataLoading = false
+    loading.value = false
   }
 
   async function handleSubmit(event: Event) {
     event.preventDefault()
-    if (!!appStore.dataLoading) return
+    if (!!loading.value) return
 
-    appStore.dataLoading = true
+    loading.value = true
     spinnerHidden.value = false
 
     if (!stripe || !elements) {
       return
     }
     if (appStore.stripePayment === 'cash') {
-      appStore.dataLoading = false
+      loading.value = false
       spinnerHidden.value = true
       await navigateTo('/submission/result')
       return
@@ -140,7 +141,7 @@
       console.log(error.message)
     }
     spinnerHidden.value = true
-    appStore.dataLoading = false
+    loading.value = false
   }
 
   // Fetches the payment intent status after payment submission
