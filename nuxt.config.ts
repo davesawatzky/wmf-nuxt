@@ -78,6 +78,7 @@ export default defineNuxtConfig({
       stripeKey: process.env.STRIPE_PUB_KEY,
     },
   },
+  sourcemap: true,
   spaLoadingTemplate: true,
   ssr: false,
   typescript: {

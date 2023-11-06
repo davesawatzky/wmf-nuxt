@@ -2,6 +2,7 @@
   "extends": "./.nuxt/tsconfig.json",
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
-    "types": ["vitest/globals"]
+    "types": ["vitest/globals"],
+    "sourceMap": true
   }
 }

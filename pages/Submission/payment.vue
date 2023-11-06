@@ -46,11 +46,11 @@
     loading.value = true
     const items = [
       {
-        amount:
-          Number(
-            +registrationStore.registration.totalAmt +
-              +registrationStore.processingFee
-          ) * 100,
+        amount: Math.round(
+          (+registrationStore.registration.totalAmt +
+            +registrationStore.processingFee) *
+            100
+        ),
         currency: 'cad',
       },
     ]
@@ -93,6 +93,7 @@
 
   async function handleSubmit(event: Event) {
     event.preventDefault()
+
     if (!!loading.value) return
 
     loading.value = true
