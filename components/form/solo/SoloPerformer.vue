@@ -5,7 +5,6 @@
   const isOpen = ref(false)
   const previousInstrument = ref('')
   const cancelInstChange = ref(false)
-  const changeInstrument = ref(false)
 
   watch(
     () => performerStore.performers[0].instrument,
@@ -32,14 +31,10 @@
       for (let i = 0; i < classesStore.registeredClasses.length; i++) {
         regClassIdNumbers.push(classesStore.registeredClasses[i].id)
       }
-      console.log('RegClass Numbers: ', regClassIdNumbers)
       for (let i = 0; i < regClassIdNumbers.length; i++) {
-        console.log(regClassIdNumbers[i])
         await classesStore.deleteClass(regClassIdNumbers[i])
       }
-      console.log('Done Deleting')
       await classesStore.createClass(registrationStore.registration.id)
-      console.log('Done Creating')
     } catch (err) {
       console.log(err)
     }

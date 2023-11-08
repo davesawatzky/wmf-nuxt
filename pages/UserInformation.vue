@@ -19,6 +19,10 @@
   const userStore = useUser()
   const teacherView = computed(() => userStore.user.privateTeacher)
 
+  definePageMeta({
+    middleware: ['auth'],
+  })
+
   /**
    * Load User details
    */

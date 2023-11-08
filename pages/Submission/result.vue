@@ -13,6 +13,10 @@
   import { useUser } from '@/stores/useUser'
   // import type { LocationQueryValue } from '#vue-router'
 
+  definePageMeta({
+    middleware: ['auth', 'submission'],
+  })
+
   const performerStore = usePerformers()
   const teacherStore = useTeacher()
   const groupStore = useGroup()

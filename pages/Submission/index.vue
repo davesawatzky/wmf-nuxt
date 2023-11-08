@@ -1,52 +1,12 @@
 <script setup lang="ts">
-  import { DateTime } from 'luxon'
   import _ from 'lodash'
-  import { usePerformers } from '@/stores/userPerformer'
-  import { useTeacher } from '@/stores/userTeacher'
-  import { useGroup } from '@/stores/userGroup'
-  import { useSchool } from '@/stores/userSchool'
-  import { useSchoolGroup } from '@/stores/userSchoolGroup'
-  import { useCommunity } from '@/stores/userCommunity'
-  import { useClasses } from '@/stores/userClasses'
-  import { useRegistration } from '@/stores/userRegistration'
-  import { useUser } from '@/stores/useUser'
-  import { useAppStore } from '@/stores/appStore'
-
-  const performerStore = usePerformers()
-  const teacherStore = useTeacher()
-  const groupStore = useGroup()
-  const schoolStore = useSchool()
-  const schoolGroupStore = useSchoolGroup()
-  const communityStore = useCommunity()
-  const classesStore = useClasses()
-  const appStore = useAppStore()
-  const userStore = useUser()
-  const registrationStore = useRegistration()
-
-  const confirmationNumber = ref('')
-  const submissionComplete = ref(false)
-  const readConfirmation = ref(false)
-
-  function printWindow() {
-    window.print()
-  }
-
-  const date = new Date()
-  const formattedDate = DateTime.now().toLocaleString(DateTime.DATETIME_MED)
 
   definePageMeta({
-    middleware: ['submission'],
+    middleware: ['auth', 'submission'],
   })
 
-  onBeforeMount(() => {
-    const regExist = registrationStore?.registrationId
-    const confirmed = registrationStore.registration?.confirmation
-    const submitted = registrationStore.registration?.submittedAt
-
-    if (!regExist || confirmed || submitted) {
-      navigateTo('/Registrations')
-    }
-  })
+  const submissionComplete = ref(false)
+  const readConfirmation = ref(false)
 </script>
 
 <template>
