@@ -25,7 +25,7 @@
   let elements: StripeElements
 
   definePageMeta({
-    middleware: ['auth', 'submission'],
+    middleware: ['submission'],
   })
 
   onBeforeMount(() => {

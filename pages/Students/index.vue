@@ -52,10 +52,6 @@
     fieldConfigStore.$reset()
   })
 
-  definePageMeta({
-    middleware: ['auth'],
-  })
-
   /**
    * Load list of all student registrations for a teacher
    */

@@ -1,3 +1,4 @@
+/* eslint-disable */
 export default defineNuxtRouteMiddleware(async (to, from) => {
   if (to.path !== '/' && to.path !== '/login') {
     const { onResult, onError } = useQuery(gql`
@@ -8,13 +9,15 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     onResult(async (result) => {
       if (result.data.tokenCheck === true) {
         await navigateTo(to.path)
-      } else {
+      } else if (result.data.tokenCheck === 'unauthorized') {
         await navigateTo('/login')
       }
     })
     onError(async (error) => {
       console.log(error)
-      return await navigateTo('/login')
+      await navigateTo('/login')
     })
+  } else if (to.path === '/' || to.path === '/login') {
+    await navigateTo('/login')
   }
 })

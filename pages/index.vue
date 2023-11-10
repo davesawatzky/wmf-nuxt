@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  onBeforeMount(async () => {
+  onMounted(async () => {
     await navigateTo('/login')
   })
 </script>

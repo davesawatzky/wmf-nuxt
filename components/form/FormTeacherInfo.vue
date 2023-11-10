@@ -22,7 +22,7 @@
     schoolteacher?: boolean
     school?: boolean
     groupperformer?: boolean
-    teacherId: number | undefined
+    teacherId: number
   }>()
 
   const emits = defineEmits<{
