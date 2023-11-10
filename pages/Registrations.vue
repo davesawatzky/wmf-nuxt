@@ -391,12 +391,12 @@
           alt-text="New Group Registration"
           @click="groupOpen ? newRegistration(PerformerType.GROUP) : ''" />
         <BaseCard
-          :label="schoolOpen ? 'School' : 'School - Coming Soon'"
+          :label="schoolOpen ? 'School' : 'School - Opening Soon'"
           :photo="schoolOpen ? schoolPhoto : schoolPhotoBW"
           alt-text="New School Registration"
           @click="schoolOpen ? newRegistration(PerformerType.SCHOOL) : ''" />
         <BaseCard
-          :label="communityOpen ? 'Community' : 'Community - Coming Soon'"
+          :label="communityOpen ? 'Community' : 'Community - Opening Soon'"
           :photo="communityOpen ? communityPhoto : communityPhotoBW"
           alt-text="New Community Registration"
           @click="
