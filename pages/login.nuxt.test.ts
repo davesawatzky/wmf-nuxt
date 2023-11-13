@@ -7,8 +7,8 @@ describe('Test Login and Registration component functions', () => {
   describe('When opening the login page', () => {
     it('Renders an email and password input field', async () => {
       await renderSuspended('Login', { route: '/login' })
-      expect(screen.findByLabelText('Email')).toBeTruthy()
-      expect(screen.findByLabelText('Password')).toBeTruthy()
+      expect(screen.findByLabelText('Email')).to.be.true
+      expect(screen.findByLabelText('Password')).to.be.true
     })
     it('displays the Log In button', async () => {})
     it('displays a link to register an account', () => {})

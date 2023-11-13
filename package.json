@@ -15,7 +15,8 @@
     "story:build": "histoire build",
     "story:preview": "histoire preview",
     "codegen": "graphql-codegen --config codegen.ts",
-    "test": "vitest"
+    "test": "vitest --run --environment happy-dom",
+    "test:watch": "vitest --environment happy-dom"
   },
   "dependencies": {
     "@formkit/auto-animate": "0.8.1",
