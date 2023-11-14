@@ -13,7 +13,6 @@
     () => props.message,
     (newValue) => {
       if (!!newValue) {
-        console.log(newValue)
         showToast.value = true
         setTimeout(() => (showToast.value = false), 4000)
       } else {

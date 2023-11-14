@@ -245,8 +245,11 @@
                 <div>{{ school.city }}, {{ school.province }}</div>
                 <div>{{ school.postalCode }}</div>
                 <div>Phone: {{ school.phone }}</div>
+                <br />
+                <mj-divider />
+                <br />
                 <div
-                  class="h4"
+                  class="h2"
                   style="padding-top: 15px">
                   School Groups
                 </div>
@@ -373,7 +376,7 @@
                   {{
                     !!registeredClass.schoolGroupID
                       ? schoolClassGroup(registeredClass.schoolGroupID)?.name
-                      : undefined
+                      : ''
                   }}
                 </div>
                 <div>

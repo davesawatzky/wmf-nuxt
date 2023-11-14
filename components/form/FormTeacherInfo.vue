@@ -312,7 +312,7 @@
     return ''
   }
   const fieldsDisabled = computed(() => {
-    return !!(teacherRadio.value === 'existing')
+    return teacherRadio.value === 'existing'
   })
 </script>
 
@@ -321,6 +321,7 @@
     <div class="pb-5 grid grid-cols-12 gap-x-3 gap-y-1 items-end">
       <div class="z-10 col-span-12">
         <BaseRadio
+          v-if="!schoolteacher"
           v-model="teacherRadio"
           class="pb-3"
           :class="!editingDisabled ? 'off' : ''"
@@ -329,6 +330,7 @@
           :disabled="!editingDisabled"
           value="existing"></BaseRadio>
         <UICombobox
+          v-if="!schoolTeacher"
           v-model="registrationStore.registration.teacherID"
           :disabled="!fieldsDisabled || !editingDisabled"
           by="id">
@@ -393,13 +395,14 @@
       <div class="grid col-span-12 items-center grid-cols-2">
         <div clas="col-span-1">
           <BaseRadio
+            v-if="!schoolTeacher"
             v-model="teacherRadio"
             :class="!editingDisabled ? 'off' : ''"
             label="OR enter a new teacher"
             name="teacherRadio"
             :disabled="!editingDisabled"
             value="new" /><br />
-          <p>
+          <p v-if="!schoolTeacher">
             <strong>First Name, Last Name,</strong> and
             <strong>Email</strong> must be initially included in a new record,
             otherwise it will not be saved.
@@ -410,7 +413,8 @@
             v-if="
               teacherRadio === 'existing' &&
               !!registrationStore.registration.teacherID &&
-              appStore.teacherHasPassword === false
+              appStore.teacherHasPassword === false &&
+              appStore.performerType !== 'SCHOOL'
             "
             v-model="editingDisabled"
             label="Edit Information">
@@ -528,7 +532,9 @@
         <BaseInput
           v-model.trim="contact.phone"
           v-maska
-          :class="fieldsDisabled && editingDisabled ? 'off' : ''"
+          :class="
+            fieldsDisabled && editingDisabled && !schoolTeacher ? 'off' : ''
+          "
           :status="status.phone"
           placeholder="(___) ___-____"
           data-maska="(###) ###-####"
@@ -536,7 +542,7 @@
           name="phone"
           type="tel"
           label="Phone Number"
-          :disabled="fieldsDisabled && editingDisabled"
+          :disabled="fieldsDisabled && editingDisabled && !schoolTeacher"
           @change-status="(stat: string) => fieldStatus(stat, 'phone')" />
       </div>
       <div class="col-span-12 sm:col-span-4">

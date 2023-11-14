@@ -146,12 +146,10 @@
       await doesTeacherExist(email.value)
         .then((user) => {
           // user email exists in db
-          console.log(user.id)
           // check to see if user has a password
           return userStore.hasPassword(user.id)
         })
         .then((checkPassword) => {
-          console.log('Has Password: ', checkPassword.pass)
           // If YES - kick out.  User already exists and no
           // changes can be made from here.
           if (checkPassword.pass) {
@@ -246,6 +244,7 @@
             email: user.value.email,
           },
         },
+        watch: false,
       })
       isOpen.value = false
       resetFields()
@@ -284,6 +283,12 @@
       </p>
       <p>
         <strong>Site best used with Google Chrome or Mozilla Firefox</strong>
+      </p>
+      <p>
+        <strong
+          >Accounts from last year have been removed. Please make a new
+          account.</strong
+        >
       </p>
       <!-- <div
 				class="mx-auto text-center border-4 border-red-700 rounded-lg mt-4 p-4">

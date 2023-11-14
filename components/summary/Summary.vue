@@ -222,7 +222,7 @@
         <BaseSummaryCard>
           <template #heading1> School Group(s) </template>
           <template #details>
-            <div class="flex gap-5 justify-around">
+            <div class="flex gap-5">
               <div
                 v-for="(schlGrp, schlGrpIndex) in schoolGroupStore.schoolGroup"
                 :key="schlGrp.id"

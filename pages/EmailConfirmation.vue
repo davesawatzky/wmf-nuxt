@@ -17,7 +17,6 @@
           body: tokenBody,
           onResponseError({ request, response, options }) {
             if (response._data.message) {
-              console.log(response._data.message)
               errorMessage.value = response._data.message
             }
           },

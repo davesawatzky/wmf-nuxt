@@ -36,7 +36,10 @@ export const useTeacher = defineStore(
     }
 
     const teacherErrors = computed(() => {
-      if (appStore.teacherHasPassword) {
+      if (
+        !!appStore.teacherHasPassword &&
+        appStore.performerType !== 'SCHOOL'
+      ) {
         return 0
       }
       const teacherKeys = fieldConfigStore.performerTypeFields('Teacher')

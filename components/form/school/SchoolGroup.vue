@@ -73,29 +73,37 @@
   const validationSchema = toTypedSchema(
     yup.object({
       groupName: yup.string().trim().required('Enter a name for your group'),
-      earliestTime: yup.string().required('Enter a time'),
-      latestTime: yup.string().required('Enter a time'),
+      earliestTime: yup
+        .string()
+        .matches(/[0-1]{0,1}[0-9]:[0-5][0-9]/, 'Enter a time')
+        .default('08:00')
+        .required('Enter a time'),
+      latestTime: yup
+        .string()
+        .matches(/[0-1]{0,1}[0-9]:[0-5][0-9]/, 'Enter a time')
+        .default('17:00')
+        .required('Enter a time'),
       groupSize: yup
         .number()
         .min(2)
         .max(300)
         .integer()
         .typeError('Please enter a valid number')
-        .required('Enter the numer of performers'),
+        .required('Enter the # of performers'),
       chaperones: yup
         .number()
         .min(0)
         .max(100)
         .integer()
         .typeError('Please enter a valid number')
-        .required('Enter the number of chaperones.'),
+        .required('Enter the # of chaperones.'),
       wheelchairs: yup
         .number()
         .min(0)
         .max(100)
         .integer()
         .typeError('Please enter a valid number')
-        .required('Enter the number of wheelchairs'),
+        .required('Enter the # of wheelchairs'),
       unavailable: yup
         .string()
         .trim()

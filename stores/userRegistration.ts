@@ -31,6 +31,21 @@ export const useRegistration = defineStore(
       registration.value = <Registration>{}
     }
 
+    const totalClassAmt = computed(() => {
+      let cost = 0.0
+      for (let regClass of classesStore.registeredClasses) {
+        cost += Number(regClass.price)
+      }
+      registration.value.totalAmt = cost
+      return Number(cost).toFixed(2)
+    })
+
+    watch(totalClassAmt, async (newValue) => {
+      if (Number.parseInt(newValue) > 0) {
+        await updateRegistration('totalAmt')
+      }
+    })
+
     const processingFee = computed(() => {
       return (
         Number(+registration.value.totalAmt + 0.3) / (1 - 0.029) -
@@ -156,6 +171,7 @@ export const useRegistration = defineStore(
       registrationId,
       registration,
       processingFee,
+      totalClassAmt,
       $reset,
       addToStore,
       createRegistration,

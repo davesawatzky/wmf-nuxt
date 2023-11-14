@@ -84,9 +84,6 @@
   onDeactivated(() => {
     currentTab.value = null
     tabIndex.value = null
-    console.log(currentTab.value)
-    console.log(tabIndex.value)
-    console.log('Before Unmount')
   })
 
   function setTab(tab: string, index: number) {

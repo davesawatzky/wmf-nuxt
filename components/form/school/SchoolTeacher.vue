@@ -1,7 +1,9 @@
 <script setup lang="ts">
   import { useTeacher } from '@/stores/userTeacher'
+  import { useUser } from '@/stores/useUser'
 
   const teacherStore = useTeacher()
+  const userStore = useUser()
 </script>
 
 <template>

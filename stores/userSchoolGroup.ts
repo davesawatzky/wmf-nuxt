@@ -151,7 +151,6 @@ export const useSchoolGroup = defineStore(
             )
           )
         }
-        console.log(schlgrpProps)
         schoolGroupUpdate({
           schoolGroupId,
           schoolGroup: <SchoolGroupInput>(schoolGroupField || schlgrpProps),

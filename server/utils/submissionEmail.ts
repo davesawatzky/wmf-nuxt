@@ -13,7 +13,7 @@ export async function renderSubmissionEmail(payload: any) {
           teacher: payload.teacher,
           group: payload.group,
           school: payload.school,
-          schoolGroups: payload.schoolGroup,
+          schoolGroups: payload.schoolGroups,
           community: payload.community,
           festivalClasses: payload.registeredClasses,
           performerType: payload.performerType,
@@ -237,8 +237,11 @@ export async function renderSubmissionEmail(payload: any) {
                   <div>{{school.city }}, {{ school.province }}</div>
                   <div>{{ school.postalCode }}</div>
                   <div>Phone: {{ school.phone }}</div>
+                  <br />
+                  <mj-divider />
+                  <br>
                   <div
-                    class="h4"
+                    class="h2"
                     style="padding-top: 15px">
                     School Groups
                   </div>
@@ -246,7 +249,7 @@ export async function renderSubmissionEmail(payload: any) {
               </mj-column>
             </mj-section>
             <mj-wrapper
-              v-for="group in school.schoolGroups"
+              v-for="group in schoolGroups"
               v-bind:key="group.id"
               background-color="#ffffff"
               padding-top="15px">
@@ -345,6 +348,7 @@ export async function renderSubmissionEmail(payload: any) {
                   v-for="registeredClass in festivalClasses"
                   v-bind:key="registeredClass.id"
                   style="padding-bottom: 10px">
+                  <br />
                   <div class="h3">
                     Festival Class Number: {{ registeredClass.classNumber }}
                   </div>

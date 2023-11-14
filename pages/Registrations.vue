@@ -151,7 +151,7 @@
         appStore.dataLoading = true
         await schoolStore.loadSchool(registrationId)
         await schoolGroupStore.loadSchoolGroups(registrationId)
-        await teacherStore.loadAllTeachers(false, true)
+        // await teacherStore.loadAllTeachers(false, true)
         appStore.dataLoading = false
         break
       case 'COMMUNITY':
@@ -164,10 +164,8 @@
     }
     appStore.dataLoading = true
     if (registration?.teacher) {
-      console.log('Teacher ID: ', registration.teacher.id)
       await teacherStore.loadTeacher(registration.teacher.id)
       registrationStore.registration.teacherID = registration.teacher.id
-      console.log(teacherStore.teacher)
     }
     await classesStore.loadClasses(registrationId)
     await fieldConfigStore.loadRequiredFields()
@@ -212,9 +210,18 @@
       case 'SCHOOL':
         appStore.performerType = PerformerType.SCHOOL
         appStore.dataLoading = true
+        if (!!userStore.user.schoolTeacher) {
+          teacherStore.teacher.id = userStore.user.id
+          registrationStore.registration.teacherID = userStore.user.id
+          await registrationStore.updateRegistration('teacherID')
+          teacherStore.teacher.firstName = userStore.user.firstName
+          teacherStore.teacher.lastName = userStore.user.lastName
+          teacherStore.teacher.email = userStore.user.email
+          teacherStore.teacher.phone = userStore.user.phone
+        }
         await schoolStore.createSchool(registrationId.value)
         await schoolGroupStore.createSchoolGroup(schoolStore.school.id!)
-        await teacherStore.loadAllTeachers(false, true)
+        // await teacherStore.loadAllTeachers(false, true)
         break
       case 'COMMUNITY':
         appStore.performerType = PerformerType.COMMUNITY
@@ -374,6 +381,10 @@
               the left of the table.
             </li>
             <li>A copy can be printed for your records.</li>
+            <li>
+              Only school teachers with their own accounts can complete
+              registrations for their own school ensembles.
+            </li>
           </ul>
         </div>
         <h3>Start A New Registration Form</h3>
