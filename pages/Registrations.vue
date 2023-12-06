@@ -403,12 +403,12 @@
           alt-text="New Group Registration"
           @click="groupOpen ? newRegistration(PerformerType.GROUP) : ''" />
         <BaseCard
-          :label="schoolOpen ? 'School' : 'School - Opening Soon'"
+          :label="schoolOpen ? 'School' : 'School - Closed'"
           :photo="schoolOpen ? schoolPhoto : schoolPhotoBW"
           alt-text="New School Registration"
           @click="schoolOpen ? newRegistration(PerformerType.SCHOOL) : ''" />
         <BaseCard
-          :label="communityOpen ? 'Community' : 'Community - Opening Soon'"
+          :label="communityOpen ? 'Community' : 'Community - Closed'"
           :photo="communityOpen ? communityPhoto : communityPhotoBW"
           alt-text="New Community Registration"
           @click="
