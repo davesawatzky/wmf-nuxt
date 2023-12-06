@@ -32,5 +32,5 @@
   "files.refactoring.autoSave": false,
   "eslint.run": "onSave",
   "vitest.enable": true,
-  "vitest.commandLine": "npx vitest run"
+  "vitest.commandLine": "pnpm run test"
 }

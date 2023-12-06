@@ -11,6 +11,7 @@
   import { useCommunity } from '@/stores/userCommunity'
   import { useFieldConfig } from '@/stores/useFieldConfig'
   import { useUser } from '@/stores/useUser'
+  import gql from 'graphql-tag'
   import {
     communityOpen,
     groupOpen,

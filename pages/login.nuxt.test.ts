@@ -1,18 +1,71 @@
-import { renderSuspended } from 'nuxt-vitest/utils'
+import { queries, render, screen } from '@testing-library/vue'
+import { DefaultApolloClient } from '@vue/apollo-composable'
+import { expect } from 'vitest'
+import '@testing-library/jest-dom'
+import Login from './Login.vue'
 import { createTestingPinia } from '@pinia/testing'
+import { createMockClient } from 'mock-apollo-client'
+import { SignInDocument, SignUpDocument } from '~/graphql/gql/graphql'
 
-import { screen } from '@testing-library/vue'
+let mockClient: any
+let options: any
+
+beforeEach(() => {
+  mockClient = createMockClient()
+  mockClient.setRequestHandler(SignInDocument, () =>
+    Promise.resolve({
+      data: {
+        userErrors: {
+          message: [],
+        },
+        diatonicToken: '',
+        user: {
+          email: 'david@diatonic.io',
+          firstName: 'David',
+          lastName: 'Sawatzky',
+          privateTeacher: true,
+          schoolTeacher: false,
+          hasSignedIn: true,
+        },
+      },
+    })
+  )
+  options = {
+    global: {
+      provide: {
+        [DefaultApolloClient]: mockClient,
+      },
+    },
+  }
+})
+
+afterEach(() => {
+  mockClient = null
+})
 
 describe('Test Login and Registration component functions', () => {
   describe('When opening the login page', () => {
-    it('Renders an email and password input field', async () => {
-      await renderSuspended('Login', { route: '/login' })
-      expect(screen.findByLabelText('Email')).to.be.true
-      expect(screen.findByLabelText('Password')).to.be.true
+    it('Renders an email and password input field', () => {
+      const { getByLabelText } = render(Login, options)
+      expect(getByLabelText('Email')).toBeInTheDocument()
+      expect(getByLabelText('Password')).toBeInTheDocument()
     })
-    it('displays the Log In button', async () => {})
-    it('displays a link to register an account', () => {})
+
+    it('displays the Log In button', () => {
+      const { ...queries } = render(Login, options)
+      expect(queries.getByRole('button')).toHaveTextContent('Sign In')
+    })
+
+    it('displays a checkbox to register an account', () => {
+      const { ...queries } = render(Login, options)
+      expect(
+        queries.getByRole('checkbox', {
+          name: 'Register for a New Account',
+        })
+      ).toBeInTheDocument()
+    })
   })
+
   describe('Logging in', () => {
     describe('When a user enters their email to login', () => {
       it('shows up in email input', () => {})

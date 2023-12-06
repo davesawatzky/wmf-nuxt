@@ -410,7 +410,7 @@
     </form>
   </div>
   <UITransitionRoot
-    :show="isOpen"
+    :show="isOpen || false"
     as="template"
     enter="duration-1000 ease-out"
     enter-from="opacity-0"
