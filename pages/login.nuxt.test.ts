@@ -68,7 +68,6 @@ describe('Test Login and Registration component functions', () => {
 
   describe('Logging in', () => {
     describe('When a user enters their email to login', () => {
-      it('shows up in email input', () => {})
       it('gets validated', () => {})
       describe('when invalid', () => {
         it('shows an error in red under the input', () => {})
@@ -79,7 +78,6 @@ describe('Test Login and Registration component functions', () => {
     })
 
     describe('When password is entered', () => {
-      it('show up in the password input', () => {})
       it('uses hidden characters', () => {})
       it('gets validated', () => {})
       describe('when invalid', () => {

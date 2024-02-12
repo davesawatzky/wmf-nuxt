@@ -276,7 +276,7 @@
   <div v-auto-animate>
     <div class="w-full sm:w-2/3 lg:w-1/2 mx-auto">
       <h2 class="text-center">Winnipeg Music Festival Registration</h2>
-      <p class="text-left">
+      <!-- <p class="text-left">
         Begin registration by creating an account (account can be for an
         individual; a teacher for all their individual students, or for all
         their choirs; a parent for their family etc.)
@@ -289,19 +289,19 @@
           >Accounts from last year have been removed. Please make a new
           account.</strong
         >
-      </p>
-      <!-- <div
-				class="mx-auto text-center border-4 border-red-700 rounded-lg mt-4 p-4">
-				<h3>Registration for the 2023 music festival is now closed.</h3>
-				<p>Please see the Winnipeg Music Festival homepage for information.</p>
-				<BaseButton class="btn btn-blue w-[150px] h-16"
-					><a href="https://www.winnipegmusicfestival.org"
-						>Winnipeg Music Festival</a
-					></BaseButton
-				>
-			</div> -->
+      </p> -->
+      <div
+        class="mx-auto text-center border-4 border-red-700 rounded-lg mt-4 p-4">
+        <h3>Registration for the 2024 music festival is now closed.</h3>
+        <p>Please see the Winnipeg Music Festival homepage for information.</p>
+        <BaseButton class="btn btn-blue w-[150px] h-16"
+          ><a href="https://www.winnipegmusicfestival.org"
+            >Winnipeg Music Festival</a
+          ></BaseButton
+        >
+      </div>
     </div>
-    <form
+    <!-- <form
       v-auto-animate
       class="w-full sm:w-3/4 max-w-sm border rounded-lg border-sky-500 p-4 mx-auto mt-8">
       <div v-if="isRegister">
@@ -382,16 +382,16 @@
           @click="signin()">
           Sign In
         </BaseButton>
-        <!-- <BaseButton
+        <BaseButton
           v-auto-animate
           v-model="isLogin"
           :value="false"
           class="w-full m-0 mt-4 btn btn-blue"
           name="isLogin"
           @click="isLoggingIn()">
-          "Register for an Aaccount
+          "Register for an Account
         </BaseButton> -->
-      </div>
+    <!-- </div>
       <div v-else>
         <BaseButton
           v-auto-animate
@@ -407,7 +407,7 @@
         name="isRegister"
         label="Register for a New Account">
       </BaseCheckbox>
-    </form>
+    </form> -->
   </div>
   <UITransitionRoot
     :show="isOpen || false"

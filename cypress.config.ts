@@ -1,7 +1,7 @@
 // cypress.config.ts
-import { defineConfig } from 'cypress'
-import { loadNuxt, buildNuxt } from '@nuxt/kit'
-import type { InlineConfig } from 'vite'
+import { defineConfig } from "cypress";
+import { loadNuxt, buildNuxt } from "@nuxt/kit";
+import type { InlineConfig } from "vite";
 
 async function getNuxtViteConfig() {
   const nuxt = await loadNuxt({
@@ -10,40 +10,46 @@ async function getNuxtViteConfig() {
     overrides: {
       ssr: false,
     },
-  })
+  });
   return new Promise<InlineConfig>((resolve, reject) => {
-    nuxt.hook('vite:extendConfig', (config) => {
-      resolve(config)
-      throw new Error('_stop_')
-    })
+    nuxt.hook("vite:extendConfig", (config) => {
+      resolve(config);
+      throw new Error("_stop_");
+    });
     buildNuxt(nuxt).catch((err) => {
-      if (!err.toString().includes('_stop_')) {
-        reject(err)
+      if (!err.toString().includes("_stop_")) {
+        reject(err);
       }
-    })
-  }).finally(() => nuxt.close())
+    });
+  }).finally(() => nuxt.close());
 }
 
 export default defineConfig({
   //...
   component: {
     devServer: {
-      framework: 'vue',
-      bundler: 'vite',
+      framework: "vue",
+      bundler: "vite",
       async viteConfig() {
-        const config = await getNuxtViteConfig()
+        const config = await getNuxtViteConfig();
 
         config.plugins = config?.plugins?.filter(
           // @ts-ignore
-          (item) => !['replace', 'vite-plugin-eslint'].includes(item.name)
-        )
+          (item) => !["replace", "vite-plugin-eslint"].includes(item.name)
+        );
 
         if (config.server) {
-          config.server.middlewareMode = false
+          config.server.middlewareMode = false;
         }
 
-        return config
+        return config;
       },
     },
   },
-})
+
+  e2e: {
+    setupNodeEvents(on, config) {
+      // implement node event listeners here
+    },
+  },
+});

@@ -3,8 +3,8 @@
   "prettier.enable": true,
   "eslint.codeActionsOnSave.mode": "problems",
   "editor.codeActionsOnSave": {
-    "source.fixAll": false,
-    "source.fixAll.eslint": false
+    "source.fixAll": "never",
+    "source.fixAll.eslint": "never"
   },
   "eslint.enable": true,
   "eslint.lintTask.enable": false,
@@ -32,5 +32,5 @@
   "files.refactoring.autoSave": false,
   "eslint.run": "onSave",
   "vitest.enable": true,
-  "vitest.commandLine": "pnpm run test"
+  "vitest.commandLine": "pnpm run test:watch --"
 }

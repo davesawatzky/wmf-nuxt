@@ -34,6 +34,11 @@ export default defineNuxtConfig({
       //     // },
     },
   },
+  app: {
+    head: {
+      script: ['https://www.polyfill.io/v3/polyfill.min.js'],
+    },
+  },
   experimental: {
     typedPages: true,
     componentIslands: true,
@@ -47,7 +52,7 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     '@pinia-plugin-persistedstate/nuxt',
     '@nuxt/devtools',
-    'nuxt-vitest',
+    '@nuxt/test-utils/module',
     '@vee-validate/nuxt',
     '@vueuse/nuxt',
     'nuxt-icon',
@@ -95,6 +100,9 @@ export default defineNuxtConfig({
     autoImports: true,
   },
   vite: {
+    build: {
+      target: 'es6',
+    },
     vue: {
       script: {
         propsDestructure: true,
