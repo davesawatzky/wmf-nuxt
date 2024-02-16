@@ -17,7 +17,7 @@ export default defineNuxtConfig({
     tokenStorage: 'cookie',
     clients: {
       default: {
-        httpEndpoint: process.env.GRAPHQL_SERVER!,
+        httpEndpoint: process.env.GRAPHQL_SERVER ?? 'http://localhost:3000/graphql',
         tokenName: 'diatonicToken',
         authHeader: 'Authorization',
         authType: 'Bearer',
