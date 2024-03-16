@@ -52,6 +52,7 @@
   <div class="py-1">
     <div :class="class">
       <input
+        class="baseCheckbox"
         :id="uuid"
         v-bind="{ ...$attrs }"
         type="checkbox"
@@ -62,7 +63,7 @@
       <label
         v-if="label"
         :for="uuid"
-        class="flex-none ml-3">
+        class="baseLabel flex-none ml-3">
         {{ label }}
       </label>
       <BaseHelpButton :help-message="helpMessage" />

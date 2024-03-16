@@ -1,8 +1,8 @@
 <script setup lang="ts">
   defineProps<{
     label: string
-    photo: string
-    altText: string
+    photo?: string
+    altText?: string
   }>()
 </script>
 
@@ -16,6 +16,7 @@
       class="bg-sky-600 text-white p-3 text-lg font-bold sm:text-xl sm:p-4 rounded-b-lg">
       {{ label }}
     </div>
+    <slot />
   </div>
 </template>
 

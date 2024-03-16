@@ -11,7 +11,8 @@
       "request": "launch",
       "skipFiles": ["<node_internals>/**"],
       "outputCapture": "std",
-      "args": ["dev"]
+      "args": ["dev"],
+      "outFiles": ["${workspaceFolder}/out/**/*.js"]
     },
     {
       "name": "Attach to Firefox",

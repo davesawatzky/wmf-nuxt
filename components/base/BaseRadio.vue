@@ -16,7 +16,7 @@
   <div>
     <input
       :id="String(value)"
-      class="cursor-pointer"
+      class="baseRadio cursor-pointer"
       type="radio"
       :checked="modelValue === value"
       :value="value"
@@ -26,7 +26,7 @@
     <label
       v-if="label"
       :for="String(value)"
-      class="pl-2"
+      class="baseLabel pl-2"
       >{{ label }}</label
     >
     <p

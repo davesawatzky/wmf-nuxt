@@ -135,8 +135,9 @@
       case 'SOLO':
         appStore.performerType = PerformerType.SOLO
         appStore.dataLoading = true
+        console.log('Are we here yet')
         await performerStore.loadPerformers(registrationId)
-        await teacherStore.loadAllTeachers(true, false)
+        await teacherStore.loadAllTeachers( true, false )
         appStore.dataLoading = false
         break
       case 'GROUP':
@@ -243,6 +244,8 @@
     await refetchRegistrations()
     appStore.dataLoading = false
   }
+
+  
 </script>
 
 <template>

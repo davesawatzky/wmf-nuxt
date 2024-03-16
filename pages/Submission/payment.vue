@@ -44,7 +44,7 @@
 
   async function initialize() {
     loading.value = true
-    const items = [
+    const items = 
       {
         amount: Math.round(
           (+registrationStore.registration.totalAmt +
@@ -52,15 +52,15 @@
             100
         ),
         currency: 'cad',
-      },
-    ]
+      }
+    
 
     const response = await useFetch(
       `${config.public.serverAddress}/payment/create-payment-intent`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ items }),
+        body: JSON.stringify(items),
       }
     )
     const { clientSecret }: any = response.data.value

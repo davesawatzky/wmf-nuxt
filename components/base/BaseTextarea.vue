@@ -49,7 +49,7 @@
         <label
           v-if="label"
           :for="uuid"
-          class="break-normal">
+          class="baseLabel break-normal">
           {{ label }}
           <BaseHelpButton :help-message="helpMessage" />
         </label>
@@ -60,6 +60,7 @@
         :status="status" />
     </div>
     <textarea
+      class="baseTextArea"
       v-bind="{ ...$attrs }"
       :id="uuid"
       type="string"

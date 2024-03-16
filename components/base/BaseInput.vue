@@ -57,6 +57,7 @@
     <div class="flex items-center ml-2">
       <div class="flex-none">
         <label
+          class="baseLabel"
           v-if="label"
           :for="uuid">
           {{ label }}
@@ -69,6 +70,7 @@
         :status="status" />
     </div>
     <input
+      class="baseInput"
       :id="uuid"
       :type="props.type"
       :name="name"

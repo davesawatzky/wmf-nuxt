@@ -121,7 +121,7 @@ export const usePerformers = defineStore(
      * @param registrationId ID of Registration form
      * @returns Promise
      */
-    function loadPerformers(registrationId: number): Promise<unknown> {
+    function loadPerformers( registrationId: number ): Promise<unknown> {
       return new Promise((resolve, reject) => {
         const {
           result: resultPerformers,
@@ -132,10 +132,11 @@ export const usePerformers = defineStore(
           PerformersDocument,
           { registrationId },
           { fetchPolicy: 'no-cache' }
-        )
-        load()
-        onResult((result) => {
-          try {
+          )
+          load()
+          onResult((result) => {
+            try {
+            console.log('Got Here - Performers')
             if (result.data.performers) {
               const performers: Performer[] = result.data.performers
               for (let i = 0; i < performers.length; i++) {

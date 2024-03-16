@@ -1,4 +1,7 @@
 {
   "extends": "../.nuxt/tsconfig.server.json",
-  "sourceMap": true
+  "sourceMap": true,
+  "compilerOptions": {
+    "noEmit": true
+  }
 }
