@@ -1,42 +1,49 @@
 <script setup lang="ts">
-  import { useClasses } from '@/stores/userClasses'
-  import { useRegistration } from '@/stores/userRegistration'
+import { useClasses } from '@/stores/userClasses'
+import { useRegistration } from '@/stores/userRegistration'
 
-  const classesStore = useClasses()
-  const registrationStore = useRegistration()
+const classesStore = useClasses()
+const registrationStore = useRegistration()
 </script>
 
 <template>
   <div
     v-auto-animate
-    class="w-full mb-4">
+    class="w-full mb-4"
+  >
     <table
-      class="table-auto w-full text-xs sm:text-base border-separate border-spacing-0">
+      class="table-auto w-full text-xs sm:text-base border-separate border-spacing-0"
+    >
       <thead class="">
         <tr class="text-white print:text-xs">
           <th
             class="text-left bg-sky-700 rounded-tl-lg"
-            scope="col">
+            scope="col"
+          >
             Class Number
           </th>
           <th
             class="text-left bg-sky-700"
-            scope="col">
+            scope="col"
+          >
             Class Name
           </th>
           <th
             class="text-left bg-sky-700"
-            scope="col">
+            scope="col"
+          >
             Level
           </th>
           <th
             class="text-left bg-sky-700"
-            scope="col">
+            scope="col"
+          >
             Category
           </th>
           <th
             class="text-left bg-sky-700 rounded-tr-lg"
-            scope="col">
+            scope="col"
+          >
             Price
           </th>
         </tr>
@@ -45,14 +52,16 @@
         <tr
           v-for="(registeredClass, index) in classesStore.registeredClasses"
           :key="registeredClass.id"
-          class="print:text-xs">
+          class="print:text-xs"
+        >
           <td
             class="p-8 border-l border-sky-700 bg-white"
             :class="
               index === classesStore.registeredClasses.length - 1
                 ? 'border-b rounded-bl-lg'
                 : ''
-            ">
+            "
+          >
             {{ registeredClass.classNumber }}
           </td>
           <td
@@ -61,7 +70,8 @@
               index === classesStore.registeredClasses.length - 1
                 ? 'border-b border-sky-700'
                 : ''
-            ">
+            "
+          >
             {{ registeredClass.subdiscipline }}
           </td>
           <td
@@ -70,7 +80,8 @@
               index === classesStore.registeredClasses.length - 1
                 ? 'border-b border-sky-700'
                 : ''
-            ">
+            "
+          >
             {{ registeredClass.level }}
           </td>
           <td
@@ -79,7 +90,8 @@
               index === classesStore.registeredClasses.length - 1
                 ? 'border-b border-sky-700'
                 : ''
-            ">
+            "
+          >
             {{ registeredClass.category }}
           </td>
           <td
@@ -88,15 +100,18 @@
               index === classesStore.registeredClasses.length - 1
                 ? 'border-b rounded-br-lg'
                 : ''
-            ">
+            "
+          >
             ${{ Number(registeredClass.price).toFixed(2) }}
           </td>
         </tr>
         <tr class="font-bold">
-          <td></td>
-          <td></td>
-          <td></td>
-          <td class="text-right">Total:</td>
+          <td />
+          <td />
+          <td />
+          <td class="text-right">
+            Total:
+          </td>
           <td>${{ registrationStore.totalClassAmt }}</td>
         </tr>
       </tbody>

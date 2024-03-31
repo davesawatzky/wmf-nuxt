@@ -45,18 +45,18 @@ export const useUser = defineStore(
         } = useMutation(UserUpdateDocument, {
           fetchPolicy: 'network-only',
         })
-        const { id, __typename, firstName, lastName, email, ...userProps } =
-          user.value
+        const { id, __typename, firstName, lastName, email, ...userProps }
+          = user.value
         let userField = null
         if (field && Object.keys(userProps).includes(field)) {
           userField = Object.fromEntries(
-            Array(Object.entries(userProps).find((item) => item[0] === field)!)
+            Array(Object.entries(userProps).find(item => item[0] === field)!),
           )
         }
         userUpdate({
           userId: user.value.id,
           user: <UserInput>(userField || userProps),
-        }).catch((error) => console.log(error))
+        }).catch(error => console.log(error))
         onDone(() => {
           resolve('Success')
         })
@@ -78,7 +78,7 @@ export const useUser = defineStore(
             }
           `,
           { checkIfPasswordExistsId: userID },
-          { fetchPolicy: 'network-only' }
+          { fetchPolicy: 'network-only' },
         )
         onResult((result) => {
           resolve(result.data.checkIfPasswordExists.pass)
@@ -98,5 +98,5 @@ export const useUser = defineStore(
       hasPassword,
     }
   },
-  { persist: true }
+  { persist: true },
 )

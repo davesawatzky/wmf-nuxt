@@ -25,12 +25,12 @@ export default defineEventHandler(async (payload) => {
     to: userEmail,
     bcc: config.bccEmailAddress,
     subject: `WMFestival Registration - ${confirmation}`,
-    html: html,
+    html,
   }
 
   const info = await transporter
     .sendMail(options)
-    .catch((error) => console.log(error))
+    .catch(error => console.log(error))
 
   return { message: 'Email sent from send-email.post.ts' }
 })

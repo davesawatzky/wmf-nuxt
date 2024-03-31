@@ -25,36 +25,36 @@ export const formErrors = computed(() => {
   switch (appStore.performerType) {
     case 'SOLO':
       tabName.value = {
-        Performer: performerStore.performerErrors,
-        Teacher: teacherStore.teacherErrors,
+        'Performer': performerStore.performerErrors,
+        'Teacher': teacherStore.teacherErrors,
         'Solo Classes': classesStore.classErrors,
-        Summary: 0,
+        'Summary': 0,
       }
       break
     case 'GROUP':
       tabName.value = {
-        Group: groupStore.groupErrors,
-        Performers: performerStore.performerErrors,
-        Teacher: teacherStore.teacherErrors,
+        'Group': groupStore.groupErrors,
+        'Performers': performerStore.performerErrors,
+        'Teacher': teacherStore.teacherErrors,
         'Group Classes': classesStore.classErrors,
-        Summary: 0,
+        'Summary': 0,
       }
       break
     case 'SCHOOL':
       tabName.value = {
-        School: schoolStore.schoolErrors,
-        Teacher: teacherStore.teacherErrors,
-        Groups: schoolGroupStore.schoolGroupErrors,
+        'School': schoolStore.schoolErrors,
+        'Teacher': teacherStore.teacherErrors,
+        'Groups': schoolGroupStore.schoolGroupErrors,
         'School Classes': classesStore.classErrors,
-        Summary: 0,
+        'Summary': 0,
       }
       break
     case 'COMMUNITY':
       tabName.value = {
-        Community: communityStore.communityErrors,
-        Contact: teacherStore.teacherErrors,
+        'Community': communityStore.communityErrors,
+        'Contact': teacherStore.teacherErrors,
         'Community Classes': classesStore.classErrors,
-        Summary: 0,
+        'Summary': 0,
       }
       break
   }

@@ -46,9 +46,9 @@ export const useFieldConfig = defineStore(
           break
       }
       fields = requiredFields.value
-        .filter((el) => el.tableName === tableName)
-        .filter((el) => el[column] === true)
-        .map((el) => el.fieldName)
+        .filter(el => el.tableName === tableName)
+        .filter(el => el[column] === true)
+        .map(el => el.fieldName)
       return fields
     }
 
@@ -66,7 +66,7 @@ export const useFieldConfig = defineStore(
         onResult((result) => {
           for (let i = 0; i < result.data.fieldConfigs.length; i++) {
             requiredFields.value.push(
-              result.data.fieldConfigs[i] as FieldConfig
+              result.data.fieldConfigs[i] as FieldConfig,
             )
           }
           resolve('Success')
@@ -86,5 +86,5 @@ export const useFieldConfig = defineStore(
   },
   {
     persist: true,
-  }
+  },
 )

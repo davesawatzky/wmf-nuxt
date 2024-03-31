@@ -1,5 +1,4 @@
-import type { Teacher } from '~/graphql/gql/graphql'
-import type { Performer } from '~/graphql/gql/graphql'
+import type { Performer, Teacher } from '~/graphql/gql/graphql'
 
 export const testFullTeacher: Teacher = {
   id: 25,

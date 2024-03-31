@@ -4,17 +4,13 @@
 
 type AuthPayload {
   diatonicToken: String
-  user: User!
+  user: User
   userErrors: [UserError!]!
 }
 
 type Category {
   description: String
-  festivalClasses(
-    levelID: Int!
-    performerType: PerformerType!
-    subdisciplineID: Int!
-  ): [FestivalClass!]
+  festivalClasses(levelID: Int!, performerType: PerformerType!, subdisciplineID: Int!): [FestivalClass!]
   id: Int!
   name: String!
   requiredComposer: String
@@ -27,7 +23,7 @@ input CategoryInput {
 }
 
 type CategoryPayload {
-  category: Category!
+  category: Category
   userErrors: [UserError!]!
 }
 
@@ -85,9 +81,7 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-"""
-An arbitrary-precision Decimal type
-"""
+"""An arbitrary-precision Decimal type"""
 scalar Decimal
 
 type Discipline {
@@ -199,12 +193,8 @@ type InstrumentPayload {
 }
 
 type Level {
-  classes(
-    categoryID: Int!
-    performerType: PerformerType!
-    subdisciplineID: Int!
-  ): [FestivalClass!]
   description: String
+  festivalClasses(categoryID: Int!, performerType: PerformerType!, subdisciplineID: Int!): [FestivalClass!]
   id: Int!
   name: String!
 }
@@ -222,97 +212,48 @@ type LevelPayload {
 type Mutation {
   categoryCreate(categoryInput: CategoryInput!): CategoryPayload!
   categoryDelete(id: Int!): CategoryPayload!
-  categoryUpdate(
-    categoryID: Int!
-    categoryInput: CategoryInput!
-  ): CategoryPayload!
+  categoryUpdate(categoryID: Int!, categoryInput: CategoryInput!): CategoryPayload!
   communityCreate(registrationID: Int!): CommunityPayload!
   communityDelete(communityID: Int!): CommunityPayload!
-  communityUpdate(
-    communityID: Int!
-    communityInput: CommunityInput!
-  ): CommunityPayload!
+  communityUpdate(communityID: Int!, communityInput: CommunityInput!): CommunityPayload!
   disciplineCreate(disciplineInput: DisciplineInput!): DisciplinePayload!
   disciplineDelete(id: Int!): DisciplinePayload!
-  disciplineUpdate(
-    disciplineInput: DisciplineInput!
-    id: Int!
-  ): DisciplinePayload!
+  disciplineUpdate(disciplineInput: DisciplineInput!, id: Int!): DisciplinePayload!
   festivalClassDelete(festivalClassID: Int!): FestivalClassPayload!
-  festivalClassUpdate(
-    festivalClass: FestivalClassInput!
-    festivalClassID: Int!
-  ): FestivalClassPayload!
+  festivalClassUpdate(festivalClass: FestivalClassInput!, festivalClassID: Int!): FestivalClassPayload!
   groupCreate(registrationID: Int!): GroupPayload!
   groupDelete(groupID: Int!): GroupPayload!
   groupUpdate(groupID: Int!, groupInput: GroupInput!): GroupPayload!
   instrumentCreate(instrument: InstrumentInput!): InstrumentPayload!
   instrumentDelete(id: Int!): InstrumentPayload!
-  instrumentUpdate(
-    instrument: InstrumentInput!
-    instrumentID: Int!
-  ): InstrumentPayload!
+  instrumentUpdate(instrument: InstrumentInput!, instrumentID: Int!): InstrumentPayload!
   levelCreate(levelInput: LevelInput!): LevelPayload!
   levelDelete(levelID: Int!): LevelPayload!
   levelUpdate(levelID: Int!, levelInput: LevelInput!): LevelPayload!
-  performerCreate(
-    performerInput: PerformerInput
-    registrationID: Int!
-  ): PerformerPayload!
+  performerCreate(performerInput: PerformerInput, registrationID: Int!): PerformerPayload!
   performerDelete(performerID: Int!): PerformerPayload!
-  performerUpdate(
-    performerID: Int!
-    performerInput: PerformerInput!
-  ): PerformerPayload!
-  registeredClassCreate(
-    registeredClass: RegisteredClassInput
-    registrationID: Int!
-  ): RegisteredClassPayload!
+  performerUpdate(performerID: Int!, performerInput: PerformerInput!): PerformerPayload!
+  registeredClassCreate(registeredClass: RegisteredClassInput, registrationID: Int!): RegisteredClassPayload!
   registeredClassDelete(registeredClassID: Int!): RegisteredClassPayload!
-  registeredClassUpdate(
-    registeredClassID: Int!
-    registeredClassInput: RegisteredClassInput!
-  ): RegisteredClassPayload!
-  registrationCreate(
-    label: String!
-    performerType: PerformerType!
-  ): RegistrationPayload!
+  registeredClassUpdate(registeredClassID: Int!, registeredClassInput: RegisteredClassInput!): RegisteredClassPayload!
+  registrationCreate(label: String!, performerType: PerformerType!): RegistrationPayload!
   registrationDelete(registrationID: Int!): RegistrationPayload!
-  registrationUpdate(
-    registrationID: Int!
-    registrationInput: RegistrationInput!
-  ): RegistrationPayload!
+  registrationUpdate(registrationID: Int!, registrationInput: RegistrationInput!): RegistrationPayload!
   schoolCreate(registrationID: Int!, schoolInput: SchoolInput): SchoolPayload!
   schoolDelete(schoolID: Int!): SchoolPayload!
   schoolGroupCreate(schoolID: Int!): SchoolGroupPayload!
   schoolGroupDelete(schoolGroupID: Int!): SchoolGroupPayload!
-  schoolGroupUpdate(
-    schoolGroupID: Int!
-    schoolGroupInput: SchoolGroupInput!
-  ): SchoolGroupPayload!
+  schoolGroupUpdate(schoolGroupID: Int!, schoolGroupInput: SchoolGroupInput!): SchoolGroupPayload!
   schoolUpdate(schoolID: Int!, schoolInput: SchoolInput!): SchoolPayload!
   selectionCreate(registeredClassID: Int!): SelectionPayload!
   selectionDelete(selectionID: Int!): SelectionPayload!
-  selectionUpdate(
-    selectionID: Int!
-    selectionInput: SelectionInput!
-  ): SelectionPayload!
+  selectionUpdate(selectionID: Int!, selectionInput: SelectionInput!): SelectionPayload!
   signin(credentials: CredentialsSignin!): AuthPayload!
   signup(credentials: CredentialsSignup!): AuthPayload!
-  subdisciplineCreate(
-    disciplineID: Int!
-    subdisciplineInput: SubdisciplineInput!
-  ): SubdisciplinePayload!
+  subdisciplineCreate(disciplineID: Int!, subdisciplineInput: SubdisciplineInput!): SubdisciplinePayload!
   subdisciplineDelete(subdisciplineID: Int!): SubdisciplinePayload!
-  subdisciplineUpdate(
-    subdisciplineID: Int!
-    subdisciplineInput: SubdisciplineInput!
-  ): SubdisciplinePayload!
-  teacherCreate(
-    privateTeacher: Boolean!
-    schoolTeacher: Boolean!
-    teacherInput: TeacherInput!
-  ): TeacherPayload!
+  subdisciplineUpdate(subdisciplineID: Int!, subdisciplineInput: SubdisciplineInput!): SubdisciplinePayload!
+  teacherCreate(privateTeacher: Boolean!, schoolTeacher: Boolean!, teacherInput: TeacherInput!): TeacherPayload!
   teacherDelete(teacherID: Int!): TeacherPayload!
   teacherUpdate(teacherID: Int!, teacherInput: TeacherInput!): TeacherPayload!
   trophyCreate(trophyInput: TrophyInput!): TrophyPayload!
@@ -367,9 +308,7 @@ type PerformerPayload {
   userErrors: [UserError!]!
 }
 
-"""
-SOLO, GROUP, SCHOOL, COMMUNITY
-"""
+"""SOLO, GROUP, SCHOOL, COMMUNITY"""
 enum PerformerType {
   COMMUNITY
   GROUP
@@ -389,13 +328,8 @@ type Query {
   disciplines(instrument: String, performerType: PerformerType): [Discipline!]!
   festivalClass(id: Int!): FestivalClass!
   festivalClassByNumber(festivalClassNumber: String!): FestivalClass!
-  festivalClassSearch(
-    festivalClassSearch: FestivalClassSearchArgs!
-  ): [FestivalClass!]!
-  festivalClasses(
-    festivalClassSearch: FestivalClassSearchArgs
-    performerType: PerformerType
-  ): [FestivalClass!]!
+  festivalClassSearch(festivalClassSearch: FestivalClassSearchArgs!): [FestivalClass!]!
+  festivalClasses(festivalClassSearch: FestivalClassSearchArgs, performerType: PerformerType): [FestivalClass!]!
   fieldConfig(fieldName: String!, tableName: String!): FieldConfig!
   fieldConfigs: [FieldConfig!]!
   group(registrationID: Int!): Group!
@@ -420,10 +354,7 @@ type Query {
   selection(selectionID: Int!): Selection!
   selections(registeredClassID: Int): [Selection!]!
   subdiscipline(subdisciplineID: Int!): Subdiscipline!
-  subdisciplines(
-    disciplineID: Int
-    performerType: PerformerType
-  ): [Subdiscipline!]!
+  subdisciplines(disciplineID: Int, performerType: PerformerType): [Subdiscipline!]!
   subdisciplinesByName(name: String!): [Subdiscipline!]!
   teacher(teacherEmail: String, teacherID: Int): Teacher!
   teachers(privateTeacher: Boolean!, schoolTeacher: Boolean!): [Teacher!]!
@@ -587,11 +518,7 @@ type SelectionPayload {
 type Subdiscipline {
   description: String
   discipline: Discipline
-  festivalClasses(
-    categoryID: Int
-    levelID: Int
-    performerType: PerformerType
-  ): [FestivalClass!]
+  festivalClasses(categoryID: Int, levelID: Int, performerType: PerformerType): [FestivalClass!]
   id: Int!
   levels: [Level!]
   maxPerformers: Int

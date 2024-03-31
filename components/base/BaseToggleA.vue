@@ -1,21 +1,22 @@
 <script setup lang="ts">
-  defineProps({
-    label: {
-      type: String,
-      default: '',
-    },
-    modelValue: {
-      type: Boolean,
-      default: false,
-    },
-  })
-  defineEmits(['update:modelValue'])
+defineProps({
+  label: {
+    type: String,
+    default: '',
+  },
+  modelValue: {
+    type: Boolean,
+    default: false,
+  },
+})
+defineEmits(['update:modelValue'])
 </script>
 
 <template>
   <label
     for="toggleA"
-    class="items-center m-5 cursor-pointer">
+    class="items-center m-5 cursor-pointer"
+  >
     <div class="relative">
       <input
         id="toggleA"
@@ -23,16 +24,19 @@
         type="checkbox"
         :checked="modelValue"
         class="sr-only"
-        @change="$emit('update:modelValue', $event.target)" />
+        @change="$emit('update:modelValue', $event.target)"
+      >
       <!-- line -->
       <div class="w-10 h-4 bg-gray-400 rounded-full shadow-inner" />
       <!-- dot -->
       <div
-        class="dot absolute w-6 h-6 bg-white rounded-full shadow -left-1 -top-1 transition" />
+        class="dot absolute w-6 h-6 bg-white rounded-full shadow -left-1 -top-1 transition"
+      />
     </div>
     <div
       v-if="label"
-      class="ml-3">
+      class="ml-3"
+    >
       {{ label }}
     </div>
   </label>

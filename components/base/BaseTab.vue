@@ -1,16 +1,16 @@
 <script setup lang="ts">
-  defineProps({
-    tabs: {
-      type: Array,
-      required: true,
-    },
-  })
-  const emit = defineEmits(['newComponent'])
-  const activeTab = ref(0)
-  function newTab(index: number) {
-    activeTab.value = index
-    emit('newComponent', index)
-  }
+defineProps({
+  tabs: {
+    type: Array,
+    required: true,
+  },
+})
+const emit = defineEmits(['newComponent'])
+const activeTab = ref(0)
+function newTab(index: number) {
+  activeTab.value = index
+  emit('newComponent', index)
+}
 </script>
 
 <template>
@@ -19,7 +19,8 @@
       <li
         v-for="(tab, index) in tabs"
         :key="index"
-        @click="newTab(index + 1)">
+        @click="newTab(index + 1)"
+      >
         {{ tab }} - {{ index + 1 }}
       </li>
     </ul>

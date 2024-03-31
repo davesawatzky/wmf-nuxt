@@ -1,4 +1,4 @@
-//Form Middleware
+// Form Middleware
 
 export default defineNuxtRouteMiddleware(async (to, from) => {
   const regExist = sessionStorage.getItem('registrations')

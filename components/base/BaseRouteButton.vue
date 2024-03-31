@@ -4,11 +4,13 @@
   <nuxt-link
     v-slot="{ navigate }"
     to=""
-    custom>
+    custom
+  >
     <button
       v-bind="$attrs"
       type="button"
-      @click="navigate">
+      @click="navigate"
+    >
       <slot />
     </button>
   </nuxt-link>

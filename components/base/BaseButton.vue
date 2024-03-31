@@ -9,7 +9,8 @@ BaseButton
 <template>
   <button
     v-bind="$attrs"
-    type="button">
+    type="button"
+  >
     <slot />
   </button>
 </template>

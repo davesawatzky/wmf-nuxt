@@ -1,9 +1,9 @@
 <script setup lang="ts">
-  import { StatusEnum } from '@/composables/types'
+import { StatusEnum } from '@/composables/types'
 
-  defineProps<{
-    status?: StatusEnum
-  }>()
+defineProps<{
+  status?: StatusEnum
+}>()
 </script>
 
 <template>
@@ -11,16 +11,19 @@
     <Icon
       v-if="status === StatusEnum.pending"
       class="animate-spin"
-      name="icomoon-free:spinner9" />
+      name="icomoon-free:spinner9"
+    />
     <Icon
       v-else-if="status === StatusEnum.saved"
       class="self-center text-base font-normal text-green-600"
-      name="mingcute:check-2-fill" />
+      name="mingcute:check-2-fill"
+    />
 
     <Icon
       v-else-if="status === StatusEnum.removed"
       class="self-center text-base font-normal text-red-600"
-      name="mingcute:forbid-circle-line" />
+      name="mingcute:forbid-circle-line"
+    />
   </span>
 </template>
 

@@ -1,3 +1,4 @@
+/* eslint-disable ts/no-require-imports */
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
@@ -7,7 +8,7 @@ export default {
     './plugins/**/*.{js,ts}',
     './nuxt.config.{js,ts}',
     './app.vue',
-    './presets/**/*.{js, vue,ts}'
+    './presets/**/*.{js, vue,ts}',
   ],
   theme: {
     extend: {
@@ -44,15 +45,15 @@ export default {
         'surface-700': 'rgb(var(--surface-700))',
         'surface-800': 'rgb(var(--surface-800))',
         'surface-900': 'rgb(var(--surface-900))',
-        'surface-950': 'rgb(var(--surface-950))'
-      }
+        'surface-950': 'rgb(var(--surface-950))',
+      },
     },
   },
   fontFamily: {
     sans: ['Roboto'],
   },
   plugins: [
-    require( '@tailwindcss/forms' ),
-    require( '@headlessui/tailwindcss' )
+    require('@tailwindcss/forms'),
+    require('@headlessui/tailwindcss'),
   ],
 }

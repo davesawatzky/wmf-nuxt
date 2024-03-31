@@ -1,199 +1,201 @@
 <script setup lang="ts">
-  import { loadStripe } from '@stripe/stripe-js'
-  import type {
-    Stripe,
-    StripeElements,
-    StripePaymentElementOptions,
-    StripeElementsOptionsClientSecret,
-  } from '@stripe/stripe-js'
-  import { useToast } from 'vue-toastification'
-  import { useRegistration } from '@/stores/userRegistration'
-  import { useUser } from '@/stores/useUser'
-  import { useAppStore } from '@/stores/appStore'
+import { loadStripe } from '@stripe/stripe-js'
+import type {
+  Stripe,
+  StripeElements,
+  StripeElementsOptionsClientSecret,
+  StripePaymentElementOptions,
+} from '@stripe/stripe-js'
+import { useToast } from 'vue-toastification'
+import { useRegistration } from '@/stores/userRegistration'
+import { useUser } from '@/stores/useUser'
+import { useAppStore } from '@/stores/appStore'
 
-  const appStore = useAppStore()
-  const userStore = useUser()
-  const toast = useToast()
-  const loading = ref(false)
-  const spinnerHidden = ref(true)
-  const registrationStore = useRegistration()
-  let clientSec: string = ''
-  // const total = ref(0)
+const appStore = useAppStore()
+const userStore = useUser()
+const toast = useToast()
+const loading = ref(false)
+const spinnerHidden = ref(true)
+const registrationStore = useRegistration()
+let clientSec: string = ''
+// const total = ref(0)
 
-  const config = useRuntimeConfig()
-  let stripe: Stripe | null
-  let elements: StripeElements
+const config = useRuntimeConfig()
+let stripe: Stripe | null
+let elements: StripeElements
 
-  definePageMeta({
-    middleware: ['submission'],
-  })
+definePageMeta({
+  middleware: ['submission'],
+})
 
-  onBeforeMount(() => {
-    const regExist = registrationStore?.registrationId
-    const confirmed = registrationStore.registration?.confirmation
-    const submitted = registrationStore.registration?.submittedAt
+onBeforeMount(() => {
+  const regExist = registrationStore?.registrationId
+  const confirmed = registrationStore.registration?.confirmation
+  const submitted = registrationStore.registration?.submittedAt
 
-    if (!regExist || confirmed || submitted) {
-      navigateTo('/Registrations')
-    }
-  })
+  if (!regExist || confirmed || submitted)
+    navigateTo('/Registrations')
+})
 
-  onMounted(() => {
-    initialize()
-  })
+onMounted(() => {
+  initialize()
+})
 
-  async function initialize() {
-    loading.value = true
-    const items = 
-      {
+async function initialize() {
+  loading.value = true
+  const items
+      = {
         amount: Math.round(
-          (+registrationStore.registration.totalAmt +
-            +registrationStore.processingFee) *
-            100
+          (+registrationStore.registration.totalAmt
+          + +registrationStore.processingFee)
+          * 100,
         ),
         currency: 'cad',
       }
-    
 
-    const response = await useFetch(
+  const response = await useFetch(
       `${config.public.serverAddress}/payment/create-payment-intent`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(items),
-      }
-    )
-    const { clientSecret }: any = response.data.value
-    clientSec = clientSecret
-
-    const appearance = {
-      theme: 'stripe',
-    }
-    stripe = await loadStripe(config.public.stripeKey)
-    elements = stripe!.elements({
-      appearance,
-      clientSecret,
-    } as StripeElementsOptionsClientSecret)
-
-    const paymentElementOptions: StripePaymentElementOptions = {
-      layout: {
-        type: 'accordion',
-        defaultCollapsed: false,
-        radios: false,
-        spacedAccordionItems: true,
       },
-    }
-    const linkAuthenticationElement = elements.create('linkAuthentication')
-    linkAuthenticationElement.mount('#link-authentication-element')
-    const paymentElement = elements.create('payment', paymentElementOptions)
-    paymentElement.mount('#payment-element')
+  )
+  const { clientSecret }: any = response.data.value
+  clientSec = clientSecret
 
-    loading.value = false
+  const appearance = {
+    theme: 'stripe',
   }
+  stripe = await loadStripe(config.public.stripeKey)
+  elements = stripe!.elements({
+    appearance,
+    clientSecret,
+  } as StripeElementsOptionsClientSecret)
 
-  async function handleSubmit(event: Event) {
-    event.preventDefault()
+  const paymentElementOptions: StripePaymentElementOptions = {
+    layout: {
+      type: 'accordion',
+      defaultCollapsed: false,
+      radios: false,
+      spacedAccordionItems: true,
+    },
+  }
+  const linkAuthenticationElement = elements.create('linkAuthentication')
+  linkAuthenticationElement.mount('#link-authentication-element')
+  const paymentElement = elements.create('payment', paymentElementOptions)
+  paymentElement.mount('#payment-element')
 
-    if (!!loading.value) return
+  loading.value = false
+}
 
-    loading.value = true
-    spinnerHidden.value = false
+async function handleSubmit(event: Event) {
+  event.preventDefault()
 
-    if (!stripe || !elements) {
-      return
-    }
-    if (appStore.stripePayment === 'cash') {
-      loading.value = false
-      spinnerHidden.value = true
-      await navigateTo('/submission/result')
-      return
-    }
+  if (loading.value)
+    return
 
-    const {
-      id,
-      firstName,
-      lastName,
-      email,
-      apartment,
-      streetNumber,
-      streetName,
-      city,
-      province,
-      postalCode,
-    } = userStore.user
+  loading.value = true
+  spinnerHidden.value = false
 
-    elements.submit()
+  if (!stripe || !elements)
+    return
 
-    const { error } = await stripe!.confirmPayment({
-      elements,
-      clientSecret: clientSec,
-      confirmParams: {
-        return_url: `${config.public.apiBase}/submission/result`,
-      },
-    })
-
-    // This point will only be reached if there is an immediate error when
-    // confirming the payment. Otherwise, your customer will be redirected to
-    // your `return_url`. For some payment methods like iDEAL, your customer will
-    // be redirected to an intermediate site first to authorize the payment, then
-    // redirected to the `return_url`.
-    if (error) {
-      toast.error('Error processing payment')
-      console.log(error.message)
-    }
+  if (appStore.stripePayment === 'cash') {
+    loading.value = false
     spinnerHidden.value = true
-    loading.value = false
+    await navigateTo('/submission/result')
+    return
   }
 
-  // Fetches the payment intent status after payment submission
-  async function checkStatus() {
-    const clientSecret = new URLSearchParams(window.location.search).get(
-      'payment_intent_client_secret'
-    )
+  const {
+    id,
+    firstName,
+    lastName,
+    email,
+    apartment,
+    streetNumber,
+    streetName,
+    city,
+    province,
+    postalCode,
+  } = userStore.user
 
-    if (!clientSecret) {
-      return
-    }
+  elements.submit()
 
-    const { paymentIntent } = await stripe!.retrievePaymentIntent(clientSecret)
-
-    switch (paymentIntent?.status) {
-      case 'succeeded':
-        console.log('Payment succeeded!')
-        break
-      case 'processing':
-        console.log('Your payment is processing.')
-        break
-      case 'requires_payment_method':
-        console.log('Your payment was not successful, please try again.')
-        break
-      default:
-        console.log('Something went wrong.')
-        break
-    }
-  }
-
-  const total = computed(() => {
-    if (appStore.stripePayment === 'ccard') {
-      return (
-        +registrationStore.registration.totalAmt +
-        +registrationStore.processingFee
-      ).toFixed(2)
-    } else if (appStore.stripePayment === 'cash') {
-      return Number(registrationStore.registration.totalAmt).toFixed(2)
-    }
+  const { error } = await stripe!.confirmPayment({
+    elements,
+    clientSecret: clientSec,
+    confirmParams: {
+      return_url: `${config.public.apiBase}/submission/result`,
+    },
   })
+
+  // This point will only be reached if there is an immediate error when
+  // confirming the payment. Otherwise, your customer will be redirected to
+  // your `return_url`. For some payment methods like iDEAL, your customer will
+  // be redirected to an intermediate site first to authorize the payment, then
+  // redirected to the `return_url`.
+  if (error) {
+    toast.error('Error processing payment')
+    console.log(error.message)
+  }
+  spinnerHidden.value = true
+  loading.value = false
+}
+
+// Fetches the payment intent status after payment submission
+async function checkStatus() {
+  const clientSecret = new URLSearchParams(window.location.search).get(
+    'payment_intent_client_secret',
+  )
+
+  if (!clientSecret)
+    return
+
+  const { paymentIntent } = await stripe!.retrievePaymentIntent(clientSecret)
+
+  switch (paymentIntent?.status) {
+    case 'succeeded':
+      console.log('Payment succeeded!')
+      break
+    case 'processing':
+      console.log('Your payment is processing.')
+      break
+    case 'requires_payment_method':
+      console.log('Your payment was not successful, please try again.')
+      break
+    default:
+      console.log('Something went wrong.')
+      break
+  }
+}
+
+const total = computed(() => {
+  if (appStore.stripePayment === 'ccard') {
+    return (
+      +registrationStore.registration.totalAmt
+      + +registrationStore.processingFee
+    ).toFixed(2)
+  }
+  else if (appStore.stripePayment === 'cash') {
+    return Number(registrationStore.registration.totalAmt).toFixed(2)
+  }
+})
 </script>
 
 <template>
   <div v-auto-animate>
-    <h1 class="my-8">Payment - Cash or Credit Card</h1>
+    <h1 class="my-8">
+      Payment - Cash or Credit Card
+    </h1>
     <p class="m-4 p-3 text-center font-bold text-xl rounded-xl">
       Please do not close your browser after submitting!
     </p>
     <form
       id="payment-form"
-      @submit="handleSubmit">
+      @submit="handleSubmit"
+    >
       <div class="sm:grid sm:grid-cols-2 sm:gap-4">
         <fieldset>
           <div class="p-4 sm:p-6 border border-sky-700 rounded-lg bg-white">
@@ -202,14 +204,13 @@
                 v-model="appStore.stripePayment"
                 name="paymentType"
                 label="Cash, Cheque, E-Transfer"
-                value="cash" />
+                value="cash"
+              />
             </div>
             <ul class="list-disc p-4">
               <li>
                 Payment may be made by cash, cheque, or e-transfer to the
-                Winnipeg Music Festival (<a href="mailto:wmf@mts.net"
-                  ><strong>wmf@mts.net</strong></a
-                >).
+                Winnipeg Music Festival (<a href="mailto:wmf@mts.net"><strong>wmf@mts.net</strong></a>).
               </li>
               <li>
                 Registrations will not be considered submitted until payment is
@@ -217,33 +218,41 @@
               </li>
             </ul>
           </div>
-          <div class="text-center font-bold text-xl py-3">OR</div>
+          <div class="text-center font-bold text-xl py-3">
+            OR
+          </div>
           <div class="p-4 sm:p-6 border border-sky-700 rounded-lg bg-white">
             <div class="pb-8">
               <BaseRadio
                 v-model="appStore.stripePayment"
                 name="paymentType"
                 label="Pay by Credit Card"
-                value="ccard" />
+                value="ccard"
+              />
             </div>
             <div id="link-authentication-element">
-              <!--Stripe.js injects the Payment Element-->
+              <!-- Stripe.js injects the Payment Element -->
             </div>
             <div id="payment-element">
-              <!--Stripe.js injects the Payment Element-->
+              <!-- Stripe.js injects the Payment Element -->
             </div>
             <div
               id="payment-message"
-              class=""></div>
+              class=""
+            />
           </div>
         </fieldset>
         <div class="mt-4 sm:mt-0">
           <div class="p-4 border border-sky-700 rounded-lg bg-white">
-            <h4 class="mb-6">Final Amount</h4>
+            <h4 class="mb-6">
+              Final Amount
+            </h4>
             <table class="table-fixed w-full">
               <tbody>
                 <tr>
-                  <td class="">Subtotal</td>
+                  <td class="">
+                    Subtotal
+                  </td>
                   <td class="text-right">
                     ${{
                       Number(registrationStore.registration.totalAmt).toFixed(2)
@@ -257,17 +266,23 @@
                   </td>
                 </tr>
                 <tr class="font-bold border-t border-sky-700 pt-5">
-                  <td class="pt-3">Total</td>
-                  <td class="pt-3 text-right">${{ total }}</td>
+                  <td class="pt-3">
+                    Total
+                  </td>
+                  <td class="pt-3 text-right">
+                    ${{ total }}
+                  </td>
                 </tr>
               </tbody>
             </table>
             <button
               id="submit"
-              class="mt-8">
+              class="mt-8"
+            >
               <div
+                id="spinner"
                 :class="spinnerHidden ? 'spinner hidden' : 'spinner'"
-                id="spinner"></div>
+              />
               <span id="button-text">Submit Payment</span>
             </button>
           </div>

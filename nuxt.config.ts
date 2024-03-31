@@ -1,5 +1,5 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-import path, { resolve } from 'node:path'
+import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import process from 'node:process'
 
@@ -10,10 +10,10 @@ export default defineNuxtConfig({
   devtools: {
     enabled: false,
   },
-  debug: true,
+  debug: false,
   alias: {
     '@': resolve(__dirname, './'),
-    images: fileURLToPath(new URL('./public/images', import.meta.url)),
+    'images': fileURLToPath(new URL('./public/images', import.meta.url)),
   },
   apollo: {
     autoImports: true,
@@ -43,7 +43,6 @@ export default defineNuxtConfig({
       script: ['https://www.polyfill.io/v3/polyfill.min.js'],
     },
   },
-  // css: ['~/assets/css/base.css'],
   experimental: {
     typedPages: true,
     componentIslands: true,
@@ -63,7 +62,7 @@ export default defineNuxtConfig({
     'nuxt-icon',
     'nuxt-headlessui',
     '@nuxtjs/device',
-    'nuxt-primevue'
+    'nuxt-primevue',
   ],
   pinia: {
     storesDirs: ['./stores'],
@@ -74,8 +73,12 @@ export default defineNuxtConfig({
   primevue: {
     options: {
       unstyled: true,
+      ripple: true,
     },
-    importPT: { from: '~/presets/wind/'}
+    components: {
+      prefix: 'Prime',
+    },
+    importPT: { from: '~/presets/lara/' },
   },
   runtimeConfig: {
     graphqlServer: process.env.GRAPHQL_SERVER,

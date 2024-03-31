@@ -1,125 +1,124 @@
 <script setup lang="ts">
-  import * as yup from 'yup'
-  import { useSchoolGroup } from '@/stores/userSchoolGroup'
-  import type { SchoolGroupInput } from '@/graphql/gql/graphql'
-  import type { Status } from '@/composables/types'
+import * as yup from 'yup'
+import { useSchoolGroup } from '@/stores/userSchoolGroup'
+import type { SchoolGroupInput } from '@/graphql/gql/graphql'
+import type { Status } from '@/composables/types'
 
-  const props = defineProps<{
-    modelValue: SchoolGroupInput
-    schoolGroupIndex: number
-    schoolGroupId: number
-  }>()
+const props = defineProps<{
+  modelValue: SchoolGroupInput
+  schoolGroupIndex: number
+  schoolGroupId: number
+}>()
 
-  const emits = defineEmits<{
-    'update:modelValue': [value: SchoolGroupInput]
-  }>()
+const emits = defineEmits<{
+  'update:modelValue': [value: SchoolGroupInput]
+}>()
 
-  const schoolGroupStore = useSchoolGroup()
+const schoolGroupStore = useSchoolGroup()
 
-  const schoolGroup = computed({
-    get: () => props.modelValue,
-    set: (value) => emits('update:modelValue', value),
-  })
+const schoolGroup = computed({
+  get: () => props.modelValue,
+  set: value => emits('update:modelValue', value),
+})
 
-  const status = reactive<Status>({
-    name: props.modelValue.name ? StatusEnum.saved : StatusEnum.null,
-    earliestTime: props.modelValue.earliestTime
-      ? StatusEnum.saved
-      : StatusEnum.null,
-    latestTime: props.modelValue.latestTime
-      ? StatusEnum.saved
-      : StatusEnum.null,
-    groupSize:
+const status = reactive<Status>({
+  name: props.modelValue.name ? StatusEnum.saved : StatusEnum.null,
+  earliestTime: props.modelValue.earliestTime
+    ? StatusEnum.saved
+    : StatusEnum.null,
+  latestTime: props.modelValue.latestTime
+    ? StatusEnum.saved
+    : StatusEnum.null,
+  groupSize:
       props.modelValue.groupSize || props.modelValue.groupSize === 0
         ? StatusEnum.saved
         : StatusEnum.null,
-    chaperones:
+  chaperones:
       props.modelValue.chaperones || props.modelValue.chaperones === 0
         ? StatusEnum.saved
         : StatusEnum.null,
-    wheelchairs:
+  wheelchairs:
       props.modelValue.wheelchairs || props.modelValue.wheelchairs === 0
         ? StatusEnum.saved
         : StatusEnum.null,
-    unavailable: props.modelValue.unavailable
-      ? StatusEnum.saved
-      : StatusEnum.null,
-    conflictPerformers: props.modelValue.conflictPerformers
-      ? StatusEnum.saved
-      : StatusEnum.null,
-  })
+  unavailable: props.modelValue.unavailable
+    ? StatusEnum.saved
+    : StatusEnum.null,
+  conflictPerformers: props.modelValue.conflictPerformers
+    ? StatusEnum.saved
+    : StatusEnum.null,
+})
 
-  const totalParticipants = computed<number>(() => {
-    return (
-      (schoolGroup.value.groupSize ?? 0) +
-      (schoolGroup.value.chaperones ?? 0) +
-      (schoolGroup.value.wheelchairs ?? 0)
-    )
-  })
-
-  async function fieldStatus(stat: string, fieldName: string) {
-    await nextTick()
-    status[fieldName] = StatusEnum.pending
-    await schoolGroupStore.updateSchoolGroup(props.schoolGroupId, fieldName)
-    if (stat === 'saved') {
-      status[fieldName] = StatusEnum.saved
-    } else if (stat === 'remove') {
-      status[fieldName] = StatusEnum.removed
-    } else {
-      status[fieldName] = StatusEnum.null
-    }
-  }
-
-  const validationSchema = toTypedSchema(
-    yup.object({
-      groupName: yup.string().trim().required('Enter a name for your group'),
-      earliestTime: yup
-        .string()
-        .matches(/[0-1]{0,1}[0-9]:[0-5][0-9]/, 'Enter a time')
-        .default('08:00')
-        .required('Enter a time'),
-      latestTime: yup
-        .string()
-        .matches(/[0-1]{0,1}[0-9]:[0-5][0-9]/, 'Enter a time')
-        .default('17:00')
-        .required('Enter a time'),
-      groupSize: yup
-        .number()
-        .min(2)
-        .max(300)
-        .integer()
-        .typeError('Please enter a valid number')
-        .required('Enter the # of performers'),
-      chaperones: yup
-        .number()
-        .min(0)
-        .max(100)
-        .integer()
-        .typeError('Please enter a valid number')
-        .required('Enter the # of chaperones.'),
-      wheelchairs: yup
-        .number()
-        .min(0)
-        .max(100)
-        .integer()
-        .typeError('Please enter a valid number')
-        .required('Enter the # of wheelchairs'),
-      unavailable: yup
-        .string()
-        .trim()
-        .required('Please indicate unavailable dates/times.'),
-      conflictPerformers: yup.string().trim().nullable(),
-    })
+const totalParticipants = computed<number>(() => {
+  return (
+    (schoolGroup.value.groupSize ?? 0)
+    + (schoolGroup.value.chaperones ?? 0)
+    + (schoolGroup.value.wheelchairs ?? 0)
   )
+})
 
-  const { errors, validate } = useForm({
-    validationSchema,
-    validateOnMount: true,
-  })
+async function fieldStatus(stat: string, fieldName: string) {
+  await nextTick()
+  status[fieldName] = StatusEnum.pending
+  await schoolGroupStore.updateSchoolGroup(props.schoolGroupId, fieldName)
+  if (stat === 'saved')
+    status[fieldName] = StatusEnum.saved
+  else if (stat === 'remove')
+    status[fieldName] = StatusEnum.removed
+  else
+    status[fieldName] = StatusEnum.null
+}
 
-  onActivated(() => {
-    validate()
-  })
+const validationSchema = toTypedSchema(
+  yup.object({
+    groupName: yup.string().trim().required('Enter a name for your group'),
+    earliestTime: yup
+      .string()
+      .matches(/[0-1]{0,1}[0-9]:[0-5][0-9]/, 'Enter a time')
+      .default('08:00')
+      .required('Enter a time'),
+    latestTime: yup
+      .string()
+      .matches(/[0-1]{0,1}[0-9]:[0-5][0-9]/, 'Enter a time')
+      .default('17:00')
+      .required('Enter a time'),
+    groupSize: yup
+      .number()
+      .min(2)
+      .max(300)
+      .integer()
+      .typeError('Please enter a valid number')
+      .required('Enter the # of performers'),
+    chaperones: yup
+      .number()
+      .min(0)
+      .max(100)
+      .integer()
+      .typeError('Please enter a valid number')
+      .required('Enter the # of chaperones.'),
+    wheelchairs: yup
+      .number()
+      .min(0)
+      .max(100)
+      .integer()
+      .typeError('Please enter a valid number')
+      .required('Enter the # of wheelchairs'),
+    unavailable: yup
+      .string()
+      .trim()
+      .required('Please indicate unavailable dates/times.'),
+    conflictPerformers: yup.string().trim().nullable(),
+  }),
+)
+
+const { errors, validate } = useForm({
+  validationSchema,
+  validateOnMount: true,
+})
+
+onActivated(() => {
+  validate()
+})
 </script>
 
 <template>
@@ -132,7 +131,8 @@
           label="Group Name"
           name="groupName"
           type="text"
-          @change-status="(stat: string) => fieldStatus(stat, 'name')" />
+          @change-status="(stat: string) => fieldStatus(stat, 'name')"
+        />
 
         <BaseInput
           v-model="schoolGroup.earliestTime"
@@ -142,7 +142,8 @@
           type="time"
           @change-status="
             (stat: string) => fieldStatus(stat, 'earliestTime')
-          " />
+          "
+        />
 
         <BaseInput
           v-model="schoolGroup.latestTime"
@@ -150,10 +151,12 @@
           name="latestTime"
           label="Latest time your group can perform"
           type="time"
-          @change-status="(stat: string) => fieldStatus(stat, 'latestTime')" />
+          @change-status="(stat: string) => fieldStatus(stat, 'latestTime')"
+        />
       </div>
       <div
-        class="col-span-12 sm:col-span-4 lg:col-span-4 grid grid-cols-2 gap-x-3 items-end">
+        class="col-span-12 sm:col-span-4 lg:col-span-4 grid grid-cols-2 gap-x-3 items-end"
+      >
         <div class="col-1 sm:col-span-2">
           <BaseInput
             v-model.number="schoolGroup.groupSize"
@@ -167,7 +170,8 @@
             name="groupSize"
             label="Number of performers"
             type="number"
-            @change-status="(stat: string) => fieldStatus(stat, 'groupSize')" />
+            @change-status="(stat: string) => fieldStatus(stat, 'groupSize')"
+          />
         </div>
         <div class="col-1 sm:col-span-2">
           <BaseInput
@@ -184,7 +188,8 @@
             type="number"
             @change-status="
               (stat: string) => fieldStatus(stat, 'chaperones')
-            " />
+            "
+          />
         </div>
         <div class="col-1 sm:col-span-2">
           <BaseInput
@@ -201,7 +206,8 @@
             type="number"
             @change-status="
               (stat: string) => fieldStatus(stat, 'wheelchairs')
-            " />
+            "
+          />
         </div>
         <div class="off col-1 sm:col-span-2 text-sm font-bold">
           Total Number: {{ totalParticipants }}
@@ -215,7 +221,8 @@
         name="unavailable"
         label="Unavailable Dates/Times"
         rows="3"
-        @change-status="(stat: string) => fieldStatus(stat, 'unavailable')" />
+        @change-status="(stat: string) => fieldStatus(stat, 'unavailable')"
+      />
       <p class="text-sm mb-2">
         List any date/time when you are unavailable for performance, including
         school in-service days, using
@@ -231,7 +238,8 @@
         rows="3"
         @change-status="
           (stat: string) => fieldStatus(stat, 'conflictPerformers')
-        " />
+        "
+      />
       <p class="text-sm mb-2">
         If there are any students in your group participating in other festival
         classes, list the students' names so that we can do our best to avoid

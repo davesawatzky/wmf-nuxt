@@ -1,16 +1,16 @@
 import { defineStore } from 'pinia'
 import { useFieldConfig } from '@/stores/useFieldConfig'
 import {
+  AllTeachersSearchDocument,
   TeacherCreateDocument,
   TeacherDeleteDocument,
   TeacherInfoDocument,
   TeacherUpdateDocument,
-  AllTeachersSearchDocument,
 } from '~/graphql/gql/graphql'
 import type {
+  Teacher,
   TeacherCreateMutation,
   TeacherInput,
-  Teacher,
 } from '~/graphql/gql/graphql'
 
 export interface AllTeachers {
@@ -37,11 +37,11 @@ export const useTeacher = defineStore(
 
     const teacherErrors = computed(() => {
       if (
-        !!appStore.teacherHasPassword &&
-        appStore.performerType !== 'SCHOOL'
-      ) {
+        !!appStore.teacherHasPassword
+        && appStore.performerType !== 'SCHOOL'
+      )
         return 0
-      }
+
       const teacherKeys = fieldConfigStore.performerTypeFields('Teacher')
       let count = 0
       for (const key of teacherKeys) {
@@ -90,7 +90,7 @@ export const useTeacher = defineStore(
      */
     function createTeacher(
       privateTeacher: boolean,
-      schoolTeacher: boolean
+      schoolTeacher: boolean,
     ): Promise<unknown> {
       return new Promise((resolve, reject) => {
         const {
@@ -105,14 +105,15 @@ export const useTeacher = defineStore(
             city: 'Winnipeg',
             province: 'MB',
           },
-        }).catch((error) => console.log(error))
+        }).catch(error => console.log(error))
         onDone((result) => {
           if (result.data?.teacherCreate.teacher) {
-            const teacher: TeacherCreateMutation['teacherCreate']['teacher'] =
-              result.data.teacherCreate.teacher
+            const teacher: TeacherCreateMutation['teacherCreate']['teacher']
+              = result.data.teacherCreate.teacher
             addToStore(teacher)
             resolve('Success')
-          } else if (result.data?.teacherCreate.userErrors) {
+          }
+          else if (result.data?.teacherCreate.userErrors) {
             reject(console.log(result.data?.teacherCreate.userErrors))
           }
         })
@@ -137,7 +138,7 @@ export const useTeacher = defineStore(
         } = useLazyQuery(
           TeacherInfoDocument,
           { teacherID },
-          { fetchPolicy: 'network-only' }
+          { fetchPolicy: 'network-only' },
         )
         load()
         onResult((result) => {
@@ -152,18 +153,18 @@ export const useTeacher = defineStore(
 
     function loadAllTeachers(
       privateTeacher: boolean,
-      schoolTeacher: boolean
+      schoolTeacher: boolean,
     ): Promise<unknown> {
       return new Promise((resolve, reject) => {
         const { result, load, onError, onResult } = useLazyQuery(
           AllTeachersSearchDocument,
           { privateTeacher, schoolTeacher },
-          { fetchPolicy: 'network-only' }
+          { fetchPolicy: 'network-only' },
         )
         load()
         onResult((result) => {
           allTeachers.value = <AllTeachers[]>(
-            result.data.teachers.map((el) => el)
+            result.data.teachers.map(el => el)
           )
           resolve('Success')
         })
@@ -190,13 +191,13 @@ export const useTeacher = defineStore(
         let teacherField = null
         if (field && Object.keys(teachProps).includes(field)) {
           teacherField = Object.fromEntries(
-            Array(Object.entries(teachProps).find((item) => item[0] === field)!)
+            Array(Object.entries(teachProps).find(item => item[0] === field)!),
           )
         }
         teacherUpdate({
           teacherId: teacher.value.id,
           teacher: <TeacherInput>(teacherField || teachProps),
-        }).catch((error) => console.log(error))
+        }).catch(error => console.log(error))
         onDone(() => {
           resolve('Success')
         })
@@ -218,7 +219,7 @@ export const useTeacher = defineStore(
           onDone,
           onError,
         } = useMutation(TeacherDeleteDocument)
-        teacherDelete({ teacherId }).catch((error) => console.log(error))
+        teacherDelete({ teacherId }).catch(error => console.log(error))
         onDone(() => {
           $resetTeacher()
           resolve('Success')
@@ -244,13 +245,14 @@ export const useTeacher = defineStore(
         } = useLazyQuery(
           TeacherInfoDocument,
           { teacherID: null, teacherEmail },
-          { fetchPolicy: 'network-only' }
+          { fetchPolicy: 'network-only' },
         )
         load()
         onResult((result) => {
           if (!result) {
             reject('no duplicate')
-          } else {
+          }
+          else {
             console.log(result)
             resolve(result.data.teacher)
           }
@@ -280,5 +282,5 @@ export const useTeacher = defineStore(
   },
   {
     persist: true,
-  }
+  },
 )

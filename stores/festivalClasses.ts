@@ -53,5 +53,5 @@ export const festivalClasses = defineStore(
   },
   {
     persist: true,
-  }
+  },
 )

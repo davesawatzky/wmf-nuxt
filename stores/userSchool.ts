@@ -65,14 +65,15 @@ export const useSchool = defineStore(
             city: 'Winnipeg',
             province: 'MB',
           },
-        }).catch((error) => console.log(error))
+        }).catch(error => console.log(error))
         onDone((result) => {
           if (result.data?.schoolCreate.school) {
-            const school: SchoolCreateMutation['schoolCreate']['school'] =
-              result.data.schoolCreate.school
+            const school: SchoolCreateMutation['schoolCreate']['school']
+              = result.data.schoolCreate.school
             addToStore(school)
             resolve('Success')
-          } else if (result.data?.schoolCreate.userErrors) {
+          }
+          else if (result.data?.schoolCreate.userErrors) {
             console.log(result.data.schoolCreate.userErrors)
           }
         })
@@ -97,7 +98,7 @@ export const useSchool = defineStore(
         } = useLazyQuery(
           SchoolInfoDocument,
           { registrationId },
-          { fetchPolicy: 'network-only' }
+          { fetchPolicy: 'network-only' },
         )
         load()
         onResult((result) => {
@@ -128,14 +129,14 @@ export const useSchool = defineStore(
         if (field && Object.keys(schoolProps).includes(field)) {
           schoolField = Object.fromEntries(
             Array(
-              Object.entries(schoolProps).find((item) => item[0] === field)!
-            )
+              Object.entries(schoolProps).find(item => item[0] === field)!,
+            ),
           )
         }
         schoolUpdate({
           schoolId: school.value.id,
           school: <SchoolInput>(schoolField || schoolProps),
-        }).catch((error) => console.log(error))
+        }).catch(error => console.log(error))
         onDone(() => {
           resolve('Success')
         })
@@ -157,7 +158,7 @@ export const useSchool = defineStore(
           onDone,
           onError,
         } = useMutation(SchoolDeleteDocument)
-        schoolDelete({ schoolId }).catch((error) => console.log(error))
+        schoolDelete({ schoolId }).catch(error => console.log(error))
         onDone(() => {
           $reset()
           resolve('Success')
@@ -181,5 +182,5 @@ export const useSchool = defineStore(
   },
   {
     persist: true,
-  }
+  },
 )

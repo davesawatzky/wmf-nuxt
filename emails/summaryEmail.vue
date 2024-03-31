@@ -1,50 +1,50 @@
 <script setup lang="ts">
-  import { DateTime } from 'luxon'
-  import { usePerformers } from '../stores/userPerformer'
-  import { useTeacher } from '../stores/userTeacher'
-  import { useGroup } from '../stores/userGroup'
-  import { useSchool } from '../stores/userSchool'
-  import { useSchoolGroup } from '../stores/userSchoolGroup'
-  import { useCommunity } from '../stores/userCommunity'
-  import { useClasses } from '../stores/userClasses'
-  import { useRegistration } from '../stores/userRegistration'
-  import { useAppStore } from '../stores/appStore'
-  import { useUser } from '../stores/useUser'
+import { DateTime } from 'luxon'
+import { usePerformers } from '../stores/userPerformer'
+import { useTeacher } from '../stores/userTeacher'
+import { useGroup } from '../stores/userGroup'
+import { useSchool } from '../stores/userSchool'
+import { useSchoolGroup } from '../stores/userSchoolGroup'
+import { useCommunity } from '../stores/userCommunity'
+import { useClasses } from '../stores/userClasses'
+import { useRegistration } from '../stores/userRegistration'
+import { useAppStore } from '../stores/appStore'
+import { useUser } from '../stores/useUser'
 
-  const performerStore = usePerformers()
-  const teacherStore = useTeacher()
-  const groupStore = useGroup()
-  const schoolStore = useSchool()
-  const schoolGroupStore = useSchoolGroup()
-  const communityStore = useCommunity()
-  const classesStore = useClasses()
-  const appStore = useAppStore()
-  const registrationStore = useRegistration()
-  const userStore = useUser()
+const performerStore = usePerformers()
+const teacherStore = useTeacher()
+const groupStore = useGroup()
+const schoolStore = useSchool()
+const schoolGroupStore = useSchoolGroup()
+const communityStore = useCommunity()
+const classesStore = useClasses()
+const appStore = useAppStore()
+const registrationStore = useRegistration()
+const userStore = useUser()
 
-  const performers = performerStore.performers
-  const teacher = teacherStore.teacher
-  const group = groupStore.group
-  const school = schoolStore.school
-  const schoolGroups = schoolGroupStore.schoolGroup
-  const community = communityStore.community
-  const festivalClasses = classesStore.registeredClasses
-  const performerType = appStore.performerType
-  const registration = registrationStore.registration
-  const userFirstName = userStore.user.firstName
-  const userLastName = userStore.user.lastName
-  const userEmail = userStore.user.email
+const performers = performerStore.performers
+const teacher = teacherStore.teacher
+const group = groupStore.group
+const school = schoolStore.school
+const schoolGroups = schoolGroupStore.schoolGroup
+const community = communityStore.community
+const festivalClasses = classesStore.registeredClasses
+const performerType = appStore.performerType
+const registration = registrationStore.registration
+const userFirstName = userStore.user.firstName
+const userLastName = userStore.user.lastName
+const userEmail = userStore.user.email
 
-  function schoolClassGroup(id: number) {
-    return schoolGroups.find((item) => item.id === id)
+function schoolClassGroup(id: number) {
+  return schoolGroups.find(item => item.id === id)
+}
+
+function dateFunction(date: Date | undefined) {
+  if (date) {
+    const dateString = date.toString()
+    return DateTime.fromISO(dateString).toLocaleString(DateTime.DATETIME_MED)
   }
-
-  function dateFunction(date: Date | undefined) {
-    if (date) {
-      const dateString = date.toString()
-      return DateTime.fromISO(dateString).toLocaleString(DateTime.DATETIME_MED)
-    }
-  }
+}
 </script>
 
 <template>
@@ -53,85 +53,103 @@
       <mj-title>Winnipeg Music Festival</mj-title>
       <mj-font
         name="Raleway"
-        href="https://fonts.googleapis.com/css?family=Raleway" />
+        href="https://fonts.googleapis.com/css?family=Raleway"
+      />
       <mj-attributes>
-        <mj-all font-family="Raleway, Helvetica, Arial, sans-serif"></mj-all>
+        <mj-all font-family="Raleway, Helvetica, Arial, sans-serif" />
         <mj-text
           padding="0px"
           font-weight="400"
           font-size="14px"
           color="#005984"
           line-height="20px"
-          font-family="Raleway, Helvetica, Arial, sans-serif"></mj-text>
+          font-family="Raleway, Helvetica, Arial, sans-serif"
+        />
         <mj-section
           padding="0px 25px"
-          background-color="#ffffff">
-        </mj-section>
+          background-color="#ffffff"
+        />
         <mj-divider
           padding="25px 25px"
           border-color="#DFE3E8"
-          border-width="2px"></mj-divider>
+          border-width="2px"
+        />
       </mj-attributes>
       <mj-style inline="inline">
         .body-section { -webkit-box-shadow: 1px 4px 11px 0px rgba(0, 0, 0,
         0.15); -moz-box-shadow: 1px 4px 11px 0px rgba(0, 0, 0, 0.15);
         box-shadow: 1px 4px 11px 0px rgba(0, 0, 0, 0.15); }
       </mj-style>
-      <mj-style inline="inline"> .text-link { color: #5e6ebf } </mj-style>
-      <mj-style inline="inline"> .footer-link { color: #888888 } </mj-style>
+      <mj-style inline="inline">
+        .text-link { color: #5e6ebf }
+      </mj-style>
+      <mj-style inline="inline">
+        .footer-link { color: #888888 }
+      </mj-style>
       <mj-style inline="inline">
         .h1 { padding: 0px; line-height: 35px; font-size:28px; font-weight: 700
-        }</mj-style
-      >
+        }
+      </mj-style>
       <mj-style inline="inline">
         .h2 { padding: 0px 0px 20px 0px; line-height: 35px; font-size:21px;
-        font-weight: 700 }</mj-style
-      >
+        font-weight: 700 }
+      </mj-style>
       <mj-style inline="inline">
         .h3 { padding: 0px; line-height: 25px; font-size:17px; font-weight: 700
-        }</mj-style
-      >
+        }
+      </mj-style>
       <mj-style inline="inline">
         .h4 { padding: 0px; line-height: 25px; font-size:14px; font-weight: 700
-        }</mj-style
-      >
+        }
+      </mj-style>
     </mj-head>
     <mj-body
       background-color="#E7E7E7"
-      width="600px">
+      width="600px"
+    >
       <mj-section
         full-width="full-width"
-        background-color="#E7E7E7">
-        <mj-column width="100%"><mj-spacer height="40px" /> </mj-column>
+        background-color="#E7E7E7"
+      >
+        <mj-column width="100%">
+          <mj-spacer height="40px" />
+        </mj-column>
       </mj-section>
       <mj-wrapper
         padding-top="0px"
         padding-bottom="0"
-        css-class="body-section">
+        css-class="body-section"
+      >
         <!-- Heading Banner -->
         <mj-section
           background-color="#ffffff"
-          padding="0px">
+          padding="0px"
+        >
           <mj-column width="100%">
             <mj-image
               src="https://images.squarespace-cdn.com/content/v1/50232a9884ae28a62a53d187/1551103051458-YFLY26WU4IYB2LQOTUE7/wmf-logo-banner.jpg"
               width="600px"
               alt="Winnipeg Music Festival Banner"
               href="https://www.winnipegmusicfestival.org"
-              padding="10px" />
+              padding="10px"
+            />
           </mj-column>
         </mj-section>
 
         <!-- Registration Summary Header -->
         <mj-section
           background-color="#ffffff"
-          padding-top="20px">
+          padding-top="20px"
+        >
           <mj-column>
             <mj-text>
-              <div class="h1">Registration Summary</div>
+              <div class="h1">
+                Registration Summary
+              </div>
               <div
                 class="h3"
-                style="padding-bottom: 20px">
+                style="padding-bottom: 20px"
+              >
                 Confirmation Number: {{ registration.confirmation }}
               </div>
               <div>Submitted by:</div>
@@ -145,12 +163,17 @@
         <!-- Group Info -->
         <mj-section
           v-if="performerType === 'GROUP'"
-          background-color="#ffffff">
+          background-color="#ffffff"
+        >
           <mj-column>
             <mj-divider />
             <mj-text>
-              <div class="h2">Group Information</div>
-              <div class="h3">Name: {{ group.name }}</div>
+              <div class="h2">
+                Group Information
+              </div>
+              <div class="h3">
+                Name: {{ group.name }}
+              </div>
               <div>Group Type: {{ group.groupType }}</div>
               <div>Number of Performers: {{ group.numberOfPerformers }}</div>
               <div>Average age: {{ group.age }}</div>
@@ -162,30 +185,36 @@
         <!-- Performer Info -->
         <mj-section
           v-if="performerType === 'GROUP' || performerType === 'SOLO'"
-          background-color="#ffffff">
+          background-color="#ffffff"
+        >
           <mj-column>
             <mj-divider />
             <mj-text>
-              <div class="h2">Performer(s)</div>
+              <div class="h2">
+                Performer(s)
+              </div>
             </mj-text>
           </mj-column>
         </mj-section>
         <mj-wrapper
           v-for="(performer, perfidx) in performers"
-          v-bind:key="performer.id"
+          :key="performer.id"
           background-color="#ffffff"
-          padding="0px 0px 10px 0px">
+          padding="0px 0px 10px 0px"
+        >
           <mj-section>
             <mj-column>
               <mj-text>
                 <div
                   v-if="performers.length > 1"
-                  class="h3">
+                  class="h3"
+                >
                   Performer #{{ perfidx + 1 }}
                 </div>
                 <div
                   class="h3"
-                  style="padding-bottom: 10px">
+                  style="padding-bottom: 10px"
+                >
                   Name: {{ performer.firstName }} {{ performer.lastName }}
                 </div>
               </mj-text>
@@ -233,24 +262,32 @@
         <!-- School Info -->
         <mj-wrapper
           v-if="performerType === 'SCHOOL'"
-          background-color="#ffffff">
+          background-color="#ffffff"
+        >
           <mj-section background-color="#ffffff">
             <mj-column>
               <mj-divider />
               <mj-text>
-                <div class="h2">School</div>
-                <div class="h3">{{ school.name }}</div>
-                <div class="h4">Division: {{ school.division }}</div>
+                <div class="h2">
+                  School
+                </div>
+                <div class="h3">
+                  {{ school.name }}
+                </div>
+                <div class="h4">
+                  Division: {{ school.division }}
+                </div>
                 <div>{{ school.streetNumber }}, {{ school.streetName }}</div>
                 <div>{{ school.city }}, {{ school.province }}</div>
                 <div>{{ school.postalCode }}</div>
                 <div>Phone: {{ school.phone }}</div>
-                <br />
+                <br>
                 <mj-divider />
-                <br />
+                <br>
                 <div
                   class="h2"
-                  style="padding-top: 15px">
+                  style="padding-top: 15px"
+                >
                   School Groups
                 </div>
               </mj-text>
@@ -258,9 +295,10 @@
           </mj-section>
           <mj-wrapper
             v-for="group in school.schoolGroups"
-            v-bind:key="group.id"
+            :key="group.id"
             background-color="#ffffff"
-            padding-top="15px">
+            padding-top="15px"
+          >
             <mj-section>
               <mj-column>
                 <mj-text>
@@ -295,13 +333,18 @@
         <!-- Community Info -->
         <mj-wrapper
           v-if="performerType === 'COMMUNITY'"
-          background-color="#ffffff">
+          background-color="#ffffff"
+        >
           <mj-section>
             <mj-column>
               <mj-divider />
               <mj-text>
-                <div class="h2">Community</div>
-                <div class="h3">Group Name: {{ community.name }}</div>
+                <div class="h2">
+                  Community
+                </div>
+                <div class="h3">
+                  Group Name: {{ community.name }}
+                </div>
               </mj-text>
             </mj-column>
           </mj-section>
@@ -332,7 +375,9 @@
           <mj-column>
             <mj-divider />
             <mj-text>
-              <div class="h2">Teacher</div>
+              <div class="h2">
+                Teacher
+              </div>
               <div class="h3">
                 {{ teacher.firstName }} {{ teacher.lastName }}
               </div>
@@ -356,22 +401,27 @@
           <mj-column>
             <mj-divider />
             <mj-text>
-              <div class="h2">Registered Classes</div>
+              <div class="h2">
+                Registered Classes
+              </div>
               <div
                 v-for="registeredClass in festivalClasses"
-                v-bind:key="registeredClass.id"
-                style="padding-bottom: 10px">
+                :key="registeredClass.id"
+                style="padding-bottom: 10px"
+              >
                 <div class="h3">
                   Festival Class Number: {{ registeredClass.classNumber }}
                 </div>
                 <div
                   class="h4"
-                  style="padding-bottom: 10px">
+                  style="padding-bottom: 10px"
+                >
                   Cost: \${{ registeredClass.price }}
                 </div>
                 <div
                   v-if="performerType === 'SCHOOL'"
-                  class="h4">
+                  class="h4"
+                >
                   School Group:
                   {{
                     !!registeredClass.schoolGroupID
@@ -391,9 +441,12 @@
                   v-for="(
                     selection, selectionIndex
                   ) in registeredClass.selections"
-                  v-bind:key="selection.id"
-                  style="padding-bottom: 10px">
-                  <div class="h4">Selection {{ selectionIndex + 1 }}</div>
+                  :key="selection.id"
+                  style="padding-bottom: 10px"
+                >
+                  <div class="h4">
+                    Selection {{ selectionIndex + 1 }}
+                  </div>
                   <div>Title: {{ selection.title }}</div>
                   <div>Composer: {{ selection.composer }}</div>
                   <div v-if="selection.largerWork">
@@ -415,7 +468,9 @@
           <mj-column>
             <mj-divider />
             <mj-text align="center">
-              <div class="h3">Total Cost: \${{ registration.totalAmt }}</div>
+              <div class="h3">
+                Total Cost: \${{ registration.totalAmt }}
+              </div>
             </mj-text>
           </mj-column>
         </mj-section>
@@ -424,23 +479,22 @@
 
         <mj-section
           background-color="#ffffff"
-          padding-bottom="20px">
+          padding-bottom="20px"
+        >
           <mj-column>
             <mj-divider />
             <mj-text align="center">
-              <strong
-                >Payment may be made by cheque or e-transfer to the<br />
-                Winnipeg Music Festival (<a href="mailto:wmf@mts.net"
-                  ><strong>wmf@mts.net</strong></a
-                >).<br />
+              <strong>Payment may be made by cheque or e-transfer to the<br>
+                Winnipeg Music Festival (<a href="mailto:wmf@mts.net"><strong>wmf@mts.net</strong></a>).<br>
                 Please include the confirmation number when submitting
-                payment.<br />
-                Entry fees are non-refundable.</strong
-              >
+                payment.<br>
+                Entry fees are non-refundable.</strong>
             </mj-text>
             <mj-divider />
             <mj-text>
-              <div class="h2">Important Notes</div>
+              <div class="h2">
+                Important Notes
+              </div>
               <p>
                 The Festival reserves the right to redirect entries to a more
                 appropriate class. These redirections will be listed in the
@@ -478,35 +532,37 @@
         <mj-section background-color="#E7E7E7">
           <mj-column
             width="100%"
-            padding="0">
+            padding="0"
+          >
             <mj-text
               color="#445566"
               font-size="14px"
               font-weight="bold"
               align="center"
               line-height="18px"
-              padding="15px">
+              padding="15px"
+            >
               Winnipeg Music Festival
-              <br />
+              <br>
               2-88 St. Anne's Rd.
-              <br />
+              <br>
               Winnipeg, MB R2M 2Y7
-              <br />
+              <br>
               Phone: (204) 947-0184
-              <br />
+              <br>
               Email:
               <a
                 mailto="wmf@mts.net"
                 class="footer-link"
-                >wmf@mts.net</a
-              >
+              >wmf@mts.net</a>
             </mj-text>
             <mj-text
               color="#445566"
               font-size="11px"
               align="center"
               line-height="16px"
-              padding-bottom="30px">
+              padding-bottom="30px"
+            >
               &copy; Winnipeg Music Festival, All Rights Reserved.
             </mj-text>
           </mj-column>

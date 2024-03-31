@@ -1,15 +1,13 @@
 <script setup lang="ts">
-  definePageMeta({
-    layout: 'admin',
-  } )
+definePageMeta({
+  layout: 'admin',
+})
 
-  const dates = ref('')
+const dates = ref('')
 </script>
 
 <template>
-  <div class="">
-  <Calendar v-model="dates" showIcon selectionMode="range" :manual-input="false"  />
-  </div>
+  <div class="" />
 </template>
 
 <style lang="scss" scoped></style>

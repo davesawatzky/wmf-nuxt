@@ -1,7 +1,7 @@
 {
-  "eslint.format.enable": false,
+  "eslint.format.enable": true,
   "prettier.enable": true,
-  "eslint.codeActionsOnSave.mode": "problems",
+  "eslint.codeActionsOnSave.mode": "all",
   "editor.codeActionsOnSave": {
     "source.fixAll": "never",
     "source.fixAll.eslint": "never"
@@ -14,7 +14,7 @@
   "prettier.requireConfig": true,
   "prettier.semi": false,
   "html.format.preserveNewLines": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.defaultFormatter": "dbaeumer.vscode-eslint",
   "editor.formatOnSave": true,
   "javascript.format.insertSpaceAfterConstructor": true,
   "typescript.format.insertSpaceAfterConstructor": true,
@@ -30,7 +30,10 @@
   "typescript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": false,
   "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": false,
   "files.refactoring.autoSave": false,
-  "eslint.run": "onSave",
+  "eslint.run": "onType",
   "vitest.enable": true,
-  "vitest.commandLine": "pnpm run test:watch --"
+  "vitest.commandLine": "pnpm run test:watch --",
+  "eslint.experimental.useFlatConfig": true,
+  "editor.detectIndentation": false,
+  "editor.tabSize": 2
 }

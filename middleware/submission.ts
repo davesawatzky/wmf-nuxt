@@ -1,4 +1,4 @@
-//Form Middleware
+// Form Middleware
 
 import { useRegistration } from '~/stores/userRegistration'
 

@@ -33,7 +33,7 @@ export async function renderSubmissionEmail(payload: any) {
           if (date) {
             const dateString = date.toString()
             return DateTime.fromISO(dateString).toLocaleString(
-              DateTime.DATETIME_MED
+              DateTime.DATETIME_MED,
             )
           }
         },
@@ -510,7 +510,8 @@ export async function renderSubmissionEmail(payload: any) {
 
     // Let mjml do its magic
     return mjml2html(html).html
-  } catch (error) {
+  }
+  catch (error) {
     console.log('Error: ', error)
   }
 }

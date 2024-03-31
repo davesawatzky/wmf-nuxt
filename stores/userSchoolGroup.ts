@@ -21,14 +21,14 @@ export const useSchoolGroup = defineStore(
     }
 
     const schoolGroupErrors = computed(() => {
-      const schoolGroupKeys =
-        fieldConfigStore.performerTypeFields('SchoolGroup')
+      const schoolGroupKeys
+        = fieldConfigStore.performerTypeFields('SchoolGroup')
       let count = 0
       for (const group of schoolGroup.value) {
         for (const key of schoolGroupKeys) {
           if (
-            !!group[key as keyof SchoolGroup] === false &&
-            group[key as keyof SchoolGroup] !== 0
+            !!group[key as keyof SchoolGroup] === false
+            && group[key as keyof SchoolGroup] !== 0
           ) {
             count++
           }
@@ -71,14 +71,15 @@ export const useSchoolGroup = defineStore(
         } = useMutation(SchoolGroupCreateDocument, {
           fetchPolicy: 'no-cache',
         })
-        schoolGroupCreate({ schoolId }).catch((error) => console.log(error))
+        schoolGroupCreate({ schoolId }).catch(error => console.log(error))
         onDone((result) => {
           if (result.data?.schoolGroupCreate.schoolGroup) {
-            const schoolGroup: SchoolGroupCreateMutation['schoolGroupCreate']['schoolGroup'] =
-              result.data.schoolGroupCreate.schoolGroup
+            const schoolGroup: SchoolGroupCreateMutation['schoolGroupCreate']['schoolGroup']
+              = result.data.schoolGroupCreate.schoolGroup
             addToStore(schoolGroup)
             resolve('Success')
-          } else if (result.data?.schoolGroupCreate.userErrors) {
+          }
+          else if (result.data?.schoolGroupCreate.userErrors) {
             console.log(result.data.schoolGroupCreate.userErrors)
           }
         })
@@ -103,16 +104,16 @@ export const useSchoolGroup = defineStore(
         } = useLazyQuery(
           SchoolGroupInfoDocument,
           { registrationId },
-          { fetchPolicy: 'no-cache' }
+          { fetchPolicy: 'no-cache' },
         )
         load()
         onResult((result) => {
           const schoolGroups = <SchoolGroup[]>(
             result.data.registration.school?.schoolGroups
           )
-          for (let i = 0; i < schoolGroups.length; i++) {
+          for (let i = 0; i < schoolGroups.length; i++)
             addToStore(schoolGroups[i])
-          }
+
           resolve('Success')
         })
         onError((error) => {
@@ -129,7 +130,7 @@ export const useSchoolGroup = defineStore(
      */
     function updateSchoolGroup(
       schoolGroupId: number,
-      field?: string
+      field?: string,
     ): Promise<unknown> {
       return new Promise((resolve, reject) => {
         const {
@@ -147,14 +148,14 @@ export const useSchoolGroup = defineStore(
         if (field && Object.keys(schlgrpProps).includes(field)) {
           schoolGroupField = Object.fromEntries(
             Array(
-              Object.entries(schlgrpProps).find((item) => item[0] === field)!
-            )
+              Object.entries(schlgrpProps).find(item => item[0] === field)!,
+            ),
           )
         }
         schoolGroupUpdate({
           schoolGroupId,
           schoolGroup: <SchoolGroupInput>(schoolGroupField || schlgrpProps),
-        }).catch((error) => console.log(error))
+        }).catch(error => console.log(error))
         onDone(() => {
           resolve('Success')
         })
@@ -168,9 +169,8 @@ export const useSchoolGroup = defineStore(
      * Updates all School Group info to the db
      */
     async function updateAllSchoolGroups(): Promise<void> {
-      for (let i = 0; i < schoolGroup.value.length; i++) {
+      for (let i = 0; i < schoolGroup.value.length; i++)
         await updateSchoolGroup(schoolGroup.value[i].id)
-      }
     }
 
     /**
@@ -185,12 +185,12 @@ export const useSchoolGroup = defineStore(
           onDone,
           onError,
         } = useMutation(SchoolGroupDeleteDocument)
-        schoolGroupDelete({ schoolGroupId }).catch((error) =>
-          console.log(error)
+        schoolGroupDelete({ schoolGroupId }).catch(error =>
+          console.log(error),
         )
         onDone(() => {
           const index = schoolGroup.value.findIndex(
-            (e) => e.id === schoolGroupId
+            e => e.id === schoolGroupId,
           )
           schoolGroup.value.splice(index, 1)
           resolve('Success')
@@ -215,5 +215,5 @@ export const useSchoolGroup = defineStore(
   },
   {
     persist: true,
-  }
+  },
 )

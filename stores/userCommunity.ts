@@ -25,8 +25,8 @@ export const useCommunity = defineStore(
       let count = 0
       for (const key of communityKeys) {
         if (
-          !!community.value[key as keyof Community] === false &&
-          community.value[key as keyof Community] !== 0
+          !!community.value[key as keyof Community] === false
+          && community.value[key as keyof Community] !== 0
         ) {
           count++
         }
@@ -41,12 +41,12 @@ export const useCommunity = defineStore(
     function addToStore(comm: Community) {
       community.value.id = comm.id
       community.value.name = comm.name || ''
-      community.value.groupSize =
-        comm.groupSize !== null ? comm.groupSize : null
-      community.value.chaperones =
-        comm.chaperones !== null ? comm.chaperones : null
-      community.value.wheelchairs =
-        comm.wheelchairs !== null ? comm.wheelchairs : null
+      community.value.groupSize
+        = comm.groupSize !== null ? comm.groupSize : null
+      community.value.chaperones
+        = comm.chaperones !== null ? comm.chaperones : null
+      community.value.wheelchairs
+        = comm.wheelchairs !== null ? comm.wheelchairs : null
       community.value.earliestTime = comm.earliestTime || ''
       community.value.latestTime = comm.latestTime || ''
       community.value.unavailable = comm.unavailable || ''
@@ -66,14 +66,15 @@ export const useCommunity = defineStore(
           onDone,
           onError,
         } = useMutation(CommunityCreateDocument, { fetchPolicy: 'no-cache' })
-        communityCreate({ registrationId }).catch((error) => console.log(error))
+        communityCreate({ registrationId }).catch(error => console.log(error))
         onDone((result) => {
           if (result.data?.communityCreate.community) {
-            const community: CommunityCreateMutation['communityCreate']['community'] =
-              result.data.communityCreate.community
+            const community: CommunityCreateMutation['communityCreate']['community']
+              = result.data.communityCreate.community
             addToStore(community)
             resolve('Success')
-          } else if (result.data?.communityCreate.userErrors) {
+          }
+          else if (result.data?.communityCreate.userErrors) {
             console.log(result.data.communityCreate.userErrors)
           }
         })
@@ -98,7 +99,7 @@ export const useCommunity = defineStore(
         } = useLazyQuery(
           CommunityInfoDocument,
           { registrationId },
-          { fetchPolicy: 'no-cache' }
+          { fetchPolicy: 'no-cache' },
         )
         load()
         onResult((result) => {
@@ -129,14 +130,14 @@ export const useCommunity = defineStore(
         if (field && Object.keys(communityProps).includes(field)) {
           communityField = Object.fromEntries(
             Array(
-              Object.entries(communityProps).find((item) => item[0] === field)!
-            )
+              Object.entries(communityProps).find(item => item[0] === field)!,
+            ),
           )
         }
         communityUpdate({
           communityId: community.value.id,
           community: <CommunityInput>(communityField || communityProps),
-        }).catch((error) => console.log(error))
+        }).catch(error => console.log(error))
         onDone(() => {
           resolve('Success')
         })
@@ -166,7 +167,7 @@ export const useCommunity = defineStore(
           onDone,
           onError,
         } = useMutation(CommunityDeleteDocument)
-        communityDelete({ communityId }).catch((error) => console.log(error))
+        communityDelete({ communityId }).catch(error => console.log(error))
         onDone(() => {
           $reset()
           resolve('Success')
@@ -191,5 +192,5 @@ export const useCommunity = defineStore(
   },
   {
     persist: true,
-  }
+  },
 )

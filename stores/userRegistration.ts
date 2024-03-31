@@ -33,23 +33,22 @@ export const useRegistration = defineStore(
 
     const totalClassAmt = computed(() => {
       let cost = 0.0
-      for (let regClass of classesStore.registeredClasses) {
+      for (const regClass of classesStore.registeredClasses)
         cost += Number(regClass.price)
-      }
+
       registration.value.totalAmt = cost
       return Number(cost).toFixed(2)
     })
 
     watch(totalClassAmt, async (newValue) => {
-      if (Number.parseInt(newValue) > 0) {
+      if (Number.parseInt(newValue) > 0)
         await updateRegistration('totalAmt')
-      }
     })
 
     const processingFee = computed(() => {
       return (
-        Number(+registration.value.totalAmt + 0.3) / (1 - 0.029) -
-        +registration.value.totalAmt
+        Number(+registration.value.totalAmt + 0.3) / (1 - 0.029)
+        - +registration.value.totalAmt
       ).toFixed(2)
     })
 
@@ -81,7 +80,7 @@ export const useRegistration = defineStore(
      */
     function createRegistration(
       performerType: PerformerType,
-      label: string
+      label: string,
     ): Promise<unknown> {
       return new Promise((resolve, reject) => {
         const {
@@ -89,16 +88,17 @@ export const useRegistration = defineStore(
           onDone,
           onError,
         } = useMutation(RegistrationCreateDocument)
-        registrationCreate({ performerType, label }).catch((error) =>
-          console.log(error)
+        registrationCreate({ performerType, label }).catch(error =>
+          console.log(error),
         )
         onDone((result) => {
           if (result.data?.registrationCreate.registration) {
-            const registration: RegistrationCreateMutation['registrationCreate']['registration'] =
-              result.data.registrationCreate.registration
+            const registration: RegistrationCreateMutation['registrationCreate']['registration']
+              = result.data.registrationCreate.registration
             addToStore(registration)
             resolve('Success')
-          } else if (result.data?.registrationCreate.userErrors) {
+          }
+          else if (result.data?.registrationCreate.userErrors) {
             console.log(result.data.registrationCreate.userErrors)
           }
         })
@@ -121,18 +121,18 @@ export const useRegistration = defineStore(
         } = useMutation(RegistrationUpdateDocument, {
           fetchPolicy: 'network-only',
         })
-        const { id, __typename, updatedAt, createdAt, ...regProps } =
-          registration.value
+        const { id, __typename, updatedAt, createdAt, ...regProps }
+          = registration.value
         let registrationField = null
         if (field && Object.keys(regProps).includes(field)) {
           registrationField = Object.fromEntries(
-            Array(Object.entries(regProps).find((item) => item[0] === field)!)
+            Array(Object.entries(regProps).find(item => item[0] === field)!),
           )
         }
         registrationUpdate({
           registrationId: registrationId.value,
           registrationInput: <RegistrationInput>(registrationField || regProps),
-        }).catch((error) => console.log(error))
+        }).catch(error => console.log(error))
         onDone(() => {
           resolve('Success')
         })
@@ -154,8 +154,8 @@ export const useRegistration = defineStore(
           onDone,
           onError,
         } = useMutation(RegistrationDeleteDocument)
-        registrationDelete({ registrationId }).catch((error) =>
-          console.log(error)
+        registrationDelete({ registrationId }).catch(error =>
+          console.log(error),
         )
         onDone(() => {
           $reset()
@@ -181,5 +181,5 @@ export const useRegistration = defineStore(
   },
   {
     persist: true,
-  }
+  },
 )

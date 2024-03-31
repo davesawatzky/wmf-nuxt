@@ -1,4 +1,3 @@
-import { env } from 'process'
 import Toast, { POSITION } from 'vue-toastification'
 import 'vue-toastification/dist/index.css'
 

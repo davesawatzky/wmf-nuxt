@@ -21,5 +21,5 @@ export const prefixes = [
   { id: '4', name: 'Dr.' },
 ]
 
-export const textAreaLabel =
-  'To avoid scheduling conflicts, please list all other Festival classes entered but not included on this form.  Use only class numbers separated by commas.'
+export const textAreaLabel
+  = 'To avoid scheduling conflicts, please list all other Festival classes entered but not included on this form.  Use only class numbers separated by commas.'

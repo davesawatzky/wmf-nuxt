@@ -1,4 +1,4 @@
-import { process } from 'node:process'
+import process from 'node:process'
 import antfu from '@antfu/eslint-config'
 
 // const process = require('node:process')
@@ -8,10 +8,9 @@ process.env.ESLINT_TSCONFIG = 'tsconfig.json'
 export default antfu(
   { typescript: { tsconfigPath: 'tsconfig.json' }, vue: true },
   {
-    extends: ['prettier'], //'@nuxtjs/eslint-config-typescript'
     rules: {
       'unused-imports/no-unused-vars': 'off',
-      'no-console': process.env.NODE_ENV === 'development' ? 'off' : '',
+      'no-console': process.env.NODE_ENV === 'development' ? 'off' : 'warn',
       '@typescript-eslint/no-console':
         process.env.NODE_ENV === 'development' ? 'off' : 'off',
       '@typescript-eslint/no-unsafe-call': 'off',

@@ -3,8 +3,8 @@ import { useFieldConfig } from '@/stores/useFieldConfig'
 import {
   PerformerCreateDocument,
   PerformerDeleteDocument,
-  PerformersDocument,
   PerformerUpdateDocument,
+  PerformersDocument,
 } from '~/graphql/gql/graphql'
 import type {
   Performer,
@@ -27,9 +27,9 @@ export const usePerformers = defineStore(
 
     const averageAge = computed(() => {
       let totalAge = 0
-      for (let i = 0; i < performers.value.length; i++) {
+      for (let i = 0; i < performers.value.length; i++)
         totalAge += performers.value[i].age ?? 0
-      }
+
       return Math.round(totalAge / performers.value.length)
     })
 
@@ -53,7 +53,7 @@ export const usePerformers = defineStore(
       const name = []
       for (let i = 0; i < performers.value.length; i++) {
         name.push(
-          `${performers.value[i].firstName} ${performers.value[i].lastName}`
+          `${performers.value[i].firstName} ${performers.value[i].lastName}`,
         )
       }
       return name
@@ -99,14 +99,15 @@ export const usePerformers = defineStore(
             city: 'Winnipeg',
             province: 'MB',
           },
-        }).catch((error) => console.log(error))
+        }).catch(error => console.log(error))
         onDone((result) => {
           if (result.data?.performerCreate.performer) {
-            const performer: PerformerCreateMutation['performerCreate']['performer'] =
-              result.data.performerCreate.performer
+            const performer: PerformerCreateMutation['performerCreate']['performer']
+              = result.data.performerCreate.performer
             addToStore(performer)
             resolve('Success')
-          } else if (result.data?.performerCreate.userErrors) {
+          }
+          else if (result.data?.performerCreate.userErrors) {
             console.log(result.data.performerCreate.userErrors)
           }
         })
@@ -121,7 +122,7 @@ export const usePerformers = defineStore(
      * @param registrationId ID of Registration form
      * @returns Promise
      */
-    function loadPerformers( registrationId: number ): Promise<unknown> {
+    function loadPerformers(registrationId: number): Promise<unknown> {
       return new Promise((resolve, reject) => {
         const {
           result: resultPerformers,
@@ -131,20 +132,21 @@ export const usePerformers = defineStore(
         } = useLazyQuery(
           PerformersDocument,
           { registrationId },
-          { fetchPolicy: 'no-cache' }
-          )
-          load()
-          onResult((result) => {
-            try {
+          { fetchPolicy: 'no-cache' },
+        )
+        load()
+        onResult((result) => {
+          try {
             console.log('Got Here - Performers')
             if (result.data.performers) {
               const performers: Performer[] = result.data.performers
-              for (let i = 0; i < performers.length; i++) {
+              for (let i = 0; i < performers.length; i++)
                 addToStore(performers[i])
-              }
+
               resolve('Success')
             }
-          } catch (error) {
+          }
+          catch (error) {
             console.log(error)
             reject(error)
           }
@@ -163,7 +165,7 @@ export const usePerformers = defineStore(
      */
     function updatePerformer(
       performerId: number,
-      field?: string
+      field?: string,
     ): Promise<unknown> {
       return new Promise((resolve, reject) => {
         const {
@@ -181,14 +183,14 @@ export const usePerformers = defineStore(
         if (field && Object.keys(personProps).includes(field)) {
           performerField = Object.fromEntries(
             Array(
-              Object.entries(personProps).find((item) => item[0] === field)!
-            )
+              Object.entries(personProps).find(item => item[0] === field)!,
+            ),
           )
         }
         performerUpdate({
           performerId,
           performer: <PerformerInput>(performerField || personProps),
-        }).catch((error) => console.log(error))
+        }).catch(error => console.log(error))
         onDone(() => {
           resolve('Success')
         })
@@ -202,9 +204,8 @@ export const usePerformers = defineStore(
      * Runs the updatePerformer function for all performers
      */
     async function updateAllPerformers(): Promise<void> {
-      for (let i = 0; i < performers.value.length; i++) {
+      for (let i = 0; i < performers.value.length; i++)
         await updatePerformer(performers.value[i].id)
-      }
     }
 
     /**
@@ -220,10 +221,10 @@ export const usePerformers = defineStore(
           onDone,
           onError,
         } = useMutation(PerformerDeleteDocument)
-        performerDelete({ performerId }).catch((error) => console.log(error))
+        performerDelete({ performerId }).catch(error => console.log(error))
         onDone(() => {
           const performerIndex = performers.value.findIndex(
-            (item) => item.id === performerId
+            item => item.id === performerId,
           )
           performers.value.splice(performerIndex, 1)
           resolve(performerIndex)
@@ -251,5 +252,5 @@ export const usePerformers = defineStore(
   },
   {
     persist: true,
-  }
+  },
 )

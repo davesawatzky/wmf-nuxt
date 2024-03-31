@@ -38,7 +38,7 @@ export const useGroup = defineStore(
       (newValue, oldValue) => {
         group.value.numberOfPerformers = newValue
       },
-      { immediate: true }
+      { immediate: true },
     )
 
     watch(
@@ -46,7 +46,7 @@ export const useGroup = defineStore(
       (newValue, oldValue) => {
         group.value.age = newValue
       },
-      { immediate: true }
+      { immediate: true },
     )
 
     /**
@@ -75,14 +75,15 @@ export const useGroup = defineStore(
           onDone,
           onError,
         } = useMutation(GroupCreateDocument)
-        groupCreate({ registrationId }).catch((error) => console.log(error))
+        groupCreate({ registrationId }).catch(error => console.log(error))
         onDone((result) => {
           if (result.data?.groupCreate.group) {
-            const group: GroupCreateMutation['groupCreate']['group'] =
-              result.data.groupCreate.group
+            const group: GroupCreateMutation['groupCreate']['group']
+              = result.data.groupCreate.group
             addToStore(group)
             resolve('Success')
-          } else if (result.data?.groupCreate.userErrors) {
+          }
+          else if (result.data?.groupCreate.userErrors) {
             console.log(result.data.groupCreate.userErrors)
           }
         })
@@ -107,7 +108,7 @@ export const useGroup = defineStore(
         } = useLazyQuery(
           GroupInfoDocument,
           { registrationId },
-          { fetchPolicy: 'no-cache' }
+          { fetchPolicy: 'no-cache' },
         )
         load()
         onResult((result) => {
@@ -135,13 +136,13 @@ export const useGroup = defineStore(
         let groupField = null
         if (field && Object.keys(groupProps).includes(field)) {
           groupField = Object.fromEntries(
-            Array(Object.entries(groupProps).find((item) => item[0] === field)!)
+            Array(Object.entries(groupProps).find(item => item[0] === field)!),
           )
         }
         groupUpdate({
           groupId: group.value.id,
           group: <GroupInput>(groupField || groupProps),
-        }).catch((error) => console.log(error))
+        }).catch(error => console.log(error))
         onDone(() => {
           resolve('Success')
         })
@@ -163,7 +164,7 @@ export const useGroup = defineStore(
           onDone,
           onError,
         } = useMutation(GroupDeleteDocument)
-        groupDelete({ groupId }).catch((error) => console.log(error))
+        groupDelete({ groupId }).catch(error => console.log(error))
         onDone(() => {
           $reset()
           resolve('Success')
@@ -187,5 +188,5 @@ export const useGroup = defineStore(
   },
   {
     persist: true,
-  }
+  },
 )

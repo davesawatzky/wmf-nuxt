@@ -20,14 +20,14 @@ import './commands'
 // require('./commands')
 
 import { mount } from 'cypress/vue'
-import { h, Suspense } from 'vue'
+import { Suspense, h } from 'vue'
 import { getContext } from 'unctx'
 import {
+  RouterLink,
   createRouter,
   createWebHistory,
-  RouterLink,
-  routerKey,
   routeLocationKey,
+  routerKey,
 } from 'vue-router'
 
 type MountParams = Parameters<typeof mount<any>>
@@ -54,19 +54,21 @@ const $router = createRouter({
   routes: [],
   history: createWebHistory(),
 })
-const generateNuxtCTX = (): Record<string, any> => ({
-  static: { data: {} },
-  payload: { data: {}, _errors: {} },
-  hook: () => () => ({}),
-  hooks: {
-    callHook: () => Promise.resolve(),
-  },
-  _asyncData: {},
-  _asyncDataPromises: {},
-  _useHead: () => ({}),
-  $router,
-  _route: $router.currentRoute,
-})
+function generateNuxtCTX(): Record<string, any> {
+  return {
+    static: { data: {} },
+    payload: { data: {}, _errors: {} },
+    hook: () => () => ({}),
+    hooks: {
+      callHook: () => Promise.resolve(),
+    },
+    _asyncData: {},
+    _asyncDataPromises: {},
+    _useHead: () => ({}),
+    $router,
+    _route: $router.currentRoute,
+  }
+}
 let nuxtCTX = generateNuxtCTX()
 
 nuxtAppCtx.set(nuxtCTX)
@@ -81,12 +83,12 @@ Cypress.Commands.add('mount', (component, options = {}) => {
 
   return mount(
     () => h(Suspense, h(component, options?.props, options?.slots)),
-    options
+    options,
   )
 })
 
 Cypress.Commands.add('stubNuxtInject', (key, value) => {
-  nuxtCTX['$' + key] = value
+  nuxtCTX[`$${key}`] = value
 })
 
 Cypress.Commands.add('stubNuxtRouter', (callback) => {
