@@ -51,6 +51,7 @@ export default defineNuxtConfig({
     prefix: 'UI',
   },
   modules: [
+    '@nuxt/eslint',
     '@nuxtjs/tailwindcss',
     '@nuxtjs/apollo',
     '@pinia/nuxt',
