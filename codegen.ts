@@ -3,7 +3,7 @@ import type { CodegenConfig } from '@graphql-codegen/cli'
 const config: CodegenConfig = {
   overwrite: true,
   schema: 'graphql/schema.gql',
-  documents: 'graphql/**/*.gql',
+  documents: ['graphql/**/*.gql', 'src/**/*.vue'],
   generates: {
     'graphql/gql/': {
       preset: 'client',

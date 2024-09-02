@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { StatusEnum } from '@/composables/types'
 
 interface Checkbox {
   label?: string

@@ -16,7 +16,7 @@ import {
   groupOpen,
   schoolOpen,
   soloOpen,
-} from '@/composables/openClosed'
+} from '#imports'
 import type { Registration, RegistrationInput } from '@/graphql/gql/graphql'
 import {
   MyUserDocument,
@@ -79,19 +79,17 @@ onBeforeMount(() => {
 /**
  * Load User details
  */
-onMounted(() => {
-  const {
-    result,
-    onResult: onUserResult,
-    onError: userError,
-  } = useQuery(MyUserDocument, null, () => ({
-    fetchPolicy: 'no-cache',
-  }))
-  onUserResult((result) => {
-    userStore.addToStore(result.data.myUser)
-  })
-  userError(error => console.log(error))
+const {
+  onResult: onUserResult,
+  onError: userError,
+} = useQuery(MyUserDocument, null, () => ({
+  fetchPolicy: 'no-cache',
+}))
+onUserResult((result) => {
+  userStore.addToStore(result.data.myUser)
 })
+userError(error => console.log(error))
+
 
 /**
  * Load all registrations for user

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { ContactInfo } from '~/composables/types'
 import { useAppStore } from '~/stores/appStore'
 
 defineProps<{

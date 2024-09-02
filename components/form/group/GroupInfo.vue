@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import * as yup from 'yup'
 import { useGroup } from '@/stores/userGroup'
-import type { Status } from '@/composables/types'
 
 const groupStore = useGroup()
 const classesStore = useClasses()

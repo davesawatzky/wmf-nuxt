@@ -3,7 +3,7 @@
   import type { Component } from 'vue'
   import { useAppStore } from '@/stores/appStore'
   import { useRegistration } from '@/stores/userRegistration'
-  import type { Status } from '@/composables/types'
+  import type { Status } from '#imports'
   import {
     useStorage,
     StorageSerializers,
@@ -161,7 +161,11 @@
 
   const { values, errors, meta, handleSubmit } = useForm({
     validationSchema,
-  })
+  } )
+
+async function gotoRegistrations() {
+  await navigateTo('/registrations')    
+  }
 </script>
 
 <template>
@@ -222,7 +226,7 @@
               class="text-sky-700 text-3xl disabled:text-slate-300">
               <Icon name="bxs:left-arrow" />
             </BaseButton>
-            <BaseButton @click="navigateTo('/registrations')">
+            <BaseButton @click="gotoRegistrations() ">
               <Icon
                 name="ic:outline-app-registration"
                 class="text-sky-700 text-4xl" />

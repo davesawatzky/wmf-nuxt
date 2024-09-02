@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import * as yup from 'yup'
 import 'yup-phone-lite'
-import type { ContactInfo, Status } from '@/composables/types'
 import { usePerformers } from '@/stores/userPerformer'
-import { InstrumentsDocument } from '~/graphql/gql/graphql'
+import {InstrumentsDocument} from '~/graphql/gql/graphql'
+import {provinces} from '#imports'
 
 const props = defineProps<{
   modelValue: ContactInfo

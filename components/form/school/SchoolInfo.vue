@@ -2,7 +2,7 @@
 import * as yup from 'yup'
 import 'yup-phone-lite'
 import { useSchool } from '@/stores/userSchool'
-import type { Status } from '@/composables/types'
+import { provinces } from '#imports'
 
 const schoolStore = useSchool()
 

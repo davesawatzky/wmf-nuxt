@@ -1,53 +1,67 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
 
-@tailwind base;
+@layer tailwind-base, primevue, tailwind-utilities;;
+
+@layer tailwind-base{
+  @tailwind base;
+}
+
+@layer tailwind-utilities {
+  @tailwind components;
+  @tailwind utilities;
+}
+
+/* @tailwind base;
 @tailwind components;
-@tailwind utilities;
-
-:root {
-    --primary-50: 236 253 245;
-    --primary-100: 209 250 229;
-    --primary-200: 167 243 208;
-    --primary-300: 110 231 183;
-    --primary-400: 52 211 153;
-    --primary-500: 16 185 129;
-    --primary-600: 5 150 105;
-    --primary-700: 4 120 87;
-    --primary-800: 6 95 70;
-    --primary-900: 4 78 56;
-    --primary-950: 2 44 34;
-    --surface-0: 255 255 255;
-    --surface-50: 249 250 251;
-    --surface-100: 243 244 246;
-    --surface-200: 229 231 235;
-    --surface-300: 209 213 219;
-    --surface-400: 156 163 175;
-    --surface-500: 107 114 128;
-    --surface-600: 75 85 99;
-    --surface-700: 55 65 81;
-    --surface-800: 31 41 55;
-    --surface-900: 17 24 39;
-    --surface-950: 8 8 8;
-}
-
-.btn {
-  @apply text-white rounded-lg py-2 w-40 m-2 text-center align-middle hover:ring-2 disabled:bg-gray-400 disabled:hover:ring-0 disabled:hover:bg-gray-400 disabled:text-gray-300;
-}
-
-.btn-blue {
-  @apply bg-sky-700 hover:bg-sky-600 hover:ring-sky-500 active:bg-sky-500 print:hidden;
-}
-.btn-green {
-  @apply bg-green-700 hover:bg-green-500 hover:ring-green-400 active:bg-green-400 print:hidden;
-}
-
-.btn-red {
-  @apply bg-rose-800 hover:bg-red-700 hover:ring-rose-400 active:bg-red-600 print:hidden;
-}
-
-@tailwind utilities;
+@tailwind utilities; */
 
 @layer base {
+
+  html { 
+    @apply text-black;
+  }
+
+  :root {
+      --primary-50: 236 253 245;
+      --primary-100: 209 250 229;
+      --primary-200: 167 243 208;
+      --primary-300: 110 231 183;
+      --primary-400: 52 211 153;
+      --primary-500: 16 185 129;
+      --primary-600: 5 150 105;
+      --primary-700: 4 120 87;
+      --primary-800: 6 95 70;
+      --primary-900: 4 78 56;
+      --primary-950: 2 44 34;
+      --surface-0: 255 255 255;
+      --surface-50: 249 250 251;
+      --surface-100: 243 244 246;
+      --surface-200: 229 231 235;
+      --surface-300: 209 213 219;
+      --surface-400: 156 163 175;
+      --surface-500: 107 114 128;
+      --surface-600: 75 85 99;
+      --surface-700: 55 65 81;
+      --surface-800: 31 41 55;
+      --surface-900: 17 24 39;
+      --surface-950: 8 8 8;
+  }
+
+  .btn {
+    @apply text-white rounded-lg py-2 w-40 m-2 text-center align-middle hover:ring-2 disabled:bg-gray-400 disabled:hover:ring-0 disabled:hover:bg-gray-400 disabled:text-gray-300;
+  }
+
+  .btn-blue {
+    @apply bg-sky-700 hover:bg-sky-600 hover:ring-sky-500 active:bg-sky-500 print:hidden;
+  }
+  .btn-green {
+    @apply bg-green-700 hover:bg-green-500 hover:ring-green-400 active:bg-green-400 print:hidden;
+  }
+
+  .btn-red {
+    @apply bg-rose-800 hover:bg-red-700 hover:ring-rose-400 active:bg-red-600 print:hidden;
+  }
+
   h6 {
     @apply text-lg print:text-base;
   }
@@ -80,13 +94,13 @@
     @apply print:text-sm;
   }
 
-  .baseInput
-  .baseSelect
+  .baseInput,
+  .baseSelect,
   .baseTextArea {
     @apply rounded-lg w-full border-gray-400 shadow-md focus:border-sky-500 focus:ring-sky-500 print:text-sm;
   }
 
-  .baseCheckbox
+  .baseCheckbox,
   .baseRadio {
     @apply border-gray-400 text-sky-600 focus:ring-sky-500 shadow-md;
   }
@@ -116,3 +130,4 @@
     @apply [&>div::before]:translate-y-0 [&>div::before]:rotate-45 [&>div::after]:translate-y-0 [&>div::after]:-rotate-45 [&>div]:bg-transparent [&>div]:rotate-[720deg];
   }
 }
+

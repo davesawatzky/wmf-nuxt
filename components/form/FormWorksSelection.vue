@@ -2,7 +2,6 @@
 import * as yup from 'yup'
 import { useClasses } from '@/stores/userClasses'
 import type { SelectionInput } from '~/graphql/gql/graphql'
-import type { Status } from '@/composables/types'
 
 const props = defineProps<{
   modelValue: SelectionInput

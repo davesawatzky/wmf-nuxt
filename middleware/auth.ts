@@ -8,8 +8,7 @@ export default defineNuxtRouteMiddleware( ( to, from ) => {
       }
     `)
     onResult(( result ) => {
-      console.log('Result: ', result)
-      if ( result.data.tokenCheck !== true ) {
+      if ( !result.data?.tokenCheck ) {
         navigateTo('/login')
       }
     })
@@ -17,7 +16,8 @@ export default defineNuxtRouteMiddleware( ( to, from ) => {
       console.log(error)
       navigateTo('/login')
     })
-  } else if (to.path === '/') {
+  } else if ( to.path === '/' ) {
+    console.log('Could not login')
     navigateTo('/login')
   }
 })

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { StatusEnum } from '@/composables/types'
 
 interface Props {
   type?: string

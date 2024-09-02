@@ -25,8 +25,6 @@
     RegisteredClassInput,
     Subdiscipline,
   } from '@/graphql/gql/graphql'
-  import type { Status } from '@/composables/types'
-  import { StatusEnum } from '@/composables/types'
 
   const props = defineProps<{
     modelValue: RegisteredClass

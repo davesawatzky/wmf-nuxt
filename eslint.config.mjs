@@ -1,11 +1,9 @@
 import process from 'node:process'
 import withNuxt from './.nuxt/eslint.config.mjs'
-import antfu from '@antfu/eslint-config'
 
 process.env.ESLINT_TSCONFIG = 'tsconfig.json'
 
 export default withNuxt(
-  antfu({}),
   { typescript: { tsconfigPath: 'tsconfig.json' }, vue: true },
   {
     rules: {

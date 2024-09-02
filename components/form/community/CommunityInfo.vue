@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import * as yup from 'yup'
 import { useCommunity } from '@/stores/userCommunity'
-import type { Status } from '@/composables/types'
 
 const communityStore = useCommunity()
 

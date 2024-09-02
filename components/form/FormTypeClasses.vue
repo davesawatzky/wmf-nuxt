@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import * as yup from 'yup'
-import type { Status } from '@/composables/types'
 import { useClasses } from '@/stores/userClasses'
 import { useRegistration } from '@/stores/userRegistration'
 import { useSchoolGroup } from '@/stores/userSchoolGroup'

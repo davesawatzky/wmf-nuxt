@@ -5,9 +5,9 @@
   import { useRegistration } from '~/stores/userRegistration'
   import { useAppStore } from '~/stores/appStore'
   import { useUser } from '~/stores/useUser'
-  import type { ContactInfo, Status } from '@/composables/types'
   import type { Teacher } from '~/graphql/gql/graphql'
-  import { useToast } from 'vue-toastification'
+import {useToast} from 'vue-toastification'
+  import { provinces } from '#imports'
 
   interface FilteredTeacher {
     id: number

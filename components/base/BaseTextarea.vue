@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { StatusEnum } from '@/composables/types'
 
 const props = defineProps<{
   label?: string

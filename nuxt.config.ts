@@ -2,8 +2,26 @@
 import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import process from 'node:process'
+import Aura from '@primevue/themes/aura'
 
-export default defineNuxtConfig({
+export default defineNuxtConfig( {
+    
+  compatibilityDate: '2024-08-28',
+  modules: [
+    '@nuxt/eslint',
+    '@nuxtjs/tailwindcss',
+    '@nuxtjs/apollo',
+    '@pinia/nuxt',
+    '@pinia-plugin-persistedstate/nuxt',
+    '@nuxt/devtools',
+    '@nuxt/test-utils/module',
+    '@vee-validate/nuxt',
+    '@vueuse/nuxt',
+    'nuxt-headlessui',
+    '@nuxtjs/device',
+    '@primevue/nuxt-module',
+    '@nuxt/icon',
+  ],
   devServer: {
     port: 3001,
   },
@@ -30,12 +48,12 @@ export default defineNuxtConfig({
           credentials: 'include',
         },
       },
-      //     // cookieAttributes: {
-      //     //   sameSite: 'none',
-      //     //   domain: 'localhost:3000',
-      //     //   path: '/graphql',
-      //     //   maxAge: 1000 * 60 * 1, // 1 hour
-      //     // },
+      // cookieAttributes: {
+      //   sameSite: 'none',
+      //   domain: 'localhost:3000',
+      //   path: '/graphql',
+      //   maxAge: 1000 * 60 * 1, // 1 hour
+      // },
     },
   },
   app: {
@@ -50,21 +68,6 @@ export default defineNuxtConfig({
   headlessui: {
     prefix: 'UI',
   },
-  modules: [
-    '@nuxt/eslint',
-    '@nuxtjs/tailwindcss',
-    '@nuxtjs/apollo',
-    '@pinia/nuxt',
-    '@pinia-plugin-persistedstate/nuxt',
-    '@nuxt/devtools',
-    '@nuxt/test-utils/module',
-    '@vee-validate/nuxt',
-    '@vueuse/nuxt',
-    'nuxt-icon',
-    'nuxt-headlessui',
-    '@nuxtjs/device',
-    'nuxt-primevue',
-  ],
   pinia: {
     storesDirs: ['./stores'],
   },
@@ -73,13 +76,22 @@ export default defineNuxtConfig({
   },
   primevue: {
     options: {
-      unstyled: true,
       ripple: true,
+      theme: {
+        preset: Aura,
+        options: {
+          prefix: 'p',
+          cssLayer: {
+            name: 'primevue',
+            order: 'tailwind-base, primevue, tailwind-utilities'
+          }
+          // cssLayer: false
+        }
+      }
     },
     components: {
       prefix: 'Prime',
     },
-    importPT: { from: '~/presets/lara/' },
   },
   runtimeConfig: {
     graphqlServer: process.env.GRAPHQL_SERVER,
@@ -102,6 +114,10 @@ export default defineNuxtConfig({
   sourcemap: true,
   spaLoadingTemplate: true,
   ssr: false,
+  tailwindcss: {
+    cssPath: [ '@/assets/css/tailwind.css', {injectPosition: 'first'} ],
+    configPath: 'tailwind.config'
+  },
   typescript: {
     strict: true,
     typeCheck: true,
@@ -125,4 +141,4 @@ export default defineNuxtConfig({
       },
     },
   },
-})
+} )

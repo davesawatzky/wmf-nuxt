@@ -4,7 +4,8 @@ const props = defineProps<{
   schoolTeacher?: boolean
 }>()
 
-const showMenu = ref(false)
+const showMenu = ref( false )
+const route = useRoute()
 
 function toggleNav() {
   showMenu.value = !showMenu.value
@@ -35,7 +36,7 @@ function toggleNav() {
 
       <!-- Toggle Button -->
       <div
-        v-if="$route.name !== 'Login' && $route.name !== 'EmailConfirmation'"
+        v-if="route.name !== 'Login' && route.name !== 'EmailConfirmation'"
       >
         <button
           id="hamburger-button"
@@ -196,7 +197,7 @@ function toggleNav() {
       </div>
     </section>
     <section
-      v-if="$route.name !== 'Login' && $route.name !== 'EmailConfirmation'"
+      v-if="route.name !== 'Login' && route.name !== 'EmailConfirmation'"
       id="mobile-menu"
       :class="showMenu ? 'flex' : 'hidden'"
       class="absolute top-84 bg-sky-800 z-30 w-full text-2xl flex-col justify-content-center origin-top animate-open-menu"
@@ -207,7 +208,7 @@ function toggleNav() {
       >
         <ul>
           <li
-            v-if="$route.name !== 'Registrations'"
+            v-if="route.name !== 'Registrations'"
             class="px-3 py-4 mx-1 hover:bg-sky-500 hover:ring-2 rounded-md text-center"
           >
             <nuxt-link
@@ -219,7 +220,7 @@ function toggleNav() {
             </nuxt-link>
           </li>
           <li
-            v-if="$route.name !== 'Students' && !!privateTeacher"
+            v-if="route.name !== 'Students' && !!privateTeacher"
             class="px-3 py-4 mx-1 hover:bg-sky-500 hover:ring-2 rounded-md text-center"
           >
             <nuxt-link
@@ -231,7 +232,7 @@ function toggleNav() {
             </nuxt-link>
           </li>
           <li
-            v-if="$route.name !== 'UserInformation'"
+            v-if="route.name !== 'UserInformation'"
             class="px-3 py-4 mx-1 hover:bg-sky-500 hover:ring-2 rounded-md text-center"
           >
             <nuxt-link

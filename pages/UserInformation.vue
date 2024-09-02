@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import * as yup from 'yup'
 import 'yup-phone-lite'
-import type { Status } from '@/composables/types'
 import { useRegistration } from '~/stores/userRegistration'
 import { useUser } from '~/stores/useUser'
-import { MyUserDocument } from '~/graphql/gql/graphql'
+import {MyUserDocument} from '~/graphql/gql/graphql'
+import { provinces } from '#imports'
 
 const props = defineProps<{}>()
 

@@ -108,7 +108,7 @@ const signin = handleSubmit((values) => {
   doneSignin(async (result) => {
     if (result.data?.signin.diatonicToken) {
       if (
-        result.data?.signin.user.privateTeacher
+        result.data.signin.user?.privateTeacher
         && !result.data?.signin.user.hasSignedIn
       )
         await navigateTo('/userinformation')
@@ -122,9 +122,9 @@ const signin = handleSubmit((values) => {
           'Account not confirmed.',
         )
       ) {
-        user.value.email = result.data!.signin.user.email!
-        user.value.firstName = result.data!.signin.user.firstName!
-        user.value.lastName = result.data!.signin.user.lastName!
+        user.value.email = result.data.signin.user?.email!
+        user.value.firstName = result.data!.signin.user?.firstName!
+        user.value.lastName = result.data!.signin.user?.lastName!
         isOpen.value = true
       }
     }

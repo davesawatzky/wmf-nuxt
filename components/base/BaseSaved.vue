@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { StatusEnum } from '@/composables/types'
+import {StatusEnum} from '#imports'
 
 defineProps<{
   status?: StatusEnum

@@ -2,7 +2,7 @@
 import * as yup from 'yup'
 import { useSchoolGroup } from '@/stores/userSchoolGroup'
 import type { SchoolGroupInput } from '@/graphql/gql/graphql'
-import type { Status } from '@/composables/types'
+
 
 const props = defineProps<{
   modelValue: SchoolGroupInput

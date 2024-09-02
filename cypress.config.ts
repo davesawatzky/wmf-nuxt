@@ -7,7 +7,7 @@ import type { InlineConfig } from 'vite'
 async function getNuxtViteConfig() {
   const nuxt = await loadNuxt({
     cwd: process.cwd(),
-    dev: false,
+    dev: true,
     overrides: {
       ssr: false,
     },
