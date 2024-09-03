@@ -175,7 +175,7 @@
     await classesStore.loadClasses(null, { registrationId })
     await fieldConfigStore.loadRequiredFields()
     appStore.dataLoading = false
-    navigateTo('/form')
+    await navigateTo('/form')
   }
 
   /**
@@ -246,7 +246,7 @@
     await fieldConfigStore.loadRequiredFields()
     appStore.dataLoading = false
 
-    navigateTo('/form')
+    await navigateTo('/form')
   }
 
   async function deleteRegistration(regId: number) {

@@ -1,62 +1,59 @@
 <script setup lang="ts">
-import { DateTime } from 'luxon'
-import { usePerformers } from '@/stores/userPerformer'
-import { useTeacher } from '@/stores/userTeacher'
-import { useGroup } from '@/stores/userGroup'
-import { useSchool } from '@/stores/userSchool'
-import { useSchoolGroup } from '@/stores/userSchoolGroup'
-import { useCommunity } from '@/stores/userCommunity'
-import { useClasses } from '@/stores/userClasses'
-import { useRegistration } from '@/stores/userRegistration'
-import { useUser } from '@/stores/useUser'
-import { useAppStore } from '@/stores/appStore'
+  import { DateTime } from 'luxon'
+  import { usePerformers } from '@/stores/userPerformer'
+  import { useTeacher } from '@/stores/userTeacher'
+  import { useGroup } from '@/stores/userGroup'
+  import { useSchool } from '@/stores/userSchool'
+  import { useSchoolGroup } from '@/stores/userSchoolGroup'
+  import { useCommunity } from '@/stores/userCommunity'
+  import { useClasses } from '@/stores/userClasses'
+  import { useRegistration } from '@/stores/userRegistration'
+  import { useUser } from '@/stores/useUser'
+  import { useAppStore } from '@/stores/appStore'
 
-const performerStore = usePerformers()
-const teacherStore = useTeacher()
-const groupStore = useGroup()
-const schoolStore = useSchool()
-const schoolGroupStore = useSchoolGroup()
-const communityStore = useCommunity()
-const classesStore = useClasses()
-const appStore = useAppStore()
-const userStore = useUser()
-const registrationStore = useRegistration()
+  const performerStore = usePerformers()
+  const teacherStore = useTeacher()
+  const groupStore = useGroup()
+  const schoolStore = useSchool()
+  const schoolGroupStore = useSchoolGroup()
+  const communityStore = useCommunity()
+  const classesStore = useClasses()
+  const appStore = useAppStore()
+  const userStore = useUser()
+  const registrationStore = useRegistration()
 
-const confirmationNumber = ref('')
-const submissionComplete = ref(false)
-const readConfirmation = ref(false)
+  const confirmationNumber = ref('')
+  const submissionComplete = ref(false)
+  const readConfirmation = ref(false)
 
-function printWindow() {
-  window.print()
-}
+  function printWindow() {
+    window.print()
+  }
 
-const date = new Date()
-const formattedDate = DateTime.now().toLocaleString(DateTime.DATETIME_MED)
+  const date = new Date()
+  const formattedDate = DateTime.now().toLocaleString(DateTime.DATETIME_MED)
 
-definePageMeta({
-  middleware: ['submission'],
-})
+  definePageMeta({
+    middleware: ['submission'],
+  })
 
-onBeforeMount(() => {
-  const regExist = registrationStore?.registrationId
-  const confirmed = registrationStore.registration?.confirmation
-  const submitted = registrationStore.registration?.submittedAt
+  onBeforeMount(async () => {
+    const regExist = registrationStore?.registrationId
+    const confirmed = registrationStore.registration?.confirmation
+    const submitted = registrationStore.registration?.submittedAt
 
-  if (!regExist || confirmed || submitted)
-    navigateTo('/Registrations')
-})
+    if (!regExist || confirmed || submitted) {
+      await navigateTo('/Registrations')
+    }
+  })
 </script>
 
 <template>
   <div v-auto-animate>
-    <h1 class="my-8">
-      Registration Submission
-    </h1>
+    <h1 class="my-8">Registration Submission</h1>
     <SummaryTable />
     <section class="p-4 border-sky-700 bg-white border rounded-xl">
-      <p class="text-center font-bold text-xl">
-        Important Notes
-      </p>
+      <p class="text-center font-bold text-xl">Important Notes</p>
 
       <p>
         The Festival reserves the right to redirect entries to a more
@@ -89,33 +86,27 @@ onBeforeMount(() => {
       </p>
     </section>
 
-    <p class="text-center font-bold text-xl">
-      Entry fees are non-refundable.
-    </p>
+    <p class="text-center font-bold text-xl">Entry fees are non-refundable.</p>
     <div
-      class="text-center mx-auto max-w-[400px] border border-sky-600 rounded-lg p-4 bg-white"
-    >
+      class="text-center mx-auto max-w-[400px] border border-sky-600 rounded-lg p-4 bg-white">
       <BaseCheckbox
         v-model="readConfirmation"
-        label="I have read and understand the preceding text."
-      />
+        label="I have read and understand the preceding text." />
     </div>
-    <br>
+    <br />
 
     <div class="text-center">
       <BaseRouteButton
         v-if="!submissionComplete"
         class="btn btn-blue"
         :disabled="!readConfirmation"
-        to="/Submission/payment"
-      >
+        to="/Submission/payment">
         Proceed to Payment
       </BaseRouteButton>
       <BaseRouteButton
         v-if="!submissionComplete"
         class="btn btn-blue"
-        to="Registrations"
-      >
+        to="Registrations">
         Cancel
       </BaseRouteButton>
     </div>

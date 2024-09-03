@@ -157,6 +157,7 @@
       await signupAccount()
     }
   }
+
   const {
     result: resultDoesTeacherExist,
     load: onDoesTeacherExistLoad,

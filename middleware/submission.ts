@@ -10,6 +10,6 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
 
   if (!regExist || confirmed || submitted) {
     abortNavigation()
-    navigateTo('/Registrations')
+    await navigateTo('/Registrations')
   }
 })

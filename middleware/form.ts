@@ -5,6 +5,6 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   const reg = JSON.parse(regExist ?? '')
   if (!reg.registrationId) {
     abortNavigation()
-    navigateTo('/Registrations')
+    await navigateTo('/Registrations')
   }
 })

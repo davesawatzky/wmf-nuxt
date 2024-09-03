@@ -118,7 +118,7 @@
     appStore.dataLoading = true
     await classesStore.loadClasses()
     appStore.dataLoading = false
-    navigateTo('/students/summary') // TODO: have to change this to a summary
+    await navigateTo('/students/summary') // TODO: have to change this to a summary
   }
 </script>
 
