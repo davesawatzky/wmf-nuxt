@@ -52,30 +52,26 @@ export const useFieldConfig = defineStore(
       return fields
     }
 
-    function loadRequiredFields(): Promise<unknown> {
-      return new Promise((resolve, reject) => {
-        const {
-          result: resultFieldConfigs,
-          load,
-          onError,
-          onResult,
-        } = useLazyQuery(FieldConfigsDocument, undefined, {
-          fetchPolicy: 'network-only',
-        })
-        load()
-        onResult((result) => {
-          for (let i = 0; i < result.data.fieldConfigs.length; i++) {
-            requiredFields.value.push(
-              result.data.fieldConfigs[i] as FieldConfig,
-            )
-          }
-          resolve('Success')
-        })
-        onError((error) => {
-          reject(console.log(error))
-        })
-      })
-    }
+
+    const {
+      result: resultFieldConfigs,
+      load: loadRequiredFields,
+      onError:onLoadRequiredFieldsError,
+      onResult: onRequiredFieldsResult,
+    } = useLazyQuery(FieldConfigsDocument, undefined, {
+      fetchPolicy: 'network-only',
+    })
+    onRequiredFieldsResult((result) => {
+      for (let i = 0; i < result.data.fieldConfigs.length; i++) {
+        requiredFields.value.push(
+          result.data.fieldConfigs[i] as FieldConfig,
+        )
+      }
+    })
+    onLoadRequiredFieldsError((error) => {
+      console.log(error)
+    })
+
 
     return {
       requiredFields,

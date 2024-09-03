@@ -451,9 +451,7 @@
         classesStore.registeredClasses[props.classIndex].selections!.length
       if (oldNumber < newNumber!) {
         while (oldNumber < newNumber!) {
-          await classesStore
-            .createSelection(props.classId)
-            .catch((error) => console.log(error))
+          await classesStore.createSelection(props.classId)
           oldNumber += 1
         }
       } else if (oldNumber > newNumber!) {

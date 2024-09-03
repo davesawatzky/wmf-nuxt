@@ -35,7 +35,7 @@
       for (let i = 0; i < regClassIdNumbers.length; i++) {
         await classesStore.deleteClass(regClassIdNumbers[i])
       }
-      await classesStore.createClass(registrationStore.registration.id)
+      await classesStore.createClass(registrationStore.registrationId)
     } catch (err) {
       console.log(err)
     }

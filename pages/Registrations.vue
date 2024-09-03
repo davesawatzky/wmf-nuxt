@@ -1,253 +1,265 @@
 <script lang="ts" setup>
-import { DateTime } from 'luxon'
-import { useRegistration } from '@/stores/userRegistration'
-import { useAppStore } from '@/stores/appStore'
-import { usePerformers } from '@/stores/userPerformer'
-import { useTeacher } from '@/stores/userTeacher'
-import { useClasses } from '@/stores/userClasses'
-import { useGroup } from '@/stores/userGroup'
-import { useSchool } from '@/stores/userSchool'
-import { useSchoolGroup } from '@/stores/userSchoolGroup'
-import { useCommunity } from '@/stores/userCommunity'
-import { useFieldConfig } from '@/stores/useFieldConfig'
-import { useUser } from '@/stores/useUser'
-import {
-  communityOpen,
-  groupOpen,
-  schoolOpen,
-  soloOpen,
-} from '#imports'
-import type { Registration, RegistrationInput } from '@/graphql/gql/graphql'
-import {
-  MyUserDocument,
-  PerformerType,
-  RegistrationsDocument,
-} from '@/graphql/gql/graphql'
+  import { DateTime } from 'luxon'
+  import { useRegistration } from '@/stores/userRegistration'
+  import { useAppStore } from '@/stores/appStore'
+  import { usePerformers } from '@/stores/userPerformer'
+  import { useTeacher } from '@/stores/userTeacher'
+  import { useClasses } from '@/stores/userClasses'
+  import { useGroup } from '@/stores/userGroup'
+  import { useSchool } from '@/stores/userSchool'
+  import { useSchoolGroup } from '@/stores/userSchoolGroup'
+  import { useCommunity } from '@/stores/userCommunity'
+  import { useFieldConfig } from '@/stores/useFieldConfig'
+  import { useUser } from '@/stores/useUser'
+  import { communityOpen, groupOpen, schoolOpen, soloOpen } from '#imports'
+  import type { Registration, RegistrationInput } from '@/graphql/gql/graphql'
+  import {
+    MyUserDocument,
+    PerformerType,
+    RegistrationsDocument,
+  } from '@/graphql/gql/graphql'
 
-const soloPhoto = '/images/opera-singer-on-stage.png'
-const soloPhotoBW = '/images/opera-singer-on-stage-BW.png'
-const groupPhoto = '/images/strings.png'
-const groupPhotoBW = '/images/strings-BW.png'
-const schoolPhoto = '/images/orff-instruments.png'
-const schoolPhotoBW = '/images/orff-instruments-BW.png'
-const communityPhoto = '/images/community_choir.png'
-const communityPhotoBW = '/images/community_choir-BW.png'
+  const soloPhoto = '/images/opera-singer-on-stage.png'
+  const soloPhotoBW = '/images/opera-singer-on-stage-BW.png'
+  const groupPhoto = '/images/strings.png'
+  const groupPhotoBW = '/images/strings-BW.png'
+  const schoolPhoto = '/images/orff-instruments.png'
+  const schoolPhotoBW = '/images/orff-instruments-BW.png'
+  const communityPhoto = '/images/community_choir.png'
+  const communityPhotoBW = '/images/community_choir-BW.png'
 
-const registrationStore = useRegistration()
-const appStore = useAppStore()
-const performerStore = usePerformers()
-const teacherStore = useTeacher()
-const groupStore = useGroup()
-const schoolStore = useSchool()
-const schoolGroupStore = useSchoolGroup()
-const communityStore = useCommunity()
-const classesStore = useClasses()
-const userStore = useUser()
-const fieldConfigStore = useFieldConfig()
+  const registrationStore = useRegistration()
+  const appStore = useAppStore()
+  const performerStore = usePerformers()
+  const teacherStore = useTeacher()
+  const groupStore = useGroup()
+  const schoolStore = useSchool()
+  const schoolGroupStore = useSchoolGroup()
+  const communityStore = useCommunity()
+  const classesStore = useClasses()
+  const userStore = useUser()
+  const fieldConfigStore = useFieldConfig()
 
-const registrationId = ref(0)
+  const registrationId = ref(0)
 
-const sm = useMediaQuery('(min-width: 640px)')
-const md = useMediaQuery('(min-width: 768px)')
-const lg = useMediaQuery('(min-width: 1024px)')
+  const sm = useMediaQuery('(min-width: 640px)')
+  const md = useMediaQuery('(min-width: 768px)')
+  const lg = useMediaQuery('(min-width: 1024px)')
 
-function dateFunction(date: Date | undefined) {
-  if (date) {
-    const dateString = date.toString()
-    return DateTime.fromISO(dateString).toLocaleString(DateTime.DATETIME_MED)
+  function dateFunction(date: Date | undefined) {
+    if (date) {
+      const dateString = date.toString()
+      return DateTime.fromISO(dateString).toLocaleString(DateTime.DATETIME_MED)
+    }
   }
-}
 
-definePageMeta({
-  middleware: ['auth'],
-})
-
-onBeforeMount(() => {
-  registrationStore.$reset()
-  appStore.$reset()
-  performerStore.$reset()
-  teacherStore.$resetTeacher()
-  teacherStore.$resetAllTeachers()
-  groupStore.$reset()
-  communityStore.$reset()
-  schoolStore.$reset()
-  schoolGroupStore.$reset()
-  classesStore.$reset()
-  fieldConfigStore.$reset()
-})
-
-/**
- * Load User details
- */
-const {
-  onResult: onUserResult,
-  onError: userError,
-} = useQuery(MyUserDocument, null, () => ({
-  fetchPolicy: 'no-cache',
-}))
-onUserResult((result) => {
-  userStore.addToStore(result.data.myUser)
-})
-userError(error => console.log(error))
-
-
-/**
- * Load all registrations for user
- */
-const {
-  result,
-  refetch: refetchRegistrations,
-  onError,
-} = useQuery(RegistrationsDocument, null, () => ({
-  fetchPolicy: 'no-cache',
-}))
-onError(error => console.log(error))
-
-const registrations = computed(() => result.value?.registrations ?? [])
-
-function openEditor(performerType: PerformerType): boolean {
-  // eslint-disable-next-line no-eval
-  return !!eval(`${performerType.toLowerCase()}Open`)
-}
-
-/**
- * Load and Edit Existing Registration
- *
- * @param registrationId The ID of the registration form
- * @param performerType SOLO, GROUP, SCHOOL, or COMMUNITY
- */
-async function loadRegistration(
-  registrationId: number,
-  performerType: PerformerType,
-) {
-  const registration = registrations.value.find((reg) => {
-    return reg.id === registrationId
+  definePageMeta({
+    middleware: ['auth'],
   })
 
-  registrationStore.registrationId = registrationId
-  registrationStore.addToStore(
-    registration as Partial<Registration & RegistrationInput>,
+  onBeforeMount(() => {
+    registrationStore.$reset()
+    appStore.$reset()
+    performerStore.$reset()
+    teacherStore.$resetTeacher()
+    teacherStore.$resetAllTeachers()
+    groupStore.$reset()
+    communityStore.$reset()
+    schoolStore.$reset()
+    schoolGroupStore.$reset()
+    classesStore.$reset()
+    fieldConfigStore.$reset()
+  })
+
+  /**
+   * Load User details
+   */
+  const { onResult: onUserResult, onError: userError } = useQuery(
+    MyUserDocument,
+    null,
+    () => ({
+      fetchPolicy: 'no-cache',
+    })
   )
-  switch (performerType) {
-    case 'SOLO':
-      appStore.performerType = PerformerType.SOLO
-      appStore.dataLoading = true
-      console.log('Are we here yet')
-      await performerStore.loadPerformers(registrationId)
-      await teacherStore.loadAllTeachers(true, false)
-      appStore.dataLoading = false
-      break
-    case 'GROUP':
-      appStore.performerType = PerformerType.GROUP
-      appStore.dataLoading = true
-      await groupStore.loadGroup(registrationId)
-      await performerStore.loadPerformers(registrationId)
-      await teacherStore.loadAllTeachers(true, false)
-      appStore.dataLoading = false
-      break
-    case 'SCHOOL':
-      appStore.performerType = PerformerType.SCHOOL
-      appStore.dataLoading = true
-      await schoolStore.loadSchool(registrationId)
-      await schoolGroupStore.loadSchoolGroups(registrationId)
-      // await teacherStore.loadAllTeachers(false, true)
-      appStore.dataLoading = false
-      break
-    case 'COMMUNITY':
-      appStore.performerType = PerformerType.COMMUNITY
-      appStore.dataLoading = true
-      await communityStore.loadCommunity(registrationId)
-      await teacherStore.loadAllTeachers(true, true)
-      appStore.dataLoading = false
-      break
-  }
-  appStore.dataLoading = true
-  if (registration?.teacher) {
-    await teacherStore.loadTeacher(registration.teacher.id)
-    registrationStore.registration.teacherID = registration.teacher.id
-  }
-  await classesStore.loadClasses(registrationId)
-  await fieldConfigStore.loadRequiredFields()
-  appStore.dataLoading = false
-  navigateTo('/form')
-}
-
-/**
- * Creates a new registration in the registration form.
- *
- * @param performerType SOLO, GROUP, SCHOOL or COMMUNITY
- * @param label A given label for the registration form
- */
-async function newRegistration(performerType: PerformerType, label?: string) {
-  if (!label || label.length === 0)
-    label = 'Registration Form'
-
-  await registrationStore.createRegistration(performerType, label)
-  registrationId.value = registrationStore.registrationId
-  appStore.$patch({
-    editExisting: false,
-    performerType,
-    registrationExists: true,
+  onUserResult((result) => {
+    userStore.addToStore(result.data.myUser)
   })
+  userError((error) => console.log(error))
 
-  switch (performerType) {
-    case 'SOLO':
-      appStore.performerType = PerformerType.SOLO
-      appStore.dataLoading = true
-      await performerStore.createPerformer(registrationId.value)
-      await teacherStore.loadAllTeachers(true, false)
-      break
-    case 'GROUP':
-      appStore.performerType = PerformerType.GROUP
-      appStore.dataLoading = true
-      await groupStore.createGroup(registrationId.value)
-      // require at least 2 performers for groups
-      await performerStore.createPerformer(registrationId.value)
-      await performerStore.createPerformer(registrationId.value)
-      await teacherStore.loadAllTeachers(true, false)
-      break
-    case 'SCHOOL':
-      appStore.performerType = PerformerType.SCHOOL
-      appStore.dataLoading = true
-      if (userStore.user.schoolTeacher) {
-        teacherStore.teacher.id = userStore.user.id
-        registrationStore.registration.teacherID = userStore.user.id
-        await registrationStore.updateRegistration('teacherID')
-        teacherStore.teacher.firstName = userStore.user.firstName
-        teacherStore.teacher.lastName = userStore.user.lastName
-        teacherStore.teacher.email = userStore.user.email
-        teacherStore.teacher.phone = userStore.user.phone
-      }
-      await schoolStore.createSchool(registrationId.value)
-      await schoolGroupStore.createSchoolGroup(schoolStore.school.id!)
-      // await teacherStore.loadAllTeachers(false, true)
-      break
-    case 'COMMUNITY':
-      appStore.performerType = PerformerType.COMMUNITY
-      appStore.dataLoading = true
-      await communityStore.createCommunity(registrationId.value)
-      await teacherStore.loadAllTeachers(true, true)
+  /**
+   * Load all registrations for user
+   */
+  const {
+    result,
+    refetch: refetchRegistrations,
+    onError,
+  } = useQuery(RegistrationsDocument, null, () => ({
+    fetchPolicy: 'no-cache',
+  }))
+  onError((error) => console.log(error))
+
+  const registrations = computed(() => result.value?.registrations ?? [])
+
+  function openEditor(performerType: PerformerType): boolean {
+    // eslint-disable-next-line no-eval
+    return !!eval(`${performerType.toLowerCase()}Open`)
   }
-  await classesStore.createClass(registrationId.value)
-  await fieldConfigStore.loadRequiredFields()
-  appStore.dataLoading = false
 
-  navigateTo('/form')
-}
+  /**
+   * Load and Edit Existing Registration
+   *
+   * @param registrationId The ID of the registration form
+   * @param performerType SOLO, GROUP, SCHOOL, or COMMUNITY
+   */
+  async function loadRegistration(
+    registrationId: number,
+    performerType: PerformerType
+  ) {
+    const registration = registrations.value.find((reg) => {
+      return reg.id === registrationId
+    })
 
-async function deleteRegistration(regId: number) {
-  appStore.dataLoading = true
-  await registrationStore.deleteRegistration(regId)
-  await refetchRegistrations()
-  appStore.dataLoading = false
-}
+    registrationStore.registrationId = registrationId
+    registrationStore.addToStore(
+      registration as Partial<Registration & RegistrationInput>
+    )
+    switch (performerType) {
+      case 'SOLO':
+        appStore.performerType = PerformerType.SOLO
+        appStore.dataLoading = true
+        console.log('Are we here yet')
+        await performerStore.loadPerformers()
+        await teacherStore.loadAllTeachers(null, {
+          privateTeacher: true,
+          schoolTeacher: false,
+        })
+        appStore.dataLoading = false
+        break
+      case 'GROUP':
+        appStore.performerType = PerformerType.GROUP
+        appStore.dataLoading = true
+        await groupStore.loadGroup(null, { registrationId })
+        await performerStore.loadPerformers()
+        await teacherStore.loadAllTeachers(null, {
+          privateTeacher: true,
+          schoolTeacher: false,
+        })
+        appStore.dataLoading = false
+        break
+      case 'SCHOOL':
+        appStore.performerType = PerformerType.SCHOOL
+        appStore.dataLoading = true
+        await schoolStore.loadSchool(null, { registrationId })
+        await schoolGroupStore.loadSchoolGroups(null, { registrationId })
+        // await teacherStore.loadAllTeachers(false, true)
+        appStore.dataLoading = false
+        break
+      case 'COMMUNITY':
+        appStore.performerType = PerformerType.COMMUNITY
+        appStore.dataLoading = true
+        await communityStore.loadCommunity(registrationId)
+        await teacherStore.loadAllTeachers(null, {
+          privateTeacher: true,
+          schoolTeacher: true,
+        })
+        appStore.dataLoading = false
+        break
+    }
+    appStore.dataLoading = true
+    if (registration?.teacher) {
+      registrationStore.registration.teacherID = registration.teacher.id
+      await teacherStore.loadTeacher(null, {
+        teacherID: registrationStore.registration.teacherID,
+      })
+    }
+    await classesStore.loadClasses(null, { registrationId })
+    await fieldConfigStore.loadRequiredFields()
+    appStore.dataLoading = false
+    navigateTo('/form')
+  }
+
+  /**
+   * Creates a new registration in the registration form.
+   *
+   * @param performerType SOLO, GROUP, SCHOOL or COMMUNITY
+   * @param label A given label for the registration form
+   */
+  async function newRegistration(performerType: PerformerType, label?: string) {
+    if (!label || label.length === 0) label = 'Registration Form'
+
+    await registrationStore.createRegistration(performerType, label)
+    registrationId.value = registrationStore.registrationId
+    appStore.$patch({
+      editExisting: false,
+      performerType,
+      registrationExists: true,
+    })
+
+    switch (performerType) {
+      case 'SOLO':
+        appStore.performerType = PerformerType.SOLO
+        appStore.dataLoading = true
+        await performerStore.createPerformer(registrationId.value)
+        await teacherStore.loadAllTeachers(null, {
+          privateTeacher: true,
+          schoolTeacher: false,
+        })
+        break
+      case 'GROUP':
+        appStore.performerType = PerformerType.GROUP
+        appStore.dataLoading = true
+        await groupStore.createGroup(registrationId.value)
+        // require at least 2 performers for groups
+        await performerStore.createPerformer(registrationId.value)
+        await performerStore.createPerformer(registrationId.value)
+        await teacherStore.loadAllTeachers(null, {
+          privateTeacher: true,
+          schoolTeacher: false,
+        })
+        break
+      case 'SCHOOL':
+        appStore.performerType = PerformerType.SCHOOL
+        appStore.dataLoading = true
+        if (userStore.user.schoolTeacher) {
+          teacherStore.teacher.id = userStore.user.id
+          registrationStore.registration.teacherID = userStore.user.id
+          await registrationStore.updateRegistration('teacherID')
+          teacherStore.teacher.firstName = userStore.user.firstName
+          teacherStore.teacher.lastName = userStore.user.lastName
+          teacherStore.teacher.email = userStore.user.email
+          teacherStore.teacher.phone = userStore.user.phone
+        }
+        await schoolStore.createSchool(registrationId.value)
+        await schoolGroupStore.createSchoolGroup(schoolStore.school.id!)
+        // await teacherStore.loadAllTeachers(false, true)
+        break
+      case 'COMMUNITY':
+        appStore.performerType = PerformerType.COMMUNITY
+        appStore.dataLoading = true
+        await communityStore.createCommunity(registrationId.value)
+        await teacherStore.loadAllTeachers(null, {
+          privateTeacher: true,
+          schoolTeacher: false,
+        })
+    }
+    await classesStore.createClass(registrationId.value)
+    await fieldConfigStore.loadRequiredFields()
+    appStore.dataLoading = false
+
+    navigateTo('/form')
+  }
+
+  async function deleteRegistration(regId: number) {
+    appStore.dataLoading = true
+    await registrationStore.deleteRegistration(regId)
+    await refetchRegistrations()
+    appStore.dataLoading = false
+  }
 </script>
 
 <template>
   <div v-auto-animate>
-    <h1 class="mt-3 mb-2">
-      Winnipeg Music Festival
-    </h1>
+    <h1 class="mt-3 mb-2">Winnipeg Music Festival</h1>
     <h2>Registration Forms</h2>
     <div class="border border-sky-500 rounded-lg text-left mt-10 md:mt-15">
       <div class="p-2 sm:p-4">
@@ -255,106 +267,83 @@ async function deleteRegistration(regId: number) {
           <h3>Submitted and In-Process Applications</h3>
           <table
             v-auto-animate
-            class="table_auto border-separate border-spacing-0 w-full text-xs sm:text-base mt-3"
-          >
+            class="table_auto border-separate border-spacing-0 w-full text-xs sm:text-base mt-3">
             <thead class="text-white">
               <tr class="py-2 px-0 sm:px-2">
-                <th class="rounded-tl-lg bg-sky-700">
-                  View
-                </th>
+                <th class="rounded-tl-lg bg-sky-700">View</th>
                 <th
                   v-if="sm"
-                  class="bg-sky-700"
-                >
+                  class="bg-sky-700">
                   ID
                 </th>
                 <th
                   v-if="sm"
-                  class="bg-sky-700"
-                >
+                  class="bg-sky-700">
                   Label
                 </th>
                 <th
                   v-if="lg"
-                  class="bg-sky-700"
-                >
+                  class="bg-sky-700">
                   Created
                 </th>
-                <th class="bg-sky-700">
-                  Type
-                </th>
+                <th class="bg-sky-700">Type</th>
                 <th
                   v-if="md"
-                  class="bg-sky-700"
-                >
+                  class="bg-sky-700">
                   Submitted
                 </th>
-                <th class="bg-sky-700">
-                  Total
-                </th>
-                <th class="bg-sky-700">
-                  Conf. #
-                </th>
-                <th class="rounded-tr-lg bg-sky-700">
-                  Del
-                </th>
+                <th class="bg-sky-700">Total</th>
+                <th class="bg-sky-700">Conf. #</th>
+                <th class="rounded-tr-lg bg-sky-700">Del</th>
               </tr>
             </thead>
             <tbody>
               <tr
                 v-for="registration in registrations"
                 :key="registration.id"
-                class="px-0 sm:px-2 bg-white"
-              >
+                class="px-0 sm:px-2 bg-white">
                 <td class="">
                   <BaseButton
                     class="text-sky-600 text-xl md:ml-4 ml-3"
                     @click="
-                      registration.confirmation
-                        || openEditor(registration.performerType)
+                      registration.confirmation ||
+                      openEditor(registration.performerType)
                         ? loadRegistration(
-                          registration.id,
-                          registration.performerType,
-                        )
+                            registration.id,
+                            registration.performerType
+                          )
                         : ''
-                    "
-                  >
+                    ">
                     <Icon
                       v-if="
-                        !registration.confirmation
-                          && openEditor(registration.performerType)
+                        !registration.confirmation &&
+                        openEditor(registration.performerType)
                       "
-                      name="fa-solid:pen"
-                    />
+                      name="fa-solid:pen" />
                     <Icon
                       v-else-if="
-                        !registration.confirmation
-                          && !openEditor(registration.performerType)
+                        !registration.confirmation &&
+                        !openEditor(registration.performerType)
                       "
-                      name="fa-solid:ban"
-                    />
+                      name="fa-solid:ban" />
                     <Icon
                       v-else
-                      name="fa-solid:eye"
-                    />
+                      name="fa-solid:eye" />
                   </BaseButton>
                 </td>
                 <td
                   v-if="sm"
-                  class="text-sm"
-                >
+                  class="text-sm">
                   {{ registration.id }}
                 </td>
                 <td
                   v-if="sm"
-                  class="text-sm"
-                >
+                  class="text-sm">
                   {{ registration.label }}
                 </td>
                 <td
                   v-if="lg"
-                  class="text-sm"
-                >
+                  class="text-sm">
                   {{ dateFunction(registration.createdAt) }}
                 </td>
                 <td class="text-sm">
@@ -362,8 +351,7 @@ async function deleteRegistration(regId: number) {
                 </td>
                 <td
                   v-if="md"
-                  class="text-sm"
-                >
+                  class="text-sm">
                   {{ dateFunction(registration.submittedAt) ?? 'No' }}
                 </td>
                 <td class="text-sm">
@@ -376,8 +364,7 @@ async function deleteRegistration(regId: number) {
                   <BaseButton
                     v-if="!registration.confirmation"
                     class="text-red-600 text-xl md:ml-4 ml-3 my-3"
-                    @click="deleteRegistration(registration.id)"
-                  >
+                    @click="deleteRegistration(registration.id)">
                     <Icon name="fa-solid:trash-alt" />
                   </BaseButton>
                 </td>
@@ -385,11 +372,9 @@ async function deleteRegistration(regId: number) {
             </tbody>
           </table>
         </div>
-        <br>
+        <br />
         <div class="pb-6">
-          <h3 class="pb-3">
-            Registering for the Winnipeg Music Festival
-          </h3>
+          <h3 class="pb-3">Registering for the Winnipeg Music Festival</h3>
           <ul class="list-disc pl-5">
             <li>
               Begin registration by creating an account (account can be for an
@@ -423,28 +408,24 @@ async function deleteRegistration(regId: number) {
           :label="soloOpen ? 'Solo' : 'Solo - Closed'"
           :photo="soloOpen ? soloPhoto : soloPhotoBW"
           alt-text="New Solo Registration"
-          @click="soloOpen ? newRegistration(PerformerType.SOLO) : ''"
-        />
+          @click="soloOpen ? newRegistration(PerformerType.SOLO) : ''" />
         <BaseCard
           :label="groupOpen ? 'Group' : 'Group - Closed'"
           :photo="groupOpen ? groupPhoto : groupPhotoBW"
           alt-text="New Group Registration"
-          @click="groupOpen ? newRegistration(PerformerType.GROUP) : ''"
-        />
+          @click="groupOpen ? newRegistration(PerformerType.GROUP) : ''" />
         <BaseCard
           :label="schoolOpen ? 'School' : 'School - Closed'"
           :photo="schoolOpen ? schoolPhoto : schoolPhotoBW"
           alt-text="New School Registration"
-          @click="schoolOpen ? newRegistration(PerformerType.SCHOOL) : ''"
-        />
+          @click="schoolOpen ? newRegistration(PerformerType.SCHOOL) : ''" />
         <BaseCard
           :label="communityOpen ? 'Community' : 'Community - Closed'"
           :photo="communityOpen ? communityPhoto : communityPhotoBW"
           alt-text="New Community Registration"
           @click="
             communityOpen ? newRegistration(PerformerType.COMMUNITY) : ''
-          "
-        />
+          " />
       </div>
     </div>
   </div>

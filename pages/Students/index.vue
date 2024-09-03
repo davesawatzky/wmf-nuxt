@@ -1,132 +1,130 @@
 <script lang="ts" setup>
-import { DateTime } from 'luxon'
-import { useRegistration } from '@/stores/userRegistration'
-import { useAppStore } from '@/stores/appStore'
-import { usePerformers } from '@/stores/userPerformer'
-import { useTeacher } from '@/stores/userTeacher'
-import { useClasses } from '@/stores/userClasses'
-import { useGroup } from '@/stores/userGroup'
-import { useSchool } from '@/stores/userSchool'
-import { useSchoolGroup } from '@/stores/userSchoolGroup'
-import { useCommunity } from '@/stores/userCommunity'
-import { useFieldConfig } from '@/stores/useFieldConfig'
-import type { Registration, RegistrationInput } from '@/graphql/gql/graphql'
-import {
-  PerformerType,
-  StudentRegistrationsDocument,
-} from '@/graphql/gql/graphql'
+  import { DateTime } from 'luxon'
+  import { useRegistration } from '@/stores/userRegistration'
+  import { useAppStore } from '@/stores/appStore'
+  import { usePerformers } from '@/stores/userPerformer'
+  import { useTeacher } from '@/stores/userTeacher'
+  import { useClasses } from '@/stores/userClasses'
+  import { useGroup } from '@/stores/userGroup'
+  import { useSchool } from '@/stores/userSchool'
+  import { useSchoolGroup } from '@/stores/userSchoolGroup'
+  import { useCommunity } from '@/stores/userCommunity'
+  import { useFieldConfig } from '@/stores/useFieldConfig'
+  import type { Registration, RegistrationInput } from '@/graphql/gql/graphql'
+  import {
+    PerformerType,
+    StudentRegistrationsDocument,
+  } from '@/graphql/gql/graphql'
 
-const registrationStore = useRegistration()
-const appStore = useAppStore()
-const performerStore = usePerformers()
-const teacherStore = useTeacher()
-const groupStore = useGroup()
-const schoolStore = useSchool()
-const schoolGroupStore = useSchoolGroup()
-const communityStore = useCommunity()
-const classesStore = useClasses()
-const fieldConfigStore = useFieldConfig()
+  const registrationStore = useRegistration()
+  const appStore = useAppStore()
+  const performerStore = usePerformers()
+  const teacherStore = useTeacher()
+  const groupStore = useGroup()
+  const schoolStore = useSchool()
+  const schoolGroupStore = useSchoolGroup()
+  const communityStore = useCommunity()
+  const classesStore = useClasses()
+  const fieldConfigStore = useFieldConfig()
 
-const sm = useMediaQuery('(min-width: 640px)')
-const md = useMediaQuery('(min-width: 768px)')
-const lg = useMediaQuery('(min-width: 1024px)')
+  const sm = useMediaQuery('(min-width: 640px)')
+  const md = useMediaQuery('(min-width: 768px)')
+  const lg = useMediaQuery('(min-width: 1024px)')
 
-function dateFunction(date: Date | undefined) {
-  if (date) {
-    const dateString = date.toString()
-    return DateTime.fromISO(dateString).toLocaleString(DateTime.DATETIME_MED)
+  function dateFunction(date: Date | undefined) {
+    if (date) {
+      const dateString = date.toString()
+      return DateTime.fromISO(dateString).toLocaleString(DateTime.DATETIME_MED)
+    }
   }
-}
 
-onBeforeMount(() => {
-  registrationStore.$reset()
-  appStore.$reset()
-  performerStore.$reset()
-  teacherStore.$resetTeacher()
-  teacherStore.$resetAllTeachers()
-  groupStore.$reset()
-  communityStore.$reset()
-  schoolStore.$reset()
-  schoolGroupStore.$reset()
-  classesStore.$reset()
-  fieldConfigStore.$reset()
-})
-
-/**
- * Load list of all student registrations for a teacher
- */
-const {
-  result,
-  refetch: refetchRegistrations,
-  onError,
-} = useQuery(StudentRegistrationsDocument, null, () => ({
-  fetchPolicy: 'no-cache',
-}))
-onError(error => console.log(error))
-
-const registrations = computed(
-  () => result.value?.myStudents.registrations ?? [],
-)
-
-/**
- * Load Viewable Student Registration
- *
- * @param registrationId The ID of the registration form
- * @param performerType SOLO, GROUP, SCHOOL, or COMMUNITY
- */
-async function loadRegistration(
-  registrationId: number,
-  performerType: PerformerType,
-) {
-  const registration = registrations.value.find((reg) => {
-    return reg.id === registrationId
+  onBeforeMount(() => {
+    registrationStore.$reset()
+    appStore.$reset()
+    performerStore.$reset()
+    teacherStore.$resetTeacher()
+    teacherStore.$resetAllTeachers()
+    groupStore.$reset()
+    communityStore.$reset()
+    schoolStore.$reset()
+    schoolGroupStore.$reset()
+    classesStore.$reset()
+    fieldConfigStore.$reset()
   })
 
-  registrationStore.registrationId = registrationId
+  /**
+   * Load list of all student registrations for a teacher
+   */
+  const {
+    result,
+    refetch: refetchRegistrations,
+    onError,
+  } = useQuery(StudentRegistrationsDocument, null, () => ({
+    fetchPolicy: 'no-cache',
+  }))
+  onError((error) => console.log(error))
 
-  registrationStore.addToStore(
-    registration as Partial<Registration & RegistrationInput>,
+  const registrations = computed(
+    () => result.value?.myStudents.registrations ?? []
   )
-  switch (performerType) {
-    case 'SOLO':
-      appStore.performerType = PerformerType.SOLO
-      appStore.dataLoading = true
-      await performerStore.loadPerformers(registrationId)
-      appStore.dataLoading = false
-      break
-    case 'GROUP':
-      appStore.performerType = PerformerType.GROUP
-      appStore.dataLoading = true
-      await groupStore.loadGroup(registrationId)
-      await performerStore.loadPerformers(registrationId)
-      appStore.dataLoading = false
-      break
-    case 'SCHOOL':
-      appStore.performerType = PerformerType.SCHOOL
-      appStore.dataLoading = true
-      await schoolStore.loadSchool(registrationId)
-      await schoolGroupStore.loadSchoolGroups(registrationId)
-      appStore.dataLoading = false
-      break
-    case 'COMMUNITY':
-      appStore.performerType = PerformerType.COMMUNITY
-      appStore.dataLoading = true
-      await communityStore.loadCommunity(registrationId)
-      appStore.dataLoading = false
-      break
+
+  /**
+   * Load Viewable Student Registration
+   *
+   * @param registrationId The ID of the registration form
+   * @param performerType SOLO, GROUP, SCHOOL, or COMMUNITY
+   */
+  async function loadRegistration(
+    registrationId: number,
+    performerType: PerformerType
+  ) {
+    const registration = registrations.value.find((reg) => {
+      return reg.id === registrationId
+    })
+
+    registrationStore.registrationId = registrationId
+
+    registrationStore.addToStore(
+      registration as Partial<Registration & RegistrationInput>
+    )
+    switch (performerType) {
+      case 'SOLO':
+        appStore.performerType = PerformerType.SOLO
+        appStore.dataLoading = true
+        await performerStore.loadPerformers()
+        appStore.dataLoading = false
+        break
+      case 'GROUP':
+        appStore.performerType = PerformerType.GROUP
+        appStore.dataLoading = true
+        await groupStore.loadGroup(null, { registrationId })
+        await performerStore.loadPerformers()
+        appStore.dataLoading = false
+        break
+      case 'SCHOOL':
+        appStore.performerType = PerformerType.SCHOOL
+        appStore.dataLoading = true
+        await schoolStore.loadSchool(null, { registrationId })
+        await schoolGroupStore.loadSchoolGroups(null, { registrationId })
+        appStore.dataLoading = false
+        break
+      case 'COMMUNITY':
+        appStore.performerType = PerformerType.COMMUNITY
+        appStore.dataLoading = true
+        await communityStore.loadCommunity(registrationId)
+        appStore.dataLoading = false
+        break
+    }
+    appStore.dataLoading = true
+    await classesStore.loadClasses()
+    appStore.dataLoading = false
+    navigateTo('/students/summary') // TODO: have to change this to a summary
   }
-  appStore.dataLoading = true
-  await classesStore.loadClasses(registrationId)
-  appStore.dataLoading = false
-  navigateTo('/students/summary') // TODO: have to change this to a summary
-}
 </script>
 
 <template>
   <div v-auto-animate>
-    <h1 class="mt-3 mb-2">
-      Winnipeg Music Festival
-    </h1>
+    <h1 class="mt-3 mb-2">Winnipeg Music Festival</h1>
     <h2>Registration Forms</h2>
     <div class="border border-sky-500 rounded-lg text-left mt-10 md:mt-15">
       <div class="p-4">
@@ -145,102 +143,81 @@ async function loadRegistration(
             <li>
               Click on the 'View' icon (<Icon
                 class="text-sky-600 text-xl"
-                name="fa-solid:eye"
-              />) to see more details.
+                name="fa-solid:eye" />) to see more details.
             </li>
           </ul>
           <table
             v-auto-animate
-            class="table_auto border-separate border-spacing-0 w-full text-xs sm:text-base mt-3"
-          >
+            class="table_auto border-separate border-spacing-0 w-full text-xs sm:text-base mt-3">
             <thead class="text-white">
               <tr class="py-2 px-2">
-                <th class="rounded-tl-lg bg-sky-700">
-                  View
-                </th>
+                <th class="rounded-tl-lg bg-sky-700">View</th>
                 <th
                   v-if="sm"
-                  class="bg-sky-700"
-                >
+                  class="bg-sky-700">
                   ID
                 </th>
-                <th class="bg-sky-700">
-                  Performer
-                </th>
+                <th class="bg-sky-700">Performer</th>
                 <th
                   v-if="lg"
-                  class="bg-sky-700"
-                >
+                  class="bg-sky-700">
                   Created
                 </th>
-                <th class="bg-sky-700">
-                  Type
-                </th>
+                <th class="bg-sky-700">Type</th>
                 <th
                   v-if="md"
-                  class="bg-sky-700"
-                >
+                  class="bg-sky-700">
                   Submitted
                 </th>
-                <th class="bg-sky-700 rounded-tr-lg">
-                  Conf. #
-                </th>
+                <th class="bg-sky-700 rounded-tr-lg">Conf. #</th>
               </tr>
             </thead>
             <tbody>
               <tr
                 v-for="registration in registrations"
                 :key="registration.id"
-                class="bg-white"
-              >
+                class="bg-white">
                 <td class="">
                   <BaseButton
                     class="text-sky-600 text-xl md:ml-4 ml-3"
                     @click="
                       loadRegistration(
                         registration.id,
-                        registration.performerType,
+                        registration.performerType
                       )
-                    "
-                  >
+                    ">
                     <Icon name="fa-solid:eye" />
                   </BaseButton>
                 </td>
                 <td
                   v-if="sm"
-                  class="text-sm"
-                >
+                  class="text-sm">
                   {{ registration.id }}
                 </td>
                 <td
                   v-if="registration.performerType === 'SOLO'"
-                  class="text-sm"
-                >
+                  class="text-sm">
                   {{ registration.performers?.[0].firstName }}
                   {{ registration.performers?.[0].lastName }}
                 </td>
                 <td
                   v-else-if="registration.performerType === 'GROUP'"
-                  class="text-sm"
-                >
+                  class="text-sm">
                   {{ registration.group?.name }}
                 </td>
                 <td
                   v-else-if="registration.performerType === 'SCHOOL'"
-                  class="text-sm"
-                >
+                  class="text-sm">
                   {{ registration.school?.name }}
                 </td>
                 <td
                   v-else-if="registration.performerType === 'COMMUNITY'"
-                  class="text-sm"
-                >
+                  class="text-sm">
                   {{ registration.community?.name }}
                 </td>
                 <td
                   v-if="lg"
-                  class="text-sm"
-                >
+                  class="text-sm">
                   {{ dateFunction(registration.createdAt) }}
                 </td>
                 <td class="text-sm">
@@ -248,8 +225,7 @@ async function loadRegistration(
                 </td>
                 <td
                   v-if="md"
-                  class="text-sm"
-                >
+                  class="text-sm">
                   {{ dateFunction(registration.submittedAt) ?? 'No' }}
                 </td>
                 <td class="text-sm">

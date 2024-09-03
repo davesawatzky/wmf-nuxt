@@ -52,122 +52,101 @@ export const useSchool = defineStore(
      * @param registrationId ID of Registration Form
      * @returns Promise
      */
-    function createSchool(registrationId: number) {
-      return new Promise((resolve, reject) => {
-        const {
-          mutate: schoolCreate,
-          onDone,
-          onError,
-        } = useMutation(SchoolCreateDocument)
-        schoolCreate({
-          registrationId,
-          school: <SchoolInput>{
-            city: 'Winnipeg',
-            province: 'MB',
-          },
-        }).catch(error => console.log(error))
-        onDone((result) => {
-          if (result.data?.schoolCreate.school) {
-            const school: SchoolCreateMutation['schoolCreate']['school']
-              = result.data.schoolCreate.school
-            addToStore(school)
-            resolve('Success')
-          }
-          else if (result.data?.schoolCreate.userErrors) {
-            console.log(result.data.schoolCreate.userErrors)
-          }
-        })
-        onError((error) => {
-          reject(console.log(error))
-        })
+    const {
+      mutate: schoolCreate,
+      loading: schoolCreateLoading,
+      onDone: onSchoolCreateDone,
+      onError: onSchoolCreateError,
+    } = useMutation(SchoolCreateDocument)
+    async function createSchool(registrationId: number) {
+      await schoolCreate({
+        registrationId,
+        school: <SchoolInput>{
+          city: 'Winnipeg',
+          province: 'MB',
+        },
       })
     }
+    onSchoolCreateDone((result) => {
+      if (result.data?.schoolCreate.school) {
+        const school: SchoolCreateMutation['schoolCreate']['school'] =
+          result.data.schoolCreate.school
+        addToStore(school)
+      } else if (result.data?.schoolCreate.userErrors) {
+        console.log(result.data.schoolCreate.userErrors)
+      }
+    })
+    onSchoolCreateError((error) => {
+      console.log(error)
+    })
 
     /**
      * Loads School information from db and adds it to the store.
      * @param registrationId ID of Registration Form
-     * @returns Promise with school details
      */
-    function loadSchool(registrationId: number) {
-      return new Promise((resolve, reject) => {
-        const {
-          result: resultSchool,
-          load,
-          onResult,
-          onError,
-        } = useLazyQuery(
-          SchoolInfoDocument,
-          { registrationId },
-          { fetchPolicy: 'network-only' },
-        )
-        load()
-        onResult((result) => {
-          addToStore(<School>result.data.registration.school)
-          resolve('Success')
-        })
-        onError((error) => {
-          reject(console.log(error))
-        })
-      })
-    }
+    const {
+      result: resultSchool,
+      load: loadSchool,
+      onResult: onLoadSchoolResult,
+      onError: onLoadSchoolError,
+    } = useLazyQuery(SchoolInfoDocument, undefined, {
+      fetchPolicy: 'network-only',
+    })
+    onLoadSchoolResult((result) => {
+      addToStore(<School>result.data.registration.school)
+    })
+    onLoadSchoolError((error) => {
+      console.log(error)
+    })
 
     /**
      * Updates School record in db from store.
      * @returns Promise
      */
-    function updateSchool(field?: string): Promise<unknown> {
-      return new Promise((resolve, reject) => {
-        const {
-          mutate: schoolUpdate,
-          onDone,
-          onError,
-        } = useMutation(SchoolUpdateDocument, {
-          fetchPolicy: 'network-only',
-        })
-        const { id, __typename, ...schoolProps } = school.value
-        let schoolField = null
-        if (field && Object.keys(schoolProps).includes(field)) {
-          schoolField = Object.fromEntries(
-            Array(
-              Object.entries(schoolProps).find(item => item[0] === field)!,
-            ),
-          )
-        }
-        schoolUpdate({
-          schoolId: school.value.id,
-          school: <SchoolInput>(schoolField || schoolProps),
-        }).catch(error => console.log(error))
-        onDone(() => {
-          resolve('Success')
-        })
-        onError((error) => {
-          reject(console.log(error))
-        })
+    const {
+      mutate: schoolUpdate,
+      loading: schoolUpdateLoading,
+      onDone: onSchoolUpdateDone,
+      onError: onSchoolUpdateError,
+    } = useMutation(SchoolUpdateDocument, {
+      fetchPolicy: 'network-only',
+    })
+    async function updateSchool(field?: string) {
+      const { id, __typename, ...schoolProps } = school.value
+      let schoolField = null
+      if (field && Object.keys(schoolProps).includes(field)) {
+        schoolField = Object.fromEntries(
+          Array(Object.entries(schoolProps).find((item) => item[0] === field)!)
+        )
+      }
+      await schoolUpdate({
+        schoolId: school.value.id,
+        school: <SchoolInput>(schoolField || schoolProps),
       })
     }
+    onSchoolUpdateError((error) => {
+      console.log(error)
+    })
 
     /**
      * Removes the School record from the db.
      * @param schoolId ID of the School record
-     * @returns Promise
      */
-    function deleteSchool(schoolId: number) {
-      return new Promise((resolve, reject) => {
-        const {
-          mutate: schoolDelete,
-          onDone,
-          onError,
-        } = useMutation(SchoolDeleteDocument)
-        schoolDelete({ schoolId }).catch(error => console.log(error))
-        onDone(() => {
-          $reset()
-          resolve('Success')
-        })
-        onError((error) => {
-          reject(console.log(error))
-        })
-      })
+    const {
+      mutate: schoolDelete,
+      loading: schoolDeleteLoading,
+      onDone: onSchoolDeleteDone,
+      onError: onSchoolDeleteError,
+    } = useMutation(SchoolDeleteDocument)
+    async function deleteSchool(schoolId: number) {
+      await schoolDelete({ schoolId })
     }
+    onSchoolDeleteDone(() => {
+      $reset()
+    })
+    onSchoolDeleteError((error) => {
+      console.log(error)
+    })
 
     return {
       deleteSchool,
@@ -182,5 +161,5 @@ export const useSchool = defineStore(
   },
   {
     persist: true,
-  },
+  }
 )

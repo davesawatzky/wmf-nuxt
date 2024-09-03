@@ -23,6 +23,7 @@ export interface AllTeachers {
 export const useTeacher = defineStore(
   'teacher',
   () => {
+    const registrationStore = useRegistration()
     const appStore = useAppStore()
     const teacher = ref(<Teacher>{})
     const allTeachers = ref<AllTeachers[]>([])
@@ -36,10 +37,7 @@ export const useTeacher = defineStore(
     }
 
     const teacherErrors = computed(() => {
-      if (
-        !!appStore.teacherHasPassword
-        && appStore.performerType !== 'SCHOOL'
-      )
+      if (!!appStore.teacherHasPassword && appStore.performerType !== 'SCHOOL')
         return 0
 
       const teacherKeys = fieldConfigStore.performerTypeFields('Teacher')
@@ -88,181 +86,159 @@ export const useTeacher = defineStore(
      * @param schoolTeacher boolean - Whether this is a school teacher
      * @returns Promise
      */
-    function createTeacher(
+
+    const {
+      mutate: teacherCreate,
+      loading: teacherCreateLoading,
+      onDone: onTeacherCreateDone,
+      onError: onTeacherCreateError,
+    } = useMutation(TeacherCreateDocument)
+    async function createTeacher(
       privateTeacher: boolean,
-      schoolTeacher: boolean,
-    ): Promise<unknown> {
-      return new Promise((resolve, reject) => {
-        const {
-          mutate: teacherCreate,
-          onDone,
-          onError,
-        } = useMutation(TeacherCreateDocument)
-        teacherCreate({
-          privateTeacher,
-          schoolTeacher,
-          teacherInput: <TeacherInput>{
-            city: 'Winnipeg',
-            province: 'MB',
-          },
-        }).catch(error => console.log(error))
-        onDone((result) => {
-          if (result.data?.teacherCreate.teacher) {
-            const teacher: TeacherCreateMutation['teacherCreate']['teacher']
-              = result.data.teacherCreate.teacher
-            addToStore(teacher)
-            resolve('Success')
-          }
-          else if (result.data?.teacherCreate.userErrors) {
-            reject(console.log(result.data?.teacherCreate.userErrors))
-          }
-        })
-        onError((error) => {
-          reject(console.log(error))
-        })
+      schoolTeacher: boolean
+    ) {
+      await teacherCreate({
+        privateTeacher,
+        schoolTeacher,
+        teacherInput: <TeacherInput>{
+          city: 'Winnipeg',
+          province: 'MB',
+        },
       })
     }
+    onTeacherCreateDone((result) => {
+      if (result.data?.teacherCreate.teacher) {
+        const teacher: TeacherCreateMutation['teacherCreate']['teacher'] =
+          result.data.teacherCreate.teacher
+        addToStore(teacher)
+      } else if (result.data?.teacherCreate.userErrors) {
+        console.log(result.data?.teacherCreate.userErrors)
+      }
+    })
+    onTeacherCreateError((error) => {
+      console.log(error)
+    })
 
     /**
      * Loads Teacher information from db into store.
      * @param teacherID teacher ID number
      * @returns Promise and teacher results
      */
-    function loadTeacher(teacherID: number): Promise<unknown> {
-      return new Promise((resolve, reject) => {
-        const {
-          result: resultTeachers,
-          load,
-          onError,
-          onResult,
-        } = useLazyQuery(
-          TeacherInfoDocument,
-          { teacherID },
-          { fetchPolicy: 'network-only' },
-        )
-        load()
-        onResult((result) => {
-          addToStore(<Teacher>result.data.teacher)
-          resolve('Success')
-        })
-        onError((error) => {
-          reject(console.log(error))
-        })
-      })
-    }
+    const {
+      result: resultTeacher,
+      load: loadTeacher,
+      onError: onLoadTeacherError,
+      onResult: onLoadTeacherResult,
+    } = useLazyQuery(TeacherInfoDocument, undefined, {
+      fetchPolicy: 'network-only',
+    })
+    onLoadTeacherResult((result) => {
+      addToStore(<Teacher>result.data.teacher)
+    })
+    onLoadTeacherError((error) => {
+      console.log(error)
+    })
 
-    function loadAllTeachers(
-      privateTeacher: boolean,
-      schoolTeacher: boolean,
-    ): Promise<unknown> {
-      return new Promise((resolve, reject) => {
-        const { result, load, onError, onResult } = useLazyQuery(
-          AllTeachersSearchDocument,
-          { privateTeacher, schoolTeacher },
-          { fetchPolicy: 'network-only' },
-        )
-        load()
-        onResult((result) => {
-          allTeachers.value = <AllTeachers[]>(
-            result.data.teachers.map(el => el)
-          )
-          resolve('Success')
-        })
-        onError((error) => {
-          reject(console.log(error))
-        })
-      })
-    }
+    /**
+     * Loads all teacher information
+     */
+    const {
+      result: resultTeachers,
+      load: loadAllTeachers,
+      onError: onTeachersLoadError,
+      onResult: onTeachersResult,
+    } = useLazyQuery(AllTeachersSearchDocument, undefined, {
+      fetchPolicy: 'network-only',
+    })
+    onTeachersResult((result) => {
+      allTeachers.value = <AllTeachers[]>result.data.teachers.map((el) => el)
+    })
+    onTeachersLoadError((error) => {
+      console.log(error)
+    })
 
     /**
      * Updates the Teacher record from the store to the db.
      * @returns Promise
      */
-    function updateTeacher(field?: string): Promise<unknown> {
-      return new Promise((resolve, reject) => {
-        const {
-          mutate: teacherUpdate,
-          onDone,
-          onError,
-        } = useMutation(TeacherUpdateDocument, {
-          fetchPolicy: 'network-only',
-        })
-        const { id, __typename, ...teachProps } = teacher.value
-        let teacherField = null
-        if (field && Object.keys(teachProps).includes(field)) {
-          teacherField = Object.fromEntries(
-            Array(Object.entries(teachProps).find(item => item[0] === field)!),
-          )
-        }
-        teacherUpdate({
-          teacherId: teacher.value.id,
-          teacher: <TeacherInput>(teacherField || teachProps),
-        }).catch(error => console.log(error))
-        onDone(() => {
-          resolve('Success')
-        })
-        onError((error) => {
-          reject(console.log(error))
-        })
+    const {
+      mutate: teacherUpdate,
+      loading: teacherUpdateLoading,
+      onDone: onTeacherUpdateDone,
+      onError: onTeacherUpdateError,
+    } = useMutation(TeacherUpdateDocument, {
+      fetchPolicy: 'network-only',
+    })
+    async function updateTeacher(field?: string) {
+      const { id, __typename, ...teachProps } = teacher.value
+      let teacherField = null
+      if (field && Object.keys(teachProps).includes(field)) {
+        teacherField = Object.fromEntries(
+          Array(Object.entries(teachProps).find((item) => item[0] === field)!)
+        )
+      }
+      await teacherUpdate({
+        teacherId: teacher.value.id,
+        teacher: <TeacherInput>(teacherField || teachProps),
       })
     }
+    onTeacherUpdateError((error) => {
+      console.log(error)
+    })
 
     /**
      * Removes a Teacher record from the db.
      * @param teacherId ID of Teacher record
      * @returns Promise
      */
-    function deleteTeacher(teacherId: number): Promise<unknown> {
-      return new Promise((resolve, reject) => {
-        const {
-          mutate: teacherDelete,
-          onDone,
-          onError,
-        } = useMutation(TeacherDeleteDocument)
-        teacherDelete({ teacherId }).catch(error => console.log(error))
-        onDone(() => {
-          $resetTeacher()
-          resolve('Success')
-        })
-        onError((error) => {
-          reject(console.log(error))
-        })
-      })
+    const {
+      mutate: teacherDelete,
+      loading: teacherDeleteLoading,
+      onDone: onTeacherDeleteDone,
+      onError: onTeacherDeleteError,
+    } = useMutation(TeacherDeleteDocument)
+    async function deleteTeacher(teacherId: number) {
+      await teacherDelete({ teacherId })
     }
+    onTeacherDeleteDone(() => {
+      $resetTeacher()
+    })
+    onTeacherDeleteError((error) => {
+      console.log(error)
+    })
 
     /**
      * Loads Teacher information from db to check for a duplicate entry.
      * @param teacherID teacher ID number
      * @returns Promise and teacher results
      */
-    function duplicateTeacherCheck(teacherEmail: string): Promise<Teacher> {
-      return new Promise((resolve, reject) => {
-        const {
-          result: resultTeacher,
-          load,
-          onError,
-          onResult,
-        } = useLazyQuery(
-          TeacherInfoDocument,
-          { teacherID: null, teacherEmail },
-          { fetchPolicy: 'network-only' },
-        )
-        load()
-        onResult((result) => {
-          if (!result) {
-            reject('no duplicate')
-          }
-          else {
-            console.log(result)
-            resolve(result.data.teacher)
-          }
-        })
-        onError((error) => {
-          console.log(error)
-          reject('no duplicate')
-        })
+
+    const {
+      result: resultTeacherDuplicate,
+      load: loadTeacherDuplicate,
+      onError: onLoadTeacherDuplicateError,
+      onResult: onLoadTeacherDuplicateResult,
+    } = useLazyQuery(TeacherInfoDocument, undefined, {
+      fetchPolicy: 'network-only',
+    })
+    async function duplicateTeacherCheck(
+      teacherEmail: string
+    ): Promise<Teacher> {
+      await loadTeacherDuplicate(null, { teacherID: null, teacherEmail })
+      let duplicateTeacher = {} as Teacher
+      onLoadTeacherDuplicateResult((result) => {
+        if (!result) {
+          duplicateTeacher = {} as Teacher
+        } else {
+          console.log(result)
+          duplicateTeacher = result.data.teacher
+        }
       })
+      return duplicateTeacher
     }
+    onLoadTeacherDuplicateError((error) => {
+      console.log(error)
+    })
 
     return {
       teacher,
@@ -282,5 +258,5 @@ export const useTeacher = defineStore(
   },
   {
     persist: true,
-  },
+  }
 )

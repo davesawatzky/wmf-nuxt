@@ -25,8 +25,8 @@ export const useCommunity = defineStore(
       let count = 0
       for (const key of communityKeys) {
         if (
-          !!community.value[key as keyof Community] === false
-          && community.value[key as keyof Community] !== 0
+          !!community.value[key as keyof Community] === false &&
+          community.value[key as keyof Community] !== 0
         ) {
           count++
         }
@@ -41,12 +41,12 @@ export const useCommunity = defineStore(
     function addToStore(comm: Community) {
       community.value.id = comm.id
       community.value.name = comm.name || ''
-      community.value.groupSize
-        = comm.groupSize !== null ? comm.groupSize : null
-      community.value.chaperones
-        = comm.chaperones !== null ? comm.chaperones : null
-      community.value.wheelchairs
-        = comm.wheelchairs !== null ? comm.wheelchairs : null
+      community.value.groupSize =
+        comm.groupSize !== null ? comm.groupSize : null
+      community.value.chaperones =
+        comm.chaperones !== null ? comm.chaperones : null
+      community.value.wheelchairs =
+        comm.wheelchairs !== null ? comm.wheelchairs : null
       community.value.earliestTime = comm.earliestTime || ''
       community.value.latestTime = comm.latestTime || ''
       community.value.unavailable = comm.unavailable || ''
@@ -59,93 +59,80 @@ export const useCommunity = defineStore(
      * @param registrationId ID of the Registration form
      * @returns Promise and saves the new id number
      */
-    function createCommunity(registrationId: number) {
-      return new Promise((resolve, reject) => {
-        const {
-          mutate: communityCreate,
-          onDone,
-          onError,
-        } = useMutation(CommunityCreateDocument, { fetchPolicy: 'no-cache' })
-        communityCreate({ registrationId }).catch(error => console.log(error))
-        onDone((result) => {
-          if (result.data?.communityCreate.community) {
-            const community: CommunityCreateMutation['communityCreate']['community']
-              = result.data.communityCreate.community
-            addToStore(community)
-            resolve('Success')
-          }
-          else if (result.data?.communityCreate.userErrors) {
-            console.log(result.data.communityCreate.userErrors)
-          }
-        })
-        onError((error) => {
-          reject(console.log(error))
-        })
-      })
+    const {
+      mutate: communityCreate,
+      loading: communityCreateLoading,
+      onDone: onCommunityCreateDone,
+      onError: onCommunityCreateError,
+    } = useMutation(CommunityCreateDocument, { fetchPolicy: 'no-cache' })
+    async function createCommunity(registrationId: number) {
+      await communityCreate({ registrationId })
     }
+    onCommunityCreateDone((result) => {
+      if (result.data?.communityCreate.community) {
+        const community: CommunityCreateMutation['communityCreate']['community'] =
+          result.data.communityCreate.community
+        addToStore(community)
+      } else if (result.data?.communityCreate.userErrors) {
+        console.log(result.data.communityCreate.userErrors)
+      }
+    })
+    onCommunityCreateError((error) => {
+      console.log(error)
+    })
 
     /**
      * Loads the Community information from the db and saves it in the store
      * @param registrationId ID of the Registration form
-     * @returns Promise and loads community ensemble data
+
      */
+    const {
+      result: resultCommunity,
+      load: communityLoad,
+      onResult: onCommunityResult,
+      onError: onCommunityError,
+    } = useLazyQuery(CommunityInfoDocument, undefined, {
+      fetchPolicy: 'no-cache',
+    })
     function loadCommunity(registrationId: number) {
-      return new Promise((resolve, reject) => {
-        const {
-          result: resultCommunity,
-          load,
-          onResult,
-          onError,
-        } = useLazyQuery(
-          CommunityInfoDocument,
-          { registrationId },
-          { fetchPolicy: 'no-cache' },
-        )
-        load()
-        onResult((result) => {
-          addToStore(<Community>result.data.registration.community)
-          resolve('Success')
-        })
-        onError((error) => {
-          reject(console.log(error))
-        })
-      })
+      communityLoad(null, { registrationId })
     }
+    onCommunityResult((result) => {
+      addToStore(<Community>result.data.registration.community)
+    })
+    onCommunityError((error) => {
+      console.log(error)
+    })
 
     /**
      * Updates Community information from store to the db
-     * @returns Promise
      */
-    function updateCommunity(field?: string): Promise<unknown> {
-      return new Promise((resolve, reject) => {
-        const {
-          mutate: communityUpdate,
-          onDone,
-          onError,
-        } = useMutation(CommunityUpdateDocument, {
-          fetchPolicy: 'no-cache',
-        })
-        const { id, __typename, ...communityProps } = community.value
-        let communityField = null
-        if (field && Object.keys(communityProps).includes(field)) {
-          communityField = Object.fromEntries(
-            Array(
-              Object.entries(communityProps).find(item => item[0] === field)!,
-            ),
+    const {
+      mutate: communityUpdate,
+      loading: communityUpdateLoading,
+      onDone: onCommunityUpdateDone,
+      onError: onCommunityUpdateError,
+    } = useMutation(CommunityUpdateDocument, {
+      fetchPolicy: 'no-cache',
+    })
+    async function updateCommunity(field?: string) {
+      const { id, __typename, ...communityProps } = community.value
+      let communityField = null
+      if (field && Object.keys(communityProps).includes(field)) {
+        communityField = Object.fromEntries(
+          Array(
+            Object.entries(communityProps).find((item) => item[0] === field)!
           )
-        }
-        communityUpdate({
-          communityId: community.value.id,
-          community: <CommunityInput>(communityField || communityProps),
-        }).catch(error => console.log(error))
-        onDone(() => {
-          resolve('Success')
-        })
-        onError((error) => {
-          reject(console.log(error))
-        })
+        )
+      }
+      await communityUpdate({
+        communityId: community.value.id,
+        community: <CommunityInput>(communityField || communityProps),
       })
     }
+    onCommunityUpdateError((error) => {
+      console.log(error)
+    })
 
     // async function updateAllCommunities() {
     //   let communityIndex = 0
@@ -160,23 +147,21 @@ export const useCommunity = defineStore(
      * @param communityId ID of the Community Record
      * @returns Promise
      */
-    function deleteCommunity(communityId: number) {
-      return new Promise((resolve, reject) => {
-        const {
-          mutate: communityDelete,
-          onDone,
-          onError,
-        } = useMutation(CommunityDeleteDocument)
-        communityDelete({ communityId }).catch(error => console.log(error))
-        onDone(() => {
-          $reset()
-          resolve('Success')
-        })
-        onError((error) => {
-          reject(console.log(error))
-        })
-      })
+    const {
+      mutate: communityDelete,
+      loading: communityDeleteLoading,
+      onDone: onCommunityDeleteDone,
+      onError: onCommunityDeleteError,
+    } = useMutation(CommunityDeleteDocument)
+    async function deleteCommunity(communityId: number) {
+      await communityDelete({ communityId })
     }
+    onCommunityDeleteDone(() => {
+      $reset()
+    })
+    onCommunityDeleteError((error) => {
+      console.log(error)
+    })
 
     return {
       $reset,
@@ -192,5 +177,5 @@ export const useCommunity = defineStore(
   },
   {
     persist: true,
-  },
+  }
 )

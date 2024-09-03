@@ -17,6 +17,7 @@ export const usePerformers = defineStore(
   () => {
     const performers = ref([] as Performer[])
     const fieldConfigStore = useFieldConfig()
+    const registrationStore = useRegistration()
     function $reset() {
       performers.value.splice(0, performers.value.length)
     }
@@ -53,7 +54,7 @@ export const usePerformers = defineStore(
       const name = []
       for (let i = 0; i < performers.value.length; i++) {
         name.push(
-          `${performers.value[i].firstName} ${performers.value[i].lastName}`,
+          `${performers.value[i].firstName} ${performers.value[i].lastName}`
         )
       }
       return name
@@ -88,124 +89,103 @@ export const usePerformers = defineStore(
     /**
      * Adds new Performer to db and store
      * @param registrationId ID of Registration Form
-     * @returns Promise
      */
-    function createPerformer(registrationId: number): Promise<unknown> {
-      return new Promise((resolve, reject) => {
-        const { mutate, onDone, onError } = useMutation(PerformerCreateDocument)
-        mutate({
-          registrationId,
-          performer: <PerformerInput>{
-            city: 'Winnipeg',
-            province: 'MB',
-          },
-        }).catch(error => console.log(error))
-        onDone((result) => {
-          if (result.data?.performerCreate.performer) {
-            const performer: PerformerCreateMutation['performerCreate']['performer']
-              = result.data.performerCreate.performer
-            addToStore(performer)
-            resolve('Success')
-          }
-          else if (result.data?.performerCreate.userErrors) {
-            console.log(result.data.performerCreate.userErrors)
-          }
-        })
-        onError((error) => {
-          reject(console.log(error))
-        })
+    const {
+      mutate: performerCreate,
+      loading: performerCreateLoading,
+      onDone: onPerformerCreateDone,
+      onError: onPerformerCreateError,
+    } = useMutation(PerformerCreateDocument)
+    async function createPerformer(registrationId: number) {
+      await performerCreate({
+        registrationId,
+        performer: <PerformerInput>{
+          city: 'Winnipeg',
+          province: 'MB',
+        },
       })
     }
+    onPerformerCreateDone((result) => {
+      if (result.data?.performerCreate.performer) {
+        const performer: PerformerCreateMutation['performerCreate']['performer'] =
+          result.data.performerCreate.performer
+        addToStore(performer)
+      } else if (result.data?.performerCreate.userErrors) {
+        console.log(result.data.performerCreate.userErrors)
+      }
+    })
+    onPerformerCreateError((error) => {
+      console.log(error)
+    })
 
     /**
      * Loads all performers from a registration form into store in an array
      * @param registrationId ID of Registration form
-     * @returns Promise
      */
-    function loadPerformers(registrationId: number): Promise<unknown> {
-      return new Promise((resolve, reject) => {
-        const {
-          result: resultPerformers,
-          load,
-          onResult,
-          onError,
-        } = useLazyQuery(
-          PerformersDocument,
-          { registrationId },
-          { fetchPolicy: 'no-cache' },
-        )
-        load()
-        onResult((result) => {
-          try {
-            console.log('Got Here - Performers')
-            if (result.data.performers) {
-              const performers: Performer[] = result.data.performers
-              for (let i = 0; i < performers.length; i++)
-                addToStore(performers[i])
-
-              resolve('Success')
-            }
-          }
-          catch (error) {
-            console.log(error)
-            reject(error)
-          }
-        })
-        onError((error) => {
-          reject(console.log(error))
-        })
-      })
-    }
+    const {
+      result: resultPerformers,
+      load: loadPerformers,
+      onResult: onPerformersResult,
+      onError: onPerformersLoadError,
+    } = useLazyQuery(
+      PerformersDocument,
+      { registrationId: registrationStore.registrationId },
+      { fetchPolicy: 'no-cache' }
+    )
+    onPerformersResult((result) => {
+      try {
+        if (result.data.performers) {
+          const performers: Performer[] = result.data.performers
+          for (let i = 0; i < performers.length; i++) addToStore(performers[i])
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    })
+    onPerformersLoadError((error) => {
+      console.log(error)
+    })
 
     /**
      * Updates an individual performer from store to db
      * @param performerId ID of performer to update
      * @param field Optional single fieldname to update
-     * @returns Promise
      */
-    function updatePerformer(
-      performerId: number,
-      field?: string,
-    ): Promise<unknown> {
-      return new Promise((resolve, reject) => {
-        const {
-          mutate: performerUpdate,
-          onDone,
-          onError,
-        } = useMutation(PerformerUpdateDocument, {
-          fetchPolicy: 'no-cache',
-        })
-        const person = <Performer>performers.value.find((item) => {
-          return item.id === performerId
-        })
-        const { id, __typename, ...personProps } = person
-        let performerField = null
-        if (field && Object.keys(personProps).includes(field)) {
-          performerField = Object.fromEntries(
-            Array(
-              Object.entries(personProps).find(item => item[0] === field)!,
-            ),
-          )
-        }
-        performerUpdate({
-          performerId,
-          performer: <PerformerInput>(performerField || personProps),
-        }).catch(error => console.log(error))
-        onDone(() => {
-          resolve('Success')
-        })
-        onError((error) => {
-          reject(console.log(error))
-        })
+    const {
+      mutate: performerUpdate,
+      loading: performerUpdateLoading,
+      onDone: onPerformerUpdateDone,
+      onError: onPerformerUpdateError,
+    } = useMutation(PerformerUpdateDocument, {
+      fetchPolicy: 'no-cache',
+    })
+    async function updatePerformer(performerId: number, field?: string) {
+      const person = <Performer>performers.value.find((item) => {
+        return item.id === performerId
+      })
+      const { id, __typename, ...personProps } = person
+      let performerField = null
+      if (field && Object.keys(personProps).includes(field)) {
+        performerField = Object.fromEntries(
+          Array(Object.entries(personProps).find((item) => item[0] === field)!)
+        )
+      }
+      await performerUpdate({
+        performerId,
+        performer: <PerformerInput>(performerField || personProps),
       })
     }
+    onPerformerUpdateError((error) => {
+      console.log(error)
+    })
 
     /**
      * Runs the updatePerformer function for all performers
      */
-    async function updateAllPerformers(): Promise<void> {
-      for (let i = 0; i < performers.value.length; i++)
+    async function updateAllPerformers() {
+      for (let i = 0; i < performers.value.length; i++) {
         await updatePerformer(performers.value[i].id)
+      }
     }
 
     /**
@@ -214,26 +194,24 @@ export const usePerformers = defineStore(
      * @param performerId ID of the individual performer in the Array
      * @returns performer array index number
      */
-    function deletePerformer(performerId: number): Promise<unknown> {
-      return new Promise((resolve, reject) => {
-        const {
-          mutate: performerDelete,
-          onDone,
-          onError,
-        } = useMutation(PerformerDeleteDocument)
-        performerDelete({ performerId }).catch(error => console.log(error))
-        onDone(() => {
-          const performerIndex = performers.value.findIndex(
-            item => item.id === performerId,
-          )
-          performers.value.splice(performerIndex, 1)
-          resolve(performerIndex)
-        })
-        onError((error) => {
-          reject(console.log(error))
-        })
+    const {
+      mutate: performerDelete,
+      loading: performerDeleteLoading,
+      onDone: onPerformerDeleteDone,
+      onError: onPerformerDeleteError,
+    } = useMutation(PerformerDeleteDocument)
+    async function deletePerformer(performerId: number) {
+      await performerDelete({ performerId })
+      onPerformerDeleteDone(() => {
+        const performerIndex = performers.value.findIndex(
+          (item) => item.id === performerId
+        )
+        performers.value.splice(performerIndex, 1)
       })
     }
+    onPerformerDeleteError((error) => {
+      console.log(error)
+    })
 
     return {
       performers,
@@ -252,5 +230,5 @@ export const usePerformers = defineStore(
   },
   {
     persist: true,
-  },
+  }
 )

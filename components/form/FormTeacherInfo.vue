@@ -6,7 +6,7 @@
   import { useAppStore } from '~/stores/appStore'
   import { useUser } from '~/stores/useUser'
   import type { Teacher } from '~/graphql/gql/graphql'
-import {useToast} from 'vue-toastification'
+  import { useToast } from 'vue-toastification'
   import { provinces } from '#imports'
 
   interface FilteredTeacher {
@@ -62,7 +62,8 @@ import {useToast} from 'vue-toastification'
   })
 
   async function checkForPassword(id: number) {
-    appStore.teacherHasPassword = await userStore.hasPassword(id)
+    userStore.checkPasswordId = id
+    appStore.teacherHasPassword = await userStore.loadHasPassword()
   }
 
   const status = reactive<Status>({
@@ -252,7 +253,7 @@ import {useToast} from 'vue-toastification'
     async (newID, oldID) => {
       if (newID !== oldID && !!newID) {
         if (teacherRadio.value === 'existing') {
-          await teacherStore.loadTeacher(newID)
+          await teacherStore.loadTeacher(null, { teacherID: newID })
         }
         await checkForPassword(newID)
         await registrationStore.updateRegistration('teacherID')
@@ -275,11 +276,9 @@ import {useToast} from 'vue-toastification'
         teacherRadio.value = 'existing'
         await removeTeacher()
         registrationStore.registration.teacherID = duplicateCheck.value.id
-        await teacherStore
-          .loadTeacher(duplicateCheck.value.id)
-          .catch((error) => {
-            console.log('Error loading teacher from duplicate id', error)
-          })
+        await teacherStore.loadTeacher(null, {
+          teacherID: duplicateCheck.value.id,
+        })
         await registrationStore
           .updateRegistration('teacherID')
           .catch((error) => {

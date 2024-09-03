@@ -4,8 +4,7 @@ import { fileURLToPath } from 'node:url'
 import process from 'node:process'
 import Aura from '@primevue/themes/aura'
 
-export default defineNuxtConfig( {
-    
+export default defineNuxtConfig({
   compatibilityDate: '2024-08-28',
   modules: [
     '@nuxt/eslint',
@@ -26,12 +25,12 @@ export default defineNuxtConfig( {
     port: 3001,
   },
   devtools: {
-    enabled: false,
+    enabled: true,
   },
   debug: false,
   alias: {
     '@': resolve(__dirname, './'),
-    'images': fileURLToPath(new URL('./public/images', import.meta.url)),
+    images: fileURLToPath(new URL('./public/images', import.meta.url)),
   },
   apollo: {
     autoImports: true,
@@ -83,11 +82,11 @@ export default defineNuxtConfig( {
           prefix: 'p',
           cssLayer: {
             name: 'primevue',
-            order: 'tailwind-base, primevue, tailwind-utilities'
-          }
+            order: 'tailwind-base, primevue, tailwind-utilities',
+          },
           // cssLayer: false
-        }
-      }
+        },
+      },
     },
     components: {
       prefix: 'Prime',
@@ -111,12 +110,14 @@ export default defineNuxtConfig( {
       stripeKey: process.env.STRIPE_PUB_KEY,
     },
   },
-  sourcemap: true,
+  sourcemap: {
+    client: true,
+  },
   spaLoadingTemplate: true,
   ssr: false,
   tailwindcss: {
-    cssPath: [ '@/assets/css/tailwind.css', {injectPosition: 'first'} ],
-    configPath: 'tailwind.config'
+    cssPath: ['@/assets/css/tailwind.css', { injectPosition: 'first' }],
+    configPath: 'tailwind.config',
   },
   typescript: {
     strict: true,
@@ -141,4 +142,4 @@ export default defineNuxtConfig( {
       },
     },
   },
-} )
+})

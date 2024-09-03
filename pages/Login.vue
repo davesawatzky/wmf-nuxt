@@ -1,285 +1,263 @@
 <script setup lang="ts">
-import * as yup from 'yup'
-import YupPassword from 'yup-password'
-import { useToast } from 'vue-toastification'
-import {
-  InstrumentsDocument,
-  SignInDocument,
-  SignUpDocument,
-} from '@/graphql/gql/graphql'
-import { useUser } from '@/stores/useUser'
+  import * as yup from 'yup'
+  import YupPassword from 'yup-password'
+  import { useToast } from 'vue-toastification'
+  import {
+    InstrumentsDocument,
+    SignInDocument,
+    SignUpDocument,
+  } from '@/graphql/gql/graphql'
+  import { useUser } from '@/stores/useUser'
 
-YupPassword(yup)
+  YupPassword(yup)
 
-const error = ref('')
-const isRegister = ref(false)
-const firstName = ref('')
-const lastName = ref('')
-const email = ref('')
-const instrument = ref('')
-const password = ref('')
-const password2 = ref('')
-const privateTeacher = ref(false)
-const schoolTeacher = ref(false)
-const config = useRuntimeConfig()
-const isOpen = ref(false)
-const user = ref({
-  email: '',
-  firstName: '',
-  lastName: '',
-})
-const userStore = useUser()
-const toast = useToast()
-
-function setIsOpen(value: boolean) {
-  isOpen.value = value
-}
-
-const { result: instrumentQuery, onError: instrumentsError }
-    = useQuery(InstrumentsDocument)
-const instruments = computed(() => instrumentQuery.value?.instruments ?? [])
-instrumentsError((error) => {
-  console.log(error)
-})
-
-const { handleSubmit, values } = useForm({
-  validationSchema: toTypedSchema(
-    yup.object({
-      isRegister: yup.boolean(),
-      firstName: yup
-        .string()
-        .trim()
-        .label('First Name')
-        .when('isRegister', {
-          is: true,
-          then: schema => schema.required('Please enter your first name'),
-          otherwise: schema => schema.notRequired(),
-        }),
-      lastName: yup
-        .string()
-        .trim()
-        .label('Last Name')
-        .when('isRegister', {
-          is: true,
-          then: schema => schema.required('Please enter your last name'),
-          otherwise: schema => schema.notRequired(),
-        }),
-      instrument: yup
-        .string()
-        .trim()
-        .label('Instrument(s)')
-        .when('privateTeacher', {
-          is: true,
-          then: schema => schema.required('Please select an instrument'),
-          otherwise: schema => schema.default('').notRequired(),
-        }),
-      email: yup.string().trim().email().required().label('Email'),
-      password: yup.string().trim().password().required().label('Password'),
-      password2: yup
-        .string()
-        .trim()
-        .password()
-        .oneOf([yup.ref('password')], 'Passwords must match')
-        .label('Password 2')
-        .when('isRegister', {
-          is: true,
-          then: schema =>
-            schema.required('Please enter your password again'),
-          otherwise: schema => schema.notRequired(),
-        }),
-      privateTeacher: yup.boolean().default(false),
-      schoolTeacher: yup.boolean().default(false),
-    }),
-  ),
-})
-
-/**
- * Sign in and retrieve Token after authenticating
- */
-const {
-  mutate: signinMutation,
-  onError: signinError,
-  onDone: doneSignin,
-} = useMutation(SignInDocument)
-const signin = handleSubmit((values) => {
-  signinMutation({
-    credentials: { email: values.email, password: values.password },
+  const error = ref('')
+  const isRegister = ref(false)
+  const firstName = ref('')
+  const lastName = ref('')
+  const email = ref('')
+  const instrument = ref('')
+  const password = ref('')
+  const password2 = ref('')
+  const privateTeacher = ref(false)
+  const schoolTeacher = ref(false)
+  const config = useRuntimeConfig()
+  const isOpen = ref(false)
+  const user = ref({
+    email: '',
+    firstName: '',
+    lastName: '',
   })
-  doneSignin(async (result) => {
-    if (result.data?.signin.diatonicToken) {
-      if (
-        result.data.signin.user?.privateTeacher
-        && !result.data?.signin.user.hasSignedIn
-      )
-        await navigateTo('/userinformation')
-      else
-        await navigateTo('/registrations')
-    }
-    if (result.data?.signin.userErrors[0]) {
-      if (
-        result.data?.signin.userErrors[0].message.includes(
-          // TODO: Something wrong here
-          'Account not confirmed.',
-        )
-      ) {
-        user.value.email = result.data.signin.user?.email!
-        user.value.firstName = result.data!.signin.user?.firstName!
-        user.value.lastName = result.data!.signin.user?.lastName!
-        isOpen.value = true
-      }
-    }
-  })
-  signinError((error) => {
-    toast.error('Incorrect email or password.')
+  const userStore = useUser()
+  const toast = useToast()
+
+  function setIsOpen(value: boolean) {
+    isOpen.value = value
+  }
+
+  const { result: instrumentQuery, onError: instrumentsError } =
+    useQuery(InstrumentsDocument)
+  const instruments = computed(() => instrumentQuery.value?.instruments ?? [])
+  instrumentsError((error) => {
     console.log(error)
-    setTimeout(() => resetFields(), 4000)
   })
-})
 
-/**
- * Check if this is a teacher account
- */
-async function signup() {
-  // teacher type is checked
-  if (!!privateTeacher.value || !!schoolTeacher.value) {
-    await doesTeacherExist(email.value)
-      .then((user) => {
-        // user email exists in db
-        // check to see if user has a password
-        return userStore.hasPassword(user.id)
+  const { handleSubmit, values } = useForm({
+    validationSchema: toTypedSchema(
+      yup.object({
+        isRegister: yup.boolean(),
+        firstName: yup
+          .string()
+          .trim()
+          .label('First Name')
+          .when('isRegister', {
+            is: true,
+            then: (schema) => schema.required('Please enter your first name'),
+            otherwise: (schema) => schema.notRequired(),
+          }),
+        lastName: yup
+          .string()
+          .trim()
+          .label('Last Name')
+          .when('isRegister', {
+            is: true,
+            then: (schema) => schema.required('Please enter your last name'),
+            otherwise: (schema) => schema.notRequired(),
+          }),
+        instrument: yup
+          .string()
+          .trim()
+          .label('Instrument(s)')
+          .when('privateTeacher', {
+            is: true,
+            then: (schema) => schema.required('Please select an instrument'),
+            otherwise: (schema) => schema.default('').notRequired(),
+          }),
+        email: yup.string().trim().email().required().label('Email'),
+        password: yup.string().trim().password().required().label('Password'),
+        password2: yup
+          .string()
+          .trim()
+          .password()
+          .oneOf([yup.ref('password')], 'Passwords must match')
+          .label('Password 2')
+          .when('isRegister', {
+            is: true,
+            then: (schema) =>
+              schema.required('Please enter your password again'),
+            otherwise: (schema) => schema.notRequired(),
+          }),
+        privateTeacher: yup.boolean().default(false),
+        schoolTeacher: yup.boolean().default(false),
       })
-      .then((checkPassword) => {
-        // If YES - kick out.  User already exists and no
-        // changes can be made from here.
-        if (checkPassword.pass) {
+    ),
+  })
+
+  /**
+   * Sign in and retrieve Token after authenticating
+   */
+  const {
+    mutate: signinMutation,
+    onError: signinError,
+    onDone: doneSignin,
+  } = useMutation(SignInDocument)
+  const signin = handleSubmit((values) => {
+    signinMutation({
+      credentials: { email: values.email, password: values.password },
+    })
+    doneSignin(async (result) => {
+      if (result.data?.signin.diatonicToken) {
+        if (
+          result.data.signin.user?.privateTeacher &&
+          !result.data?.signin.user.hasSignedIn
+        )
+          await navigateTo('/userinformation')
+        else await navigateTo('/registrations')
+      }
+      if (result.data?.signin.userErrors[0]) {
+        if (
+          result.data?.signin.userErrors[0].message.includes(
+            // TODO: Something wrong here
+            'Account not confirmed.'
+          )
+        ) {
+          user.value.email = result.data.signin.user?.email!
+          user.value.firstName = result.data!.signin.user?.firstName!
+          user.value.lastName = result.data!.signin.user?.lastName!
+          isOpen.value = true
+        }
+      }
+    })
+    signinError((error) => {
+      toast.error('Incorrect email or password.')
+      console.log(error)
+      setTimeout(() => resetFields(), 4000)
+    })
+  })
+
+  /**
+   * Check if this is a teacher account
+   */
+  async function signup() {
+    // teacher type is checked
+    if (!!privateTeacher.value || !!schoolTeacher.value) {
+      await onDoesTeacherExistLoad()
+      if (!!teacherExistCheck.value) {
+        await userStore.loadHasPassword(null, {
+          checkIfPasswordExistsId: teacherExistCheck.value.id,
+        })
+        if (!!userStore.checkPassword) {
           alert('User already exists')
           return null
-        }
-        else if (!checkPassword.pass) {
+        } else if (!userStore.checkPassword) {
           signupAccount()
         }
-
-        // If NO -  add password and teaching details to
-        // existing account. Then send confirmation email
-      })
-
-    // teacher is brand new
-      .catch((error) => {
-        console.log('User does not exist')
-        console.log(error)
-        signupAccount()
-      })
-
-    // no teacher type is checked
+      }
+    } else {
+      await signupAccount()
+    }
   }
-  else {
-    await signupAccount()
-  }
-}
+  const {
+    result: resultDoesTeacherExist,
+    load: onDoesTeacherExistLoad,
+    onResult: onDoesTeacherExistResult,
+    onError: onDoesTeacherExistError,
+  } = useLazyQuery(
+    gql`
+      query DoesTeacherExist($email: String!) {
+        checkUser(email: $email) {
+          id
+        }
+      }
+    `,
+    { email: email.value },
+    { fetchPolicy: 'network-only' }
+  )
+  const teacherExistCheck = computed(
+    () => resultDoesTeacherExist.value?.checkUser ?? null
+  )
+  onDoesTeacherExistError((error) => {
+    console.log(error)
+  })
 
-async function doesTeacherExist(emailCheck: string): Promise<any> {
-  return new Promise((resolve, reject) => {
-    const { result, loading, onResult, onError } = useQuery(
-      gql`
-          query DoesTeacherExist($email: String!) {
-            checkUser(email: $email) {
-              id
-            }
-          }
-        `,
-      { email: emailCheck },
-      { fetchPolicy: 'network-only' },
-    )
-    onResult((result) => {
-      resolve(result.data.checkUser)
-    })
-    onError((error) => {
-      reject(error)
-    })
-  })
-}
-
-/**
- * Register new account.  Sends confirmation email.
- */
-const {
-  mutate: signupMutation,
-  onError: registerError,
-  onDone: doneSignup,
-} = useMutation(SignUpDocument)
-const signupAccount = handleSubmit((values) => {
-  signupMutation({
-    credentials: {
-      firstName: values.firstName!,
-      lastName: values.lastName!,
-      instrument: values.instrument,
-      email: values.email,
-      password: values.password,
-      privateTeacher: values.privateTeacher,
-      schoolTeacher: values.schoolTeacher,
-    },
-  })
-  doneSignup(async (result) => {
-    toast.success('Check EMAIL for account verification link')
-    isRegister.value = false
-    resetFields()
-  })
-  registerError((err) => {
-    toast.error('Error signing up for account')
-    console.log(err)
-    setTimeout(() => resetFields(), 4000)
-  })
-})
-
-/**
- * Resend confirmation link
- */
-async function resendEmail() {
-  try {
-    await useFetch(config.public.resendConfirmation, {
-      method: 'POST',
-      body: {
-        user: {
-          firstName: user.value.firstName,
-          lastName: user.value.lastName,
-          email: user.value.email,
-        },
+  /**
+   * Register new account.  Sends confirmation email.
+   */
+  const {
+    mutate: signupMutation,
+    onError: registerError,
+    onDone: doneSignup,
+  } = useMutation(SignUpDocument)
+  const signupAccount = handleSubmit((values) => {
+    signupMutation({
+      credentials: {
+        firstName: values.firstName!,
+        lastName: values.lastName!,
+        instrument: values.instrument,
+        email: values.email,
+        password: values.password,
+        privateTeacher: values.privateTeacher,
+        schoolTeacher: values.schoolTeacher,
       },
-      watch: false,
     })
-    isOpen.value = false
-    resetFields()
-  }
-  catch (err) {
-    console.log(err)
-  }
-}
+    doneSignup(async (result) => {
+      toast.success('Check EMAIL for account verification link')
+      isRegister.value = false
+      resetFields()
+    })
+    registerError((err) => {
+      toast.error('Error signing up for account')
+      console.log(err)
+      setTimeout(() => resetFields(), 4000)
+    })
+  })
 
-/**
- * Reset Email and Password Fields
- */
-function resetFields() {
-  error.value = ''
-  firstName.value = ''
-  lastName.value = ''
-  instrument.value = ''
-  email.value = ''
-  password.value = ''
-  password2.value = ''
-  privateTeacher.value = false
-  schoolTeacher.value = false
-  user.value.email = ''
-  user.value.firstName = ''
-  user.value.lastName = ''
-}
+  /**
+   * Resend confirmation link
+   */
+  async function resendEmail() {
+    try {
+      await useFetch(config.public.resendConfirmation, {
+        method: 'POST',
+        body: {
+          user: {
+            firstName: user.value.firstName,
+            lastName: user.value.lastName,
+            email: user.value.email,
+          },
+        },
+        watch: false,
+      })
+      isOpen.value = false
+      resetFields()
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  /**
+   * Reset Email and Password Fields
+   */
+  function resetFields() {
+    error.value = ''
+    firstName.value = ''
+    lastName.value = ''
+    instrument.value = ''
+    email.value = ''
+    password.value = ''
+    password2.value = ''
+    privateTeacher.value = false
+    schoolTeacher.value = false
+    user.value.email = ''
+    user.value.firstName = ''
+    user.value.lastName = ''
+  }
 </script>
 
 <template>
   <div v-auto-animate>
     <div class="w-full sm:w-2/3 lg:w-1/2 mx-auto">
-      <h2 class="text-center">
-        Winnipeg Music Festival Registration
-      </h2>
+      <h2 class="text-center">Winnipeg Music Festival Registration</h2>
       <p class="text-left">
         Begin registration by creating an account (account can be for an
         individual; a teacher for all their individual students, or for all
@@ -307,16 +285,12 @@ function resetFields() {
     </div>
     <form
       v-auto-animate
-      class="w-full sm:w-3/4 max-w-sm border rounded-lg border-sky-500 p-4 mx-auto mt-8"
-    >
+      class="w-full sm:w-3/4 max-w-sm border rounded-lg border-sky-500 p-4 mx-auto mt-8">
       <div v-if="isRegister">
-        <h3 class="loginheading">
-          Sign up
-        </h3>
+        <h3 class="loginheading">Sign up</h3>
         <fieldset
           v-auto-animate
-          class="my-4 p-1 border-sky-500 border rounded-lg"
-        >
+          class="my-4 p-1 border-sky-500 border rounded-lg">
           <legend class="ml-2">
             <label>Select teacher type if applicable</label>
           </legend>
@@ -324,42 +298,36 @@ function resetFields() {
             v-model="privateTeacher"
             name="privateTeacher"
             label="Private Teacher or Community Ensemble Leader"
-            class="py-2 px-4"
-          />
+            class="py-2 px-4" />
           <BaseCheckbox
             v-model="schoolTeacher"
             name="schoolTeacher"
             label="Grade School Teacher"
-            class="py-2 px-4"
-          />
+            class="py-2 px-4" />
         </fieldset>
         <BaseInput
           v-model="firstName"
           v-auto-animate
           name="firstName"
           type="text"
-          label="First Name"
-        />
+          label="First Name" />
         <BaseInput
           v-model="lastName"
           v-auto-animate
           name="lastName"
           type="text"
-          label="Last Name"
-        />
+          label="Last Name" />
         <BaseSelect
           v-if="privateTeacher"
           v-model="instrument"
           v-auto-animate
           name="instrument"
           :options="instruments"
-          label="Instrument(s)"
-        />
+          label="Instrument(s)" />
       </div>
       <h3
         v-else
-        class="loginheading"
-      >
+        class="loginheading">
         Sign in
       </h3>
       <BaseInput
@@ -370,8 +338,7 @@ function resetFields() {
         name="email"
         type="email"
         label="Email"
-        @keyup.enter="!isRegister ? signin() : signup()"
-      />
+        @keyup.enter="!isRegister ? signin() : signup()" />
       <BaseInput
         v-model="password"
         v-auto-animate
@@ -379,8 +346,7 @@ function resetFields() {
         name="password"
         type="password"
         label="Password"
-        @keyup.enter="!isRegister ? signin() : signup()"
-      />
+        @keyup.enter="!isRegister ? signin() : signup()" />
       <BaseInput
         v-if="isRegister"
         v-model="password2"
@@ -389,15 +355,13 @@ function resetFields() {
         name="password2"
         type="password"
         label="Re-enter Password"
-        @keyup.enter="signup()"
-      />
+        @keyup.enter="signup()" />
 
       <div v-if="!isRegister">
         <BaseButton
           v-auto-animate
           class="w-full m-0 btn btn-blue"
-          @click="signin()"
-        >
+          @click="signin()">
           Sign In
         </BaseButton>
         <!-- <BaseButton
@@ -414,8 +378,7 @@ function resetFields() {
         <BaseButton
           v-auto-animate
           class="w-full m-0 btn btn-blue"
-          @click="signup()"
-        >
+          @click="signup()">
           Register New Account
         </BaseButton>
       </div>
@@ -424,8 +387,7 @@ function resetFields() {
         v-auto-animate
         class="mt-3"
         name="isRegister"
-        label="Register for a New Account"
-      />
+        label="Register for a New Account" />
     </form>
   </div>
   <UITransitionRoot
@@ -436,24 +398,20 @@ function resetFields() {
     enter-to="opacity-100"
     leave="duration-1000 ease-in"
     leave-from="opacity-100"
-    leave-to="opacity-0"
-  >
+    leave-to="opacity-0">
     <UIDialog
       class="relative z-50"
-      @close="setIsOpen"
-    >
+      @close="setIsOpen">
       <UITransitionChild
         enter="duration-300 ease-out"
         enter-from="opacity-0"
         enter-to="opacity-100"
         leave="duration-200 ease-in"
         leave-from="opacity-100"
-        leave-to="opacity-0"
-      >
+        leave-to="opacity-0">
         <div
           class="fixed inset-0 bg-black/30"
-          aria-hidden="true"
-        />
+          aria-hidden="true" />
       </UITransitionChild>
       <div class="fixed inset-0 flex w-screen items-center justify-center p-4">
         <UITransitionChild
@@ -462,11 +420,9 @@ function resetFields() {
           enter-to="opacity-100 scale-100"
           leave="duration-200 ease-in"
           leave-from="opacity-100 scale-100"
-          leave-to="opacity-0 scale-95"
-        >
+          leave-to="opacity-0 scale-95">
           <UIDialogPanel
-            class="p-4 w-full max-w-sm rounded-lg bg-white shadow-lg"
-          >
+            class="p-4 w-full max-w-sm rounded-lg bg-white shadow-lg">
             <UIDialogTitle class="text-center text-xl font-bold">
               Account not verified
             </UIDialogTitle>
@@ -478,14 +434,12 @@ function resetFields() {
             <div>
               <BaseButton
                 class="btn btn-blue"
-                @click="setIsOpen(false)"
-              >
+                @click="setIsOpen(false)">
                 Close
               </BaseButton>
               <BaseButton
                 class="btn btn-blue"
-                @click="resendEmail()"
-              >
+                @click="resendEmail()">
                 Re-Send Verificaton
               </BaseButton>
             </div>

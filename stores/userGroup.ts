@@ -38,7 +38,7 @@ export const useGroup = defineStore(
       (newValue, oldValue) => {
         group.value.numberOfPerformers = newValue
       },
-      { immediate: true },
+      { immediate: true }
     )
 
     watch(
@@ -46,7 +46,7 @@ export const useGroup = defineStore(
       (newValue, oldValue) => {
         group.value.age = newValue
       },
-      { immediate: true },
+      { immediate: true }
     )
 
     /**
@@ -66,114 +66,96 @@ export const useGroup = defineStore(
     /**
      * Creates a new Group object on the db and adds it to the store
      * @param registrationId ID of the Registration Form
-     * @returns Promise
      */
-    function createGroup(registrationId: number): Promise<unknown> {
-      return new Promise((resolve, reject) => {
-        const {
-          mutate: groupCreate,
-          onDone,
-          onError,
-        } = useMutation(GroupCreateDocument)
-        groupCreate({ registrationId }).catch(error => console.log(error))
-        onDone((result) => {
-          if (result.data?.groupCreate.group) {
-            const group: GroupCreateMutation['groupCreate']['group']
-              = result.data.groupCreate.group
-            addToStore(group)
-            resolve('Success')
-          }
-          else if (result.data?.groupCreate.userErrors) {
-            console.log(result.data.groupCreate.userErrors)
-          }
-        })
-        onError((error) => {
-          reject(console.log(error))
-        })
-      })
+
+    const {
+      mutate: groupCreate,
+      loading: createGroupLoading,
+      onDone: onCreateGroupDone,
+      onError: onCreateGroupError,
+    } = useMutation(GroupCreateDocument)
+    async function createGroup(registrationId: number) {
+      await groupCreate({ registrationId })
     }
+    onCreateGroupDone((result) => {
+      if (result.data?.groupCreate.group) {
+        const group: GroupCreateMutation['groupCreate']['group'] =
+          result.data.groupCreate.group
+        addToStore(group)
+      } else if (result.data?.groupCreate.userErrors) {
+        console.log(result.data.groupCreate.userErrors)
+      }
+    })
+    onCreateGroupError((error) => {
+      console.log(error)
+    })
 
     /**
      * Loads Group record from db into store
      * @param registrationId ID of the Registration Form
-     * @returns Promise
      */
-    function loadGroup(registrationId: number): Promise<unknown> {
-      return new Promise((resolve, reject) => {
-        const {
-          result: resultGroup,
-          load,
-          onResult,
-          onError,
-        } = useLazyQuery(
-          GroupInfoDocument,
-          { registrationId },
-          { fetchPolicy: 'no-cache' },
-        )
-        load()
-        onResult((result) => {
-          addToStore(<Group>result.data.registration.group)
-          resolve('Success')
-        })
-        onError((error) => {
-          reject(console.log(error))
-        })
-      })
-    }
+
+    const {
+      result: resultGroup,
+      load: loadGroup,
+      onResult: onGroupLoadResult,
+      onError: onGroupLoadError,
+    } = useLazyQuery(GroupInfoDocument, undefined, { fetchPolicy: 'no-cache' })
+    onGroupLoadResult((result) => {
+      addToStore(<Group>result.data.registration.group)
+    })
+    onGroupLoadError((error) => {
+      console.log(error)
+    })
 
     /**
      * Updates the Group object from the store to the db
      * @returns Promise
      */
-    function updateGroup(field?: string): Promise<unknown> {
-      return new Promise((resolve, reject) => {
-        const {
-          mutate: groupUpdate,
-          onDone,
-          onError,
-        } = useMutation(GroupUpdateDocument, { fetchPolicy: 'network-only' })
-        const { id, __typename, ...groupProps } = group.value
-        let groupField = null
-        if (field && Object.keys(groupProps).includes(field)) {
-          groupField = Object.fromEntries(
-            Array(Object.entries(groupProps).find(item => item[0] === field)!),
-          )
-        }
-        groupUpdate({
-          groupId: group.value.id,
-          group: <GroupInput>(groupField || groupProps),
-        }).catch(error => console.log(error))
-        onDone(() => {
-          resolve('Success')
-        })
-        onError((error) => {
-          reject(console.log(error))
-        })
+
+    const {
+      mutate: groupUpdate,
+      loading: updateGroupLoading,
+      onDone: onGroupUpdateDone,
+      onError: onGroupUpdateError,
+    } = useMutation(GroupUpdateDocument, { fetchPolicy: 'network-only' })
+    async function updateGroup(field?: string) {
+      const { id, __typename, ...groupProps } = group.value
+      let groupField = null
+      if (field && Object.keys(groupProps).includes(field)) {
+        groupField = Object.fromEntries(
+          Array(Object.entries(groupProps).find((item) => item[0] === field)!)
+        )
+      }
+      await groupUpdate({
+        groupId: group.value.id,
+        group: <GroupInput>(groupField || groupProps),
       })
     }
+    onGroupUpdateError((error) => {
+      console.log(error)
+    })
 
     /**
      * Delete Group record form the store and db
      * @param groupId ID of the Group record
      * @returns Promise
      */
-    function deleteGroup(groupId: number): Promise<unknown> {
-      return new Promise((resolve, reject) => {
-        const {
-          mutate: groupDelete,
-          onDone,
-          onError,
-        } = useMutation(GroupDeleteDocument)
-        groupDelete({ groupId }).catch(error => console.log(error))
-        onDone(() => {
-          $reset()
-          resolve('Success')
-        })
-        onError((error) => {
-          reject(console.log(error))
-        })
-      })
+    const {
+      mutate: groupDelete,
+      loading: deleteGroupLoading,
+      onDone: onGroupDeleteDone,
+      onError: onGroupDeleteError,
+    } = useMutation(GroupDeleteDocument)
+    async function deleteGroup(groupId: number) {
+      await groupDelete({ groupId })
     }
+    onGroupDeleteDone(() => {
+      $reset()
+    })
+    onGroupDeleteError((error) => {
+      console.log(error)
+    })
 
     return {
       group,
@@ -188,5 +170,5 @@ export const useGroup = defineStore(
   },
   {
     persist: true,
-  },
+  }
 )

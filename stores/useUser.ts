@@ -5,6 +5,7 @@ export const useUser = defineStore(
   'user',
   () => {
     const user = ref(<User>{})
+    const checkPasswordId = ref(0)
 
     function $reset() {
       user.value = <User>{}
@@ -36,67 +37,66 @@ export const useUser = defineStore(
      * But does not change names, password, or email.
      * @returns Promise
      */
-    function updateUser(field?: string): Promise<unknown> {
-      return new Promise((resolve, reject) => {
-        const {
-          mutate: userUpdate,
-          onDone,
-          onError,
-        } = useMutation(UserUpdateDocument, {
-          fetchPolicy: 'network-only',
-        })
-        const { id, __typename, firstName, lastName, email, ...userProps }
-          = user.value
-        let userField = null
-        if (field && Object.keys(userProps).includes(field)) {
-          userField = Object.fromEntries(
-            Array(Object.entries(userProps).find(item => item[0] === field)!),
-          )
-        }
-        userUpdate({
-          userId: user.value.id,
-          user: <UserInput>(userField || userProps),
-        }).catch(error => console.log(error))
-        onDone(() => {
-          resolve('Success')
-        })
-        onError((error) => {
-          reject(console.log(error))
-        })
-      })
-    }
-
-    async function hasPassword(userID: number): Promise<any> {
-      return new Promise((resolve, reject) => {
-        const { result, loading, onResult, onError } = useQuery(
-          gql`
-            query HasPassword($checkIfPasswordExistsId: Int!) {
-              checkIfPasswordExists(id: $checkIfPasswordExistsId) {
-                id
-                pass
-              }
-            }
-          `,
-          { checkIfPasswordExistsId: userID },
-          { fetchPolicy: 'network-only' },
+    const {
+      mutate: userUpdate,
+      loading: userUpdateLoading,
+      onDone: onUserUpdateDone,
+      onError: onUserUpdateError,
+    } = useMutation(UserUpdateDocument, {
+      fetchPolicy: 'network-only',
+    })
+    async function updateUser(field?: string) {
+      const { id, __typename, firstName, lastName, email, ...userProps } =
+        user.value
+      let userField = null
+      if (field && Object.keys(userProps).includes(field)) {
+        userField = Object.fromEntries(
+          Array(Object.entries(userProps).find((item) => item[0] === field)!)
         )
-        onResult((result) => {
-          resolve(result.data.checkIfPasswordExists.pass)
-        })
-        onError((error) => {
-          console.log(error)
-          reject(error)
-        })
-      })
+      }
+      await userUpdate({
+        userId: user.value.id,
+        user: <UserInput>(userField || userProps),
+      }).catch((error) => console.log(error))
     }
+    onUserUpdateError((error) => {
+      console.log(error)
+    })
+
+    /**
+     * Password Check
+     */
+    const {
+      result: resultHasPassword,
+      load: loadHasPassword,
+      onResult: onHasPasswordResult,
+      onError: onHasPasswordError,
+    } = useLazyQuery(
+      gql`
+        query HasPassword($checkIfPasswordExistsId: Int!) {
+          checkIfPasswordExists(id: $checkIfPasswordExistsId) {
+            id
+            pass
+          }
+        }
+      `,
+      { checkIfPasswordExistsId: checkPasswordId.value },
+      { fetchPolicy: 'network-only' }
+    )
+    const checkPassword = computed(() => resultHasPassword.value.pass ?? null)
+    onHasPasswordError((error) => {
+      console.log(error)
+    })
 
     return {
       $reset,
+      checkPasswordId,
+      checkPassword,
       user,
       updateUser,
       addToStore,
-      hasPassword,
+      loadHasPassword,
     }
   },
-  { persist: true },
+  { persist: true }
 )

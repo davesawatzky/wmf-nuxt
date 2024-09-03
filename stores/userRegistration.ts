@@ -41,14 +41,13 @@ export const useRegistration = defineStore(
     })
 
     watch(totalClassAmt, async (newValue) => {
-      if (Number.parseInt(newValue) > 0)
-        await updateRegistration('totalAmt')
+      if (Number.parseInt(newValue) > 0) await updateRegistration('totalAmt')
     })
 
     const processingFee = computed(() => {
       return (
-        Number(+registration.value.totalAmt + 0.3) / (1 - 0.029)
-        - +registration.value.totalAmt
+        Number(+registration.value.totalAmt + 0.3) / (1 - 0.029) -
+        +registration.value.totalAmt
       ).toFixed(2)
     })
 
@@ -76,94 +75,80 @@ export const useRegistration = defineStore(
      * Creates a new registration form in the store and db
      * @param performerType Type of registration according to performer type
      * @param label Specific label for the registration
-     * @returns Promise
      */
-    function createRegistration(
+
+    const {
+      mutate: registrationCreate,
+      loading: registrationCreateLoading,
+      onDone: onRegistrationCreateDone,
+      onError: onRegistrationCreateError,
+    } = useMutation(RegistrationCreateDocument)
+    async function createRegistration(
       performerType: PerformerType,
-      label: string,
-    ): Promise<unknown> {
-      return new Promise((resolve, reject) => {
-        const {
-          mutate: registrationCreate,
-          onDone,
-          onError,
-        } = useMutation(RegistrationCreateDocument)
-        registrationCreate({ performerType, label }).catch(error =>
-          console.log(error),
-        )
-        onDone((result) => {
-          if (result.data?.registrationCreate.registration) {
-            const registration: RegistrationCreateMutation['registrationCreate']['registration']
-              = result.data.registrationCreate.registration
-            addToStore(registration)
-            resolve('Success')
-          }
-          else if (result.data?.registrationCreate.userErrors) {
-            console.log(result.data.registrationCreate.userErrors)
-          }
-        })
-        onError((error) => {
-          reject(console.log(error))
-        })
-      })
+      label: string
+    ) {
+      await registrationCreate({ performerType, label })
     }
+    onRegistrationCreateDone((result) => {
+      if (result.data?.registrationCreate.registration) {
+        const registration: RegistrationCreateMutation['registrationCreate']['registration'] =
+          result.data.registrationCreate.registration
+        addToStore(registration)
+      } else if (result.data?.registrationCreate.userErrors) {
+        console.log(result.data.registrationCreate.userErrors)
+      }
+    })
+    onRegistrationCreateError((error) => {
+      console.log(error)
+    })
 
     /**
      * Updates Registration form information from store to db.
-     * @returns Promise
      */
-    function updateRegistration(field?: string): Promise<unknown> {
-      return new Promise((resolve, reject) => {
-        const {
-          mutate: registrationUpdate,
-          onDone,
-          onError,
-        } = useMutation(RegistrationUpdateDocument, {
-          fetchPolicy: 'network-only',
-        })
-        const { id, __typename, updatedAt, createdAt, ...regProps }
-          = registration.value
-        let registrationField = null
-        if (field && Object.keys(regProps).includes(field)) {
-          registrationField = Object.fromEntries(
-            Array(Object.entries(regProps).find(item => item[0] === field)!),
-          )
-        }
-        registrationUpdate({
-          registrationId: registrationId.value,
-          registrationInput: <RegistrationInput>(registrationField || regProps),
-        }).catch(error => console.log(error))
-        onDone(() => {
-          resolve('Success')
-        })
-        onError((error) => {
-          reject(console.log(error))
-        })
-      })
+    const {
+      mutate: registrationUpdate,
+      loading: registrationUpdateLoading,
+      onDone: onRegistrationUpdateDone,
+      onError: onRegistrationUpdateError,
+    } = useMutation(RegistrationUpdateDocument, {
+      fetchPolicy: 'network-only',
+    })
+    async function updateRegistration(field?: string) {
+      const { id, __typename, updatedAt, createdAt, ...regProps } =
+        registration.value
+      let registrationField = null
+      if (field && Object.keys(regProps).includes(field)) {
+        registrationField = Object.fromEntries(
+          Array(Object.entries(regProps).find((item) => item[0] === field)!)
+        )
+      }
+      await registrationUpdate({
+        registrationId: registrationId.value,
+        registrationInput: <RegistrationInput>(registrationField || regProps),
+      }).catch((error) => console.log(error))
     }
+    onRegistrationUpdateError((error) => {
+      console.log(error)
+    })
 
     /**
      * Removes registration from db
      * @param registrationId ID of Registration Form
      * @returns Promise
      */
-    function deleteRegistration(registrationId: number): Promise<unknown> {
-      return new Promise((resolve, reject) => {
-        const {
-          mutate: registrationDelete,
-          onDone,
-          onError,
-        } = useMutation(RegistrationDeleteDocument)
-        registrationDelete({ registrationId }).catch(error =>
-          console.log(error),
-        )
-        onDone(() => {
-          $reset()
-          resolve('Success')
-        })
-        onError((error) => {
-          reject(console.log(error))
-        })
+    const {
+      mutate: registrationDelete,
+      loading: registrationDeleteLoading,
+      onDone: onRegistrationDeleteDone,
+      onError: onRegistrationDeleteError,
+    } = useMutation(RegistrationDeleteDocument)
+    async function deleteRegistration(registrationId: number) {
+      await registrationDelete({ registrationId })
+      onRegistrationDeleteDone(() => {
+        $reset()
+      })
+      onRegistrationDeleteError((error) => {
+        console.log(error)
       })
     }
 
@@ -181,5 +166,5 @@ export const useRegistration = defineStore(
   },
   {
     persist: true,
-  },
+  }
 )

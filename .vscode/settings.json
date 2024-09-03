@@ -14,7 +14,7 @@
   "prettier.requireConfig": true,
   "prettier.semi": false,
   "html.format.preserveNewLines": true,
-  "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
   "javascript.format.insertSpaceAfterConstructor": true,
   "typescript.format.insertSpaceAfterConstructor": true,
@@ -35,5 +35,7 @@
   "vitest.commandLine": "pnpm run test:watch --",
   "eslint.experimental.useFlatConfig": true,
   "editor.detectIndentation": false,
-  "editor.tabSize": 2
+  "editor.tabSize": 2,
+  "editor.formatOnPaste": true,
+  "html.format.indentHandlebars": false
 }
