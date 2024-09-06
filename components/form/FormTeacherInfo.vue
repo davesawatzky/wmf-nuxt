@@ -22,7 +22,7 @@
     schoolteacher?: boolean
     school?: boolean
     groupperformer?: boolean
-    teacherId: number
+    // teacherId?: number
   }>()
 
   const emits = defineEmits<{
@@ -62,8 +62,8 @@
   })
 
   async function checkForPassword(id: number) {
-    userStore.checkPasswordId = id
-    appStore.teacherHasPassword = await userStore.loadHasPassword()
+    await userStore.loadHasPassword(id)
+    appStore.teacherHasPassword = userStore.checkPassword
   }
 
   const status = reactive<Status>({
@@ -253,7 +253,7 @@
     async (newID, oldID) => {
       if (newID !== oldID && !!newID) {
         if (teacherRadio.value === 'existing') {
-          await teacherStore.loadTeacher(null, { teacherID: newID })
+          await teacherStore.loadTeacher(newID, undefined)
         }
         await checkForPassword(newID)
         await registrationStore.updateRegistration('teacherID')
@@ -276,9 +276,7 @@
         teacherRadio.value = 'existing'
         await removeTeacher()
         registrationStore.registration.teacherID = duplicateCheck.value.id
-        await teacherStore.loadTeacher(null, {
-          teacherID: duplicateCheck.value.id,
-        })
+        await teacherStore.loadTeacher(duplicateCheck.value.id, undefined)
         await registrationStore
           .updateRegistration('teacherID')
           .catch((error) => {
@@ -327,7 +325,8 @@
           label="Choose a teacher from the list"
           name="teacherRadio"
           :disabled="!editingDisabled"
-          value="existing"></BaseRadio>
+          value="existing">
+        </BaseRadio>
         <UICombobox
           v-if="!schoolTeacher"
           v-model="registrationStore.registration.teacherID"

@@ -4,7 +4,7 @@ import {
   testFullPerformer1,
   testFullPerformer2,
   testPartialPerformer,
-} from './testData'
+} from '../utils/testData'
 import { usePerformers } from '@/stores/userPerformer'
 
 let performerStore: any
@@ -49,7 +49,7 @@ describe('performer Store', () => {
     performerStore.addToStore(testFullPerformer2)
     const averageAge = performerStore.averageAge
     const avg = Math.round(
-      (performerStore.performers[0].age + performerStore.performers[1].age) / 2,
+      (performerStore.performers[0].age + performerStore.performers[1].age) / 2
     )
     expect(averageAge).toBeTypeOf('number')
     expect(averageAge).toBe(avg)

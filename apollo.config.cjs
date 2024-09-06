@@ -8,5 +8,5 @@ module.exports = {
     },
     // Files processed by the extension
     includes: ['**/*.vue', 'graphql/**/*.gql', 'graphql/**/*.graphql'],
-  }
+  },
 }

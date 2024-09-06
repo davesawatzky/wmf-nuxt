@@ -16,6 +16,7 @@ export const useGroup = defineStore(
   'group',
   () => {
     const group = ref(<Group>{})
+    const registrationStore = useRegistration()
     const performerStore = usePerformers()
     const fieldConfigStore = useFieldConfig()
     function $reset() {
@@ -97,10 +98,15 @@ export const useGroup = defineStore(
 
     const {
       result: resultGroup,
-      load: loadGroup,
+      load: groupLoad,
+      refetch: refetchGroup,
       onResult: onGroupLoadResult,
       onError: onGroupLoadError,
     } = useLazyQuery(GroupInfoDocument, undefined, { fetchPolicy: 'no-cache' })
+    async function loadGroup(registrationId: number) {
+      ;(await groupLoad(null, { registrationId })) ||
+        (await refetchGroup({ registrationId }))
+    }
     onGroupLoadResult((result) => {
       addToStore(<Group>result.data.registration.group)
     })

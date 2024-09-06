@@ -5,12 +5,14 @@ mutation SignIn($credentials: CredentialsSignin!) {
     }
     diatonicToken
     user {
+      id
       email
       firstName
       lastName
       privateTeacher
       schoolTeacher
       hasSignedIn
+      admin
     }
   }
 }

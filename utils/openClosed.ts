@@ -1,4 +1,4 @@
 export const soloOpen = true
-export const groupOpen = false
-export const schoolOpen = false
-export const communityOpen = false
+export const groupOpen = true
+export const schoolOpen = true
+export const communityOpen = true

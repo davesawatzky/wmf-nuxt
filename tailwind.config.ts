@@ -53,8 +53,8 @@ export default {
     sans: ['Roboto'],
   },
   plugins: [
-    require( '@headlessui/tailwindcss' ),
+    require('@headlessui/tailwindcss')({ prefix: 'UI' }),
     require('@tailwindcss/forms'),
-    require('tailwindcss-primeui')
+    require('tailwindcss-primeui'),
   ],
 }

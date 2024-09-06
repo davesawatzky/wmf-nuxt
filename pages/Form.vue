@@ -161,15 +161,16 @@
 
   const { values, errors, meta, handleSubmit } = useForm({
     validationSchema,
-  } )
+  })
 
-async function gotoRegistrations() {
-  await navigateTo('/registrations')    
+  async function gotoRegistrations() {
+    await navigateTo('/registrations')
   }
 </script>
 
 <template>
   <div>
+    {{ currentTab }}
     <BaseInput
       v-model="registrationStore.registration.label"
       class="text-3xl"
@@ -226,7 +227,7 @@ async function gotoRegistrations() {
               class="text-sky-700 text-3xl disabled:text-slate-300">
               <Icon name="bxs:left-arrow" />
             </BaseButton>
-            <BaseButton @click="gotoRegistrations() ">
+            <BaseButton @click="gotoRegistrations()">
               <Icon
                 name="ic:outline-app-registration"
                 class="text-sky-700 text-4xl" />

@@ -15,6 +15,7 @@ export const useCommunity = defineStore(
   'community',
   () => {
     const community = ref(<Community>{})
+    const registrationStore = useRegistration()
     const fieldConfigStore = useFieldConfig()
     function $reset() {
       community.value = <Community>{}
@@ -89,13 +90,15 @@ export const useCommunity = defineStore(
     const {
       result: resultCommunity,
       load: communityLoad,
+      refetch: refetchCommunity,
       onResult: onCommunityResult,
       onError: onCommunityError,
     } = useLazyQuery(CommunityInfoDocument, undefined, {
       fetchPolicy: 'no-cache',
     })
-    function loadCommunity(registrationId: number) {
-      communityLoad(null, { registrationId })
+    async function loadCommunity(registrationId: number) {
+      ;(await communityLoad(null, { registrationId })) ||
+        (await refetchCommunity({ registrationId }))
     }
     onCommunityResult((result) => {
       addToStore(<Community>result.data.registration.community)

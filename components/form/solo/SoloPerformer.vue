@@ -22,7 +22,9 @@
         setIsOpen(false)
       }
     },
-    { flush: 'post' }
+    {
+      flush: 'post',
+    }
   )
 
   async function resetClasses() {

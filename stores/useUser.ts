@@ -5,7 +5,6 @@ export const useUser = defineStore(
   'user',
   () => {
     const user = ref(<User>{})
-    const checkPasswordId = ref(0)
 
     function $reset() {
       user.value = <User>{}
@@ -68,7 +67,8 @@ export const useUser = defineStore(
      */
     const {
       result: resultHasPassword,
-      load: loadHasPassword,
+      load: hasPasswordLoad,
+      refetch: refetchHasPassword,
       onResult: onHasPasswordResult,
       onError: onHasPasswordError,
     } = useLazyQuery(
@@ -80,9 +80,13 @@ export const useUser = defineStore(
           }
         }
       `,
-      { checkIfPasswordExistsId: checkPasswordId.value },
+      undefined,
       { fetchPolicy: 'network-only' }
     )
+    async function loadHasPassword(id: number) {
+      ;(await hasPasswordLoad(null, { checkIfPasswordExistsId: id })) ||
+        refetchHasPassword({ checkIfPasswordExistsId: id })
+    }
     const checkPassword = computed(() => resultHasPassword.value.pass ?? null)
     onHasPasswordError((error) => {
       console.log(error)
@@ -90,7 +94,6 @@ export const useUser = defineStore(
 
     return {
       $reset,
-      checkPasswordId,
       checkPassword,
       user,
       updateUser,

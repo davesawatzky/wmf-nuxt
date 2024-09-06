@@ -15,6 +15,7 @@
   const groupStore = useGroup()
   const schoolStore = useSchool()
   const userStore = useUser()
+  const fieldConfig = useFieldConfig()
 
   const {
     load: loadLogout,
@@ -43,6 +44,7 @@
     groupStore.$reset()
     schoolStore.$reset()
     userStore.$reset()
+    fieldConfig.$reset()
     await loadLogout()
     await navigateTo('/login')
   }

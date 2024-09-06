@@ -126,12 +126,18 @@ export const useTeacher = defineStore(
      */
     const {
       result: resultTeacher,
-      load: loadTeacher,
+      load: teacherLoad,
+      refetch: refetchTeacher,
       onError: onLoadTeacherError,
       onResult: onLoadTeacherResult,
     } = useLazyQuery(TeacherInfoDocument, undefined, {
-      fetchPolicy: 'network-only',
+      fetchPolicy: 'no-cache',
     })
+
+    async function loadTeacher(teacherID?: number, teacherEmail?: string) {
+      ;(await teacherLoad(null, { teacherID, teacherEmail })) ||
+        (await refetchTeacher({ teacherID, teacherEmail }))
+    }
     onLoadTeacherResult((result) => {
       addToStore(<Teacher>result.data.teacher)
     })
@@ -144,12 +150,20 @@ export const useTeacher = defineStore(
      */
     const {
       result: resultTeachers,
-      load: loadAllTeachers,
+      load: allTeachersLoad,
+      refetch: refetchAllTeachers,
       onError: onTeachersLoadError,
       onResult: onTeachersResult,
     } = useLazyQuery(AllTeachersSearchDocument, undefined, {
-      fetchPolicy: 'network-only',
+      fetchPolicy: 'no-cache',
     })
+    async function loadAllTeachers(
+      privateTeacher: boolean,
+      schoolTeacher: boolean
+    ) {
+      ;(await allTeachersLoad(null, { privateTeacher, schoolTeacher })) ||
+        (await refetchAllTeachers({ privateTeacher, schoolTeacher }))
+    }
     onTeachersResult((result) => {
       allTeachers.value = <AllTeachers[]>result.data.teachers.map((el) => el)
     })
@@ -216,17 +230,25 @@ export const useTeacher = defineStore(
     const {
       result: resultTeacherDuplicate,
       load: loadTeacherDuplicate,
-      onError: onLoadTeacherDuplicateError,
-      onResult: onLoadTeacherDuplicateResult,
+      refetch: refetchTeacherDuplicate,
+      onError: onTeacherDuplicateError,
+      onResult: onTeacherDuplicateResult,
     } = useLazyQuery(TeacherInfoDocument, undefined, {
-      fetchPolicy: 'network-only',
+      fetchPolicy: 'no-cache',
     })
+    async function teacherDuplicateLoad(
+      teacherID?: number,
+      teacherEmail?: string
+    ) {
+      ;(await loadTeacherDuplicate(null, { teacherID, teacherEmail })) ||
+        (await refetchTeacherDuplicate({ teacherID, teacherEmail }))
+    }
     async function duplicateTeacherCheck(
       teacherEmail: string
     ): Promise<Teacher> {
-      await loadTeacherDuplicate(null, { teacherID: null, teacherEmail })
+      await teacherDuplicateLoad(undefined, teacherEmail)
       let duplicateTeacher = {} as Teacher
-      onLoadTeacherDuplicateResult((result) => {
+      onTeacherDuplicateResult((result) => {
         if (!result) {
           duplicateTeacher = {} as Teacher
         } else {
@@ -236,7 +258,7 @@ export const useTeacher = defineStore(
       })
       return duplicateTeacher
     }
-    onLoadTeacherDuplicateError((error) => {
+    onTeacherDuplicateError((error) => {
       console.log(error)
     })
 

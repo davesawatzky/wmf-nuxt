@@ -124,26 +124,21 @@ export const usePerformers = defineStore(
      */
     const {
       result: resultPerformers,
-      load: loadPerformers,
+      load: performersLoad,
+      refetch: performersRefetch,
       onResult: onPerformersResult,
-      onError: onPerformersLoadError,
-    } = useLazyQuery(
-      PerformersDocument,
-      { registrationId: registrationStore.registrationId },
-      { fetchPolicy: 'no-cache' }
-    )
+      onError: onPerformersError,
+    } = useLazyQuery(PerformersDocument, undefined, { fetchPolicy: 'no-cache' })
+    async function loadPerformers(registrationId: number) {
+      ;(await performersLoad(null, { registrationId })) ||
+        (await performersRefetch({ registrationId }))
+    }
     onPerformersResult((result) => {
-      try {
-        if (result.data.performers) {
-          const performers: Performer[] = result.data.performers
-          for (let i = 0; i < performers.length; i++) addToStore(performers[i])
-        }
-      } catch (error) {
-        console.log(error)
-      }
+      const performers: Performer[] = result.data.performers
+      for (let i = 0; i < performers.length; i++) addToStore(performers[i])
     })
-    onPerformersLoadError((error) => {
-      console.log(error)
+    onPerformersError((error) => {
+      console.log('Performer Load Error. ', error)
     })
 
     /**

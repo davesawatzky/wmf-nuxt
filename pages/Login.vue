@@ -101,8 +101,9 @@
     onError: signinError,
     onDone: doneSignin,
   } = useMutation(SignInDocument)
-  const signin = handleSubmit((values) => {
-    signinMutation({
+
+  const signin = handleSubmit(async (values) => {
+    await signinMutation({
       credentials: { email: values.email, password: values.password },
     })
     doneSignin(async (result) => {
@@ -110,9 +111,11 @@
         if (
           result.data.signin.user?.privateTeacher &&
           !result.data?.signin.user.hasSignedIn
-        )
+        ) {
           await navigateTo('/userinformation')
-        else await navigateTo('/registrations')
+        } else {
+          await navigateTo('/registrations')
+        }
       }
       if (result.data?.signin.userErrors[0]) {
         if (
@@ -141,11 +144,9 @@
   async function signup() {
     // teacher type is checked
     if (!!privateTeacher.value || !!schoolTeacher.value) {
-      await onDoesTeacherExistLoad()
+      await doesTeacherExistLoad()
       if (!!teacherExistCheck.value) {
-        await userStore.loadHasPassword(null, {
-          checkIfPasswordExistsId: teacherExistCheck.value.id,
-        })
+        await userStore.loadHasPassword(teacherExistCheck.value.id)
         if (!!userStore.checkPassword) {
           alert('User already exists')
           return null
@@ -160,7 +161,8 @@
 
   const {
     result: resultDoesTeacherExist,
-    load: onDoesTeacherExistLoad,
+    load: loadDoesTeacherExist,
+    refetch: doesTeacherExistRefetch,
     onResult: onDoesTeacherExistResult,
     onError: onDoesTeacherExistError,
   } = useLazyQuery(
@@ -174,6 +176,9 @@
     { email: email.value },
     { fetchPolicy: 'network-only' }
   )
+  async function doesTeacherExistLoad() {
+    ;(await loadDoesTeacherExist()) || (await doesTeacherExistRefetch())
+  }
   const teacherExistCheck = computed(
     () => resultDoesTeacherExist.value?.checkUser ?? null
   )
@@ -258,7 +263,7 @@
 <template>
   <div v-auto-animate>
     <div class="w-full sm:w-2/3 lg:w-1/2 mx-auto">
-      <h2 class="text-center">Winnipeg Music Festival Registration</h2>
+      <h2 class="text-center">Winnipeg Music Festival Registration 2025</h2>
       <p class="text-left">
         Begin registration by creating an account (account can be for an
         individual; a teacher for all their individual students, or for all

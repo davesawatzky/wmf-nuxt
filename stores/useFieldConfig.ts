@@ -46,41 +46,42 @@ export const useFieldConfig = defineStore(
           break
       }
       fields = requiredFields.value
-        .filter(el => el.tableName === tableName)
-        .filter(el => el[column] === true)
-        .map(el => el.fieldName)
+        .filter((el) => el.tableName === tableName)
+        .filter((el) => el[column] === true)
+        .map((el) => el.fieldName)
       return fields
     }
 
-
     const {
       result: resultFieldConfigs,
-      load: loadRequiredFields,
-      onError:onLoadRequiredFieldsError,
+      load: requiredFieldsLoad,
+      refetch: refetchRequiredFields,
+      onError: onLoadRequiredFieldsError,
       onResult: onRequiredFieldsResult,
     } = useLazyQuery(FieldConfigsDocument, undefined, {
-      fetchPolicy: 'network-only',
+      fetchPolicy: 'no-cache',
     })
+    async function loadRequiredFields() {
+      ;(await requiredFieldsLoad()) || (await refetchRequiredFields())
+    }
     onRequiredFieldsResult((result) => {
       for (let i = 0; i < result.data.fieldConfigs.length; i++) {
-        requiredFields.value.push(
-          result.data.fieldConfigs[i] as FieldConfig,
-        )
+        requiredFields.value.push(result.data.fieldConfigs[i] as FieldConfig)
       }
     })
     onLoadRequiredFieldsError((error) => {
       console.log(error)
     })
 
-
     return {
       requiredFields,
       $reset,
       loadRequiredFields,
       performerTypeFields,
+      resultFieldConfigs,
     }
   },
   {
     persist: true,
-  },
+  }
 )

@@ -83,7 +83,7 @@
     <h2 class="pt-8">Class Information</h2>
     <div
       v-for="(selectedClass, classIndex) in classesStore.registeredClasses"
-      :key="classIndex">
+      :key="selectedClass.id">
       <div class="py-4">
         <h3 class="pb-4">Class {{ classIndex + 1 }}</h3>
         <div v-if="appStore.performerType === PerformerType.SCHOOL">

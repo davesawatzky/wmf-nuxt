@@ -86,12 +86,17 @@ export const useSchool = defineStore(
      */
     const {
       result: resultSchool,
-      load: loadSchool,
+      load: schoolLoad,
+      refetch: refetchSchool,
       onResult: onLoadSchoolResult,
       onError: onLoadSchoolError,
     } = useLazyQuery(SchoolInfoDocument, undefined, {
-      fetchPolicy: 'network-only',
+      fetchPolicy: 'no-cache',
     })
+    async function loadSchool(registrationId: number) {
+      ;(await schoolLoad(null, { registrationId })) ||
+        (await refetchSchool({ registrationId }))
+    }
     onLoadSchoolResult((result) => {
       addToStore(<School>result.data.registration.school)
     })

@@ -74,19 +74,20 @@
    * and used on the page.  It allows for filling the comboboxes with
    * pre-saved data from an existing registration.
    */
-  onMounted(() => {
+  onMounted(async () => {
+    await loadDisciplines()
     if (props.modelValue.subdiscipline) {
-      loadSubdisciplines()
+      await loadSubdisciplines()
     }
     if (props.modelValue.level) {
-      loadLevels()
+      await loadLevels()
     }
     if (props.modelValue.category) {
-      loadCategories()
+      await loadCategories()
       selectedClasses.value.numberOfSelections =
         props.modelValue.numberOfSelections
       loadInfoFirstRun.value = true
-      loadClassInformation()
+      await loadClassInformation()
     }
   })
 
@@ -101,14 +102,21 @@
   /**
    * Disciplines combobox data
    */
-  const { result: disciplineQuery, onError: errorDisciplines } = useQuery(
+  const {
+    result: disciplineResult,
+    load: loadDisciplines,
+    onError: onErrorDisciplines,
+  } = useLazyQuery(
     DisciplinesByTypeDocument,
     () => ({
       performerType: appStore.performerType,
-    }),
-    { fetchPolicy: 'network-only' }
+    })
+    // { fetchPolicy: 'network-only' }
   )
-  errorDisciplines((error) => {
+  const disciplineQuery = computed(
+    () => disciplineResult.value ?? <DisciplinesByTypeQuery>{}
+  )
+  onErrorDisciplines((error) => {
     console.log(error)
   })
 
@@ -202,8 +210,8 @@
     () => ({
       disciplineId: chosenDiscipline.value.id,
       performerType: appStore.performerType,
-    }),
-    { fetchPolicy: 'network-only' }
+    })
+    // { fetchPolicy: 'network-only' }
   )
   errorSubdisciplines((error) => {
     console.log(error)
@@ -232,8 +240,8 @@
     LevelsDocument,
     () => ({
       subdisciplineId: chosenSubdiscipline.value.id,
-    }),
-    { fetchPolicy: 'network-only' }
+    })
+    // { fetchPolicy: 'network-only' }
   )
   errorLevel((error) => console.log(error))
   const levels = computed(() => gradeLevels.value?.levels ?? [])
@@ -259,8 +267,8 @@
     () => ({
       subdisciplineId: chosenSubdiscipline.value.id,
       levelId: chosenGradeLevel.value.id,
-    }),
-    { fetchPolicy: 'network-only' }
+    })
+    // { fetchPolicy: 'network-only' }
   )
   errorCategories((error) => console.log(error))
   const categories = computed(() => cat.value?.categories ?? [])
@@ -369,7 +377,9 @@
           ? (status.discipline = StatusEnum.saved)
           : (status.discipline = StatusEnum.null)
       }
-      loadSubdisciplines()
+      if (!!chosenDiscipline.value.id) {
+        loadSubdisciplines()
+      }
     }
   )
 
@@ -384,7 +394,7 @@
           ? (status.subdiscipline = StatusEnum.saved)
           : (status.subdiscipline = StatusEnum.null)
       }
-      if (selectedClasses.value.subdiscipline !== null) {
+      if (!!chosenSubdiscipline.value.id) {
         loadLevels()
       }
     }
@@ -401,7 +411,7 @@
           ? (status.level = StatusEnum.saved)
           : (status.level = StatusEnum.null)
       }
-      if (selectedClasses.value.level !== null) {
+      if (!!chosenSubdiscipline.value.id && !!chosenGradeLevel.value.id) {
         loadCategories()
       }
     }
@@ -450,11 +460,14 @@
       let oldNumber =
         classesStore.registeredClasses[props.classIndex].selections!.length
       if (oldNumber < newNumber!) {
+        console.log('newNumber bigger than oldNumber')
         while (oldNumber < newNumber!) {
+          console.log(props.classId)
           await classesStore.createSelection(props.classId)
           oldNumber += 1
         }
       } else if (oldNumber > newNumber!) {
+        console.log('oldNumber bigger than new number')
         while (oldNumber > newNumber!) {
           const selectionLength =
             classesStore.registeredClasses[props.classIndex].selections!.length
@@ -468,6 +481,7 @@
           oldNumber -= 1
         }
       }
+      console.log('Watcher Fired')
       await classesStore.updateClass(props.classId, 'numberOfSelections')
     }
   )

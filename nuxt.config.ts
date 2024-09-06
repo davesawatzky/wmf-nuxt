@@ -36,9 +36,15 @@ export default defineNuxtConfig({
     autoImports: true,
     proxyCookies: true,
     tokenStorage: 'cookie',
+    defaultOptions: {
+      query: {
+        fetchPolicy: 'no-cache',
+      },
+    },
     clients: {
       default: {
-        httpEndpoint: process.env.GRAPHQL_SERVER!,
+        httpEndpoint:
+          process.env.GRAPHQL_SERVER || 'http://localhost:3000/graphql',
         tokenName: 'diatonicToken',
         authHeader: 'Authorization',
         authType: 'Bearer',
@@ -74,6 +80,7 @@ export default defineNuxtConfig({
     storage: 'sessionStorage',
   },
   primevue: {
+    autoImport: true,
     options: {
       ripple: true,
       theme: {
@@ -111,6 +118,7 @@ export default defineNuxtConfig({
     },
   },
   sourcemap: {
+    server: true,
     client: true,
   },
   spaLoadingTemplate: true,

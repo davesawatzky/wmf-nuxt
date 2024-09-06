@@ -91,21 +91,21 @@
       case 'SOLO':
         appStore.performerType = PerformerType.SOLO
         appStore.dataLoading = true
-        await performerStore.loadPerformers()
+        await performerStore.loadPerformers(registrationId)
         appStore.dataLoading = false
         break
       case 'GROUP':
         appStore.performerType = PerformerType.GROUP
         appStore.dataLoading = true
-        await groupStore.loadGroup(null, { registrationId })
-        await performerStore.loadPerformers()
+        await groupStore.loadGroup(registrationId)
+        await performerStore.loadPerformers(registrationId)
         appStore.dataLoading = false
         break
       case 'SCHOOL':
         appStore.performerType = PerformerType.SCHOOL
         appStore.dataLoading = true
-        await schoolStore.loadSchool(null, { registrationId })
-        await schoolGroupStore.loadSchoolGroups(null, { registrationId })
+        await schoolStore.loadSchool(registrationId)
+        await schoolGroupStore.loadSchoolGroups(registrationId)
         appStore.dataLoading = false
         break
       case 'COMMUNITY':
@@ -116,7 +116,7 @@
         break
     }
     appStore.dataLoading = true
-    await classesStore.loadClasses()
+    await classesStore.loadClasses(registrationId)
     appStore.dataLoading = false
     await navigateTo('/students/summary') // TODO: have to change this to a summary
   }

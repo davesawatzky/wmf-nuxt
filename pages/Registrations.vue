@@ -127,30 +127,23 @@
       case 'SOLO':
         appStore.performerType = PerformerType.SOLO
         appStore.dataLoading = true
-        console.log('Are we here yet')
-        await performerStore.loadPerformers()
-        await teacherStore.loadAllTeachers(null, {
-          privateTeacher: true,
-          schoolTeacher: false,
-        })
+        await performerStore.loadPerformers(registrationId)
+        await teacherStore.loadAllTeachers(true, false)
         appStore.dataLoading = false
         break
       case 'GROUP':
         appStore.performerType = PerformerType.GROUP
         appStore.dataLoading = true
-        await groupStore.loadGroup(null, { registrationId })
-        await performerStore.loadPerformers()
-        await teacherStore.loadAllTeachers(null, {
-          privateTeacher: true,
-          schoolTeacher: false,
-        })
+        await groupStore.loadGroup(registrationId)
+        await performerStore.loadPerformers(registrationId)
+        await teacherStore.loadAllTeachers(true, false)
         appStore.dataLoading = false
         break
       case 'SCHOOL':
         appStore.performerType = PerformerType.SCHOOL
         appStore.dataLoading = true
-        await schoolStore.loadSchool(null, { registrationId })
-        await schoolGroupStore.loadSchoolGroups(null, { registrationId })
+        await schoolStore.loadSchool(registrationId)
+        await schoolGroupStore.loadSchoolGroups(registrationId)
         // await teacherStore.loadAllTeachers(false, true)
         appStore.dataLoading = false
         break
@@ -158,21 +151,19 @@
         appStore.performerType = PerformerType.COMMUNITY
         appStore.dataLoading = true
         await communityStore.loadCommunity(registrationId)
-        await teacherStore.loadAllTeachers(null, {
-          privateTeacher: true,
-          schoolTeacher: true,
-        })
+        await teacherStore.loadAllTeachers(true, true)
         appStore.dataLoading = false
         break
     }
     appStore.dataLoading = true
     if (registration?.teacher) {
       registrationStore.registration.teacherID = registration.teacher.id
-      await teacherStore.loadTeacher(null, {
-        teacherID: registrationStore.registration.teacherID,
-      })
+      await teacherStore.loadTeacher(
+        registrationStore.registration.teacherID,
+        undefined
+      )
     }
-    await classesStore.loadClasses(null, { registrationId })
+    await classesStore.loadClasses(registrationId)
     await fieldConfigStore.loadRequiredFields()
     appStore.dataLoading = false
     await navigateTo('/form')
@@ -200,10 +191,7 @@
         appStore.performerType = PerformerType.SOLO
         appStore.dataLoading = true
         await performerStore.createPerformer(registrationId.value)
-        await teacherStore.loadAllTeachers(null, {
-          privateTeacher: true,
-          schoolTeacher: false,
-        })
+        await teacherStore.loadAllTeachers(true, false)
         break
       case 'GROUP':
         appStore.performerType = PerformerType.GROUP
@@ -212,10 +200,7 @@
         // require at least 2 performers for groups
         await performerStore.createPerformer(registrationId.value)
         await performerStore.createPerformer(registrationId.value)
-        await teacherStore.loadAllTeachers(null, {
-          privateTeacher: true,
-          schoolTeacher: false,
-        })
+        await teacherStore.loadAllTeachers(true, false)
         break
       case 'SCHOOL':
         appStore.performerType = PerformerType.SCHOOL
@@ -237,10 +222,7 @@
         appStore.performerType = PerformerType.COMMUNITY
         appStore.dataLoading = true
         await communityStore.createCommunity(registrationId.value)
-        await teacherStore.loadAllTeachers(null, {
-          privateTeacher: true,
-          schoolTeacher: false,
-        })
+        await teacherStore.loadAllTeachers(true, true)
     }
     await classesStore.createClass(registrationId.value)
     await fieldConfigStore.loadRequiredFields()

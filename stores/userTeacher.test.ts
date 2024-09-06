@@ -1,6 +1,6 @@
 import { createPinia, setActivePinia } from 'pinia'
 import { expect } from 'vitest'
-import { testFullTeacher, testPartialTeacher } from './testData'
+import { testFullTeacher, testPartialTeacher } from '../utils/testData'
 import { useTeacher } from '@/stores/userTeacher'
 
 let teacherStore: any

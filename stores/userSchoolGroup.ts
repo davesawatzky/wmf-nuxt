@@ -93,12 +93,17 @@ export const useSchoolGroup = defineStore(
 
     const {
       result: resultSchoolGroups,
-      load: loadSchoolGroups,
+      load: schoolGroupsLoad,
+      refetch: refetchSchoolGroups,
       onResult: onSchoolGroupsResult,
       onError: onSchoolGroupsError,
     } = useLazyQuery(SchoolGroupInfoDocument, undefined, {
       fetchPolicy: 'no-cache',
     })
+    async function loadSchoolGroups(registrationId: number) {
+      ;(await schoolGroupsLoad(null, { registrationId })) ||
+        (await refetchSchoolGroups({ registrationId }))
+    }
     onSchoolGroupsResult((result) => {
       const schoolGroups = <SchoolGroup[]>(
         result.data.registration.school?.schoolGroups
