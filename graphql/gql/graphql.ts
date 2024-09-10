@@ -82,7 +82,7 @@ export type Community = {
   communityGroups?: Maybe<Array<CommunityGroup>>;
   email?: Maybe<Scalars['String']['output']>;
   id: Scalars['Int']['output'];
-  name: Scalars['String']['output'];
+  name?: Maybe<Scalars['String']['output']>;
   phone?: Maybe<Scalars['String']['output']>;
   postalCode?: Maybe<Scalars['String']['output']>;
   province?: Maybe<Scalars['String']['output']>;
@@ -1081,7 +1081,7 @@ export type School = {
   city?: Maybe<Scalars['String']['output']>;
   division?: Maybe<Scalars['String']['output']>;
   id: Scalars['Int']['output'];
-  name: Scalars['String']['output'];
+  name?: Maybe<Scalars['String']['output']>;
   phone?: Maybe<Scalars['String']['output']>;
   postalCode?: Maybe<Scalars['String']['output']>;
   province?: Maybe<Scalars['String']['output']>;
@@ -1583,7 +1583,7 @@ export type CommunityInfoQueryVariables = Exact<{
 }>;
 
 
-export type CommunityInfoQuery = { __typename: 'Query', registration: { __typename: 'Registration', community?: { __typename: 'Community', id: number, name: string, streetNumber?: string | null, streetName?: string | null, city?: string | null, province?: string | null, postalCode?: string | null, phone?: string | null, email?: string | null } | null } };
+export type CommunityInfoQuery = { __typename: 'Query', registration: { __typename: 'Registration', community?: { __typename: 'Community', id: number, name?: string | null, streetNumber?: string | null, streetName?: string | null, city?: string | null, province?: string | null, postalCode?: string | null, phone?: string | null, email?: string | null } | null } };
 
 export type DisciplinesByTypeQueryVariables = Exact<{
   performerType: PerformerType;
@@ -1625,7 +1625,7 @@ export type SchoolInfoQueryVariables = Exact<{
 }>;
 
 
-export type SchoolInfoQuery = { __typename: 'Query', registration: { __typename: 'Registration', school?: { __typename: 'School', id: number, name: string, division?: string | null, streetNumber?: string | null, streetName?: string | null, city?: string | null, province?: string | null, postalCode?: string | null, phone?: string | null } | null } };
+export type SchoolInfoQuery = { __typename: 'Query', registration: { __typename: 'Registration', school?: { __typename: 'School', id: number, name?: string | null, division?: string | null, streetNumber?: string | null, streetName?: string | null, city?: string | null, province?: string | null, postalCode?: string | null, phone?: string | null } | null } };
 
 export type TeacherInfoQueryVariables = Exact<{
   teacherID?: InputMaybe<Scalars['Int']['input']>;
@@ -1726,7 +1726,7 @@ export type RegistrationsQuery = { __typename: 'Query', registrations: Array<{ _
 export type StudentRegistrationsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type StudentRegistrationsQuery = { __typename: 'Query', myStudents: { __typename: 'Teacher', registrations?: Array<{ __typename: 'Registration', confirmation?: string | null, createdAt?: any | null, id: number, label?: string | null, performerType: PerformerType, submittedAt?: any | null, updatedAt?: any | null, performers?: Array<{ __typename: 'Performer', firstName?: string | null, lastName?: string | null }> | null, group?: { __typename: 'Group', name?: string | null } | null, school?: { __typename: 'School', name: string } | null, community?: { __typename: 'Community', name: string } | null }> | null } };
+export type StudentRegistrationsQuery = { __typename: 'Query', myStudents: { __typename: 'Teacher', registrations?: Array<{ __typename: 'Registration', confirmation?: string | null, createdAt?: any | null, id: number, label?: string | null, performerType: PerformerType, submittedAt?: any | null, updatedAt?: any | null, performers?: Array<{ __typename: 'Performer', firstName?: string | null, lastName?: string | null }> | null, group?: { __typename: 'Group', name?: string | null } | null, school?: { __typename: 'School', name?: string | null } | null, community?: { __typename: 'Community', name?: string | null } | null }> | null } };
 
 export type SubDisciplinesQueryVariables = Exact<{
   disciplineId: Scalars['Int']['input'];

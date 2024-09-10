@@ -1,15 +1,15 @@
 <script setup lang="ts">
   import { DateTime } from 'luxon'
-  import { usePerformers } from '@/stores/userPerformer'
-  import { useTeacher } from '@/stores/userTeacher'
-  import { useGroup } from '@/stores/userGroup'
-  import { useSchool } from '@/stores/userSchool'
-  import { useSchoolGroup } from '@/stores/userSchoolGroup'
-  import { useCommunity } from '@/stores/userCommunity'
-  import { useClasses } from '@/stores/userClasses'
-  import { useRegistration } from '@/stores/userRegistration'
-  import { useUser } from '@/stores/useUser'
-  import { useAppStore } from '@/stores/appStore'
+  // import { usePerformers } from '@/stores/userPerformer'
+  // import { useTeacher } from '@/stores/userTeacher'
+  // import { useGroup } from '@/stores/userGroup'
+  // import { useSchool } from '@/stores/userSchool'
+  // import { useSchoolGroup } from '@/stores/userSchoolGroup'
+  // import { useCommunity } from '@/stores/userCommunity'
+  // import { useClasses } from '@/stores/userClasses'
+  // import { useRegistration } from '@/stores/userRegistration'
+  // import { useUser } from '@/stores/useUser'
+  // import { useAppStore } from '@/stores/appStore'
 
   type Confirmed = {
     importantNotes: boolean
@@ -20,14 +20,15 @@
   }
 
   const performerStore = usePerformers()
-  const teacherStore = useTeacher()
-  const groupStore = useGroup()
-  const schoolStore = useSchool()
-  const schoolGroupStore = useSchoolGroup()
-  const communityStore = useCommunity()
-  const classesStore = useClasses()
-  const appStore = useAppStore()
-  const userStore = useUser()
+  // const teacherStore = useTeacher()
+  // const groupStore = useGroup()
+  // const schoolStore = useSchool()
+  // const schoolGroupStore = useSchoolGroup()
+  // const communityStore = useCommunity()
+  // const communityGroupStore = useCommunityGroup()
+  // const classesStore = useClasses()
+  // const appStore = useAppStore()
+  // const userStore = useUser()
   const registrationStore = useRegistration()
 
   const confirmationNumber = ref('')
