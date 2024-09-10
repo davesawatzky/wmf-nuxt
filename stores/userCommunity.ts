@@ -15,7 +15,6 @@ export const useCommunity = defineStore(
   'community',
   () => {
     const community = ref(<Community>{})
-    const registrationStore = useRegistration()
     const fieldConfigStore = useFieldConfig()
     function $reset() {
       community.value = <Community>{}
@@ -25,49 +24,48 @@ export const useCommunity = defineStore(
       const communityKeys = fieldConfigStore.performerTypeFields('Community')
       let count = 0
       for (const key of communityKeys) {
-        if (
-          !!community.value[key as keyof Community] === false &&
-          community.value[key as keyof Community] !== 0
-        ) {
+        if (!!community.value[key as keyof Community] === false) {
           count++
         }
       }
       return count
     })
-
     /**
-     * Adds empty Community properties or a Community object into the store
-     * @param comm Community object must include an id property value
+     * Adds Community Object to the store. Only one
+     * @param comm Community object must have valid id property value
      */
-    function addToStore(comm: Community) {
-      community.value.id = comm.id
+    function addToStore(comm: Partial<Community>) {
+      community.value.id = comm.id!
       community.value.name = comm.name || ''
-      community.value.groupSize =
-        comm.groupSize !== null ? comm.groupSize : null
-      community.value.chaperones =
-        comm.chaperones !== null ? comm.chaperones : null
-      community.value.wheelchairs =
-        comm.wheelchairs !== null ? comm.wheelchairs : null
-      community.value.earliestTime = comm.earliestTime || ''
-      community.value.latestTime = comm.latestTime || ''
-      community.value.unavailable = comm.unavailable || ''
-      community.value.conflictPerformers = comm.conflictPerformers || ''
+      community.value.streetNumber = comm.streetNumber || ''
+      community.value.streetName = comm.streetName || ''
+      community.value.city = comm.city || 'Winnipeg'
+      community.value.province = comm.province || 'MB'
+      community.value.postalCode = comm.postalCode || ''
+      community.value.phone = comm.phone || ''
+      community.value.email = comm.email || ''
       community.value.__typename = comm.__typename || 'Community'
     }
 
     /**
-     * Creates a new community object in the store and db.
-     * @param registrationId ID of the Registration form
-     * @returns Promise and saves the new id number
+     * Creates new Community in db and adds it to the store
+     * @param registrationId ID of Registration Form
+     * @returns Promise
      */
     const {
       mutate: communityCreate,
       loading: communityCreateLoading,
       onDone: onCommunityCreateDone,
       onError: onCommunityCreateError,
-    } = useMutation(CommunityCreateDocument, { fetchPolicy: 'no-cache' })
+    } = useMutation(CommunityCreateDocument)
     async function createCommunity(registrationId: number) {
-      await communityCreate({ registrationId })
+      await communityCreate({
+        registrationId,
+        community: <CommunityInput>{
+          city: 'Winnipeg',
+          province: 'MB',
+        },
+      })
     }
     onCommunityCreateDone((result) => {
       if (result.data?.communityCreate.community) {
@@ -83,16 +81,15 @@ export const useCommunity = defineStore(
     })
 
     /**
-     * Loads the Community information from the db and saves it in the store
-     * @param registrationId ID of the Registration form
-
+     * Loads Community information from db and adds it to the store.
+     * @param registrationId ID of Registration Form
      */
     const {
       result: resultCommunity,
       load: communityLoad,
       refetch: refetchCommunity,
-      onResult: onCommunityResult,
-      onError: onCommunityError,
+      onResult: onLoadCommunityResult,
+      onError: onLoadCommunityError,
     } = useLazyQuery(CommunityInfoDocument, undefined, {
       fetchPolicy: 'no-cache',
     })
@@ -100,15 +97,18 @@ export const useCommunity = defineStore(
       ;(await communityLoad(null, { registrationId })) ||
         (await refetchCommunity({ registrationId }))
     }
-    onCommunityResult((result) => {
-      addToStore(<Community>result.data.registration.community)
+    watch(resultCommunity, (newResult) => {
+      if (newResult?.registration.community) {
+        addToStore(<Community>newResult.registration.community)
+      }
     })
-    onCommunityError((error) => {
+    onLoadCommunityError((error) => {
       console.log(error)
     })
 
     /**
-     * Updates Community information from store to the db
+     * Updates Community record in db from store.
+     * @returns Promise
      */
     const {
       mutate: communityUpdate,
@@ -116,7 +116,7 @@ export const useCommunity = defineStore(
       onDone: onCommunityUpdateDone,
       onError: onCommunityUpdateError,
     } = useMutation(CommunityUpdateDocument, {
-      fetchPolicy: 'no-cache',
+      fetchPolicy: 'network-only',
     })
     async function updateCommunity(field?: string) {
       const { id, __typename, ...communityProps } = community.value
@@ -137,18 +137,9 @@ export const useCommunity = defineStore(
       console.log(error)
     })
 
-    // async function updateAllCommunities() {
-    //   let communityIndex = 0
-    //   for (const eachCommunity of community.value) {
-    //     await updateCommunity(communityIndex, eachCommunity.id)
-    //     communityIndex++
-    //   }
-    // }
-
     /**
-     * Removes the Community from the store and the db
-     * @param communityId ID of the Community Record
-     * @returns Promise
+     * Removes the Community record from the db.
+     * @param communityId ID of the Community record
      */
     const {
       mutate: communityDelete,
@@ -167,15 +158,14 @@ export const useCommunity = defineStore(
     })
 
     return {
+      deleteCommunity,
       $reset,
       communityErrors,
-      deleteCommunity,
       updateCommunity,
-      community,
-      // updateAllCommunities,
-      addToStore,
-      createCommunity,
       loadCommunity,
+      createCommunity,
+      community,
+      addToStore,
     }
   },
   {

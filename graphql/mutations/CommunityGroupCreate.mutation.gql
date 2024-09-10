@@ -1,0 +1,10 @@
+mutation CommunityGroupCreate($communityId: Int!) {
+  communityGroupCreate(communityID: $communityId) {
+    communityGroup {
+      id
+    }
+    userErrors {
+      message
+    }
+  }
+}
