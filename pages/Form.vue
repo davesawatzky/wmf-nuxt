@@ -170,7 +170,6 @@
 
 <template>
   <div>
-    {{ currentTab }}
     <BaseInput
       v-model="registrationStore.registration.label"
       class="text-3xl"

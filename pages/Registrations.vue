@@ -272,7 +272,7 @@
                 <th
                   v-if="md"
                   class="bg-sky-700">
-                  Submitted
+                  Status
                 </th>
                 <th class="bg-sky-700">Total</th>
                 <th class="bg-sky-700">Conf. #</th>
@@ -333,8 +333,17 @@
                 </td>
                 <td
                   v-if="md"
-                  class="text-sm">
-                  {{ dateFunction(registration.submittedAt) ?? 'No' }}
+                  class="text-xs text-white">
+                  <div
+                    v-if="dateFunction(registration.submittedAt)"
+                    class="rounded-xl pl-2 py-1 bg-green-700">
+                    Submitted
+                  </div>
+                  <div
+                    v-else
+                    class="rounded-xl pl-2 py-1 bg-red-700">
+                    Incomplete
+                  </div>
                 </td>
                 <td class="text-sm">
                   ${{ Number(registration.totalAmt).toFixed(2) }}

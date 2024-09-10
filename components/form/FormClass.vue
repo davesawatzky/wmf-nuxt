@@ -117,7 +117,7 @@
     () => disciplineResult.value ?? <DisciplinesByTypeQuery>{}
   )
   onErrorDisciplines((error) => {
-    console.log(error)
+    console.log('Stopping Here: ', error)
   })
 
   /**
@@ -130,13 +130,14 @@
     // and the Mozart class if instrument>mozart is true.
     if (
       appStore.performerType === 'SOLO' &&
-      !!performerStore.performers[0].instrument
+      !!performerStore.performers[0].instrument &&
+      disciplineQuery.value.disciplines
     ) {
-      const Mozart = disciplineQuery.value?.disciplines.filter((item) => {
+      const Mozart = disciplineQuery.value.disciplines.filter((item) => {
         return item.name.toLowerCase().includes('mozart')
       })
       if (performerStore.performers[0].instrument.toLowerCase() === 'voice') {
-        return disciplineQuery.value?.disciplines.filter((item) => {
+        return disciplineQuery.value.disciplines.filter((item) => {
           return (
             item.name.toLowerCase() === 'vocal' ||
             item.name.toLowerCase() === 'musical theatre' ||

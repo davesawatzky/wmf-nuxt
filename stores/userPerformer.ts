@@ -133,9 +133,11 @@ export const usePerformers = defineStore(
       ;(await performersLoad(null, { registrationId })) ||
         (await performersRefetch({ registrationId }))
     }
-    onPerformersResult((result) => {
-      const performers: Performer[] = result.data.performers
-      for (let i = 0; i < performers.length; i++) addToStore(performers[i])
+    watch(resultPerformers, (newResult) => {
+      if (newResult?.performers) {
+        const performers: Performer[] = newResult.performers
+        for (let i = 0; i < performers.length; i++) addToStore(performers[i])
+      }
     })
     onPerformersError((error) => {
       console.log('Performer Load Error. ', error)

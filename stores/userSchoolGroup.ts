@@ -104,11 +104,14 @@ export const useSchoolGroup = defineStore(
       ;(await schoolGroupsLoad(null, { registrationId })) ||
         (await refetchSchoolGroups({ registrationId }))
     }
-    onSchoolGroupsResult((result) => {
-      const schoolGroups = <SchoolGroup[]>(
-        result.data.registration.school?.schoolGroups
-      )
-      for (let i = 0; i < schoolGroups.length; i++) addToStore(schoolGroups[i])
+    watch(resultSchoolGroups, (newResult) => {
+      if (newResult?.registration.school?.schoolGroups) {
+        const schoolGroups = <SchoolGroup[]>(
+          newResult.registration.school?.schoolGroups
+        )
+        for (let i = 0; i < schoolGroups.length; i++)
+          addToStore(schoolGroups[i])
+      }
     })
     onSchoolGroupsError((error) => {
       console.log(error)

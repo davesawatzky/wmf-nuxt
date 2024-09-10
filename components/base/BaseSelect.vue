@@ -1,45 +1,44 @@
 <script lang="ts" setup>
+  interface Options {
+    id: string | number
+    name?: string
+  }
 
-interface Options {
-  id: string | number
-  name?: string
-}
+  const props = defineProps<{
+    label?: string
+    helpMessage?: string
+    status?: StatusEnum
+    name: string
+    options: Options[] | undefined
+    modelValue?: string | number | null
+    returnId?: boolean
+  }>()
 
-const props = defineProps<{
-  label?: string
-  helpMessage?: string
-  status?: StatusEnum
-  name: string
-  options: Options[] | undefined
-  modelValue?: string | number | null
-  returnId?: boolean
-}>()
+  const emit = defineEmits<{
+    'update:modelValue': [value: string | number]
+    changeStatus: [stat: string]
+  }>()
 
-const emit = defineEmits<{
-  'update:modelValue': [value: string | number]
-  'changeStatus': [stat: string]
-}>()
+  const uuid = UniqueID().getID()
 
-const uuid = UniqueID().getID()
-
-// Aggressive
-const { value, resetField, errorMessage, meta, handleChange, handleBlur }
-    = useField(() => props.name, undefined, {
+  // Aggressive
+  const { value, resetField, errorMessage, meta, handleChange, handleBlur } =
+    useField(() => props.name, undefined, {
       validateOnValueUpdate: false,
       initialValue: props.modelValue,
       syncVModel: true,
     })
 
-const validationListeners = {
-  change: (evt: any) => {
-    handleChange(evt, true)
-    emit('changeStatus', 'saved')
-  },
-  input: (evt: any) => {
-    handleChange(evt, true)
-    emit('changeStatus', 'saved')
-  },
-}
+  const validationListeners = {
+    change: (evt: any) => {
+      handleChange(evt, true)
+      emit('changeStatus', 'saved')
+    },
+    input: (evt: any) => {
+      handleChange(evt, true)
+      emit('changeStatus', 'saved')
+    },
+  }
 </script>
 
 <template>
@@ -49,8 +48,7 @@ const validationListeners = {
         <label
           v-if="label"
           class="baseLabel"
-          :for="uuid"
-        >
+          :for="uuid">
           {{ label }}
           <BaseHelpButton :help-message="helpMessage" />
         </label>
@@ -58,8 +56,7 @@ const validationListeners = {
       <div class="grow" />
       <BaseSaved
         class="flex-none mr-2"
-        :status="status"
-      />
+        :status="status" />
     </div>
     <select
       :id="uuid"
@@ -69,14 +66,12 @@ const validationListeners = {
       v-bind="{ ...$attrs }"
       :aria-describedby="errorMessage ? `${uuid}-error` : ''"
       :aria-invalid="errorMessage ? true : false"
-      v-on="validationListeners"
-    >
+      v-on="validationListeners">
       <option
         v-for="option in options"
         :key="option.id"
         :value="returnId ? option.id : option.name"
-        :selected="option.name === modelValue"
-      >
+        :selected="option.name === modelValue">
         {{ option.name }}
       </option>
     </select>

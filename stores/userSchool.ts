@@ -97,8 +97,10 @@ export const useSchool = defineStore(
       ;(await schoolLoad(null, { registrationId })) ||
         (await refetchSchool({ registrationId }))
     }
-    onLoadSchoolResult((result) => {
-      addToStore(<School>result.data.registration.school)
+    watch(resultSchool, (newResult) => {
+      if (newResult?.registration.school) {
+        addToStore(<School>newResult.registration.school)
+      }
     })
     onLoadSchoolError((error) => {
       console.log(error)

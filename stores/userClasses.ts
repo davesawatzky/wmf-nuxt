@@ -247,6 +247,7 @@ export const useClasses = defineStore(
       onError: onCreateSelectionError,
     } = useMutation(SelectionCreateDocument, { fetchPolicy: 'no-cache' })
     async function createSelection(registeredClassId: number) {
+      registeredClassSelectionId = registeredClassId
       await selectionCreate({ registeredClassId })
     }
     onCreateSelectionDone((result) => {

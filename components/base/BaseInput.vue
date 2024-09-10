@@ -1,55 +1,53 @@
 <script setup lang="ts">
+  interface Props {
+    type?: string
+    label?: string
+    helpMessage?: string
+    status?: StatusEnum
+    name: string
+    placeholder?: string
+    modelValue?: string | number | null
+  }
 
-interface Props {
-  type?: string
-  label?: string
-  helpMessage?: string
-  status?: StatusEnum
-  name: string
-  placeholder?: string
-  modelValue?: string | number | null
-}
+  const props = withDefaults(defineProps<Props>(), {
+    type: 'text',
+    label: '',
+    helpMessage: undefined,
+    status: StatusEnum.null,
+    placeholder: '',
+    modelValue: null,
+  })
 
-const props = withDefaults(defineProps<Props>(), {
-  type: 'text',
-  label: '',
-  helpMessage: undefined,
-  status: StatusEnum.null,
-  placeholder: '',
-  modelValue: null,
-})
+  const emit = defineEmits<{
+    'update:modelValue': [value: string | number]
+    changeStatus: [stat: string]
+  }>()
 
-const emit = defineEmits<{
-  'update:modelValue': [value: string | number]
-  'changeStatus': [stat: string]
-}>()
+  const uuid = UniqueID().getID()
 
-const uuid = UniqueID().getID()
-
-const { value, resetField, errorMessage, meta, handleChange, handleBlur }
-    = useField(() => props.name, undefined, {
+  const { value, resetField, errorMessage, meta, handleChange, handleBlur } =
+    useField(() => props.name, undefined, {
       validateOnValueUpdate: false,
       initialValue: props.modelValue,
       syncVModel: true,
     })
 
-const validationListeners = {
-  blur: (evt: Event) => handleBlur(evt, true),
-  change: (evt: Event) => {
-    handleChange(evt, true)
-    if (meta.valid) {
-      emit('changeStatus', 'saved')
-      resetField({ value: value.value })
-    }
-    else if (!meta.valid && meta.initialValue) {
-      emit('changeStatus', 'remove')
-      resetField({ value: props.type === 'number' ? 0 : null })
-    }
-  },
-  input: (evt: Event) => {
-    handleChange(evt, !!errorMessage.value)
-  },
-}
+  const validationListeners = {
+    blur: (evt: Event) => handleBlur(evt, true),
+    change: (evt: Event) => {
+      handleChange(evt, true)
+      if (meta.valid) {
+        emit('changeStatus', 'saved')
+        resetField({ value: value.value })
+      } else if (!meta.valid && meta.initialValue) {
+        emit('changeStatus', 'remove')
+        resetField({ value: props.type === 'number' ? 0 : null })
+      }
+    },
+    input: (evt: Event) => {
+      handleChange(evt, !!errorMessage.value)
+    },
+  }
 </script>
 
 <template>
@@ -59,8 +57,7 @@ const validationListeners = {
         <label
           v-if="label"
           class="baseLabel"
-          :for="uuid"
-        >
+          :for="uuid">
           {{ label }}
           <BaseHelpButton :help-message="helpMessage" />
         </label>
@@ -68,8 +65,7 @@ const validationListeners = {
       <div class="grow" />
       <BaseSaved
         class="flex-none mr-2"
-        :status="status"
-      />
+        :status="status" />
     </div>
     <input
       :id="uuid"
@@ -81,8 +77,7 @@ const validationListeners = {
       :value="value"
       :aria-describedby="errorMessage ? `${uuid}-error` : ''"
       :aria-invalid="errorMessage ? true : false"
-      v-on="validationListeners"
-    >
+      v-on="validationListeners" />
     <BaseErrorMessage>
       {{ errorMessage }}
     </BaseErrorMessage>

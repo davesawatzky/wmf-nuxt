@@ -107,8 +107,10 @@ export const useGroup = defineStore(
       ;(await groupLoad(null, { registrationId })) ||
         (await refetchGroup({ registrationId }))
     }
-    onGroupLoadResult((result) => {
-      addToStore(<Group>result.data.registration.group)
+    watch(resultGroup, (newResult) => {
+      if (newResult?.registration.group) {
+        addToStore(<Group>newResult.registration.group)
+      }
     })
     onGroupLoadError((error) => {
       console.log(error)

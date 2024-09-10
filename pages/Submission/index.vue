@@ -11,6 +11,14 @@
   import { useUser } from '@/stores/useUser'
   import { useAppStore } from '@/stores/appStore'
 
+  type Confirmed = {
+    importantNotes: boolean
+    nonrefundable: boolean
+    parentGuardian: boolean
+    photoPermission: boolean
+    rulesAndTrophyForms: boolean
+  }
+
   const performerStore = usePerformers()
   const teacherStore = useTeacher()
   const groupStore = useGroup()
@@ -24,7 +32,34 @@
 
   const confirmationNumber = ref('')
   const submissionComplete = ref(false)
-  const readConfirmation = ref(false)
+  const readConfirmation = ref(<Confirmed>{
+    importantNotes: false,
+    nonrefundable: false,
+    parentGuardian: false,
+    photoPermission: false,
+    rulesAndTrophyForms: false,
+  })
+
+  const proceedToPayment = computed(() => {
+    for (const key in readConfirmation.value) {
+      if (!readConfirmation.value[key as keyof Confirmed]) {
+        return false
+      }
+    }
+    return true
+  })
+
+  const checkIfParentConsentRequired = computed(() => {
+    if (registrationStore.registration.performerType === 'SOLO') {
+      if (performerStore.performers[0].age! < 18) {
+        return true
+      } else {
+        readConfirmation.value.parentGuardian = true
+        return false
+      }
+    } else if (registrationStore.registration.performerType === 'GROUP') {
+    }
+  })
 
   function printWindow() {
     window.print()
@@ -84,30 +119,39 @@
         withdraw must notify the Festival office in writing as early as
         possible.
       </p>
+      <BaseCheckbox
+        v-model="readConfirmation.importantNotes"
+        label="I have read and understand the above text." />
+      <BaseCheckbox
+        v-model="readConfirmation.nonrefundable"
+        label="I understand that ENTRY FEES ARE NON-REFUNDABLE." />
+      <BaseCheckbox
+        v-if="checkIfParentConsentRequired"
+        v-model="readConfirmation.parentGuardian"
+        label="If participant is under 18 then I certify that I am the parent/guardian of this child." />
+      <BaseCheckbox
+        v-model="readConfirmation.photoPermission"
+        label="I give permission for the Festival to use photographs of this participant in marketing materials." />
+      <BaseCheckbox
+        v-model="readConfirmation.rulesAndTrophyForms"
+        label="I have read all applicable rules and trophy eligibility forms as found on the music festival website." />
     </section>
 
-    <p class="text-center font-bold text-xl">Entry fees are non-refundable.</p>
-    <div
-      class="text-center mx-auto max-w-[400px] border border-sky-600 rounded-lg p-4 bg-white">
-      <BaseCheckbox
-        v-model="readConfirmation"
-        label="I have read and understand the preceding text." />
-    </div>
     <br />
 
     <div class="text-center">
       <BaseRouteButton
         v-if="!submissionComplete"
         class="btn btn-blue"
-        :disabled="!readConfirmation"
-        to="/Submission/payment">
-        Proceed to Payment
+        to="Registrations">
+        Cancel
       </BaseRouteButton>
       <BaseRouteButton
         v-if="!submissionComplete"
         class="btn btn-blue"
-        to="Registrations">
-        Cancel
+        :disabled="!proceedToPayment"
+        to="/Submission/payment">
+        Proceed to Payment
       </BaseRouteButton>
     </div>
   </div>

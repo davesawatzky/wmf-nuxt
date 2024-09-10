@@ -138,8 +138,10 @@ export const useTeacher = defineStore(
       ;(await teacherLoad(null, { teacherID, teacherEmail })) ||
         (await refetchTeacher({ teacherID, teacherEmail }))
     }
-    onLoadTeacherResult((result) => {
-      addToStore(<Teacher>result.data.teacher)
+    watch(resultTeacher, (newResult) => {
+      if (newResult?.teacher) {
+        addToStore(<Teacher>newResult.teacher)
+      }
     })
     onLoadTeacherError((error) => {
       console.log(error)
