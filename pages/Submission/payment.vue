@@ -65,7 +65,7 @@
     const appearance = {
       theme: 'stripe',
     }
-    stripe = await loadStripe(config.public.stripeKey)
+    stripe = await loadStripe(config.public.stripePubKey)
     elements = stripe!.elements({
       appearance,
       clientSecret,

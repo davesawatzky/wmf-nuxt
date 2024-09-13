@@ -242,7 +242,7 @@
   }
 
   /**
-   * Reset Email and Password Fields
+   * Reset Email and Password Fields after failed login
    */
   function resetFields() {
     error.value = ''
@@ -370,15 +370,28 @@
           @click="signin()">
           Sign In
         </BaseButton>
-        <!-- <BaseButton
-          v-auto-animate
-          v-model="isLogin"
-          :value="false"
-          class="w-full m-0 mt-4 btn btn-blue"
-          name="isLogin"
-          @click="isLoggingIn()">
-          "Register for an Account
-        </BaseButton> -->
+        <div class="">
+          <div class="pt-3">
+            <NuxtLink
+              v-auto-animate
+              class="text-sky-700 w-full mx-auto"
+              to="/password/EmailVerification"
+              name="resetPassword">
+              Forgot your password?
+            </NuxtLink>
+          </div>
+
+          <div class="pt-8 w-full mx-auto inline-block">
+            Don't have an account?
+            <button
+              v-auto-animate
+              class="text-sky-700"
+              name="isLogin"
+              @click="isRegister = true">
+              Sign up here.
+            </button>
+          </div>
+        </div>
       </div>
       <div v-else>
         <BaseButton
@@ -388,12 +401,6 @@
           Register New Account
         </BaseButton>
       </div>
-      <BaseCheckbox
-        v-model="isRegister"
-        v-auto-animate
-        class="mt-3"
-        name="isRegister"
-        label="Register for a New Account" />
     </form>
   </div>
   <UITransitionRoot
