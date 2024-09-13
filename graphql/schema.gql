@@ -150,6 +150,10 @@ type DisciplinePayload {
   userErrors: [UserError!]!
 }
 
+type EmailExists {
+  email: String
+}
+
 type FestivalClass {
   category: Category!
   classNumber: String!
@@ -325,6 +329,9 @@ type Mutation {
   levelCreate(levelInput: LevelInput!): LevelPayload!
   levelDelete(levelID: Int!): LevelPayload!
   levelUpdate(levelID: Int!, levelInput: LevelInput!): LevelPayload!
+  passwordChange(
+    passwordChangeInput: PasswordChangeInput!
+  ): PasswordChangePayload!
   performerCreate(
     performerInput: PerformerInput
     registrationID: Int!
@@ -392,6 +399,17 @@ type Mutation {
   trophyUpdate(trophyID: Int!, trophyInput: TrophyInput!): TrophyPayload!
   userDelete(userID: Int!): UserPayload!
   userUpdate(userID: Int!, userInput: UserInput!): UserPayload!
+}
+
+input PasswordChangeInput {
+  password1: String!
+  password2: String!
+  resetToken: String!
+}
+
+type PasswordChangePayload {
+  passwordChanged: Boolean!
+  userErrors: [UserError!]!
 }
 
 type PasswordExists {
@@ -483,6 +501,7 @@ type Query {
   logout: String!
   myStudents: Teacher!
   myUser: User!
+  passwordChangeEmailVerification(email: String!): EmailExists!
   performer(performerID: Int!): Performer!
   performers(registrationID: Int): [Performer!]!
   registeredClass(registeredClassID: Int!): RegisteredClass!

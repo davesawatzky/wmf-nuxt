@@ -2,27 +2,32 @@
   import * as yup from 'yup'
 
   const email = ref('')
+  const appStore = useAppStore()
 
   const {
-    mutate: sendVerification,
+    result: resultSendEmailVerification,
+    load: sendVerification,
     loading: sendLoading,
     onError: onSendError,
-    onDone: onSendDone,
-  } = useMutation(
+    onResult: onSendResult,
+  } = useLazyQuery(
     gql`
-      mutation EmailVerification($email: String!) {
-        emailVerification(email: $email) {
+      query PasswordChangeEmailVerification($email: String!) {
+        passwordChangeEmailVerification(email: $email) {
           email
         }
       }
     `,
     () => ({
-      fetchPolicy: 'no-cache',
-      variables: {
-        email: email.value,
-      },
+      email: email.value,
     })
   )
+
+  onSendResult(async (result) => {
+    if (result.data?.passwordChangeEmailVerification) {
+      appStore.passwordResetSent = true
+    }
+  })
 
   const { handleSubmit, values } = useForm({
     validationSchema: toTypedSchema(
@@ -43,6 +48,7 @@
       <h2 class="text-center">Winnipeg Music Festival Registration 2025</h2>
       <h3 class="text-center mt-8">Password Reset Link</h3>
       <form
+        v-if="!appStore.passwordResetSent"
         v-auto-animate
         class="sm:w-3/4 max-w-sm border rounded-lg border-sky-500 p-4 mx-auto mt-8">
         <BaseInput
@@ -63,6 +69,21 @@
           Send Reset Link
         </BaseButton>
       </form>
+      <div
+        v-else
+        v-auto-animate
+        class="sm:w-3/4 max-w-sm border rounded-lg border-sky-500 p-4 mx-auto mt-8">
+        <h4 class="text-center">Email Verification Sent</h4>
+        <p>
+          An email verification link has been sent to your email address. Click
+          the link in the email to change your password.
+        </p>
+        <NuxtLink to="/login">
+          <BaseButton class="w-full mx-auto mt-4 btn btn-blue">
+            Proceed to Sign In
+          </BaseButton>
+        </NuxtLink>
+      </div>
     </div>
   </div>
 </template>

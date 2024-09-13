@@ -23,6 +23,8 @@
   const schoolTeacher = ref(false)
   const config = useRuntimeConfig()
   const isOpen = ref(false)
+  const accountNotConfirmed = ref(false)
+  const passwordChangePending = ref(false)
   const user = ref({
     email: '',
     firstName: '',
@@ -106,36 +108,44 @@
     await signinMutation({
       credentials: { email: values.email, password: values.password },
     })
-    doneSignin(async (result) => {
-      if (result.data?.signin.diatonicToken) {
-        if (
-          result.data.signin.user?.privateTeacher &&
-          !result.data?.signin.user.hasSignedIn
-        ) {
-          await navigateTo('/userinformation')
-        } else {
-          await navigateTo('/registrations')
-        }
+  })
+  doneSignin(async (result) => {
+    console.log('Result: ', result)
+    if (result.data?.signin.diatonicToken) {
+      if (
+        result.data.signin.user?.privateTeacher &&
+        !result.data?.signin.user.hasSignedIn
+      ) {
+        await navigateTo('/userinformation')
+      } else {
+        await navigateTo('/registrations')
       }
-      if (result.data?.signin.userErrors[0]) {
-        if (
-          result.data?.signin.userErrors[0].message.includes(
-            // TODO: Something wrong here
-            'Account not confirmed.'
-          )
-        ) {
-          user.value.email = result.data.signin.user?.email!
-          user.value.firstName = result.data!.signin.user?.firstName!
-          user.value.lastName = result.data!.signin.user?.lastName!
-          isOpen.value = true
-        }
+    }
+    if (result.data?.signin?.userErrors[0]) {
+      if (
+        result.data?.signin.userErrors[0].message.includes(
+          'Account not confirmed.'
+        )
+      ) {
+        // user.value.email = result.data.signin.user?.email!
+        // user.value.firstName = result.data!.signin.user?.firstName!
+        // user.value.lastName = result.data!.signin.user?.lastName!
+        accountNotConfirmed.value = true
+        isOpen.value = true
       }
-    })
-    signinError((error) => {
-      toast.error('Incorrect email or password.')
-      console.log(error)
-      setTimeout(() => resetFields(), 4000)
-    })
+      if (result.data?.signin.userErrors[0].message.includes('Password')) {
+        // user.value.email = result.data.signin.user?.email!
+        // user.value.firstName = result.data!.signin.user?.firstName!
+        // user.value.lastName = result.data!.signin.user?.lastName!
+        passwordChangePending.value = true
+        isOpen.value = true
+      }
+    }
+  })
+  signinError((error) => {
+    toast.error('Incorrect email or password.')
+    console.log(error)
+    setTimeout(() => resetFields(), 4000)
   })
 
   /**
@@ -206,24 +216,24 @@
         schoolTeacher: values.schoolTeacher,
       },
     })
-    doneSignup(async (result) => {
-      toast.success('Check EMAIL for account verification link')
-      isRegister.value = false
-      resetFields()
-    })
-    registerError((err) => {
-      toast.error('Error signing up for account')
-      console.log(err)
-      setTimeout(() => resetFields(), 4000)
-    })
+  })
+  doneSignup(async (result) => {
+    toast.success('Check EMAIL for account verification link')
+    isRegister.value = false
+    resetFields()
+  })
+  registerError((err) => {
+    toast.error('Error signing up for account')
+    console.log(err)
+    setTimeout(() => resetFields(), 4000)
   })
 
   /**
    * Resend confirmation link
    */
-  async function resendEmail() {
+  async function resendVerificationEmail() {
     try {
-      await useFetch(config.public.resendConfirmation, {
+      await $fetch(config.public.resendConfirmation, {
         method: 'POST',
         body: {
           user: {
@@ -232,9 +242,28 @@
             email: user.value.email,
           },
         },
-        watch: false,
       })
       isOpen.value = false
+      accountNotConfirmed.value = false
+      resetFields()
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  /**
+   * Resend password reset link
+   */
+  async function resendPasswordEmail() {
+    try {
+      await $fetch(config.public.resendPasswordReset, {
+        method: 'POST',
+        body: {
+          email: user.value.email,
+        },
+      })
+      isOpen.value = false
+      passwordChangePending.value = false
       resetFields()
     } catch (err) {
       console.log(err)
@@ -435,6 +464,7 @@
           leave-from="opacity-100 scale-100"
           leave-to="opacity-0 scale-95">
           <UIDialogPanel
+            v-if="accountNotConfirmed"
             class="p-4 w-full max-w-sm rounded-lg bg-white shadow-lg">
             <UIDialogTitle class="text-center text-xl font-bold">
               Account not verified
@@ -452,8 +482,32 @@
               </BaseButton>
               <BaseButton
                 class="btn btn-blue"
-                @click="resendEmail()">
+                @click="resendVerificationEmail()">
                 Re-Send Verificaton
+              </BaseButton>
+            </div>
+          </UIDialogPanel>
+          <UIDialogPanel
+            v-if="passwordChangePending"
+            class="p-4 w-full max-w-sm rounded-lg bg-white shadow-lg">
+            <UIDialogTitle class="text-center text-xl font-bold">
+              Password Change Pending
+            </UIDialogTitle>
+            <UIDialogDescription class="text-center">
+              A password change has been requested on this account. Check your
+              email inbox and spam folders for instructions on changing your
+              email.
+            </UIDialogDescription>
+            <div>
+              <BaseButton
+                class="btn btn-blue"
+                @click="setIsOpen(false)">
+                Close
+              </BaseButton>
+              <BaseButton
+                class="btn btn-blue"
+                @click="resendPasswordEmail()">
+                Re-Send Password Change Email
               </BaseButton>
             </div>
           </UIDialogPanel>

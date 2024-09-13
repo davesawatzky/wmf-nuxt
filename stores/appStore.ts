@@ -18,6 +18,7 @@ export const useAppStore = defineStore(
     const dataLoading = ref(false)
     const teacherHasPassword = ref(false)
     const stripePayment = ref('')
+    const passwordResetSent = ref(false)
 
     function $reset() {
       editExisting.value = false
@@ -34,6 +35,7 @@ export const useAppStore = defineStore(
       dataLoading.value = false
       teacherHasPassword.value = false
       stripePayment.value = 'cash'
+      passwordResetSent.value = false
     }
 
     return {
@@ -52,9 +54,10 @@ export const useAppStore = defineStore(
       dataLoading,
       teacherHasPassword,
       stripePayment,
+      passwordResetSent,
     }
   },
   {
     persist: true,
-  },
+  }
 )
