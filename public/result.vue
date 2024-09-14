@@ -20,6 +20,7 @@
   const schoolStore = useSchool()
   const schoolGroupStore = useSchoolGroup()
   const communityStore = useCommunity()
+  const communityGroupStore = useCommunityGroup()
   const classesStore = useClasses()
   const appStore = useAppStore()
   const userStore = useUser()
@@ -39,6 +40,7 @@
   const school = toValue(schoolStore.school)
   const schoolGroups = toValue(schoolGroupStore.schoolGroup)
   const community = toValue(communityStore.community)
+  const communityGroups = toValue(communityGroupStore.communityGroup)
   const registeredClasses = toValue(classesStore.registeredClasses)
   const performerType = toValue(appStore.performerType)
   const registration = toValue(registrationStore.registration)
@@ -122,6 +124,7 @@
           school,
           schoolGroups,
           community,
+          communityGroups,
           registeredClasses,
           performerType,
           registration,

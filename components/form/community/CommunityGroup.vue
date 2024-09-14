@@ -1,21 +1,21 @@
 <script setup lang="ts">
   import * as yup from 'yup'
-  import { useSchoolGroup } from '@/stores/userSchoolGroup'
-  import type { SchoolGroupInput } from '@/graphql/gql/graphql'
+  import { useCommunityGroup } from '@/stores/userCommunityGroup'
+  import type { CommunityGroupInput } from '@/graphql/gql/graphql'
 
   const props = defineProps<{
-    modelValue: SchoolGroupInput
-    schoolGroupIndex: number
-    schoolGroupId: number
+    modelValue: CommunityGroupInput
+    communityGroupIndex: number
+    communityGroupId: number
   }>()
 
   const emits = defineEmits<{
-    'update:modelValue': [value: SchoolGroupInput]
+    'update:modelValue': [value: CommunityGroupInput]
   }>()
 
-  const schoolGroupStore = useSchoolGroup()
+  const communityGroupStore = useCommunityGroup()
 
-  const schoolGroup = computed({
+  const communityGroup = computed({
     get: () => props.modelValue,
     set: (value) => emits('update:modelValue', value),
   })
@@ -50,16 +50,19 @@
 
   const totalParticipants = computed<number>(() => {
     return (
-      (schoolGroup.value.groupSize ?? 0) +
-      (schoolGroup.value.chaperones ?? 0) +
-      (schoolGroup.value.wheelchairs ?? 0)
+      (communityGroup.value.groupSize ?? 0) +
+      (communityGroup.value.chaperones ?? 0) +
+      (communityGroup.value.wheelchairs ?? 0)
     )
   })
 
   async function fieldStatus(stat: string, fieldName: string) {
     await nextTick()
     status[fieldName] = StatusEnum.pending
-    await schoolGroupStore.updateSchoolGroup(props.schoolGroupId, fieldName)
+    await communityGroupStore.updateCommunityGroup(
+      props.communityGroupId,
+      fieldName
+    )
     if (stat === 'saved') status[fieldName] = StatusEnum.saved
     else if (stat === 'remove') status[fieldName] = StatusEnum.removed
     else status[fieldName] = StatusEnum.null
@@ -122,7 +125,7 @@
     <div class="col-span-12 lg:col-span-7 grid grid-cols-12 gap-x-3 gap-y-2">
       <div class="col-span-12 sm:col-span-8 lg:col-span-8">
         <BaseInput
-          v-model="schoolGroup.name"
+          v-model="communityGroup.name"
           :status="status.name"
           label="Group Name"
           name="groupName"
@@ -130,7 +133,7 @@
           @change-status="(stat: string) => fieldStatus(stat, 'name')" />
 
         <BaseInput
-          v-model="schoolGroup.earliestTime"
+          v-model="communityGroup.earliestTime"
           :status="status.earliestTime"
           name="earliestTime"
           label="Earliest time your group can perform"
@@ -140,7 +143,7 @@
           " />
 
         <BaseInput
-          v-model="schoolGroup.latestTime"
+          v-model="communityGroup.latestTime"
           :status="status.latestTime"
           name="latestTime"
           label="Latest time your group can perform"
@@ -151,7 +154,7 @@
         class="col-span-12 sm:col-span-4 lg:col-span-4 grid grid-cols-2 gap-x-3 items-end">
         <div class="col-1 sm:col-span-2">
           <BaseInput
-            v-model.number="schoolGroup.groupSize"
+            v-model.number="communityGroup.groupSize"
             v-maska
             :status="status.groupSize"
             min="2"
@@ -166,7 +169,7 @@
         </div>
         <div class="col-1 sm:col-span-2">
           <BaseInput
-            v-model.number="schoolGroup.chaperones"
+            v-model.number="communityGroup.chaperones"
             v-maska
             :status="status.chaperones"
             name="chaperones"
@@ -183,7 +186,7 @@
         </div>
         <div class="col-1 sm:col-span-2">
           <BaseInput
-            v-model.number="schoolGroup.wheelchairs"
+            v-model.number="communityGroup.wheelchairs"
             v-maska
             :status="status.wheelchairs"
             name="wheelchairs"
@@ -205,21 +208,19 @@
     </div>
     <div class="col-span-12 lg:col-span-5">
       <BaseTextarea
-        v-model="schoolGroup.unavailable"
+        v-model="communityGroup.unavailable"
         :status="status.unavailable"
         name="unavailable"
         label="Unavailable Dates/Times"
         rows="3"
         @change-status="(stat: string) => fieldStatus(stat, 'unavailable')" />
       <p class="text-sm mb-2">
-        List any date/time when you are unavailable for performance, including
-        school in-service days, using
-        <strong>calendar dates</strong>, not school cycle days, between February
-        23 and March 20, 2025.
+        List any date/time when you are unavailable for performance using
+        <strong>calendar dates</strong>, between February 23 and March 20, 2025.
       </p>
 
       <BaseTextarea
-        v-model="schoolGroup.conflictPerformers"
+        v-model="communityGroup.conflictPerformers"
         :status="status.conflictPerformers"
         name="conflictPerformers"
         label="Performers participating in other classes."
@@ -228,8 +229,8 @@
           (stat: string) => fieldStatus(stat, 'conflictPerformers')
         " />
       <p class="text-sm mb-2">
-        If there are any students in your group participating in other festival
-        classes, list the students' names so that we can do our best to avoid
+        If there are any performers in your group participating in other
+        festival classes, list their names so that we can do our best to avoid
         scheduling conflicts:
       </p>
     </div>

@@ -16,8 +16,11 @@ const documents = {
     "mutation ClassCreate($registrationId: Int!, $registeredClass: RegisteredClassInput) {\n  registeredClassCreate(\n    registrationID: $registrationId\n    registeredClass: $registeredClass\n  ) {\n    registeredClass {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.ClassCreateDocument,
     "mutation ClassDelete($registeredClassId: Int!) {\n  registeredClassDelete(registeredClassID: $registeredClassId) {\n    registeredClass {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.ClassDeleteDocument,
     "mutation ClassUpdate($registeredClassId: Int!, $registeredClass: RegisteredClassInput!) {\n  registeredClassUpdate(\n    registeredClassID: $registeredClassId\n    registeredClassInput: $registeredClass\n  ) {\n    registeredClass {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.ClassUpdateDocument,
-    "mutation CommunityCreate($registrationId: Int!) {\n  communityCreate(registrationID: $registrationId) {\n    community {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.CommunityCreateDocument,
+    "mutation CommunityCreate($registrationId: Int!, $community: CommunityInput!) {\n  communityCreate(registrationID: $registrationId, communityInput: $community) {\n    community {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.CommunityCreateDocument,
     "mutation CommunityDelete($communityId: Int!) {\n  communityDelete(communityID: $communityId) {\n    community {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.CommunityDeleteDocument,
+    "mutation CommunityGroupCreate($communityId: Int!) {\n  communityGroupCreate(communityID: $communityId) {\n    communityGroup {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.CommunityGroupCreateDocument,
+    "mutation CommunityGroupDelete($communityGroupId: Int!) {\n  communityGroupDelete(communityGroupID: $communityGroupId) {\n    communityGroup {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.CommunityGroupDeleteDocument,
+    "mutation CommunityGroupUpdate($communityGroupId: Int!, $communityGroup: CommunityGroupInput!) {\n  communityGroupUpdate(\n    communityGroupID: $communityGroupId\n    communityGroupInput: $communityGroup\n  ) {\n    communityGroup {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.CommunityGroupUpdateDocument,
     "mutation CommunityUpdate($communityId: Int!, $community: CommunityInput!) {\n  communityUpdate(communityID: $communityId, communityInput: $community) {\n    community {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.CommunityUpdateDocument,
     "mutation GroupCreate($registrationId: Int!) {\n  groupCreate(registrationID: $registrationId) {\n    group {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.GroupCreateDocument,
     "mutation GroupDelete($groupId: Int!) {\n  groupDelete(groupID: $groupId) {\n    group {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.GroupDeleteDocument,
@@ -41,9 +44,10 @@ const documents = {
     "mutation TeacherDelete($teacherId: Int!) {\n  teacherDelete(teacherID: $teacherId) {\n    teacher {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.TeacherDeleteDocument,
     "mutation TeacherUpdate($teacherId: Int!, $teacher: TeacherInput!) {\n  teacherUpdate(teacherID: $teacherId, teacherInput: $teacher) {\n    teacher {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.TeacherUpdateDocument,
     "mutation UserUpdate($userId: Int!, $user: UserInput!) {\n  userUpdate(userID: $userId, userInput: $user) {\n    user {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.UserUpdateDocument,
-    "mutation SignIn($credentials: CredentialsSignin!) {\n  signin(credentials: $credentials) {\n    userErrors {\n      message\n    }\n    diatonicToken\n    user {\n      id\n      email\n      firstName\n      lastName\n      privateTeacher\n      schoolTeacher\n      hasSignedIn\n      admin\n    }\n  }\n}": types.SignInDocument,
+    "mutation SignIn($credentials: CredentialsSignin!) {\n  signin(credentials: $credentials) {\n    userErrors {\n      message\n    }\n    diatonicToken\n    user {\n      email\n      firstName\n      lastName\n      privateTeacher\n      hasSignedIn\n    }\n  }\n}": types.SignInDocument,
     "mutation SignUp($credentials: CredentialsSignup!) {\n  signup(credentials: $credentials) {\n    userErrors {\n      message\n    }\n    user {\n      email\n    }\n  }\n}": types.SignUpDocument,
-    "query CommunityInfo($registrationId: Int!) {\n  registration(id: $registrationId) {\n    community {\n      id\n      name\n      groupSize\n      chaperones\n      wheelchairs\n      earliestTime\n      latestTime\n      unavailable\n      conflictPerformers\n    }\n  }\n}": types.CommunityInfoDocument,
+    "query CommunityGroupInfo($registrationId: Int!) {\n  registration(id: $registrationId) {\n    community {\n      communityGroups {\n        id\n        name\n        groupSize\n        chaperones\n        wheelchairs\n        earliestTime\n        latestTime\n        unavailable\n        conflictPerformers\n      }\n    }\n  }\n}": types.CommunityGroupInfoDocument,
+    "query CommunityInfo($registrationId: Int!) {\n  registration(id: $registrationId) {\n    community {\n      id\n      name\n      streetNumber\n      streetName\n      city\n      province\n      postalCode\n      phone\n      email\n    }\n  }\n}": types.CommunityInfoDocument,
     "query DisciplinesByType($performerType: PerformerType!) {\n  disciplines(performerType: $performerType) {\n    id\n    name\n    instruments {\n      id\n      name\n      mozart\n    }\n  }\n}": types.DisciplinesByTypeDocument,
     "query GroupInfo($registrationId: Int!) {\n  registration(id: $registrationId) {\n    group {\n      id\n      age\n      groupType\n      instruments\n      name\n      numberOfPerformers\n    }\n  }\n}": types.GroupInfoDocument,
     "query Performers($registrationId: Int!) {\n  performers(registrationID: $registrationId) {\n    id\n    firstName\n    lastName\n    age\n    apartment\n    streetNumber\n    streetName\n    city\n    province\n    postalCode\n    phone\n    email\n    instrument\n    level\n  }\n}": types.PerformersDocument,
@@ -98,11 +102,23 @@ export function graphql(source: "mutation ClassUpdate($registeredClassId: Int!, 
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "mutation CommunityCreate($registrationId: Int!) {\n  communityCreate(registrationID: $registrationId) {\n    community {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}"): (typeof documents)["mutation CommunityCreate($registrationId: Int!) {\n  communityCreate(registrationID: $registrationId) {\n    community {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}"];
+export function graphql(source: "mutation CommunityCreate($registrationId: Int!, $community: CommunityInput!) {\n  communityCreate(registrationID: $registrationId, communityInput: $community) {\n    community {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}"): (typeof documents)["mutation CommunityCreate($registrationId: Int!, $community: CommunityInput!) {\n  communityCreate(registrationID: $registrationId, communityInput: $community) {\n    community {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "mutation CommunityDelete($communityId: Int!) {\n  communityDelete(communityID: $communityId) {\n    community {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}"): (typeof documents)["mutation CommunityDelete($communityId: Int!) {\n  communityDelete(communityID: $communityId) {\n    community {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "mutation CommunityGroupCreate($communityId: Int!) {\n  communityGroupCreate(communityID: $communityId) {\n    communityGroup {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}"): (typeof documents)["mutation CommunityGroupCreate($communityId: Int!) {\n  communityGroupCreate(communityID: $communityId) {\n    communityGroup {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "mutation CommunityGroupDelete($communityGroupId: Int!) {\n  communityGroupDelete(communityGroupID: $communityGroupId) {\n    communityGroup {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}"): (typeof documents)["mutation CommunityGroupDelete($communityGroupId: Int!) {\n  communityGroupDelete(communityGroupID: $communityGroupId) {\n    communityGroup {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "mutation CommunityGroupUpdate($communityGroupId: Int!, $communityGroup: CommunityGroupInput!) {\n  communityGroupUpdate(\n    communityGroupID: $communityGroupId\n    communityGroupInput: $communityGroup\n  ) {\n    communityGroup {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}"): (typeof documents)["mutation CommunityGroupUpdate($communityGroupId: Int!, $communityGroup: CommunityGroupInput!) {\n  communityGroupUpdate(\n    communityGroupID: $communityGroupId\n    communityGroupInput: $communityGroup\n  ) {\n    communityGroup {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -198,7 +214,7 @@ export function graphql(source: "mutation UserUpdate($userId: Int!, $user: UserI
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "mutation SignIn($credentials: CredentialsSignin!) {\n  signin(credentials: $credentials) {\n    userErrors {\n      message\n    }\n    diatonicToken\n    user {\n      id\n      email\n      firstName\n      lastName\n      privateTeacher\n      schoolTeacher\n      hasSignedIn\n      admin\n    }\n  }\n}"): (typeof documents)["mutation SignIn($credentials: CredentialsSignin!) {\n  signin(credentials: $credentials) {\n    userErrors {\n      message\n    }\n    diatonicToken\n    user {\n      id\n      email\n      firstName\n      lastName\n      privateTeacher\n      schoolTeacher\n      hasSignedIn\n      admin\n    }\n  }\n}"];
+export function graphql(source: "mutation SignIn($credentials: CredentialsSignin!) {\n  signin(credentials: $credentials) {\n    userErrors {\n      message\n    }\n    diatonicToken\n    user {\n      email\n      firstName\n      lastName\n      privateTeacher\n      hasSignedIn\n    }\n  }\n}"): (typeof documents)["mutation SignIn($credentials: CredentialsSignin!) {\n  signin(credentials: $credentials) {\n    userErrors {\n      message\n    }\n    diatonicToken\n    user {\n      email\n      firstName\n      lastName\n      privateTeacher\n      hasSignedIn\n    }\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -206,7 +222,11 @@ export function graphql(source: "mutation SignUp($credentials: CredentialsSignup
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "query CommunityInfo($registrationId: Int!) {\n  registration(id: $registrationId) {\n    community {\n      id\n      name\n      groupSize\n      chaperones\n      wheelchairs\n      earliestTime\n      latestTime\n      unavailable\n      conflictPerformers\n    }\n  }\n}"): (typeof documents)["query CommunityInfo($registrationId: Int!) {\n  registration(id: $registrationId) {\n    community {\n      id\n      name\n      groupSize\n      chaperones\n      wheelchairs\n      earliestTime\n      latestTime\n      unavailable\n      conflictPerformers\n    }\n  }\n}"];
+export function graphql(source: "query CommunityGroupInfo($registrationId: Int!) {\n  registration(id: $registrationId) {\n    community {\n      communityGroups {\n        id\n        name\n        groupSize\n        chaperones\n        wheelchairs\n        earliestTime\n        latestTime\n        unavailable\n        conflictPerformers\n      }\n    }\n  }\n}"): (typeof documents)["query CommunityGroupInfo($registrationId: Int!) {\n  registration(id: $registrationId) {\n    community {\n      communityGroups {\n        id\n        name\n        groupSize\n        chaperones\n        wheelchairs\n        earliestTime\n        latestTime\n        unavailable\n        conflictPerformers\n      }\n    }\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "query CommunityInfo($registrationId: Int!) {\n  registration(id: $registrationId) {\n    community {\n      id\n      name\n      streetNumber\n      streetName\n      city\n      province\n      postalCode\n      phone\n      email\n    }\n  }\n}"): (typeof documents)["query CommunityInfo($registrationId: Int!) {\n  registration(id: $registrationId) {\n    community {\n      id\n      name\n      streetNumber\n      streetName\n      city\n      province\n      postalCode\n      phone\n      email\n    }\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

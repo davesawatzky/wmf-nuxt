@@ -24,6 +24,7 @@
   const schoolStore = useSchool()
   const schoolGroupStore = useSchoolGroup()
   const communityStore = useCommunity()
+  const communityGroupStore = useCommunityGroup()
   const classesStore = useClasses()
   const fieldConfigStore = useFieldConfig()
 
@@ -46,6 +47,7 @@
     teacherStore.$resetAllTeachers()
     groupStore.$reset()
     communityStore.$reset()
+    communityGroupStore.$reset()
     schoolStore.$reset()
     schoolGroupStore.$reset()
     classesStore.$reset()
@@ -112,6 +114,7 @@
         appStore.performerType = PerformerType.COMMUNITY
         appStore.dataLoading = true
         await communityStore.loadCommunity(registrationId)
+        await communityGroupStore.loadCommunityGroups(registrationId)
         appStore.dataLoading = false
         break
     }

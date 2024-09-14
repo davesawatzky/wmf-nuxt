@@ -32,8 +32,10 @@ export type Category = {
   description?: Maybe<Scalars['String']['output']>;
   festivalClasses?: Maybe<Array<FestivalClass>>;
   id: Scalars['Int']['output'];
+  levels?: Maybe<Array<Level>>;
   name: Scalars['String']['output'];
   requiredComposer?: Maybe<Scalars['String']['output']>;
+  subdisciplines?: Maybe<Array<Subdiscipline>>;
 };
 
 
@@ -58,13 +60,41 @@ export type CategoryPayload = {
 export type ClassType = {
   __typename: 'ClassType';
   description?: Maybe<Scalars['String']['output']>;
+  festivalClasses: Array<FestivalClass>;
   id: Scalars['Int']['output'];
   name: Scalars['String']['output'];
 };
 
+export type ClassTypeInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  name: Scalars['String']['input'];
+};
+
+export type ClassTypePayload = {
+  __typename: 'ClassTypePayload';
+  classType?: Maybe<ClassType>;
+  userErrors: Array<UserError>;
+};
+
 export type Community = {
   __typename: 'Community';
+  city?: Maybe<Scalars['String']['output']>;
+  communityGroups?: Maybe<Array<CommunityGroup>>;
+  email?: Maybe<Scalars['String']['output']>;
+  id: Scalars['Int']['output'];
+  name?: Maybe<Scalars['String']['output']>;
+  phone?: Maybe<Scalars['String']['output']>;
+  postalCode?: Maybe<Scalars['String']['output']>;
+  province?: Maybe<Scalars['String']['output']>;
+  registration?: Maybe<Registration>;
+  streetName?: Maybe<Scalars['String']['output']>;
+  streetNumber?: Maybe<Scalars['String']['output']>;
+};
+
+export type CommunityGroup = {
+  __typename: 'CommunityGroup';
   chaperones?: Maybe<Scalars['Int']['output']>;
+  community?: Maybe<Community>;
   conflictPerformers?: Maybe<Scalars['String']['output']>;
   earliestTime?: Maybe<Scalars['String']['output']>;
   groupSize?: Maybe<Scalars['Int']['output']>;
@@ -75,7 +105,7 @@ export type Community = {
   wheelchairs?: Maybe<Scalars['Int']['output']>;
 };
 
-export type CommunityInput = {
+export type CommunityGroupInput = {
   chaperones?: InputMaybe<Scalars['Int']['input']>;
   conflictPerformers?: InputMaybe<Scalars['String']['input']>;
   earliestTime?: InputMaybe<Scalars['String']['input']>;
@@ -86,9 +116,26 @@ export type CommunityInput = {
   wheelchairs?: InputMaybe<Scalars['Int']['input']>;
 };
 
+export type CommunityGroupPayload = {
+  __typename: 'CommunityGroupPayload';
+  communityGroup?: Maybe<CommunityGroup>;
+  userErrors: Array<UserError>;
+};
+
+export type CommunityInput = {
+  city?: InputMaybe<Scalars['String']['input']>;
+  email?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  phone?: InputMaybe<Scalars['String']['input']>;
+  postalCode?: InputMaybe<Scalars['String']['input']>;
+  province?: InputMaybe<Scalars['String']['input']>;
+  streetName?: InputMaybe<Scalars['String']['input']>;
+  streetNumber?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type CommunityPayload = {
   __typename: 'CommunityPayload';
-  community: Community;
+  community?: Maybe<Community>;
   userErrors: Array<UserError>;
 };
 
@@ -126,8 +173,13 @@ export type DisciplineInput = {
 
 export type DisciplinePayload = {
   __typename: 'DisciplinePayload';
-  discipline: Discipline;
+  discipline?: Maybe<Discipline>;
   userErrors: Array<UserError>;
+};
+
+export type EmailExists = {
+  __typename: 'EmailExists';
+  email?: Maybe<Scalars['String']['output']>;
 };
 
 export type FestivalClass = {
@@ -141,7 +193,7 @@ export type FestivalClass = {
   maxSelections: Scalars['Int']['output'];
   minSelections: Scalars['Int']['output'];
   performerType: PerformerType;
-  price?: Maybe<Scalars['Decimal']['output']>;
+  price?: Maybe<Scalars['Int']['output']>;
   requiredSelection?: Maybe<Scalars['String']['output']>;
   subdiscipline: Subdiscipline;
   trophies?: Maybe<Array<Trophy>>;
@@ -151,12 +203,12 @@ export type FestivalClassInput = {
   categoryID: Scalars['Int']['input'];
   classNumber: Scalars['String']['input'];
   classTypeID: Scalars['Int']['input'];
-  description?: InputMaybe<Scalars['String']['input']>;
+  description: Scalars['String']['input'];
   levelID: Scalars['Int']['input'];
   maxSelections: Scalars['Int']['input'];
   minSelections: Scalars['Int']['input'];
   performerType: PerformerType;
-  price?: InputMaybe<Scalars['Decimal']['input']>;
+  price?: InputMaybe<Scalars['Int']['input']>;
   requiredSelection?: InputMaybe<Scalars['String']['input']>;
   subdisciplineID: Scalars['Int']['input'];
 };
@@ -195,6 +247,7 @@ export type Group = {
   instruments?: Maybe<Scalars['String']['output']>;
   name?: Maybe<Scalars['String']['output']>;
   numberOfPerformers?: Maybe<Scalars['Int']['output']>;
+  registration?: Maybe<Registration>;
 };
 
 export type GroupInput = {
@@ -207,20 +260,22 @@ export type GroupInput = {
 
 export type GroupPayload = {
   __typename: 'GroupPayload';
-  group: Group;
+  group?: Maybe<Group>;
   userErrors: Array<UserError>;
 };
 
 export type Instrument = {
   __typename: 'Instrument';
-  discipline: Discipline;
+  discipline?: Maybe<Discipline>;
   id: Scalars['Int']['output'];
-  mozart: Scalars['Boolean']['output'];
+  mozart?: Maybe<Scalars['Boolean']['output']>;
   name: Scalars['String']['output'];
 };
 
 export type InstrumentInput = {
-  name?: InputMaybe<Scalars['String']['input']>;
+  disciplineID?: InputMaybe<Scalars['Int']['input']>;
+  mozart?: InputMaybe<Scalars['Boolean']['input']>;
+  name: Scalars['String']['input'];
 };
 
 export type InstrumentPayload = {
@@ -231,10 +286,12 @@ export type InstrumentPayload = {
 
 export type Level = {
   __typename: 'Level';
+  categories?: Maybe<Array<Category>>;
   description?: Maybe<Scalars['String']['output']>;
   festivalClasses?: Maybe<Array<FestivalClass>>;
   id: Scalars['Int']['output'];
   name: Scalars['String']['output'];
+  subdisciplines?: Maybe<Array<Subdiscipline>>;
 };
 
 
@@ -260,12 +317,19 @@ export type Mutation = {
   categoryCreate: CategoryPayload;
   categoryDelete: CategoryPayload;
   categoryUpdate: CategoryPayload;
+  classTypeCreate: ClassTypePayload;
+  classTypeDelete: ClassTypePayload;
+  classTypeUpdate: ClassTypePayload;
   communityCreate: CommunityPayload;
   communityDelete: CommunityPayload;
+  communityGroupCreate: CommunityGroupPayload;
+  communityGroupDelete: CommunityGroupPayload;
+  communityGroupUpdate: CommunityGroupPayload;
   communityUpdate: CommunityPayload;
   disciplineCreate: DisciplinePayload;
   disciplineDelete: DisciplinePayload;
   disciplineUpdate: DisciplinePayload;
+  festivalClassCreate: FestivalClassPayload;
   festivalClassDelete: FestivalClassPayload;
   festivalClassUpdate: FestivalClassPayload;
   groupCreate: GroupPayload;
@@ -277,6 +341,7 @@ export type Mutation = {
   levelCreate: LevelPayload;
   levelDelete: LevelPayload;
   levelUpdate: LevelPayload;
+  passwordChange: PasswordChangePayload;
   performerCreate: PerformerPayload;
   performerDelete: PerformerPayload;
   performerUpdate: PerformerPayload;
@@ -317,7 +382,7 @@ export type MutationcategoryCreateArgs = {
 
 
 export type MutationcategoryDeleteArgs = {
-  id: Scalars['Int']['input'];
+  categoryID: Scalars['Int']['input'];
 };
 
 
@@ -327,13 +392,47 @@ export type MutationcategoryUpdateArgs = {
 };
 
 
+export type MutationclassTypeCreateArgs = {
+  classTypeInput: ClassTypeInput;
+};
+
+
+export type MutationclassTypeDeleteArgs = {
+  classTypeID: Scalars['Int']['input'];
+};
+
+
+export type MutationclassTypeUpdateArgs = {
+  classTypeID: Scalars['Int']['input'];
+  classTypeInput: ClassTypeInput;
+};
+
+
 export type MutationcommunityCreateArgs = {
+  communityInput?: InputMaybe<CommunityInput>;
   registrationID: Scalars['Int']['input'];
 };
 
 
 export type MutationcommunityDeleteArgs = {
   communityID: Scalars['Int']['input'];
+};
+
+
+export type MutationcommunityGroupCreateArgs = {
+  communityGroupInput?: InputMaybe<CommunityGroupInput>;
+  communityID: Scalars['Int']['input'];
+};
+
+
+export type MutationcommunityGroupDeleteArgs = {
+  communityGroupID: Scalars['Int']['input'];
+};
+
+
+export type MutationcommunityGroupUpdateArgs = {
+  communityGroupID: Scalars['Int']['input'];
+  communityGroupInput: CommunityGroupInput;
 };
 
 
@@ -349,13 +448,18 @@ export type MutationdisciplineCreateArgs = {
 
 
 export type MutationdisciplineDeleteArgs = {
-  id: Scalars['Int']['input'];
+  disciplineID: Scalars['Int']['input'];
 };
 
 
 export type MutationdisciplineUpdateArgs = {
+  disciplineID: Scalars['Int']['input'];
   disciplineInput: DisciplineInput;
-  id: Scalars['Int']['input'];
+};
+
+
+export type MutationfestivalClassCreateArgs = {
+  festivalClassInput: FestivalClassInput;
 };
 
 
@@ -365,8 +469,8 @@ export type MutationfestivalClassDeleteArgs = {
 
 
 export type MutationfestivalClassUpdateArgs = {
-  festivalClass: FestivalClassInput;
   festivalClassID: Scalars['Int']['input'];
+  festivalClassInput: FestivalClassInput;
 };
 
 
@@ -387,18 +491,18 @@ export type MutationgroupUpdateArgs = {
 
 
 export type MutationinstrumentCreateArgs = {
-  instrument: InstrumentInput;
+  instrumentInput: InstrumentInput;
 };
 
 
 export type MutationinstrumentDeleteArgs = {
-  id: Scalars['Int']['input'];
+  instrumentID: Scalars['Int']['input'];
 };
 
 
 export type MutationinstrumentUpdateArgs = {
-  instrument: InstrumentInput;
   instrumentID: Scalars['Int']['input'];
+  instrumentInput: InstrumentInput;
 };
 
 
@@ -415,6 +519,11 @@ export type MutationlevelDeleteArgs = {
 export type MutationlevelUpdateArgs = {
   levelID: Scalars['Int']['input'];
   levelInput: LevelInput;
+};
+
+
+export type MutationpasswordChangeArgs = {
+  passwordChangeInput: PasswordChangeInput;
 };
 
 
@@ -481,6 +590,7 @@ export type MutationschoolDeleteArgs = {
 
 
 export type MutationschoolGroupCreateArgs = {
+  schoolGroupInput?: InputMaybe<SchoolGroupInput>;
   schoolID: Scalars['Int']['input'];
 };
 
@@ -529,7 +639,6 @@ export type MutationsignupArgs = {
 
 
 export type MutationsubdisciplineCreateArgs = {
-  disciplineID: Scalars['Int']['input'];
   subdisciplineInput: SubdisciplineInput;
 };
 
@@ -569,7 +678,7 @@ export type MutationtrophyCreateArgs = {
 
 
 export type MutationtrophyDeleteArgs = {
-  id: Scalars['Int']['input'];
+  trophyID: Scalars['Int']['input'];
 };
 
 
@@ -580,13 +689,25 @@ export type MutationtrophyUpdateArgs = {
 
 
 export type MutationuserDeleteArgs = {
-  id: Scalars['Int']['input'];
+  userID: Scalars['Int']['input'];
 };
 
 
 export type MutationuserUpdateArgs = {
   userID: Scalars['Int']['input'];
   userInput: UserInput;
+};
+
+export type PasswordChangeInput = {
+  password1: Scalars['String']['input'];
+  password2: Scalars['String']['input'];
+  resetToken: Scalars['String']['input'];
+};
+
+export type PasswordChangePayload = {
+  __typename: 'PasswordChangePayload';
+  passwordChanged: Scalars['Boolean']['output'];
+  userErrors: Array<UserError>;
 };
 
 export type PasswordExists = {
@@ -610,6 +731,7 @@ export type Performer = {
   phone?: Maybe<Scalars['String']['output']>;
   postalCode?: Maybe<Scalars['String']['output']>;
   province?: Maybe<Scalars['String']['output']>;
+  registration?: Maybe<Registration>;
   streetName?: Maybe<Scalars['String']['output']>;
   streetNumber?: Maybe<Scalars['String']['output']>;
 };
@@ -633,7 +755,7 @@ export type PerformerInput = {
 
 export type PerformerPayload = {
   __typename: 'PerformerPayload';
-  performer: Performer;
+  performer?: Maybe<Performer>;
   userErrors: Array<UserError>;
 };
 
@@ -652,8 +774,11 @@ export type Query = {
   checkIfPasswordExists: PasswordExists;
   checkUser: User;
   classType: ClassType;
+  classTypes: Array<ClassType>;
   communities: Array<Community>;
   community: Community;
+  communityGroup: CommunityGroup;
+  communityGroups: Array<CommunityGroup>;
   discipline: Discipline;
   disciplines: Array<Discipline>;
   festivalClass: FestivalClass;
@@ -671,6 +796,7 @@ export type Query = {
   logout: Scalars['String']['output'];
   myStudents: Teacher;
   myUser: User;
+  passwordChangeEmailVerification: EmailExists;
   performer: Performer;
   performers: Array<Performer>;
   registeredClass: RegisteredClass;
@@ -685,7 +811,6 @@ export type Query = {
   selections: Array<Selection>;
   subdiscipline: Subdiscipline;
   subdisciplines: Array<Subdiscipline>;
-  subdisciplinesByName: Array<Subdiscipline>;
   teacher: Teacher;
   teachers: Array<Teacher>;
   tokenCheck: Scalars['Boolean']['output'];
@@ -723,7 +848,18 @@ export type QueryclassTypeArgs = {
 
 
 export type QuerycommunityArgs = {
-  registrationID: Scalars['Int']['input'];
+  communityID?: InputMaybe<Scalars['Int']['input']>;
+  registrationID?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QuerycommunityGroupArgs = {
+  communityGroupID: Scalars['Int']['input'];
+};
+
+
+export type QuerycommunityGroupsArgs = {
+  communityID?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
@@ -766,13 +902,24 @@ export type QueryfieldConfigArgs = {
 
 
 export type QuerygroupArgs = {
-  registrationID: Scalars['Int']['input'];
+  groupID?: InputMaybe<Scalars['Int']['input']>;
+  registrationID?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QuerygroupsArgs = {
+  registrationID?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
 export type QueryinstrumentArgs = {
   id?: InputMaybe<Scalars['Int']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryinstrumentsArgs = {
+  disciplineID?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
@@ -787,13 +934,18 @@ export type QuerylevelsArgs = {
 };
 
 
+export type QuerypasswordChangeEmailVerificationArgs = {
+  email: Scalars['String']['input'];
+};
+
+
 export type QueryperformerArgs = {
   performerID: Scalars['Int']['input'];
 };
 
 
 export type QueryperformersArgs = {
-  registrationID: Scalars['Int']['input'];
+  registrationID?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
@@ -818,7 +970,8 @@ export type QueryregistrationsArgs = {
 
 
 export type QueryschoolArgs = {
-  schoolID: Scalars['Int']['input'];
+  registrationID?: InputMaybe<Scalars['Int']['input']>;
+  schoolID?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
@@ -828,7 +981,7 @@ export type QueryschoolGroupArgs = {
 
 
 export type QueryschoolGroupsArgs = {
-  schoolID: Scalars['Int']['input'];
+  schoolID?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
@@ -853,11 +1006,6 @@ export type QuerysubdisciplinesArgs = {
 };
 
 
-export type QuerysubdisciplinesByNameArgs = {
-  name: Scalars['String']['input'];
-};
-
-
 export type QueryteacherArgs = {
   teacherEmail?: InputMaybe<Scalars['String']['input']>;
   teacherID?: InputMaybe<Scalars['Int']['input']>;
@@ -876,7 +1024,8 @@ export type QuerytrophyArgs = {
 
 
 export type QueryuserArgs = {
-  userID: Scalars['Int']['input'];
+  email?: InputMaybe<Scalars['String']['input']>;
+  userID?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type RegisteredClass = {
@@ -884,6 +1033,7 @@ export type RegisteredClass = {
   category?: Maybe<Scalars['String']['output']>;
   classNumber?: Maybe<Scalars['String']['output']>;
   classType?: Maybe<Scalars['String']['output']>;
+  communityGroupID?: Maybe<Scalars['Int']['output']>;
   discipline?: Maybe<Scalars['String']['output']>;
   id: Scalars['Int']['output'];
   level?: Maybe<Scalars['String']['output']>;
@@ -900,6 +1050,7 @@ export type RegisteredClassInput = {
   category?: InputMaybe<Scalars['String']['input']>;
   classNumber?: InputMaybe<Scalars['String']['input']>;
   classType?: InputMaybe<Scalars['String']['input']>;
+  communityGroupID?: InputMaybe<Scalars['Int']['input']>;
   discipline?: InputMaybe<Scalars['String']['input']>;
   level?: InputMaybe<Scalars['String']['input']>;
   maxSelections?: InputMaybe<Scalars['Int']['input']>;
@@ -950,7 +1101,7 @@ export type RegistrationInput = {
 
 export type RegistrationPayload = {
   __typename: 'RegistrationPayload';
-  registration: Registration;
+  registration?: Maybe<Registration>;
   userErrors: Array<UserError>;
 };
 
@@ -959,10 +1110,11 @@ export type School = {
   city?: Maybe<Scalars['String']['output']>;
   division?: Maybe<Scalars['String']['output']>;
   id: Scalars['Int']['output'];
-  name: Scalars['String']['output'];
+  name?: Maybe<Scalars['String']['output']>;
   phone?: Maybe<Scalars['String']['output']>;
   postalCode?: Maybe<Scalars['String']['output']>;
   province?: Maybe<Scalars['String']['output']>;
+  registration?: Maybe<Registration>;
   schoolGroups?: Maybe<Array<SchoolGroup>>;
   streetName?: Maybe<Scalars['String']['output']>;
   streetNumber?: Maybe<Scalars['String']['output']>;
@@ -977,6 +1129,7 @@ export type SchoolGroup = {
   id: Scalars['Int']['output'];
   latestTime?: Maybe<Scalars['String']['output']>;
   name?: Maybe<Scalars['String']['output']>;
+  school?: Maybe<School>;
   unavailable?: Maybe<Scalars['String']['output']>;
   wheelchairs?: Maybe<Scalars['Int']['output']>;
 };
@@ -994,7 +1147,7 @@ export type SchoolGroupInput = {
 
 export type SchoolGroupPayload = {
   __typename: 'SchoolGroupPayload';
-  schoolGroup: SchoolGroup;
+  schoolGroup?: Maybe<SchoolGroup>;
   userErrors: Array<UserError>;
 };
 
@@ -1011,7 +1164,7 @@ export type SchoolInput = {
 
 export type SchoolPayload = {
   __typename: 'SchoolPayload';
-  school: School;
+  school?: Maybe<School>;
   userErrors: Array<UserError>;
 };
 
@@ -1041,6 +1194,7 @@ export type SelectionPayload = {
 
 export type Subdiscipline = {
   __typename: 'Subdiscipline';
+  categories?: Maybe<Array<Category>>;
   description?: Maybe<Scalars['String']['output']>;
   discipline?: Maybe<Discipline>;
   festivalClasses?: Maybe<Array<FestivalClass>>;
@@ -1049,7 +1203,7 @@ export type Subdiscipline = {
   maxPerformers?: Maybe<Scalars['Int']['output']>;
   minPerformers?: Maybe<Scalars['Int']['output']>;
   name: Scalars['String']['output'];
-  performerType: PerformerType;
+  performerType?: Maybe<PerformerType>;
   price?: Maybe<Scalars['Decimal']['output']>;
 };
 
@@ -1062,6 +1216,7 @@ export type SubdisciplinefestivalClassesArgs = {
 
 export type SubdisciplineInput = {
   description?: InputMaybe<Scalars['String']['input']>;
+  disciplineID: Scalars['Int']['input'];
   maxPerformers?: InputMaybe<Scalars['Int']['input']>;
   minPerformers?: InputMaybe<Scalars['Int']['input']>;
   name: Scalars['String']['input'];
@@ -1071,7 +1226,7 @@ export type SubdisciplineInput = {
 
 export type SubdisciplinePayload = {
   __typename: 'SubdisciplinePayload';
-  subdiscpline?: Maybe<Subdiscipline>;
+  subdiscipline?: Maybe<Subdiscipline>;
   userErrors: Array<UserError>;
 };
 
@@ -1192,7 +1347,7 @@ export type UserInput = {
 
 export type UserPayload = {
   __typename: 'UserPayload';
-  user: User;
+  user?: Maybe<User>;
   userErrors: Array<UserError>;
 };
 
@@ -1221,17 +1376,40 @@ export type ClassUpdateMutation = { __typename: 'Mutation', registeredClassUpdat
 
 export type CommunityCreateMutationVariables = Exact<{
   registrationId: Scalars['Int']['input'];
+  community: CommunityInput;
 }>;
 
 
-export type CommunityCreateMutation = { __typename: 'Mutation', communityCreate: { __typename: 'CommunityPayload', community: { __typename: 'Community', id: number }, userErrors: Array<{ __typename: 'UserError', message: string }> } };
+export type CommunityCreateMutation = { __typename: 'Mutation', communityCreate: { __typename: 'CommunityPayload', community?: { __typename: 'Community', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type CommunityDeleteMutationVariables = Exact<{
   communityId: Scalars['Int']['input'];
 }>;
 
 
-export type CommunityDeleteMutation = { __typename: 'Mutation', communityDelete: { __typename: 'CommunityPayload', community: { __typename: 'Community', id: number }, userErrors: Array<{ __typename: 'UserError', message: string }> } };
+export type CommunityDeleteMutation = { __typename: 'Mutation', communityDelete: { __typename: 'CommunityPayload', community?: { __typename: 'Community', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
+
+export type CommunityGroupCreateMutationVariables = Exact<{
+  communityId: Scalars['Int']['input'];
+}>;
+
+
+export type CommunityGroupCreateMutation = { __typename: 'Mutation', communityGroupCreate: { __typename: 'CommunityGroupPayload', communityGroup?: { __typename: 'CommunityGroup', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
+
+export type CommunityGroupDeleteMutationVariables = Exact<{
+  communityGroupId: Scalars['Int']['input'];
+}>;
+
+
+export type CommunityGroupDeleteMutation = { __typename: 'Mutation', communityGroupDelete: { __typename: 'CommunityGroupPayload', communityGroup?: { __typename: 'CommunityGroup', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
+
+export type CommunityGroupUpdateMutationVariables = Exact<{
+  communityGroupId: Scalars['Int']['input'];
+  communityGroup: CommunityGroupInput;
+}>;
+
+
+export type CommunityGroupUpdateMutation = { __typename: 'Mutation', communityGroupUpdate: { __typename: 'CommunityGroupPayload', communityGroup?: { __typename: 'CommunityGroup', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type CommunityUpdateMutationVariables = Exact<{
   communityId: Scalars['Int']['input'];
@@ -1239,21 +1417,21 @@ export type CommunityUpdateMutationVariables = Exact<{
 }>;
 
 
-export type CommunityUpdateMutation = { __typename: 'Mutation', communityUpdate: { __typename: 'CommunityPayload', community: { __typename: 'Community', id: number }, userErrors: Array<{ __typename: 'UserError', message: string }> } };
+export type CommunityUpdateMutation = { __typename: 'Mutation', communityUpdate: { __typename: 'CommunityPayload', community?: { __typename: 'Community', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type GroupCreateMutationVariables = Exact<{
   registrationId: Scalars['Int']['input'];
 }>;
 
 
-export type GroupCreateMutation = { __typename: 'Mutation', groupCreate: { __typename: 'GroupPayload', group: { __typename: 'Group', id: number }, userErrors: Array<{ __typename: 'UserError', message: string }> } };
+export type GroupCreateMutation = { __typename: 'Mutation', groupCreate: { __typename: 'GroupPayload', group?: { __typename: 'Group', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type GroupDeleteMutationVariables = Exact<{
   groupId: Scalars['Int']['input'];
 }>;
 
 
-export type GroupDeleteMutation = { __typename: 'Mutation', groupDelete: { __typename: 'GroupPayload', group: { __typename: 'Group', id: number }, userErrors: Array<{ __typename: 'UserError', message: string }> } };
+export type GroupDeleteMutation = { __typename: 'Mutation', groupDelete: { __typename: 'GroupPayload', group?: { __typename: 'Group', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type GroupUpdateMutationVariables = Exact<{
   groupId: Scalars['Int']['input'];
@@ -1261,7 +1439,7 @@ export type GroupUpdateMutationVariables = Exact<{
 }>;
 
 
-export type GroupUpdateMutation = { __typename: 'Mutation', groupUpdate: { __typename: 'GroupPayload', group: { __typename: 'Group', id: number }, userErrors: Array<{ __typename: 'UserError', message: string }> } };
+export type GroupUpdateMutation = { __typename: 'Mutation', groupUpdate: { __typename: 'GroupPayload', group?: { __typename: 'Group', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type PerformerCreateMutationVariables = Exact<{
   registrationId: Scalars['Int']['input'];
@@ -1269,14 +1447,14 @@ export type PerformerCreateMutationVariables = Exact<{
 }>;
 
 
-export type PerformerCreateMutation = { __typename: 'Mutation', performerCreate: { __typename: 'PerformerPayload', performer: { __typename: 'Performer', id: number }, userErrors: Array<{ __typename: 'UserError', message: string }> } };
+export type PerformerCreateMutation = { __typename: 'Mutation', performerCreate: { __typename: 'PerformerPayload', performer?: { __typename: 'Performer', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type PerformerDeleteMutationVariables = Exact<{
   performerId: Scalars['Int']['input'];
 }>;
 
 
-export type PerformerDeleteMutation = { __typename: 'Mutation', performerDelete: { __typename: 'PerformerPayload', performer: { __typename: 'Performer', id: number }, userErrors: Array<{ __typename: 'UserError', message: string }> } };
+export type PerformerDeleteMutation = { __typename: 'Mutation', performerDelete: { __typename: 'PerformerPayload', performer?: { __typename: 'Performer', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type PerformerUpdateMutationVariables = Exact<{
   performerId: Scalars['Int']['input'];
@@ -1284,7 +1462,7 @@ export type PerformerUpdateMutationVariables = Exact<{
 }>;
 
 
-export type PerformerUpdateMutation = { __typename: 'Mutation', performerUpdate: { __typename: 'PerformerPayload', performer: { __typename: 'Performer', id: number }, userErrors: Array<{ __typename: 'UserError', message: string }> } };
+export type PerformerUpdateMutation = { __typename: 'Mutation', performerUpdate: { __typename: 'PerformerPayload', performer?: { __typename: 'Performer', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type RegistrationCreateMutationVariables = Exact<{
   performerType: PerformerType;
@@ -1292,14 +1470,14 @@ export type RegistrationCreateMutationVariables = Exact<{
 }>;
 
 
-export type RegistrationCreateMutation = { __typename: 'Mutation', registrationCreate: { __typename: 'RegistrationPayload', registration: { __typename: 'Registration', id: number, label?: string | null, performerType: PerformerType }, userErrors: Array<{ __typename: 'UserError', message: string }> } };
+export type RegistrationCreateMutation = { __typename: 'Mutation', registrationCreate: { __typename: 'RegistrationPayload', registration?: { __typename: 'Registration', id: number, label?: string | null, performerType: PerformerType } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type RegistrationDeleteMutationVariables = Exact<{
   registrationId: Scalars['Int']['input'];
 }>;
 
 
-export type RegistrationDeleteMutation = { __typename: 'Mutation', registrationDelete: { __typename: 'RegistrationPayload', registration: { __typename: 'Registration', id: number }, userErrors: Array<{ __typename: 'UserError', message: string }> } };
+export type RegistrationDeleteMutation = { __typename: 'Mutation', registrationDelete: { __typename: 'RegistrationPayload', registration?: { __typename: 'Registration', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type RegistrationUpdateMutationVariables = Exact<{
   registrationId: Scalars['Int']['input'];
@@ -1307,7 +1485,7 @@ export type RegistrationUpdateMutationVariables = Exact<{
 }>;
 
 
-export type RegistrationUpdateMutation = { __typename: 'Mutation', registrationUpdate: { __typename: 'RegistrationPayload', registration: { __typename: 'Registration', id: number }, userErrors: Array<{ __typename: 'UserError', message: string }> } };
+export type RegistrationUpdateMutation = { __typename: 'Mutation', registrationUpdate: { __typename: 'RegistrationPayload', registration?: { __typename: 'Registration', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type SchoolCreateMutationVariables = Exact<{
   registrationId: Scalars['Int']['input'];
@@ -1315,28 +1493,28 @@ export type SchoolCreateMutationVariables = Exact<{
 }>;
 
 
-export type SchoolCreateMutation = { __typename: 'Mutation', schoolCreate: { __typename: 'SchoolPayload', school: { __typename: 'School', id: number }, userErrors: Array<{ __typename: 'UserError', message: string }> } };
+export type SchoolCreateMutation = { __typename: 'Mutation', schoolCreate: { __typename: 'SchoolPayload', school?: { __typename: 'School', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type SchoolDeleteMutationVariables = Exact<{
   schoolId: Scalars['Int']['input'];
 }>;
 
 
-export type SchoolDeleteMutation = { __typename: 'Mutation', schoolDelete: { __typename: 'SchoolPayload', school: { __typename: 'School', id: number }, userErrors: Array<{ __typename: 'UserError', message: string }> } };
+export type SchoolDeleteMutation = { __typename: 'Mutation', schoolDelete: { __typename: 'SchoolPayload', school?: { __typename: 'School', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type SchoolGroupCreateMutationVariables = Exact<{
   schoolId: Scalars['Int']['input'];
 }>;
 
 
-export type SchoolGroupCreateMutation = { __typename: 'Mutation', schoolGroupCreate: { __typename: 'SchoolGroupPayload', schoolGroup: { __typename: 'SchoolGroup', id: number }, userErrors: Array<{ __typename: 'UserError', message: string }> } };
+export type SchoolGroupCreateMutation = { __typename: 'Mutation', schoolGroupCreate: { __typename: 'SchoolGroupPayload', schoolGroup?: { __typename: 'SchoolGroup', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type SchoolGroupDeleteMutationVariables = Exact<{
   schoolGroupId: Scalars['Int']['input'];
 }>;
 
 
-export type SchoolGroupDeleteMutation = { __typename: 'Mutation', schoolGroupDelete: { __typename: 'SchoolGroupPayload', schoolGroup: { __typename: 'SchoolGroup', id: number }, userErrors: Array<{ __typename: 'UserError', message: string }> } };
+export type SchoolGroupDeleteMutation = { __typename: 'Mutation', schoolGroupDelete: { __typename: 'SchoolGroupPayload', schoolGroup?: { __typename: 'SchoolGroup', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type SchoolGroupUpdateMutationVariables = Exact<{
   schoolGroupId: Scalars['Int']['input'];
@@ -1344,7 +1522,7 @@ export type SchoolGroupUpdateMutationVariables = Exact<{
 }>;
 
 
-export type SchoolGroupUpdateMutation = { __typename: 'Mutation', schoolGroupUpdate: { __typename: 'SchoolGroupPayload', schoolGroup: { __typename: 'SchoolGroup', id: number }, userErrors: Array<{ __typename: 'UserError', message: string }> } };
+export type SchoolGroupUpdateMutation = { __typename: 'Mutation', schoolGroupUpdate: { __typename: 'SchoolGroupPayload', schoolGroup?: { __typename: 'SchoolGroup', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type SchoolUpdateMutationVariables = Exact<{
   schoolId: Scalars['Int']['input'];
@@ -1352,7 +1530,7 @@ export type SchoolUpdateMutationVariables = Exact<{
 }>;
 
 
-export type SchoolUpdateMutation = { __typename: 'Mutation', schoolUpdate: { __typename: 'SchoolPayload', school: { __typename: 'School', id: number }, userErrors: Array<{ __typename: 'UserError', message: string }> } };
+export type SchoolUpdateMutation = { __typename: 'Mutation', schoolUpdate: { __typename: 'SchoolPayload', school?: { __typename: 'School', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type SelectionCreateMutationVariables = Exact<{
   registeredClassId: Scalars['Int']['input'];
@@ -1406,14 +1584,14 @@ export type UserUpdateMutationVariables = Exact<{
 }>;
 
 
-export type UserUpdateMutation = { __typename: 'Mutation', userUpdate: { __typename: 'UserPayload', user: { __typename: 'User', id: number }, userErrors: Array<{ __typename: 'UserError', message: string }> } };
+export type UserUpdateMutation = { __typename: 'Mutation', userUpdate: { __typename: 'UserPayload', user?: { __typename: 'User', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type SignInMutationVariables = Exact<{
   credentials: CredentialsSignin;
 }>;
 
 
-export type SignInMutation = { __typename: 'Mutation', signin: { __typename: 'AuthPayload', diatonicToken?: string | null, userErrors: Array<{ __typename: 'UserError', message: string }>, user?: { __typename: 'User', id: number, email?: string | null, firstName?: string | null, lastName?: string | null, privateTeacher?: boolean | null, schoolTeacher?: boolean | null, hasSignedIn?: boolean | null, admin?: boolean | null } | null } };
+export type SignInMutation = { __typename: 'Mutation', signin: { __typename: 'AuthPayload', diatonicToken?: string | null, userErrors: Array<{ __typename: 'UserError', message: string }>, user?: { __typename: 'User', email?: string | null, firstName?: string | null, lastName?: string | null, privateTeacher?: boolean | null, hasSignedIn?: boolean | null } | null } };
 
 export type SignUpMutationVariables = Exact<{
   credentials: CredentialsSignup;
@@ -1422,19 +1600,26 @@ export type SignUpMutationVariables = Exact<{
 
 export type SignUpMutation = { __typename: 'Mutation', signup: { __typename: 'AuthPayload', userErrors: Array<{ __typename: 'UserError', message: string }>, user?: { __typename: 'User', email?: string | null } | null } };
 
+export type CommunityGroupInfoQueryVariables = Exact<{
+  registrationId: Scalars['Int']['input'];
+}>;
+
+
+export type CommunityGroupInfoQuery = { __typename: 'Query', registration: { __typename: 'Registration', community?: { __typename: 'Community', communityGroups?: Array<{ __typename: 'CommunityGroup', id: number, name?: string | null, groupSize?: number | null, chaperones?: number | null, wheelchairs?: number | null, earliestTime?: string | null, latestTime?: string | null, unavailable?: string | null, conflictPerformers?: string | null }> | null } | null } };
+
 export type CommunityInfoQueryVariables = Exact<{
   registrationId: Scalars['Int']['input'];
 }>;
 
 
-export type CommunityInfoQuery = { __typename: 'Query', registration: { __typename: 'Registration', community?: { __typename: 'Community', id: number, name?: string | null, groupSize?: number | null, chaperones?: number | null, wheelchairs?: number | null, earliestTime?: string | null, latestTime?: string | null, unavailable?: string | null, conflictPerformers?: string | null } | null } };
+export type CommunityInfoQuery = { __typename: 'Query', registration: { __typename: 'Registration', community?: { __typename: 'Community', id: number, name?: string | null, streetNumber?: string | null, streetName?: string | null, city?: string | null, province?: string | null, postalCode?: string | null, phone?: string | null, email?: string | null } | null } };
 
 export type DisciplinesByTypeQueryVariables = Exact<{
   performerType: PerformerType;
 }>;
 
 
-export type DisciplinesByTypeQuery = { __typename: 'Query', disciplines: Array<{ __typename: 'Discipline', id: number, name: string, instruments?: Array<{ __typename: 'Instrument', id: number, name: string, mozart: boolean }> | null }> };
+export type DisciplinesByTypeQuery = { __typename: 'Query', disciplines: Array<{ __typename: 'Discipline', id: number, name: string, instruments?: Array<{ __typename: 'Instrument', id: number, name: string, mozart?: boolean | null }> | null }> };
 
 export type GroupInfoQueryVariables = Exact<{
   registrationId: Scalars['Int']['input'];
@@ -1469,7 +1654,7 @@ export type SchoolInfoQueryVariables = Exact<{
 }>;
 
 
-export type SchoolInfoQuery = { __typename: 'Query', registration: { __typename: 'Registration', school?: { __typename: 'School', id: number, name: string, division?: string | null, streetNumber?: string | null, streetName?: string | null, city?: string | null, province?: string | null, postalCode?: string | null, phone?: string | null } | null } };
+export type SchoolInfoQuery = { __typename: 'Query', registration: { __typename: 'Registration', school?: { __typename: 'School', id: number, name?: string | null, division?: string | null, streetNumber?: string | null, streetName?: string | null, city?: string | null, province?: string | null, postalCode?: string | null, phone?: string | null } | null } };
 
 export type TeacherInfoQueryVariables = Exact<{
   teacherID?: InputMaybe<Scalars['Int']['input']>;
@@ -1500,14 +1685,14 @@ export type ClassByNumberQueryVariables = Exact<{
 }>;
 
 
-export type ClassByNumberQuery = { __typename: 'Query', festivalClassByNumber: { __typename: 'FestivalClass', id: number, classNumber: string, maxSelections: number, minSelections: number, requiredSelection?: string | null, performerType: PerformerType, price?: any | null, category: { __typename: 'Category', id: number, name: string, description?: string | null, requiredComposer?: string | null }, level: { __typename: 'Level', id: number, name: string, description?: string | null }, subdiscipline: { __typename: 'Subdiscipline', id: number, name: string, description?: string | null, discipline?: { __typename: 'Discipline', id: number, name: string } | null }, trophies?: Array<{ __typename: 'Trophy', id: number, name: string, description?: string | null }> | null } };
+export type ClassByNumberQuery = { __typename: 'Query', festivalClassByNumber: { __typename: 'FestivalClass', id: number, classNumber: string, maxSelections: number, minSelections: number, requiredSelection?: string | null, performerType: PerformerType, price?: number | null, category: { __typename: 'Category', id: number, name: string, description?: string | null, requiredComposer?: string | null }, level: { __typename: 'Level', id: number, name: string, description?: string | null }, subdiscipline: { __typename: 'Subdiscipline', id: number, name: string, description?: string | null, discipline?: { __typename: 'Discipline', id: number, name: string } | null }, trophies?: Array<{ __typename: 'Trophy', id: number, name: string, description?: string | null }> | null } };
 
 export type FestivalClassSearchQueryVariables = Exact<{
   festivalClassSearch: FestivalClassSearchArgs;
 }>;
 
 
-export type FestivalClassSearchQuery = { __typename: 'Query', festivalClassSearch: Array<{ __typename: 'FestivalClass', id: number, classNumber: string, maxSelections: number, minSelections: number, requiredSelection?: string | null, performerType: PerformerType, price?: any | null, description?: string | null, classType: { __typename: 'ClassType', name: string, description?: string | null }, subdiscipline: { __typename: 'Subdiscipline', name: string, description?: string | null }, level: { __typename: 'Level', name: string, description?: string | null }, category: { __typename: 'Category', name: string, description?: string | null }, trophies?: Array<{ __typename: 'Trophy', id: number, name: string, description?: string | null }> | null }> };
+export type FestivalClassSearchQuery = { __typename: 'Query', festivalClassSearch: Array<{ __typename: 'FestivalClass', id: number, classNumber: string, maxSelections: number, minSelections: number, requiredSelection?: string | null, performerType: PerformerType, price?: number | null, description?: string | null, classType: { __typename: 'ClassType', name: string, description?: string | null }, subdiscipline: { __typename: 'Subdiscipline', name: string, description?: string | null }, level: { __typename: 'Level', name: string, description?: string | null }, category: { __typename: 'Category', name: string, description?: string | null }, trophies?: Array<{ __typename: 'Trophy', id: number, name: string, description?: string | null }> | null }> };
 
 export type FestivalClassesQueryVariables = Exact<{
   performerType?: InputMaybe<PerformerType>;
@@ -1540,12 +1725,12 @@ export type instrumentQueryVariables = Exact<{
 }>;
 
 
-export type instrumentQuery = { __typename: 'Query', instrument: { __typename: 'Instrument', name: string, mozart: boolean, discipline: { __typename: 'Discipline', name: string } } };
+export type instrumentQuery = { __typename: 'Query', instrument: { __typename: 'Instrument', name: string, mozart?: boolean | null, discipline?: { __typename: 'Discipline', name: string } | null } };
 
 export type InstrumentsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type InstrumentsQuery = { __typename: 'Query', instruments: Array<{ __typename: 'Instrument', id: number, name: string, mozart: boolean, discipline: { __typename: 'Discipline', name: string } }> };
+export type InstrumentsQuery = { __typename: 'Query', instruments: Array<{ __typename: 'Instrument', id: number, name: string, mozart?: boolean | null, discipline?: { __typename: 'Discipline', name: string } | null }> };
 
 export type LevelsQueryVariables = Exact<{
   subdisciplineId?: InputMaybe<Scalars['Int']['input']>;
@@ -1570,7 +1755,7 @@ export type RegistrationsQuery = { __typename: 'Query', registrations: Array<{ _
 export type StudentRegistrationsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type StudentRegistrationsQuery = { __typename: 'Query', myStudents: { __typename: 'Teacher', registrations?: Array<{ __typename: 'Registration', confirmation?: string | null, createdAt?: any | null, id: number, label?: string | null, performerType: PerformerType, submittedAt?: any | null, updatedAt?: any | null, performers?: Array<{ __typename: 'Performer', firstName?: string | null, lastName?: string | null }> | null, group?: { __typename: 'Group', name?: string | null } | null, school?: { __typename: 'School', name: string } | null, community?: { __typename: 'Community', name?: string | null } | null }> | null } };
+export type StudentRegistrationsQuery = { __typename: 'Query', myStudents: { __typename: 'Teacher', registrations?: Array<{ __typename: 'Registration', confirmation?: string | null, createdAt?: any | null, id: number, label?: string | null, performerType: PerformerType, submittedAt?: any | null, updatedAt?: any | null, performers?: Array<{ __typename: 'Performer', firstName?: string | null, lastName?: string | null }> | null, group?: { __typename: 'Group', name?: string | null } | null, school?: { __typename: 'School', name?: string | null } | null, community?: { __typename: 'Community', name?: string | null } | null }> | null } };
 
 export type SubDisciplinesQueryVariables = Exact<{
   disciplineId: Scalars['Int']['input'];
@@ -1586,14 +1771,17 @@ export type SubdisciplinesByTypeQueryVariables = Exact<{
 }>;
 
 
-export type SubdisciplinesByTypeQuery = { __typename: 'Query', subdisciplines: Array<{ __typename: 'Subdiscipline', id: number, name: string, description?: string | null, maxPerformers?: number | null, minPerformers?: number | null, performerType: PerformerType }> };
+export type SubdisciplinesByTypeQuery = { __typename: 'Query', subdisciplines: Array<{ __typename: 'Subdiscipline', id: number, name: string, description?: string | null, maxPerformers?: number | null, minPerformers?: number | null, performerType?: PerformerType | null }> };
 
 
 export const ClassCreateDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ClassCreate"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"registrationId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"registeredClass"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"RegisteredClassInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registeredClassCreate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"registrationID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"registrationId"}}},{"kind":"Argument","name":{"kind":"Name","value":"registeredClass"},"value":{"kind":"Variable","name":{"kind":"Name","value":"registeredClass"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registeredClass"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"userErrors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]} as unknown as DocumentNode<ClassCreateMutation, ClassCreateMutationVariables>;
 export const ClassDeleteDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ClassDelete"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"registeredClassId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registeredClassDelete"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"registeredClassID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"registeredClassId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registeredClass"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"userErrors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]} as unknown as DocumentNode<ClassDeleteMutation, ClassDeleteMutationVariables>;
 export const ClassUpdateDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ClassUpdate"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"registeredClassId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"registeredClass"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"RegisteredClassInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registeredClassUpdate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"registeredClassID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"registeredClassId"}}},{"kind":"Argument","name":{"kind":"Name","value":"registeredClassInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"registeredClass"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registeredClass"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"userErrors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]} as unknown as DocumentNode<ClassUpdateMutation, ClassUpdateMutationVariables>;
-export const CommunityCreateDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CommunityCreate"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"registrationId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"communityCreate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"registrationID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"registrationId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"community"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"userErrors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]} as unknown as DocumentNode<CommunityCreateMutation, CommunityCreateMutationVariables>;
+export const CommunityCreateDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CommunityCreate"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"registrationId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"community"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CommunityInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"communityCreate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"registrationID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"registrationId"}}},{"kind":"Argument","name":{"kind":"Name","value":"communityInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"community"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"community"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"userErrors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]} as unknown as DocumentNode<CommunityCreateMutation, CommunityCreateMutationVariables>;
 export const CommunityDeleteDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CommunityDelete"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"communityId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"communityDelete"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"communityID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"communityId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"community"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"userErrors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]} as unknown as DocumentNode<CommunityDeleteMutation, CommunityDeleteMutationVariables>;
+export const CommunityGroupCreateDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CommunityGroupCreate"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"communityId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"communityGroupCreate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"communityID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"communityId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"communityGroup"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"userErrors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]} as unknown as DocumentNode<CommunityGroupCreateMutation, CommunityGroupCreateMutationVariables>;
+export const CommunityGroupDeleteDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CommunityGroupDelete"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"communityGroupId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"communityGroupDelete"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"communityGroupID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"communityGroupId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"communityGroup"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"userErrors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]} as unknown as DocumentNode<CommunityGroupDeleteMutation, CommunityGroupDeleteMutationVariables>;
+export const CommunityGroupUpdateDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CommunityGroupUpdate"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"communityGroupId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"communityGroup"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CommunityGroupInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"communityGroupUpdate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"communityGroupID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"communityGroupId"}}},{"kind":"Argument","name":{"kind":"Name","value":"communityGroupInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"communityGroup"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"communityGroup"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"userErrors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]} as unknown as DocumentNode<CommunityGroupUpdateMutation, CommunityGroupUpdateMutationVariables>;
 export const CommunityUpdateDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CommunityUpdate"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"communityId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"community"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CommunityInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"communityUpdate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"communityID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"communityId"}}},{"kind":"Argument","name":{"kind":"Name","value":"communityInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"community"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"community"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"userErrors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]} as unknown as DocumentNode<CommunityUpdateMutation, CommunityUpdateMutationVariables>;
 export const GroupCreateDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"GroupCreate"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"registrationId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"groupCreate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"registrationID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"registrationId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"userErrors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]} as unknown as DocumentNode<GroupCreateMutation, GroupCreateMutationVariables>;
 export const GroupDeleteDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"GroupDelete"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"groupId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"groupDelete"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"groupID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"groupId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"userErrors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]} as unknown as DocumentNode<GroupDeleteMutation, GroupDeleteMutationVariables>;
@@ -1617,9 +1805,10 @@ export const TeacherCreateDocument = {"kind":"Document","definitions":[{"kind":"
 export const TeacherDeleteDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"TeacherDelete"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"teacherId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"teacherDelete"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"teacherID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"teacherId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"teacher"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"userErrors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]} as unknown as DocumentNode<TeacherDeleteMutation, TeacherDeleteMutationVariables>;
 export const TeacherUpdateDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"TeacherUpdate"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"teacherId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"teacher"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"TeacherInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"teacherUpdate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"teacherID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"teacherId"}}},{"kind":"Argument","name":{"kind":"Name","value":"teacherInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"teacher"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"teacher"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"userErrors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]} as unknown as DocumentNode<TeacherUpdateMutation, TeacherUpdateMutationVariables>;
 export const UserUpdateDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UserUpdate"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"user"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UserInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userUpdate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"userID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}},{"kind":"Argument","name":{"kind":"Name","value":"userInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"user"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"userErrors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]} as unknown as DocumentNode<UserUpdateMutation, UserUpdateMutationVariables>;
-export const SignInDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SignIn"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"credentials"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CredentialsSignin"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"signin"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"credentials"},"value":{"kind":"Variable","name":{"kind":"Name","value":"credentials"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userErrors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}},{"kind":"Field","name":{"kind":"Name","value":"diatonicToken"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"privateTeacher"}},{"kind":"Field","name":{"kind":"Name","value":"schoolTeacher"}},{"kind":"Field","name":{"kind":"Name","value":"hasSignedIn"}},{"kind":"Field","name":{"kind":"Name","value":"admin"}}]}}]}}]}}]} as unknown as DocumentNode<SignInMutation, SignInMutationVariables>;
+export const SignInDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SignIn"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"credentials"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CredentialsSignin"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"signin"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"credentials"},"value":{"kind":"Variable","name":{"kind":"Name","value":"credentials"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userErrors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}},{"kind":"Field","name":{"kind":"Name","value":"diatonicToken"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"privateTeacher"}},{"kind":"Field","name":{"kind":"Name","value":"hasSignedIn"}}]}}]}}]}}]} as unknown as DocumentNode<SignInMutation, SignInMutationVariables>;
 export const SignUpDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SignUp"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"credentials"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CredentialsSignup"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"signup"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"credentials"},"value":{"kind":"Variable","name":{"kind":"Name","value":"credentials"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userErrors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}}]}}]}}]}}]} as unknown as DocumentNode<SignUpMutation, SignUpMutationVariables>;
-export const CommunityInfoDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"CommunityInfo"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"registrationId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registration"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"registrationId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"community"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"groupSize"}},{"kind":"Field","name":{"kind":"Name","value":"chaperones"}},{"kind":"Field","name":{"kind":"Name","value":"wheelchairs"}},{"kind":"Field","name":{"kind":"Name","value":"earliestTime"}},{"kind":"Field","name":{"kind":"Name","value":"latestTime"}},{"kind":"Field","name":{"kind":"Name","value":"unavailable"}},{"kind":"Field","name":{"kind":"Name","value":"conflictPerformers"}}]}}]}}]}}]} as unknown as DocumentNode<CommunityInfoQuery, CommunityInfoQueryVariables>;
+export const CommunityGroupInfoDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"CommunityGroupInfo"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"registrationId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registration"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"registrationId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"community"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"communityGroups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"groupSize"}},{"kind":"Field","name":{"kind":"Name","value":"chaperones"}},{"kind":"Field","name":{"kind":"Name","value":"wheelchairs"}},{"kind":"Field","name":{"kind":"Name","value":"earliestTime"}},{"kind":"Field","name":{"kind":"Name","value":"latestTime"}},{"kind":"Field","name":{"kind":"Name","value":"unavailable"}},{"kind":"Field","name":{"kind":"Name","value":"conflictPerformers"}}]}}]}}]}}]}}]} as unknown as DocumentNode<CommunityGroupInfoQuery, CommunityGroupInfoQueryVariables>;
+export const CommunityInfoDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"CommunityInfo"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"registrationId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registration"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"registrationId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"community"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"streetNumber"}},{"kind":"Field","name":{"kind":"Name","value":"streetName"}},{"kind":"Field","name":{"kind":"Name","value":"city"}},{"kind":"Field","name":{"kind":"Name","value":"province"}},{"kind":"Field","name":{"kind":"Name","value":"postalCode"}},{"kind":"Field","name":{"kind":"Name","value":"phone"}},{"kind":"Field","name":{"kind":"Name","value":"email"}}]}}]}}]}}]} as unknown as DocumentNode<CommunityInfoQuery, CommunityInfoQueryVariables>;
 export const DisciplinesByTypeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"DisciplinesByType"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"performerType"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PerformerType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"disciplines"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"performerType"},"value":{"kind":"Variable","name":{"kind":"Name","value":"performerType"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"instruments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"mozart"}}]}}]}}]}}]} as unknown as DocumentNode<DisciplinesByTypeQuery, DisciplinesByTypeQueryVariables>;
 export const GroupInfoDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GroupInfo"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"registrationId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registration"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"registrationId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"age"}},{"kind":"Field","name":{"kind":"Name","value":"groupType"}},{"kind":"Field","name":{"kind":"Name","value":"instruments"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"numberOfPerformers"}}]}}]}}]}}]} as unknown as DocumentNode<GroupInfoQuery, GroupInfoQueryVariables>;
 export const PerformersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Performers"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"registrationId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"performers"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"registrationID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"registrationId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"age"}},{"kind":"Field","name":{"kind":"Name","value":"apartment"}},{"kind":"Field","name":{"kind":"Name","value":"streetNumber"}},{"kind":"Field","name":{"kind":"Name","value":"streetName"}},{"kind":"Field","name":{"kind":"Name","value":"city"}},{"kind":"Field","name":{"kind":"Name","value":"province"}},{"kind":"Field","name":{"kind":"Name","value":"postalCode"}},{"kind":"Field","name":{"kind":"Name","value":"phone"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"instrument"}},{"kind":"Field","name":{"kind":"Name","value":"level"}}]}}]}}]} as unknown as DocumentNode<PerformersQuery, PerformersQueryVariables>;

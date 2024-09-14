@@ -9,6 +9,7 @@
   import { useSchool } from '@/stores/userSchool'
   import { useSchoolGroup } from '@/stores/userSchoolGroup'
   import { useCommunity } from '@/stores/userCommunity'
+  import { useCommunityGroup } from '@/stores/userCommunityGroup'
   import { useFieldConfig } from '@/stores/useFieldConfig'
   import { useUser } from '@/stores/useUser'
   import { communityOpen, groupOpen, schoolOpen, soloOpen } from '#imports'
@@ -36,6 +37,7 @@
   const schoolStore = useSchool()
   const schoolGroupStore = useSchoolGroup()
   const communityStore = useCommunity()
+  const communityGroupStore = useCommunityGroup()
   const classesStore = useClasses()
   const userStore = useUser()
   const fieldConfigStore = useFieldConfig()
@@ -65,6 +67,7 @@
     teacherStore.$resetAllTeachers()
     groupStore.$reset()
     communityStore.$reset()
+    communityGroupStore.$reset()
     schoolStore.$reset()
     schoolGroupStore.$reset()
     classesStore.$reset()
@@ -151,7 +154,8 @@
         appStore.performerType = PerformerType.COMMUNITY
         appStore.dataLoading = true
         await communityStore.loadCommunity(registrationId)
-        await teacherStore.loadAllTeachers(true, true)
+        await communityGroupStore.loadCommunityGroups(registrationId)
+        // await teacherStore.loadAllTeachers(true, true)
         appStore.dataLoading = false
         break
     }
@@ -222,7 +226,10 @@
         appStore.performerType = PerformerType.COMMUNITY
         appStore.dataLoading = true
         await communityStore.createCommunity(registrationId.value)
-        await teacherStore.loadAllTeachers(true, true)
+        await communityGroupStore.createCommunityGroup(
+          communityStore.community.id!
+        )
+      // await teacherStore.loadAllTeachers(true, true)
     }
     await classesStore.createClass(registrationId.value)
     await fieldConfigStore.loadRequiredFields()

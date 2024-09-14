@@ -32,6 +32,7 @@
   const FormCommunityTeacher = <Component>(
     resolveComponent('FormCommunityTeacher')
   )
+  const FormCommunityGroups = <Component>resolveComponent('FormCommunityGroups')
   const FormTypeClasses = <Component>resolveComponent('FormTypeClasses')
   const Summary = <Component>resolveComponent('Summary')
 
@@ -140,6 +141,7 @@
       tabs = {
         Community: FormCommunityInfo,
         Contact: FormCommunityTeacher,
+        Groups: FormCommunityGroups,
         'Community Classes': FormTypeClasses,
         Summary,
       }

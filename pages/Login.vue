@@ -23,6 +23,8 @@
   const schoolTeacher = ref(false)
   const config = useRuntimeConfig()
   const isOpen = ref(false)
+  const accountNotConfirmed = ref(false)
+  const passwordChangePending = ref(false)
   const user = ref({
     email: '',
     firstName: '',
@@ -106,36 +108,38 @@
     await signinMutation({
       credentials: { email: values.email, password: values.password },
     })
-    doneSignin(async (result) => {
-      if (result.data?.signin.diatonicToken) {
-        if (
-          result.data.signin.user?.privateTeacher &&
-          !result.data?.signin.user.hasSignedIn
-        ) {
-          await navigateTo('/userinformation')
-        } else {
-          await navigateTo('/registrations')
-        }
+  })
+  doneSignin(async (result) => {
+    console.log('Result: ', result)
+    if (result.data?.signin.diatonicToken) {
+      if (
+        result.data.signin.user?.privateTeacher &&
+        !result.data?.signin.user.hasSignedIn
+      ) {
+        await navigateTo('/userinformation')
+      } else {
+        await navigateTo('/registrations')
       }
-      if (result.data?.signin.userErrors[0]) {
-        if (
-          result.data?.signin.userErrors[0].message.includes(
-            // TODO: Something wrong here
-            'Account not confirmed.'
-          )
-        ) {
-          user.value.email = result.data.signin.user?.email!
-          user.value.firstName = result.data!.signin.user?.firstName!
-          user.value.lastName = result.data!.signin.user?.lastName!
-          isOpen.value = true
-        }
+    }
+    if (result.data?.signin?.userErrors[0]) {
+      if (
+        result.data?.signin.userErrors[0].message.includes(
+          'Account not confirmed.'
+        )
+      ) {
+        accountNotConfirmed.value = true
+        isOpen.value = true
       }
-    })
-    signinError((error) => {
-      toast.error('Incorrect email or password.')
-      console.log(error)
-      setTimeout(() => resetFields(), 4000)
-    })
+      if (result.data?.signin.userErrors[0].message.includes('Password')) {
+        passwordChangePending.value = true
+        isOpen.value = true
+      }
+    }
+  })
+  signinError((error) => {
+    toast.error('Incorrect email or password.')
+    console.log(error)
+    setTimeout(() => resetFields(), 4000)
   })
 
   /**
@@ -206,24 +210,24 @@
         schoolTeacher: values.schoolTeacher,
       },
     })
-    doneSignup(async (result) => {
-      toast.success('Check EMAIL for account verification link')
-      isRegister.value = false
-      resetFields()
-    })
-    registerError((err) => {
-      toast.error('Error signing up for account')
-      console.log(err)
-      setTimeout(() => resetFields(), 4000)
-    })
+  })
+  doneSignup(async (result) => {
+    toast.success('Check EMAIL for account verification link')
+    isRegister.value = false
+    resetFields()
+  })
+  registerError((err) => {
+    toast.error('Error signing up for account')
+    console.log(err)
+    setTimeout(() => resetFields(), 4000)
   })
 
   /**
    * Resend confirmation link
    */
-  async function resendEmail() {
+  async function resendVerificationEmail() {
     try {
-      await useFetch(config.public.resendConfirmation, {
+      await $fetch(config.public.resendConfirmation, {
         method: 'POST',
         body: {
           user: {
@@ -232,9 +236,9 @@
             email: user.value.email,
           },
         },
-        watch: false,
       })
       isOpen.value = false
+      accountNotConfirmed.value = false
       resetFields()
     } catch (err) {
       console.log(err)
@@ -242,7 +246,26 @@
   }
 
   /**
-   * Reset Email and Password Fields
+   * Resend password reset link
+   */
+  async function resendPasswordEmail() {
+    try {
+      await $fetch(config.public.resendPasswordReset, {
+        method: 'POST',
+        body: {
+          email: user.value.email,
+        },
+      })
+      isOpen.value = false
+      passwordChangePending.value = false
+      resetFields()
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  /**
+   * Reset Email and Password Fields after failed login
    */
   function resetFields() {
     error.value = ''
@@ -370,15 +393,28 @@
           @click="signin()">
           Sign In
         </BaseButton>
-        <!-- <BaseButton
-          v-auto-animate
-          v-model="isLogin"
-          :value="false"
-          class="w-full m-0 mt-4 btn btn-blue"
-          name="isLogin"
-          @click="isLoggingIn()">
-          "Register for an Account
-        </BaseButton> -->
+        <div class="">
+          <div class="pt-4 text-center">
+            <NuxtLink
+              v-auto-animate
+              class="text-sky-700 text-center"
+              to="/password/EmailVerification"
+              name="resetPassword">
+              Forgot your password?
+            </NuxtLink>
+          </div>
+
+          <div class="pt-8 text-center">
+            Don't have an account?
+            <button
+              v-auto-animate
+              class="text-sky-700"
+              name="isLogin"
+              @click="isRegister = true">
+              Sign up here.
+            </button>
+          </div>
+        </div>
       </div>
       <div v-else>
         <BaseButton
@@ -388,12 +424,6 @@
           Register New Account
         </BaseButton>
       </div>
-      <BaseCheckbox
-        v-model="isRegister"
-        v-auto-animate
-        class="mt-3"
-        name="isRegister"
-        label="Register for a New Account" />
     </form>
   </div>
   <UITransitionRoot
@@ -428,6 +458,7 @@
           leave-from="opacity-100 scale-100"
           leave-to="opacity-0 scale-95">
           <UIDialogPanel
+            v-if="accountNotConfirmed"
             class="p-4 w-full max-w-sm rounded-lg bg-white shadow-lg">
             <UIDialogTitle class="text-center text-xl font-bold">
               Account not verified
@@ -445,8 +476,32 @@
               </BaseButton>
               <BaseButton
                 class="btn btn-blue"
-                @click="resendEmail()">
+                @click="resendVerificationEmail()">
                 Re-Send Verificaton
+              </BaseButton>
+            </div>
+          </UIDialogPanel>
+          <UIDialogPanel
+            v-if="passwordChangePending"
+            class="p-4 w-full max-w-sm rounded-lg bg-white shadow-lg">
+            <UIDialogTitle class="text-center text-xl font-bold">
+              Password Change Pending
+            </UIDialogTitle>
+            <UIDialogDescription class="text-center">
+              A password change has been requested on this account. Check your
+              email inbox and spam folders for instructions on changing your
+              email.
+            </UIDialogDescription>
+            <div>
+              <BaseButton
+                class="btn btn-blue"
+                @click="setIsOpen(false)">
+                Close
+              </BaseButton>
+              <BaseButton
+                class="btn btn-blue"
+                @click="resendPasswordEmail()">
+                Re-Send Password Change Email
               </BaseButton>
             </div>
           </UIDialogPanel>

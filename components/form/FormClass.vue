@@ -48,6 +48,9 @@
     schoolGroupID: props.modelValue.schoolGroupID
       ? StatusEnum.saved
       : StatusEnum.null,
+    communityGroupID: props.modelValue.communityGroupID
+      ? StatusEnum.saved
+      : StatusEnum.null,
   })
 
   const instrumentRequired = ref(false) // used to be for mozart classes.  Might not need this anymore.

@@ -1,5 +1,5 @@
-mutation CommunityCreate($registrationId: Int!) {
-  communityCreate(registrationID: $registrationId) {
+mutation CommunityCreate($registrationId: Int!, $community: CommunityInput!) {
+  communityCreate(registrationID: $registrationId, communityInput: $community) {
     community {
       id
     }
