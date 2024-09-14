@@ -127,16 +127,10 @@
           'Account not confirmed.'
         )
       ) {
-        // user.value.email = result.data.signin.user?.email!
-        // user.value.firstName = result.data!.signin.user?.firstName!
-        // user.value.lastName = result.data!.signin.user?.lastName!
         accountNotConfirmed.value = true
         isOpen.value = true
       }
       if (result.data?.signin.userErrors[0].message.includes('Password')) {
-        // user.value.email = result.data.signin.user?.email!
-        // user.value.firstName = result.data!.signin.user?.firstName!
-        // user.value.lastName = result.data!.signin.user?.lastName!
         passwordChangePending.value = true
         isOpen.value = true
       }
@@ -400,17 +394,17 @@
           Sign In
         </BaseButton>
         <div class="">
-          <div class="pt-3">
+          <div class="pt-4 text-center">
             <NuxtLink
               v-auto-animate
-              class="text-sky-700 w-full mx-auto"
+              class="text-sky-700 text-center"
               to="/password/EmailVerification"
               name="resetPassword">
               Forgot your password?
             </NuxtLink>
           </div>
 
-          <div class="pt-8 w-full mx-auto inline-block">
+          <div class="pt-8 text-center">
             Don't have an account?
             <button
               v-auto-animate
