@@ -86,7 +86,6 @@ export const useTeacher = defineStore(
      * @param schoolTeacher boolean - Whether this is a school teacher
      * @returns Promise
      */
-
     const {
       mutate: teacherCreate,
       loading: teacherCreateLoading,
@@ -133,12 +132,12 @@ export const useTeacher = defineStore(
     } = useLazyQuery(TeacherInfoDocument, undefined, {
       fetchPolicy: 'no-cache',
     })
-
     async function loadTeacher(teacherID?: number, teacherEmail?: string) {
       ;(await teacherLoad(null, { teacherID, teacherEmail })) ||
         (await refetchTeacher({ teacherID, teacherEmail }))
     }
     watch(resultTeacher, (newResult) => {
+      console.log('New Result: ', newResult)
       if (newResult?.teacher) {
         addToStore(<Teacher>newResult.teacher)
       }
@@ -160,14 +159,25 @@ export const useTeacher = defineStore(
       fetchPolicy: 'no-cache',
     })
     async function loadAllTeachers(
-      privateTeacher: boolean,
-      schoolTeacher: boolean
+      teacherType: 'privateTeacher' | 'schoolTeacher'
     ) {
-      ;(await allTeachersLoad(null, { privateTeacher, schoolTeacher })) ||
-        (await refetchAllTeachers({ privateTeacher, schoolTeacher }))
+      ;(await allTeachersLoad(null, { teacherType })) ||
+        (await refetchAllTeachers({ teacherType }))
     }
     onTeachersResult((result) => {
       allTeachers.value = <AllTeachers[]>result.data.teachers.map((el) => el)
+      allTeachers.value.unshift(<AllTeachers>{
+        id: 1,
+        firstName: 'No Teacher',
+        lastName: '',
+        instrument: '',
+      })
+      allTeachers.value.unshift(<AllTeachers>{
+        id: 2,
+        firstName: 'Unlisted Teacher',
+        lastName: '',
+        instrument: '',
+      })
     })
     onTeachersLoadError((error) => {
       console.log(error)
@@ -228,7 +238,6 @@ export const useTeacher = defineStore(
      * @param teacherID teacher ID number
      * @returns Promise and teacher results
      */
-
     const {
       result: resultTeacherDuplicate,
       load: loadTeacherDuplicate,

@@ -131,7 +131,7 @@
         appStore.performerType = PerformerType.SOLO
         appStore.dataLoading = true
         await performerStore.loadPerformers(registrationId)
-        await teacherStore.loadAllTeachers(true, false)
+        await teacherStore.loadAllTeachers('privateTeacher')
         appStore.dataLoading = false
         break
       case 'GROUP':
@@ -139,7 +139,7 @@
         appStore.dataLoading = true
         await groupStore.loadGroup(registrationId)
         await performerStore.loadPerformers(registrationId)
-        await teacherStore.loadAllTeachers(true, false)
+        await teacherStore.loadAllTeachers('privateTeacher')
         appStore.dataLoading = false
         break
       case 'SCHOOL':
@@ -147,7 +147,7 @@
         appStore.dataLoading = true
         await schoolStore.loadSchool(registrationId)
         await schoolGroupStore.loadSchoolGroups(registrationId)
-        // await teacherStore.loadAllTeachers(false, true)
+        await teacherStore.loadAllTeachers('schoolTeacher')
         appStore.dataLoading = false
         break
       case 'COMMUNITY':
@@ -155,7 +155,7 @@
         appStore.dataLoading = true
         await communityStore.loadCommunity(registrationId)
         await communityGroupStore.loadCommunityGroups(registrationId)
-        // await teacherStore.loadAllTeachers(true, true)
+        await teacherStore.loadAllTeachers('privateTeacher')
         appStore.dataLoading = false
         break
     }
@@ -195,7 +195,7 @@
         appStore.performerType = PerformerType.SOLO
         appStore.dataLoading = true
         await performerStore.createPerformer(registrationId.value)
-        await teacherStore.loadAllTeachers(true, false)
+        await teacherStore.loadAllTeachers('privateTeacher')
         break
       case 'GROUP':
         appStore.performerType = PerformerType.GROUP
@@ -204,7 +204,7 @@
         // require at least 2 performers for groups
         await performerStore.createPerformer(registrationId.value)
         await performerStore.createPerformer(registrationId.value)
-        await teacherStore.loadAllTeachers(true, false)
+        await teacherStore.loadAllTeachers('privateTeacher')
         break
       case 'SCHOOL':
         appStore.performerType = PerformerType.SCHOOL
@@ -220,7 +220,7 @@
         }
         await schoolStore.createSchool(registrationId.value)
         await schoolGroupStore.createSchoolGroup(schoolStore.school.id!)
-        // await teacherStore.loadAllTeachers(false, true)
+        await teacherStore.loadAllTeachers('schoolTeacher')
         break
       case 'COMMUNITY':
         appStore.performerType = PerformerType.COMMUNITY
@@ -229,7 +229,7 @@
         await communityGroupStore.createCommunityGroup(
           communityStore.community.id!
         )
-      // await teacherStore.loadAllTeachers(true, true)
+        await teacherStore.loadAllTeachers('privateTeacher')
     }
     await classesStore.createClass(registrationId.value)
     await fieldConfigStore.loadRequiredFields()

@@ -406,13 +406,13 @@
 
           <div class="pt-8 text-center">
             Don't have an account?
-            <button
+            <BaseButton
               v-auto-animate
               class="text-sky-700"
               name="isLogin"
               @click="isRegister = true">
               Sign up here.
-            </button>
+            </BaseButton>
           </div>
         </div>
       </div>
@@ -423,6 +423,14 @@
           @click="signup()">
           Register New Account
         </BaseButton>
+        <div class="text-center">
+          <BaseButton
+            v-auto-animate
+            class="mt-8 text-sky-700"
+            @click="isRegister = false">
+            Back to Sign In
+          </BaseButton>
+        </div>
       </div>
     </form>
   </div>

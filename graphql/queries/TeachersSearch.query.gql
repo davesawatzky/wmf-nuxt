@@ -1,5 +1,5 @@
-query AllTeachersSearch($privateTeacher: Boolean!, $schoolTeacher: Boolean!) {
-  teachers(privateTeacher: $privateTeacher, schoolTeacher: $schoolTeacher) {
+query AllTeachersSearch($teacherType: String!) {
+  teachers(teacherType: $teacherType) {
     id
     firstName
     lastName
