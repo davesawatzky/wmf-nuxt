@@ -7,18 +7,19 @@
   import { useUser } from '~/stores/useUser'
   import type { Teacher } from '~/graphql/gql/graphql'
   import { useToast } from 'vue-toastification'
-  import { provinces } from '#imports'
+  import { provinces, StatusEnum } from '#imports'
 
   interface FilteredTeacher {
     id: number
     firstName: string
     lastName: string
-    instrument: string
+    instrument?: string
   }
 
   const props = defineProps<{
     modelValue: ContactInfo
     teacher?: boolean
+    teacherId?: number
     schoolteacher?: boolean
     school?: boolean
     groupperformer?: boolean
@@ -58,6 +59,11 @@
       schoolTeacher.value = false
     }
     if (!!registrationStore.registration.teacherID) {
+      let { id, firstName, lastName, instrument } = teacherStore.teacher
+      firstName = firstName ?? ''
+      lastName = lastName ?? ''
+      instrument = instrument ?? undefined
+      chosenTeacher.value = { id, firstName, lastName, instrument }
       checkForPassword(registrationStore.registration.teacherID)
     }
   })
@@ -68,20 +74,21 @@
   }
 
   const status = reactive<Status>({
+    id: props.teacherId ? StatusEnum.saved : StatusEnum.null,
     firstName: props.modelValue.firstName ? StatusEnum.saved : StatusEnum.null,
     lastName: props.modelValue.lastName ? StatusEnum.saved : StatusEnum.null,
-    apartment: props.modelValue.apartment ? StatusEnum.saved : StatusEnum.null,
-    streetNumber: props.modelValue.streetNumber
-      ? StatusEnum.saved
-      : StatusEnum.null,
-    streetName: props.modelValue.streetName
-      ? StatusEnum.saved
-      : StatusEnum.null,
-    city: props.modelValue.city ? StatusEnum.saved : StatusEnum.null,
-    province: props.modelValue.province ? StatusEnum.saved : StatusEnum.null,
-    postalCode: props.modelValue.postalCode
-      ? StatusEnum.saved
-      : StatusEnum.null,
+    // apartment: props.modelValue.apartment ? StatusEnum.saved : StatusEnum.null,
+    // streetNumber: props.modelValue.streetNumber
+    //   ? StatusEnum.saved
+    //   : StatusEnum.null,
+    // streetName: props.modelValue.streetName
+    //   ? StatusEnum.saved
+    //   : StatusEnum.null,
+    // city: props.modelValue.city ? StatusEnum.saved : StatusEnum.null,
+    // province: props.modelValue.province ? StatusEnum.saved : StatusEnum.null,
+    // postalCode: props.modelValue.postalCode
+    //   ? StatusEnum.saved
+    //   : StatusEnum.null,
     email: props.modelValue.email ? StatusEnum.saved : StatusEnum.null,
     phone: props.modelValue.phone ? StatusEnum.saved : StatusEnum.null,
     instrument: props.modelValue.instrument
@@ -91,34 +98,35 @@
 
   const teacherSchema = toTypedSchema(
     yup.object({
+      id: yup.number(),
       firstName: yup.string().trim().required('First name is required'),
       lastName: yup.string().trim().required('Last name is required'),
-      apartment: yup
-        .string()
-        .notRequired()
-        .trim()
-        .nullable()
-        .max(10, '10 characters maximum'),
-      streetNumber: yup
-        .string()
-        .trim()
-        .max(5, '5 characters maximum')
-        .required('Enter a valid street number'),
-      streetName: yup.string().trim().required('Enter a valid street name'),
-      city: yup
-        .string()
-        .trim()
-        .max(20, 'Too many characters')
-        .required('Enter a city name'),
-      province: yup.string().max(3).required(),
-      postalCode: yup
-        .string()
-        .trim()
-        .matches(
-          /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i,
-          'Enter a valid postal code'
-        )
-        .required('Enter a valid postal code'),
+      // apartment: yup
+      //   .string()
+      //   .notRequired()
+      //   .trim()
+      //   .nullable()
+      //   .max(10, '10 characters maximum'),
+      // streetNumber: yup
+      //   .string()
+      //   .trim()
+      //   .max(5, '5 characters maximum')
+      //   .required('Enter a valid street number'),
+      // streetName: yup.string().trim().required('Enter a valid street name'),
+      // city: yup
+      //   .string()
+      //   .trim()
+      //   .max(20, 'Too many characters')
+      //   .required('Enter a city name'),
+      // province: yup.string().max(3).required(),
+      // postalCode: yup
+      //   .string()
+      //   .trim()
+      //   .matches(
+      //     /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i,
+      //     'Enter a valid postal code'
+      //   )
+      //   .required('Enter a valid postal code'),
       phone: yup
         .string()
         .trim()
@@ -135,6 +143,7 @@
 
   const schoolTeacherSchema = toTypedSchema(
     yup.object({
+      id: yup.number(),
       firstName: yup.string().trim().required('First name is required'),
       lastName: yup.string().trim().required('Last name is required'),
       phone: yup
@@ -176,10 +185,6 @@
     emailAlreadyExists.value = false
   }
 
-  const maskaUcaseOption = {
-    preProcess: (val: string) => val.toUpperCase(),
-  }
-
   const { errors, validate, values } = useForm({
     validationSchema,
     validateOnMount: true,
@@ -195,14 +200,13 @@
     ) {
       await removeTeacher()
       emailAlreadyExists.value = false
-      teacherRadio.value = 'existing'
+      // teacherRadio.value = 'existing'
     }
   })
 
   // Working with the new Teacher ComboBox
 
-  const teacherRadio = ref('existing') // 'existing' or 'new'
-  const editingDisabled = ref(true)
+  // const editingDisabled = ref(true)
   // Checks if a newly created record is actually a duplicate
   // of an existing record.
   const duplicateCheck = ref(<Teacher>{})
@@ -213,31 +217,31 @@
   /**
    * Watching the Teacher page action flow
    *
-   * Creates a new teacher account when the radio button is pressed.
-   * Empty Record is automatically created in the db
+   * Creates a new teacher account when Unlisted Teacher is selected.
+   * Empty Teacher Record is automatically created in the db
    **/
-  // watch(teacherRadio, async (newValue, oldValue) => {
-  //   if (newValue === 'new') {
-  //     teacherStore.$resetTeacher()
-  //     registrationStore.registration.teacherID = null
+  watch(unlistedTeacher, async (newValue, oldValue) => {
+    if (newValue === true) {
+      teacherStore.$resetTeacher()
+      registrationStore.registration.teacherID = null
 
-  //     privateTeacher.value = appStore.performerType !== 'SCHOOL' ? true : false
-  //     schoolTeacher.value = appStore.performerType === 'SCHOOL' ? true : false
+      privateTeacher.value = appStore.performerType !== 'SCHOOL' ? true : false
+      schoolTeacher.value = appStore.performerType === 'SCHOOL' ? true : false
 
-  //     await teacherStore.createTeacher(
-  //       privateTeacher.value,
-  //       schoolTeacher.value
-  //     )
-  //     registrationStore.registration.teacherID = teacherStore.teacher.id
-  //     teacherCreated.value = true
-  //   } else if (
-  //     newValue === 'existing' &&
-  //     teacherCreated.value === true &&
-  //     !emailAlreadyExists.value
-  //   ) {
-  //     await removeTeacher()
-  //   }
-  // })
+      await teacherStore.createTeacher(
+        privateTeacher.value,
+        schoolTeacher.value
+      )
+      registrationStore.registration.teacherID = teacherStore.teacher.id
+      teacherCreated.value = true
+    } else if (
+      newValue === false &&
+      teacherCreated.value === true &&
+      !emailAlreadyExists.value
+    ) {
+      await removeTeacher()
+    }
+  })
 
   async function removeTeacher() {
     if (registrationStore.registration.teacherID) {
@@ -248,37 +252,26 @@
     teacherCreated.value = false
   }
 
-  // Watches for a change in the teacher
-  // watch(
-  //   () => registrationStore.registration.teacherID,
-  //   async (newID, oldID) => {
-  //     if (newID !== oldID && !!newID) {
-  //       if (teacherRadio.value === 'existing') {
-  //         await teacherStore.loadTeacher(newID, undefined)
-  //       }
-  //       await checkForPassword(newID)
-  //       await registrationStore.updateRegistration('teacherID')
-  //     }
-  //   }
-  // )
-
   watch(
     chosenTeacher,
     async (newTeacher) => {
-      if (!!newTeacher) {
-        console.log('New Teacher: ', newTeacher)
+      if (newTeacher.firstName === 'Unlisted') {
+        unlistedTeacher.value = true
+        return
+      } else {
+        unlistedTeacher.value = false
+        registrationStore.registration.teacherID = newTeacher.id
         await teacherStore.loadTeacher(newTeacher.id, undefined)
-        // await checkForPassword(newTeacher.value.id)
         await registrationStore.updateRegistration('teacherID')
         registrationStore.registration.teacherID = newTeacher.id
       }
-    },
-    { flush: 'post' }
+    }
+    // { flush: 'post' }
   )
 
   async function checkForDuplicate() {
     emailAlreadyExists.value = false
-    if (teacherRadio.value === 'new' && teacherStore.teacher.email) {
+    if (unlistedTeacher.value === true && teacherStore.teacher.email) {
       duplicateCheck.value = await teacherStore.duplicateTeacherCheck(
         teacherStore.teacher?.email
       )
@@ -287,8 +280,7 @@
         toast.warning(
           'Email already exists. Changing the teacher details to an existing teacher if available'
         )
-        // TODO: Accidentally runs the watcher
-        teacherRadio.value = 'existing'
+        unlistedTeacher.value = false
         await removeTeacher()
         registrationStore.registration.teacherID = duplicateCheck.value.id
         await teacherStore.loadTeacher(duplicateCheck.value.id, undefined)
@@ -311,34 +303,49 @@
     })
   }
 
-  const fieldsDisabled = computed(() => {
-    return teacherRadio.value === 'existing'
-  })
+  function displayName(teacher: FilteredTeacher) {
+    if (teacher.instrument) {
+      return `${teacher.firstName} ${teacher.lastName}, ${teacher.instrument}`
+    } else {
+      return `${teacher.firstName} ${teacher.lastName}`
+    }
+  }
 </script>
 
 <template>
   <div>
     <div class="pb-5 z-10 text-center">
+      <div class="flex items-center ml-2">
+        <div class="flex-none">
+          <label class="baseLabel"> Select a Teacher from the list </label>
+        </div>
+        <div class="grow" />
+        <BaseSaved
+          class="flex-none mr-2"
+          :status="status.id" />
+      </div>
       <PrimeAutoComplete
         class="w-full lg:w-1/2 md:w-3/4"
         v-model="chosenTeacher"
         dropdown
         forceSelection
         :optionLabel="
-          (teacher: FilteredTeacher) =>
-            teacher.firstName + ' ' + teacher.lastName
+          (chosenTeacher: FilteredTeacher) => displayName(chosenTeacher)
         "
         :suggestions="filteredTeachers"
         @complete="search">
         <template #option="slotProps">
-          <div>
+          <div v-if="slotProps.option.instrument">
             {{ slotProps.option.firstName }} {{ slotProps.option.lastName }},
             {{ slotProps.option.instrument }}
+          </div>
+          <div v-else>
+            {{ slotProps.option.firstName }} {{ slotProps.option.lastName }}
           </div>
         </template>
       </PrimeAutoComplete>
     </div>
-    <div v-if="teacherStore.teacher.firstName === 'Unlisted Teacher'">
+    <div v-if="unlistedTeacher === true">
       <p>
         Please enter the contact information for your teacher so that we may
         contact them regarding your entry and include them in our database.
@@ -347,23 +354,19 @@
         <div class="col-span-12 sm:col-span-6">
           <BaseInput
             v-model.trim="contact.firstName"
-            :class="fieldsDisabled ? 'off' : ''"
             :status="status.firstName"
             name="firstName"
             type="text"
             label="First Name"
-            :disabled="fieldsDisabled"
             @change-status="(stat: string) => fieldStatus(stat, 'firstName')" />
         </div>
         <div class="col-span-12 sm:col-span-6">
           <BaseInput
             v-model.trim="contact.lastName"
-            :class="fieldsDisabled ? 'off' : ''"
             :status="status.lastName"
             name="lastName"
             type="text"
             label="Last Name"
-            :disabled="fieldsDisabled"
             @change-status="(stat: string) => fieldStatus(stat, 'lastName')" />
         </div>
 
@@ -371,9 +374,6 @@
           <BaseInput
             v-model.trim="contact.phone"
             v-maska
-            :class="
-              fieldsDisabled && editingDisabled && !schoolTeacher ? 'off' : ''
-            "
             :status="status.phone"
             placeholder="(___) ___-____"
             data-maska="(###) ###-####"
@@ -381,19 +381,16 @@
             name="phone"
             type="tel"
             label="Phone Number"
-            :disabled="fieldsDisabled && editingDisabled && !schoolTeacher"
             @change-status="(stat: string) => fieldStatus(stat, 'phone')" />
         </div>
         <div class="col-span-12 sm:col-span-4">
           <BaseInput
             v-model.trim="contact.email"
-            :class="fieldsDisabled ? 'off' : ''"
             :status="status.email"
             placeholder="example@email.com"
             name="email"
             type="email"
             label="Email"
-            :disabled="fieldsDisabled"
             @change-status="
               (stat: string) => {
                 checkForDuplicate()
@@ -406,12 +403,10 @@
           class="col-span-12 sm:col-span-4">
           <BaseInput
             v-model.trim="contact.instrument"
-            :class="fieldsDisabled && editingDisabled ? 'off' : ''"
             :status="status.instrument"
             name="instrument"
             type="text"
             label="Instrument"
-            :disabled="fieldsDisabled && editingDisabled"
             @change-status="
               (stat: string) => fieldStatus(stat, 'instrument')
             " />

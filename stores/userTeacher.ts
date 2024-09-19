@@ -137,7 +137,6 @@ export const useTeacher = defineStore(
         (await refetchTeacher({ teacherID, teacherEmail }))
     }
     watch(resultTeacher, (newResult) => {
-      console.log('New Result: ', newResult)
       if (newResult?.teacher) {
         addToStore(<Teacher>newResult.teacher)
       }
@@ -166,18 +165,6 @@ export const useTeacher = defineStore(
     }
     onTeachersResult((result) => {
       allTeachers.value = <AllTeachers[]>result.data.teachers.map((el) => el)
-      allTeachers.value.unshift(<AllTeachers>{
-        id: 1,
-        firstName: 'No Teacher',
-        lastName: '',
-        instrument: '',
-      })
-      allTeachers.value.unshift(<AllTeachers>{
-        id: 2,
-        firstName: 'Unlisted Teacher',
-        lastName: '',
-        instrument: '',
-      })
     })
     onTeachersLoadError((error) => {
       console.log(error)
@@ -263,7 +250,7 @@ export const useTeacher = defineStore(
         if (!result) {
           duplicateTeacher = {} as Teacher
         } else {
-          console.log(result)
+          console.log('Duplicate Teacher: ', result.data.teacher)
           duplicateTeacher = result.data.teacher
         }
       })
