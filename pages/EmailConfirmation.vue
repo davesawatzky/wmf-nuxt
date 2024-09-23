@@ -5,19 +5,30 @@
 
   const tokenParam = route.query.token
   const tokenBody = { token: tokenParam }
-
-  const { data, status, error } = await useFetch(
-    config.public.emailConfirmation,
-    {
-      method: 'POST',
-      body: tokenBody,
-      onResponseError({ request, response, options }) {
-        if (response._data.message) {
-          errorMessage.value = response._data.message
-        }
-      },
+  const tokenResponse = ref()
+  const tokenError = ref(false)
+  async function confirmation() {
+    try {
+      tokenResponse.value = await $fetch(config.public.emailConfirmation, {
+        method: 'POST',
+        body: tokenBody,
+        onResponseError({ request, response, options }) {
+          if (response._data.message) {
+            errorMessage.value = response._data.message
+          }
+        },
+      })
+      console.log('Token Response: ', tokenResponse.value)
+    } catch (err) {
+      tokenError.value = true
+      console.log(err)
     }
-  )
+  }
+  confirmation()
+
+  const status = computed(() => {
+    return !!tokenResponse ? 'success' : 'pending'
+  })
 
   async function login() {
     await navigateTo('/login')
@@ -37,7 +48,7 @@
           name="icomoon-free:spinner9" />
       </div>
     </div>
-    <div v-if="status === 'success' && !error">
+    <div v-if="status === 'success' && !tokenError">
       <h3>Congratulations, your account is verified.</h3>
       <br />
       <button
@@ -87,7 +98,7 @@
         Proceed to Sign In
       </button>
     </div>
-    <div v-if="error && !errorMessage">
+    <div v-if="tokenError && !errorMessage">
       <h3>Error Verifying Account</h3>
       <p class="max-w-[400px] mx-auto">
         Try using the verification link again, re-register, or contact Winnipeg

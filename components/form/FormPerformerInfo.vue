@@ -1,168 +1,192 @@
 <script lang="ts" setup>
-import * as yup from 'yup'
-import 'yup-phone-lite'
-import { usePerformers } from '@/stores/userPerformer'
-import {InstrumentsDocument} from '~/graphql/gql/graphql'
-import {provinces} from '#imports'
+  import * as yup from 'yup'
+  import 'yup-phone-lite'
+  import { usePerformers } from '@/stores/userPerformer'
+  import { InstrumentsDocument } from '~/graphql/gql/graphql'
+  import { provinces } from '#imports'
+  import BaseSelect from '../base/BaseSelect.vue'
 
-const props = defineProps<{
-  modelValue: ContactInfo
-  teacher?: boolean
-  schoolteacher?: boolean
-  school?: boolean
-  groupperformer?: boolean
-  performerIndex: number
-  performerId: number
-}>()
+  type Pronouns = {}
 
-const emits = defineEmits<{
-  'update:modelValue': [value: ContactInfo]
-}>()
+  const props = defineProps<{
+    modelValue: ContactInfo
+    teacher?: boolean
+    schoolteacher?: boolean
+    school?: boolean
+    groupperformer?: boolean
+    performerIndex: number
+    performerId: number
+  }>()
 
-const performerStore = usePerformers()
-const appStore = useAppStore()
+  const emits = defineEmits<{
+    'update:modelValue': [value: ContactInfo]
+  }>()
 
-const contact = computed({
-  get: () => props.modelValue,
-  set: value => emits('update:modelValue', value),
-})
+  const performerStore = usePerformers()
+  const appStore = useAppStore()
 
-const { result: instrumentQuery, onError: instrumentsError }
-    = useQuery(InstrumentsDocument)
-const instruments = computed(() => instrumentQuery.value?.instruments ?? [])
-instrumentsError((error) => {
-  console.log(error)
-})
+  const contact = computed({
+    get: () => props.modelValue,
+    set: (value) => emits('update:modelValue', value),
+  })
 
-const status = reactive<Status>({
-  firstName: props.modelValue.firstName ? StatusEnum.saved : StatusEnum.null,
-  lastName: props.modelValue.lastName ? StatusEnum.saved : StatusEnum.null,
-  age: props.modelValue.age ? StatusEnum.saved : StatusEnum.null,
-  level: props.modelValue.level ? StatusEnum.saved : StatusEnum.null,
-  instrument: props.modelValue.instrument
-    ? StatusEnum.saved
-    : StatusEnum.null,
-  otherClasses: props.modelValue.otherClasses
-    ? StatusEnum.saved
-    : StatusEnum.null,
-  apartment: props.modelValue.apartment ? StatusEnum.saved : StatusEnum.null,
-  streetNumber: props.modelValue.streetNumber
-    ? StatusEnum.saved
-    : StatusEnum.null,
-  streetName: props.modelValue.streetName
-    ? StatusEnum.saved
-    : StatusEnum.null,
-  city: props.modelValue.city ? StatusEnum.saved : StatusEnum.null,
-  province: props.modelValue.province ? StatusEnum.saved : StatusEnum.null,
-  postalCode: props.modelValue.postalCode
-    ? StatusEnum.saved
-    : StatusEnum.null,
-  email: props.modelValue.email ? StatusEnum.saved : StatusEnum.null,
-  phone: props.modelValue.phone ? StatusEnum.saved : StatusEnum.null,
-})
+  const { result: instrumentQuery, onError: instrumentsError } =
+    useQuery(InstrumentsDocument)
+  const instruments = computed(() => instrumentQuery.value?.instruments ?? [])
+  instrumentsError((error) => {
+    console.log(error)
+  })
 
-async function fieldStatus(stat: string, fieldName: string) {
-  await nextTick()
-  status[fieldName] = StatusEnum.pending
-  await performerStore.updatePerformer(props.performerId, fieldName)
-  if (stat === 'saved')
-    status[fieldName] = StatusEnum.saved
-  else if (stat === 'remove')
-    status[fieldName] = StatusEnum.removed
-  else
-    status[fieldName] = StatusEnum.null
-}
+  const status = reactive<Status>({
+    pronouns: props.modelValue.pronouns ? StatusEnum.saved : StatusEnum.null,
+    firstName: props.modelValue.firstName ? StatusEnum.saved : StatusEnum.null,
+    lastName: props.modelValue.lastName ? StatusEnum.saved : StatusEnum.null,
+    age: props.modelValue.age ? StatusEnum.saved : StatusEnum.null,
+    level: props.modelValue.level ? StatusEnum.saved : StatusEnum.null,
+    instrument: props.modelValue.instrument
+      ? StatusEnum.saved
+      : StatusEnum.null,
+    otherClasses: props.modelValue.otherClasses
+      ? StatusEnum.saved
+      : StatusEnum.null,
+    unavailable: props.modelValue.unavailable
+      ? StatusEnum.saved
+      : StatusEnum.null,
+    apartment: props.modelValue.apartment ? StatusEnum.saved : StatusEnum.null,
+    streetNumber: props.modelValue.streetNumber
+      ? StatusEnum.saved
+      : StatusEnum.null,
+    streetName: props.modelValue.streetName
+      ? StatusEnum.saved
+      : StatusEnum.null,
+    city: props.modelValue.city ? StatusEnum.saved : StatusEnum.null,
+    province: props.modelValue.province ? StatusEnum.saved : StatusEnum.null,
+    postalCode: props.modelValue.postalCode
+      ? StatusEnum.saved
+      : StatusEnum.null,
+    email: props.modelValue.email ? StatusEnum.saved : StatusEnum.null,
+    phone: props.modelValue.phone ? StatusEnum.saved : StatusEnum.null,
+  })
 
-const validationSchema = toTypedSchema(
-  yup.object({
-    firstName: yup.string().trim().required('First name is required'),
-    lastName: yup.string().trim().required('Last name is required'),
-    age: yup
-      .number()
-      .positive('Enter age')
-      .integer('Enter age')
-      .min(1)
-      .max(100, 'Enter age')
-      .required('Enter age'),
-    apartment: yup
-      .string()
-      .notRequired()
-      .trim()
-      .nullable()
-      .max(10, '10 characters maximum'),
-    streetNumber: yup
-      .string()
-      .trim()
-      .max(5, '5 characters maximum')
-      .required('Enter a valid street number'),
-    streetName: yup.string().trim().required('Enter a valid street name'),
-    city: yup
-      .string()
-      .trim()
-      .max(20, 'Too many characters')
-      .required('Enter a city name'),
-    province: yup.string().max(3).required(),
-    postalCode: yup
-      .string()
-      .trim()
-      .matches(
-        /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i,
-        'Enter a valid postal code',
-      )
-      .required('Enter a valid postal code'),
-    phone: yup
-      .string()
-      .trim()
-      .phone('CA', 'Please enter a valid phone number')
-      .required('A phone number is required'),
-    email: yup
-      .string()
-      .trim()
-      .email('Must be a valid email address')
-      .required('Email address is required'),
-    instrument: yup.string().trim().required('Please indicate an instrument'),
-    level: yup.string().trim().required('Please indicate grade or level'),
-    otherClasses: yup.string().trim(),
-  }),
-)
+  async function fieldStatus(stat: string, fieldName: string) {
+    await nextTick()
+    status[fieldName] = StatusEnum.pending
+    await performerStore.updatePerformer(props.performerId, fieldName)
+    if (stat === 'saved') status[fieldName] = StatusEnum.saved
+    else if (stat === 'remove') status[fieldName] = StatusEnum.removed
+    else status[fieldName] = StatusEnum.null
+  }
 
-const { errors, validate } = useForm({
-  validationSchema,
-  validateOnMount: true,
-})
+  const validationSchema = toTypedSchema(
+    yup.object({
+      pronouns: yup
+        .string()
+        .trim()
+        .notRequired()
+        .oneOf(['', 'She/Her', 'He/Him', 'They/Them']),
+      firstName: yup.string().trim().required('First name is required'),
+      lastName: yup.string().trim().required('Last name is required'),
+      age: yup
+        .number()
+        .positive('Enter age')
+        .integer('Enter age')
+        .min(1)
+        .max(100, 'Enter age')
+        .required('Enter age'),
+      apartment: yup
+        .string()
+        .notRequired()
+        .trim()
+        .nullable()
+        .max(10, '10 characters maximum'),
+      streetNumber: yup
+        .string()
+        .trim()
+        .max(5, '5 characters maximum')
+        .required('Enter a valid street number'),
+      streetName: yup.string().trim().required('Enter a valid street name'),
+      city: yup
+        .string()
+        .trim()
+        .max(20, 'Too many characters')
+        .required('Enter a city name'),
+      province: yup.string().max(3).required(),
+      postalCode: yup
+        .string()
+        .trim()
+        .matches(
+          /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i,
+          'Enter a valid postal code'
+        )
+        .required('Enter a valid postal code'),
+      phone: yup
+        .string()
+        .trim()
+        .phone('CA', 'Please enter a valid phone number')
+        .required('A phone number is required'),
+      email: yup
+        .string()
+        .trim()
+        .email('Must be a valid email address')
+        .required('Email address is required'),
+      instrument: yup.string().trim().required('Please indicate an instrument'),
+      level: yup.string().trim().required('Please indicate grade or level'),
+      otherClasses: yup.string().trim().notRequired().nullable(),
+      unavailable: yup.string().trim().notRequired().nullable(),
+    })
+  )
 
-onActivated(async () => {
-  await validate()
-})
+  const { errors, validate } = useForm({
+    validationSchema,
+    validateOnMount: true,
+  })
 
-const maskaUcaseOption = {
-  preProcess: (val: string) => val.toUpperCase(),
-}
+  onActivated(async () => {
+    await validate()
+  })
 
-const currentYear = new Date().getFullYear()
+  const maskaUcaseOption = {
+    preProcess: (val: string) => val.toUpperCase(),
+  }
+
+  const currentYear = new Date().getFullYear()
+
+  const pronounOptions = [
+    { id: 'Empty', name: '' },
+    { id: 'She/Her', name: 'She/Her' },
+    { id: 'He/Him', name: 'He/Him' },
+    { id: 'They/Them', name: 'They/Them' },
+  ]
 </script>
 
 <template>
   <div class="grid grid-cols-12 gap-x-3 gap-y-1 items-end">
-    <div class="col-span-12 sm:col-span-5">
+    <div class="col-span-12 sm:col-span-2">
+      <BaseSelect
+        v-model.trim="contact.pronouns"
+        :status="status.pronouns"
+        name="pronouns"
+        label="Pronouns"
+        :options="pronounOptions"
+        @change-status="(stat: string) => fieldStatus(stat, 'pronouns')" />
+    </div>
+    <div class="col-span-12 sm:col-span-4">
       <BaseInput
         v-model.trim="contact.firstName"
         :status="status.firstName"
         name="firstName"
         type="text"
         label="First Name"
-        @change-status="(stat: string) => fieldStatus(stat, 'firstName')"
-      />
+        @change-status="(stat: string) => fieldStatus(stat, 'firstName')" />
     </div>
-    <div class="col-span-12 sm:col-span-5">
+    <div class="col-span-12 sm:col-span-4">
       <BaseInput
         v-model.trim="contact.lastName"
         :status="status.lastName"
         name="lastName"
         type="text"
         label="Last Name"
-        @change-status="(stat: string) => fieldStatus(stat, 'lastName')"
-      />
+        @change-status="(stat: string) => fieldStatus(stat, 'lastName')" />
     </div>
     <div class="col-span-3 sm:col-span-2">
       <BaseInput
@@ -175,8 +199,7 @@ const currentYear = new Date().getFullYear()
         type="number"
         label="Age"
         :help-message="`Age as of December 31, ${currentYear}`"
-        @change-status="(stat: string) => fieldStatus(stat, 'age')"
-      />
+        @change-status="(stat: string) => fieldStatus(stat, 'age')" />
     </div>
     <div class="col-span-4 sm:col-span-3">
       <BaseInput
@@ -185,8 +208,7 @@ const currentYear = new Date().getFullYear()
         name="apartment"
         type="text"
         label="Apt."
-        @change-status="(stat: string) => fieldStatus(stat, 'apartment')"
-      />
+        @change-status="(stat: string) => fieldStatus(stat, 'apartment')" />
     </div>
     <div class="col-span-5 sm:col-span-3">
       <BaseInput
@@ -195,8 +217,7 @@ const currentYear = new Date().getFullYear()
         name="streetNumber"
         type="text"
         label="Street #"
-        @change-status="(stat: string) => fieldStatus(stat, 'streetNumber')"
-      />
+        @change-status="(stat: string) => fieldStatus(stat, 'streetNumber')" />
     </div>
     <div class="col-span-12 sm:col-span-6">
       <BaseInput
@@ -205,8 +226,7 @@ const currentYear = new Date().getFullYear()
         name="streetName"
         type="text"
         label="Street Name"
-        @change-status="(stat: string) => fieldStatus(stat, 'streetName')"
-      />
+        @change-status="(stat: string) => fieldStatus(stat, 'streetName')" />
     </div>
     <div class="col-span-8 sm:col-span-7">
       <BaseInput
@@ -215,8 +235,7 @@ const currentYear = new Date().getFullYear()
         name="city"
         type="text"
         label="City/Town"
-        @change-status="(stat: string) => fieldStatus(stat, 'city')"
-      />
+        @change-status="(stat: string) => fieldStatus(stat, 'city')" />
     </div>
     <div class="col-span-4 sm:col-span-2 self-start">
       <BaseSelect
@@ -225,8 +244,7 @@ const currentYear = new Date().getFullYear()
         name="province"
         label="Province"
         :options="provinces"
-        @change-status="(stat: string) => fieldStatus(stat, 'province')"
-      />
+        @change-status="(stat: string) => fieldStatus(stat, 'province')" />
     </div>
     <div class="col-span-6 sm:col-span-3">
       <BaseInput
@@ -240,8 +258,7 @@ const currentYear = new Date().getFullYear()
         name="postalCode"
         type="text"
         label="Postal Code"
-        @change-status="(stat: string) => fieldStatus(stat, 'postalCode')"
-      />
+        @change-status="(stat: string) => fieldStatus(stat, 'postalCode')" />
     </div>
     <div class="col-span-6 sm:col-span-5">
       <BaseInput
@@ -254,8 +271,7 @@ const currentYear = new Date().getFullYear()
         name="phone"
         type="tel"
         label="Phone Number"
-        @change-status="(stat: string) => fieldStatus(stat, 'phone')"
-      />
+        @change-status="(stat: string) => fieldStatus(stat, 'phone')" />
     </div>
     <div class="col-span-12 sm:col-span-7">
       <BaseInput
@@ -265,8 +281,7 @@ const currentYear = new Date().getFullYear()
         name="email"
         type="email"
         label="Email"
-        @change-status="(stat: string) => fieldStatus(stat, 'email')"
-      />
+        @change-status="(stat: string) => fieldStatus(stat, 'email')" />
     </div>
     <div class="col-span-6 sm:col-span-6">
       <BaseSelect
@@ -276,26 +291,22 @@ const currentYear = new Date().getFullYear()
         name="instrument"
         :options="instruments"
         label="Instrument"
-        @change-status="(stat: string) => fieldStatus(stat, 'instrument')"
-      />
+        @change-status="(stat: string) => fieldStatus(stat, 'instrument')" />
     </div>
     <div
       v-if="groupperformer"
-      class="col-span-6 sm:col-span-6"
-    >
+      class="col-span-6 sm:col-span-6">
       <BaseInput
         v-model.trim="contact.level"
         :status="status.level"
         name="level"
         type="text"
         label="Level"
-        @change-status="(stat: string) => fieldStatus(stat, 'level')"
-      />
+        @change-status="(stat: string) => fieldStatus(stat, 'level')" />
     </div>
     <div
       v-if="groupperformer"
-      class="col-span-12"
-    >
+      class="col-span-12">
       <p>
         To avoid scheduling conflicts, please list all other festival classes
         entered but not included on this form. Use only class numbers separated
@@ -306,8 +317,21 @@ const currentYear = new Date().getFullYear()
         :status="status.otherClasses"
         name="otherClasses"
         label="Other festival classes entered"
-        @change-status="(stat: string) => fieldStatus(stat, 'otherClasses')"
-      />
+        @change-status="(stat: string) => fieldStatus(stat, 'otherClasses')" />
+    </div>
+    <div
+      v-else
+      class="col-span-12">
+      <p>
+        List ay date/time when you are unavailable for performance, using
+        <strong>calendar dates</strong>, between February 23 and March 20, 2025.
+      </p>
+      <BaseTextarea
+        v-model.trim="contact.unavailable"
+        :status="status.unavailable"
+        name="unavailable"
+        label="Unavailable Dates/Times"
+        @change-status="(stat: string) => fieldStatus(stat, 'unavailable')" />
     </div>
   </div>
 </template>

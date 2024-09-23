@@ -3,13 +3,14 @@
   import type {
     Stripe,
     StripeElements,
-    StripeElementsOptionsClientSecret,
+    StripeElementsOptions,
     StripePaymentElementOptions,
   } from '@stripe/stripe-js'
   import { useToast } from 'vue-toastification'
   import { useRegistration } from '@/stores/userRegistration'
   import { useUser } from '@/stores/useUser'
   import { useAppStore } from '@/stores/appStore'
+  import { ErrorMessage } from 'vee-validate'
 
   const appStore = useAppStore()
   const userStore = useUser()
@@ -17,11 +18,12 @@
   const loading = ref(false)
   const spinnerHidden = ref(true)
   const registrationStore = useRegistration()
+  const submitDisabled = ref(false)
   let clientSec: string = ''
   // const total = ref(0)
 
   const config = useRuntimeConfig()
-  let stripe: Stripe | null
+
   let elements: StripeElements
 
   definePageMeta({
@@ -32,44 +34,38 @@
     const regExist = registrationStore?.registrationId
     const confirmed = registrationStore.registration?.confirmation
     const submitted = registrationStore.registration?.submittedAt
-
     if (!regExist || confirmed || submitted) await navigateTo('/Registrations')
   })
 
-  onMounted(() => {
-    initialize()
-  })
+  const stripe: Stripe | null = await loadStripe(config.public.stripePubKey)
 
-  async function initialize() {
+  const handleError = (error: any) => {
+    toast.error(error.message)
+    submitDisabled.value = false
+    return
+  }
+
+  async function loadStripeElements() {
     loading.value = true
-    const items = {
-      amount: Math.round(
-        (+registrationStore.registration.totalAmt +
-          +registrationStore.processingFee) *
-          100
-      ),
+    const options: StripeElementsOptions = {
+      mode: 'payment',
+      amount: Math.round(+registrationStore.registration.totalAmt * 100),
       currency: 'cad',
+      appearance: { theme: 'stripe' },
     }
 
-    const response = await useFetch(
-      `${config.public.serverAddress}/payment/create-payment-intent`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(items),
-      }
-    )
-    const { clientSecret }: any = response.data.value
-    clientSec = clientSecret
+    // const PaymentIntent: any = await $fetch(
+    //   `${config.public.serverAddress}/payment/create-payment-intent`,
+    //   {
+    //     method: 'POST',
+    //     headers: { 'Content-Type': 'application/json' },
+    //     body: JSON.stringify(items),
+    //   }
+    // )
+    // const { clientSecret }: any = PaymentIntent
+    // clientSec = clientSecret
 
-    const appearance = {
-      theme: 'stripe',
-    }
-    stripe = await loadStripe(config.public.stripePubKey)
-    elements = stripe!.elements({
-      appearance,
-      clientSecret,
-    } as StripeElementsOptionsClientSecret)
+    elements = stripe!.elements(options)
 
     const paymentElementOptions: StripePaymentElementOptions = {
       layout: {
@@ -79,8 +75,6 @@
         spacedAccordionItems: true,
       },
     }
-    const linkAuthenticationElement = elements.create('linkAuthentication')
-    linkAuthenticationElement.mount('#link-authentication-element')
     const paymentElement = elements.create('payment', paymentElementOptions)
     paymentElement.mount('#payment-element')
 
@@ -102,42 +96,73 @@
       spinnerHidden.value = true
       await navigateTo('/submission/result')
       return
+    } else if (appStore.stripePayment === 'ccard') {
+      if (submitDisabled.value) {
+        return
+      }
+
+      submitDisabled.value = true
+
+      const {
+        id,
+        firstName,
+        lastName,
+        email,
+        apartment,
+        streetNumber,
+        streetName,
+        city,
+        province,
+        postalCode,
+      } = userStore.user
+
+      const { error: submitError } = await elements.submit()
+      if (submitError) {
+        handleError(submitError)
+        return
+      }
+
+      const { error: confirmTokenError, confirmationToken } =
+        await stripe.createConfirmationToken({
+          elements,
+          params: {
+            payment_method_data: {
+              billing_details: {
+                name: `${firstName} ${lastName}`,
+              },
+            },
+          },
+        })
+      if (confirmTokenError) {
+        handleError(confirmTokenError)
+        return
+      }
+      appStore.stripeTokenId = confirmationToken.id
+
+      // const { error: confirmPaymentError } = await stripe!.confirmPayment({
+      //   elements,
+      //   clientSecret: clientSec,
+      //   confirmParams: {
+      //     return_url: `${config.public.apiBase}/submission/result`,
+      //   },
+      // })
+
+      // This point will only be reached if there is an immediate error when
+      // confirming the payment. Otherwise, your customer will be redirected to
+      // your `return_url`. For some payment methods like iDEAL, your customer will
+      // be redirected to an intermediate site first to authorize the payment, then
+      // redirected to the `return_url`.
+
+      spinnerHidden.value = true
+      loading.value = false
+
+      await navigateTo('/submission/ConfirmPayment')
+
+      // if (confirmPaymentError) {
+      //   handleError(confirmPaymentError)
+      //   return
+      // }
     }
-
-    const {
-      id,
-      firstName,
-      lastName,
-      email,
-      apartment,
-      streetNumber,
-      streetName,
-      city,
-      province,
-      postalCode,
-    } = userStore.user
-
-    elements.submit()
-
-    const { error } = await stripe!.confirmPayment({
-      elements,
-      clientSecret: clientSec,
-      confirmParams: {
-        return_url: `${config.public.apiBase}/submission/result`,
-      },
-    })
-
-    // This point will only be reached if there is an immediate error when
-    // confirming the payment. Otherwise, your customer will be redirected to
-    // your `return_url`. For some payment methods like iDEAL, your customer will
-    // be redirected to an intermediate site first to authorize the payment, then
-    // redirected to the `return_url`.
-    if (error) {
-      toast.error('Error processing payment')
-      console.log(error.message)
-    }
-    spinnerHidden.value = true
-    loading.value = false
   }
 
   // Fetches the payment intent status after payment submission
@@ -166,16 +191,14 @@
     }
   }
 
-  const total = computed(() => {
-    if (appStore.stripePayment === 'ccard') {
-      return (
-        +registrationStore.registration.totalAmt +
-        +registrationStore.processingFee
-      ).toFixed(2)
-    } else if (appStore.stripePayment === 'cash') {
-      return Number(registrationStore.registration.totalAmt).toFixed(2)
+  watch(
+    () => appStore.stripePayment,
+    async (newPaymentType) => {
+      if (newPaymentType === 'ccard') {
+        await loadStripeElements()
+      }
     }
-  })
+  )
 </script>
 
 <template>
@@ -184,87 +207,89 @@
     <p class="m-4 p-3 text-center font-bold text-xl rounded-xl">
       Please do not close your browser after submitting!
     </p>
+    <h3 class="text-center mb-8">Select method of payment</h3>
+    <div class="text-center mb-8">
+      <BaseButton
+        class="btn w-[200px] h-[150px] text-xl font-semibold"
+        :class="appStore.stripePayment === 'cash' ? 'btn-green' : 'btn-blue'"
+        label="Cash, Cheque, E-Transfer"
+        @click="appStore.stripePayment = 'cash'">
+        Cash, Cheque, E-Transfer
+      </BaseButton>
+      <BaseButton
+        class="btn w-[200px] h-[150px] text-xl font-semibold"
+        :class="appStore.stripePayment === 'ccard' ? 'btn-green' : 'btn-blue'"
+        label="Pay by Credit Card"
+        @click="appStore.stripePayment = 'ccard'">
+        Credit Card
+      </BaseButton>
+    </div>
+
     <form
       id="payment-form"
       @submit="handleSubmit">
-      <div class="sm:grid sm:grid-cols-2 sm:gap-4">
-        <fieldset>
-          <div class="p-4 sm:p-6 border border-sky-700 rounded-lg bg-white">
-            <div class="pb-4">
-              <BaseRadio
-                v-model="appStore.stripePayment"
-                name="paymentType"
-                label="Cash, Cheque, E-Transfer"
-                value="cash" />
-            </div>
-            <ul class="list-disc p-4">
-              <li>
-                Payment may be made by cash, cheque, or e-transfer to the
-                Winnipeg Music Festival (<a href="mailto:wmf@mts.net"
-                  ><strong>wmf@mts.net</strong></a
-                >).
-              </li>
-              <li>
-                Registrations will not be considered submitted until payment is
-                received.
-              </li>
-            </ul>
-          </div>
-          <div class="text-center font-bold text-xl py-3">OR</div>
-          <div class="p-4 sm:p-6 border border-sky-700 rounded-lg bg-white">
-            <div class="pb-8">
-              <BaseRadio
-                v-model="appStore.stripePayment"
-                name="paymentType"
-                label="Pay by Credit Card"
-                value="ccard" />
-            </div>
-            <div id="link-authentication-element">
-              <!-- Stripe.js injects the Payment Element -->
-            </div>
-            <div id="payment-element">
-              <!-- Stripe.js injects the Payment Element -->
-            </div>
-            <div
-              id="payment-message"
-              class="" />
-          </div>
-        </fieldset>
-        <div class="mt-4 sm:mt-0">
-          <div class="p-4 border border-sky-700 rounded-lg bg-white">
-            <h4 class="mb-6">Final Amount</h4>
-            <table class="table-fixed w-full">
-              <tbody>
-                <tr>
-                  <td class="">Subtotal</td>
-                  <td class="text-right">
-                    ${{
-                      Number(registrationStore.registration.totalAmt).toFixed(2)
-                    }}
-                  </td>
-                </tr>
-                <tr v-if="appStore.stripePayment === 'ccard'">
-                  <td>Processing Fee</td>
-                  <td class="text-right">
-                    ${{ registrationStore.processingFee }}
-                  </td>
-                </tr>
-                <tr class="font-bold border-t border-sky-700 pt-5">
-                  <td class="pt-3">Total</td>
-                  <td class="pt-3 text-right">${{ total }}</td>
-                </tr>
-              </tbody>
-            </table>
-            <button
-              id="submit"
-              class="mt-8">
-              <div
-                id="spinner"
-                :class="spinnerHidden ? 'spinner hidden' : 'spinner'" />
-              <span id="button-text">Submit Payment</span>
-            </button>
-          </div>
+      <div class="my-6 sm:mt-0">
+        <div class="p-4 border border-sky-700 rounded-lg bg-white">
+          <h4 class="mb-6">Final Amount</h4>
+          <table class="table-fixed w-full">
+            <tbody>
+              <tr>
+                <td class="">Total</td>
+                <td class="text-right">
+                  ${{
+                    Number(registrationStore.registration.totalAmt).toFixed(2)
+                  }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
+      </div>
+
+      <fieldset>
+        <div
+          v-auto-animate
+          v-show="appStore.stripePayment === 'cash'"
+          class="p-4 sm:p-6 border border-sky-700 rounded-lg bg-white">
+          <ul class="list-disc">
+            <li>
+              Payment may be made by cash, cheque, or e-transfer to the Winnipeg
+              Music Festival (<a href="mailto:wmf@mts.net"
+                ><strong>wmf@mts.net</strong></a
+              >).
+            </li>
+            <li>
+              Registrations will not be considered submitted until payment is
+              received.
+            </li>
+          </ul>
+        </div>
+
+        <div
+          v-auto-animate
+          v-show="appStore.stripePayment === 'ccard'"
+          class="p-4 sm:p-6 border border-sky-700 rounded-lg bg-white">
+          <div class="pb-8"></div>
+          <div id="payment-element">
+            <!-- Stripe.js injects the Payment Element -->
+          </div>
+          <div
+            id="payment-message"
+            class="" />
+        </div>
+      </fieldset>
+
+      <div class="text-center">
+        <BaseButton
+          :disabled="submitDisabled"
+          type="submit"
+          id="submit"
+          class="mt-8 btn btn-blue w-[200px] h-[75px]">
+          <div
+            id="spinner"
+            :class="spinnerHidden ? 'spinner hidden' : 'spinner'" />
+          <span id="button-text">Submit Payment</span>
+        </BaseButton>
       </div>
     </form>
   </div>
@@ -295,30 +320,6 @@
 
   #payment-element {
     margin-bottom: 24px;
-  }
-
-  /* Buttons and links */
-  button {
-    background: #5469d4;
-    font-family: Arial, sans-serif;
-    color: #ffffff;
-    border-radius: 4px;
-    border: 0;
-    padding: 12px 16px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    display: block;
-    transition: all 0.2s ease;
-    box-shadow: 0px 4px 5.5px 0px rgba(0, 0, 0, 0.07);
-    width: 100%;
-  }
-  button:hover {
-    filter: contrast(115%);
-  }
-  button:disabled {
-    opacity: 0.5;
-    cursor: default;
   }
 
   /* spinner/processing state, errors */

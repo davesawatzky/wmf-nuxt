@@ -19,6 +19,8 @@ export const useAppStore = defineStore(
     const teacherHasPassword = ref(false)
     const stripePayment = ref('')
     const passwordResetSent = ref(false)
+    const processingFee = ref('')
+    const stripeTokenId = ref()
 
     function $reset() {
       editExisting.value = false
@@ -36,6 +38,8 @@ export const useAppStore = defineStore(
       teacherHasPassword.value = false
       stripePayment.value = 'cash'
       passwordResetSent.value = false
+      processingFee.value = ''
+      stripeTokenId.value = ''
     }
 
     return {
@@ -55,6 +59,8 @@ export const useAppStore = defineStore(
       teacherHasPassword,
       stripePayment,
       passwordResetSent,
+      processingFee,
+      stripeTokenId,
     }
   },
   {

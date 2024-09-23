@@ -61,7 +61,7 @@
                 leave-from-class="transform scale-100 opacity-100"
                 leave-to-class="transform scale-95 opacity-0">
                 <UIMenuItems
-                  class="absolute mt-[45px] ml-[-75px] w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg shadow-slate-400 ring-1 ring-black ring-opacity-10 focus:outline-none">
+                  class="absolute z-10 mt-[45px] ml-[-75px] w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg shadow-slate-400 ring-1 ring-black ring-opacity-10 focus:outline-none">
                   <div class="p-1">
                     <UIMenuItem
                       v-slot="{ active, close }"
@@ -122,7 +122,7 @@
                 leave-from-class="transform scale-100 opacity-100"
                 leave-to-class="transform scale-95 opacity-0">
                 <UIMenuItems
-                  class="absolute mt-[45px] ml-[42px] w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg shadow-slate-400 ring-1 ring-black ring-opacity-10 focus:outline-none">
+                  class="absolute z-10 mt-[45px] ml-[42px] w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg shadow-slate-400 ring-1 ring-black ring-opacity-10 focus:outline-none">
                   <div class="p-1">
                     <UIMenuItem
                       v-slot="{ active, close }"

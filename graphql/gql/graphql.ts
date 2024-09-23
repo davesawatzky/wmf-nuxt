@@ -730,10 +730,12 @@ export type Performer = {
   otherClasses?: Maybe<Scalars['String']['output']>;
   phone?: Maybe<Scalars['String']['output']>;
   postalCode?: Maybe<Scalars['String']['output']>;
+  pronouns?: Maybe<Scalars['String']['output']>;
   province?: Maybe<Scalars['String']['output']>;
   registration?: Maybe<Registration>;
   streetName?: Maybe<Scalars['String']['output']>;
   streetNumber?: Maybe<Scalars['String']['output']>;
+  unavailable?: Maybe<Scalars['String']['output']>;
 };
 
 export type PerformerInput = {
@@ -748,9 +750,11 @@ export type PerformerInput = {
   otherClasses?: InputMaybe<Scalars['String']['input']>;
   phone?: InputMaybe<Scalars['String']['input']>;
   postalCode?: InputMaybe<Scalars['String']['input']>;
+  pronouns?: InputMaybe<Scalars['String']['input']>;
   province?: InputMaybe<Scalars['String']['input']>;
   streetName?: InputMaybe<Scalars['String']['input']>;
   streetNumber?: InputMaybe<Scalars['String']['input']>;
+  unavailable?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type PerformerPayload = {

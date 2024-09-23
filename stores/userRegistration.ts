@@ -44,13 +44,6 @@ export const useRegistration = defineStore(
       if (Number.parseInt(newValue) > 0) await updateRegistration('totalAmt')
     })
 
-    const processingFee = computed(() => {
-      return (
-        Number(+registration.value.totalAmt + 0.3) / (1 - 0.029) -
-        +registration.value.totalAmt
-      ).toFixed(2)
-    })
-
     /**
      * Adds Registration Object to the store.  Can only be one.
      * @param reg Registration Object, must have valid id property value
@@ -155,7 +148,6 @@ export const useRegistration = defineStore(
     return {
       registrationId,
       registration,
-      processingFee,
       totalClassAmt,
       $reset,
       addToStore,

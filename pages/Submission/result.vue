@@ -104,8 +104,7 @@
       if (appStore.stripePayment === 'ccard') {
         registrationStore.registration.transactionInfo = 'ccard - succeeded'
         registrationStore.registration.payedAmt = Number(
-          +registrationStore.registration.totalAmt +
-            +registrationStore.processingFee
+          +registrationStore.registration.totalAmt + +appStore.processingFee
         ).toFixed(2)
       } else if (appStore.stripePayment === 'cash') {
         registrationStore.registration.transactionInfo =

@@ -110,7 +110,6 @@
     })
   })
   doneSignin(async (result) => {
-    console.log('Result: ', result)
     if (result.data?.signin.diatonicToken) {
       if (
         result.data.signin.user?.privateTeacher &&
@@ -127,6 +126,9 @@
           'Account not confirmed.'
         )
       ) {
+        user.value.firstName = result.data?.signin.user?.firstName!
+        user.value.lastName = result.data?.signin.user?.lastName!
+        user.value.email = result.data?.signin.user?.email!
         accountNotConfirmed.value = true
         isOpen.value = true
       }

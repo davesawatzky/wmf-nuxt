@@ -341,15 +341,15 @@
                 <td
                   v-if="md"
                   class="text-xs text-white">
-                  <div
-                    v-if="dateFunction(registration.submittedAt)"
-                    class="rounded-xl pl-2 py-1 bg-green-700">
-                    Submitted
+                  <div v-if="dateFunction(registration.submittedAt)">
+                    <p class="inlinr rounded-xl px-2 py-1 bg-green-700">
+                      Submitted
+                    </p>
                   </div>
-                  <div
-                    v-else
-                    class="rounded-xl pl-2 py-1 bg-red-700">
-                    Incomplete
+                  <div v-else>
+                    <p class="inline rounded-xl px-2 py-1 bg-red-700">
+                      Incomplete
+                    </p>
                   </div>
                 </td>
                 <td class="text-sm">

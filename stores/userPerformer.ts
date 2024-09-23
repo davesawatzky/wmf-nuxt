@@ -68,12 +68,14 @@ export const usePerformers = defineStore(
     function addToStore(performer: Partial<Performer>): void {
       performers.value.push(<Performer>{
         id: performer.id,
+        pronouns: performer.pronouns || '',
         firstName: performer.firstName || '',
         lastName: performer.lastName || '',
         age: performer.age || undefined,
         level: performer.level || '',
         instrument: performer.instrument || '',
         otherClasses: performer.otherClasses || '',
+        unavailable: performer.unavailable || '',
         apartment: performer.apartment || '',
         streetNumber: performer.streetNumber || '',
         streetName: performer.streetName || '',
