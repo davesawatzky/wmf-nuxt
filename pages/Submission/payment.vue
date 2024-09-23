@@ -10,7 +10,6 @@
   import { useRegistration } from '@/stores/userRegistration'
   import { useUser } from '@/stores/useUser'
   import { useAppStore } from '@/stores/appStore'
-  import { ErrorMessage } from 'vee-validate'
 
   const appStore = useAppStore()
   const userStore = useUser()
@@ -53,17 +52,6 @@
       currency: 'cad',
       appearance: { theme: 'stripe' },
     }
-
-    // const PaymentIntent: any = await $fetch(
-    //   `${config.public.serverAddress}/payment/create-payment-intent`,
-    //   {
-    //     method: 'POST',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify(items),
-    //   }
-    // )
-    // const { clientSecret }: any = PaymentIntent
-    // clientSec = clientSecret
 
     elements = stripe!.elements(options)
 
@@ -139,29 +127,10 @@
       }
       appStore.stripeTokenId = confirmationToken.id
 
-      // const { error: confirmPaymentError } = await stripe!.confirmPayment({
-      //   elements,
-      //   clientSecret: clientSec,
-      //   confirmParams: {
-      //     return_url: `${config.public.apiBase}/submission/result`,
-      //   },
-      // })
-
-      // This point will only be reached if there is an immediate error when
-      // confirming the payment. Otherwise, your customer will be redirected to
-      // your `return_url`. For some payment methods like iDEAL, your customer will
-      // be redirected to an intermediate site first to authorize the payment, then
-      // redirected to the `return_url`.
-
       spinnerHidden.value = true
       loading.value = false
 
       await navigateTo('/submission/ConfirmPayment')
-
-      // if (confirmPaymentError) {
-      //   handleError(confirmPaymentError)
-      //   return
-      // }
     }
   }
 

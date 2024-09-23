@@ -47,6 +47,7 @@
   const userFirstName = toValue(userStore.user.firstName)
   const userLastName = toValue(userStore.user.lastName)
   const userEmail = toValue(userStore.user.email)
+  const dataSending = ref(false)
 
   function printWindow() {
     window.print()
@@ -94,18 +95,13 @@
   }
 
   async function onSuccess() {
+    dataSending.value = true
     try {
-      let dataSending = true
-      confirmationNumber.value = `WMF-${
-        registrationStore.registrationId
-      }-${_.random(1000, 9999)}`
+      confirmationNumber.value = registrationStore.registration.confirmation!
       registrationStore.registration.submittedAt = date
       registrationStore.registration.confirmation = confirmationNumber.value
       if (appStore.stripePayment === 'ccard') {
         registrationStore.registration.transactionInfo = 'ccard - succeeded'
-        registrationStore.registration.payedAmt = Number(
-          +registrationStore.registration.totalAmt + +appStore.processingFee
-        ).toFixed(2)
       } else if (appStore.stripePayment === 'cash') {
         registrationStore.registration.transactionInfo =
           'cash/cheque/e-transfer'
@@ -132,15 +128,16 @@
           userEmail,
         }
       )
-      await useFetch('/api/send-email', {
+      await $fetch('/api/send-email', {
         watch: false,
         method: 'POST',
         body: payload,
       })
-      dataSending = false
     } catch (err) {
+      dataSending.value = false
       console.log(err)
     }
+    dataSending.value = false
   }
 </script>
 

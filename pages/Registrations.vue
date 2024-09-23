@@ -342,7 +342,7 @@
                   v-if="md"
                   class="text-xs text-white">
                   <div v-if="dateFunction(registration.submittedAt)">
-                    <p class="inlinr rounded-xl px-2 py-1 bg-green-700">
+                    <p class="inline rounded-xl px-2 py-1 bg-green-700">
                       Submitted
                     </p>
                   </div>
