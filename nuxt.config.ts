@@ -42,8 +42,7 @@ export default defineNuxtConfig({
     },
     clients: {
       default: {
-        httpEndpoint:
-          process.env.NUXT_GRAPHQL_SERVER || 'http://localhost:3000/graphql',
+        httpEndpoint: 'https://wmfapi.diatonic.ca/graphql',
         tokenName: 'diatonicToken',
         authHeader: 'Authorization',
         authType: 'Bearer',
