@@ -1,7 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import process from 'node:process'
 import Aura from '@primevue/themes/aura'
 
 export default defineNuxtConfig({
@@ -43,8 +42,7 @@ export default defineNuxtConfig({
     },
     clients: {
       default: {
-        httpEndpoint:
-          process.env.NUXT_GRAPHQL_SERVER || 'http://localhost:3000/graphql',
+        httpEndpoint: 'https://wmf-diatonic-be.onrender.com/graphql',
         tokenName: 'diatonicToken',
         authHeader: 'Authorization',
         authType: 'Bearer',
