@@ -133,7 +133,7 @@ export const usePerformers = defineStore(
     } = useLazyQuery(PerformersDocument, undefined, { fetchPolicy: 'no-cache' })
     async function loadPerformers(registrationId: number) {
       ;(await performersLoad(null, { registrationId })) ||
-        (await performersRefetch({ registrationId }))
+        (await performersRefetch())
     }
     watch(resultPerformers, (newResult) => {
       if (newResult?.performers) {
@@ -201,12 +201,10 @@ export const usePerformers = defineStore(
     } = useMutation(PerformerDeleteDocument)
     async function deletePerformer(performerId: number) {
       await performerDelete({ performerId })
-      onPerformerDeleteDone(() => {
-        const performerIndex = performers.value.findIndex(
-          (item) => item.id === performerId
-        )
-        performers.value.splice(performerIndex, 1)
-      })
+      const performerIndex = performers.value.findIndex(
+        (item) => item.id === performerId
+      )
+      performers.value.splice(performerIndex, 1)
     }
     onPerformerDeleteError((error) => {
       console.log(error)

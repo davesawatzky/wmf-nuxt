@@ -56,7 +56,7 @@ export const useUser = defineStore(
       await userUpdate({
         userId: user.value.id,
         user: <UserInput>(userField || userProps),
-      }).catch((error) => console.log(error))
+      })
     }
     onUserUpdateError((error) => {
       console.log(error)

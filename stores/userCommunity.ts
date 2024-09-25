@@ -95,7 +95,7 @@ export const useCommunity = defineStore(
     })
     async function loadCommunity(registrationId: number) {
       ;(await communityLoad(null, { registrationId })) ||
-        (await refetchCommunity({ registrationId }))
+        (await refetchCommunity())
     }
     watch(resultCommunity, (newResult) => {
       if (newResult?.registration.community) {

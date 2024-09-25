@@ -121,10 +121,10 @@ export const useClasses = defineStore(
       onDone: onCreateClassDone,
       onError: onCreateClassError,
     } = useMutation(ClassCreateDocument, { fetchPolicy: 'no-cache' })
-    function createClass(registrationId: number) {
-      classCreate({ registrationId })
+    async function createClass(registrationId: number) {
+      await classCreate({ registrationId })
     }
-    onCreateClassDone(async (result) => {
+    onCreateClassDone((result) => {
       if (result.data?.registeredClassCreate.registeredClass) {
         const regClass = result.data.registeredClassCreate.registeredClass
         addClassToStore(regClass)
@@ -222,10 +222,9 @@ export const useClasses = defineStore(
       onDone: onClassDeleteDone,
       onError: onClassDeleteError,
     } = useMutation(ClassDeleteDocument)
-    function deleteClass(registeredClassId: number): number {
-      classDelete({ registeredClassId })
-      let classIndex = 0
-      classIndex = registeredClasses.value.findIndex(
+    async function deleteClass(registeredClassId: number): Promise<number> {
+      await classDelete({ registeredClassId })
+      const classIndex = registeredClasses.value.findIndex(
         (item) => item.id === registeredClassId
       )
       registeredClasses.value.splice(classIndex, 1)

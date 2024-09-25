@@ -26,7 +26,7 @@
   })
 
   async function addClass() {
-    classesStore.createClass(registrationStore.registrationId)
+    await classesStore.createClass(registrationStore.registrationId)
     if (appStore.performerType === PerformerType.SCHOOL)
       status.push({ schoolGroupID: StatusEnum.null })
     if (appStore.performerType === PerformerType.COMMUNITY)
@@ -34,7 +34,7 @@
   }
 
   async function removeClass(classId: number, index: number) {
-    const classIndex = classesStore.deleteClass(classId)
+    const classIndex = await classesStore.deleteClass(classId)
     if (appStore.performerType === PerformerType.SCHOOL)
       status.splice(classIndex, 1)
     if (appStore.performerType === PerformerType.COMMUNITY)
@@ -112,7 +112,7 @@
             v-model.number="
               classesStore.registeredClasses[classIndex].schoolGroupID
             "
-            :status="status[classIndex].schoolGroupID"
+            :status="status[classIndex]?.schoolGroupID"
             :name="`schoolGroups[${classIndex}].id`"
             return-id
             label="Select a school Group"

@@ -116,11 +116,11 @@
     })
     // { fetchPolicy: 'network-only' }
   )
-  const disciplineQuery = computed(
-    () => disciplineResult.value ?? <DisciplinesByTypeQuery>{}
-  )
+  const disciplineQuery = computed(() => {
+    return disciplineResult.value ?? <DisciplinesByTypeQuery>{}
+  })
   onErrorDisciplines((error) => {
-    console.log('Stopping Here: ', error)
+    console.log(error)
   })
 
   /**
@@ -140,13 +140,15 @@
         return item.name.toLowerCase().includes('mozart')
       })
       if (performerStore.performers[0].instrument.toLowerCase() === 'voice') {
-        return disciplineQuery.value.disciplines.filter((item) => {
-          return (
-            item.name.toLowerCase() === 'vocal' ||
-            item.name.toLowerCase() === 'musical theatre' ||
-            item.name.toLowerCase().includes('mozart')
-          )
-        })
+        return (
+          disciplineQuery.value.disciplines.filter((item) => {
+            return (
+              item.name.toLowerCase() === 'vocal' ||
+              item.name.toLowerCase() === 'musical theatre' ||
+              item.name.toLowerCase().includes('mozart')
+            )
+          }) ?? []
+        )
       } else {
         // Adds Mozart Classes to all the other instruments
         let isMozart = false
@@ -162,31 +164,40 @@
         if (isMozart && Mozart) {
           discipline?.push(Mozart[0])
         }
-        return discipline
+        return discipline ?? ''
       }
-    } else if (appStore.performerType === 'GROUP') {
+    } else if (
+      appStore.performerType === 'GROUP' &&
+      disciplineQuery.value.disciplines
+    ) {
       if (groupStore.group.groupType === 'vocal') {
-        return disciplineQuery.value?.disciplines.filter((item) => {
-          return (
-            item.name.toLowerCase().includes('vocal') ||
-            item.name.toLowerCase().includes('musical theatre')
-          )
-        })
+        return (
+          disciplineQuery.value?.disciplines.filter((item) => {
+            return (
+              item.name.toLowerCase().includes('vocal') ||
+              item.name.toLowerCase().includes('musical theatre')
+            )
+          }) ?? []
+        )
       } else if (groupStore.group.groupType === 'instrumental') {
-        return disciplineQuery.value?.disciplines.filter((item) => {
-          return (
-            item.name.toLowerCase().includes('brass') ||
-            item.name.toLowerCase().includes('classical guitar') ||
-            item.name.toLowerCase().includes('percussion') ||
-            item.name.toLowerCase().includes('piano') ||
-            item.name.toLowerCase().includes('strings') ||
-            item.name.toLowerCase().includes('woodwinds')
-          )
-        })
+        return (
+          disciplineQuery.value?.disciplines.filter((item) => {
+            return (
+              item.name.toLowerCase().includes('brass') ||
+              item.name.toLowerCase().includes('classical guitar') ||
+              item.name.toLowerCase().includes('percussion') ||
+              item.name.toLowerCase().includes('piano') ||
+              item.name.toLowerCase().includes('strings') ||
+              item.name.toLowerCase().includes('woodwinds')
+            )
+          }) ?? []
+        )
       } else if (groupStore.group.groupType === 'mixed') {
-        return disciplineQuery.value?.disciplines.filter((item) => {
-          return item.name.toLowerCase().includes('mixed group')
-        })
+        return (
+          disciplineQuery.value?.disciplines.filter((item) => {
+            return item.name.toLowerCase().includes('mixed group')
+          }) ?? []
+        )
       }
     } else {
       return disciplineQuery.value?.disciplines ?? []
@@ -464,14 +475,12 @@
       let oldNumber =
         classesStore.registeredClasses[props.classIndex].selections!.length
       if (oldNumber < newNumber!) {
-        console.log('newNumber bigger than oldNumber')
         while (oldNumber < newNumber!) {
           console.log(props.classId)
           await classesStore.createSelection(props.classId)
           oldNumber += 1
         }
       } else if (oldNumber > newNumber!) {
-        console.log('oldNumber bigger than new number')
         while (oldNumber > newNumber!) {
           const selectionLength =
             classesStore.registeredClasses[props.classIndex].selections!.length
@@ -485,7 +494,6 @@
           oldNumber -= 1
         }
       }
-      console.log('Watcher Fired')
       await classesStore.updateClass(props.classId, 'numberOfSelections')
     }
   )

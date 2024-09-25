@@ -118,7 +118,7 @@ export const useRegistration = defineStore(
       await registrationUpdate({
         registrationId: registrationId.value,
         registrationInput: <RegistrationInput>(registrationField || regProps),
-      }).catch((error) => console.log(error))
+      })
     }
     onRegistrationUpdateError((error) => {
       console.log(error)
@@ -137,13 +137,13 @@ export const useRegistration = defineStore(
     } = useMutation(RegistrationDeleteDocument)
     async function deleteRegistration(registrationId: number) {
       await registrationDelete({ registrationId })
-      onRegistrationDeleteDone(() => {
-        $reset()
-      })
-      onRegistrationDeleteError((error) => {
-        console.log(error)
-      })
     }
+    onRegistrationDeleteDone(() => {
+      $reset()
+    })
+    onRegistrationDeleteError((error) => {
+      console.log(error)
+    })
 
     return {
       registrationId,

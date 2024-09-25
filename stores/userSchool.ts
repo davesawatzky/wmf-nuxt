@@ -94,8 +94,7 @@ export const useSchool = defineStore(
       fetchPolicy: 'no-cache',
     })
     async function loadSchool(registrationId: number) {
-      ;(await schoolLoad(null, { registrationId })) ||
-        (await refetchSchool({ registrationId }))
+      ;(await schoolLoad(null, { registrationId })) || (await refetchSchool())
     }
     watch(resultSchool, (newResult) => {
       if (newResult?.registration.school) {

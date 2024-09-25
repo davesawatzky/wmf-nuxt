@@ -42,19 +42,24 @@ export const useSchoolGroup = defineStore(
      * @param schoolGrp School Group Object must have valid id property value
      */
     function addToStore(schoolGrp: SchoolGroup): void {
-      schoolGroup.value.push({
-        id: schoolGrp.id,
-        name: schoolGrp.name || '',
-        groupSize: schoolGrp.groupSize !== null ? schoolGrp.groupSize : null,
-        chaperones: schoolGrp.chaperones !== null ? schoolGrp.chaperones : null,
-        wheelchairs:
-          schoolGrp.wheelchairs !== null ? schoolGrp.wheelchairs : null,
-        earliestTime: schoolGrp.earliestTime || '',
-        latestTime: schoolGrp.latestTime || '',
-        unavailable: schoolGrp.unavailable || '',
-        conflictPerformers: schoolGrp.conflictPerformers || '',
-        __typename: schoolGrp.__typename || 'SchoolGroup',
-      })
+      try {
+        schoolGroup.value.push({
+          id: schoolGrp.id,
+          name: schoolGrp.name || '',
+          groupSize: schoolGrp.groupSize !== null ? schoolGrp.groupSize : null,
+          chaperones:
+            schoolGrp.chaperones !== null ? schoolGrp.chaperones : null,
+          wheelchairs:
+            schoolGrp.wheelchairs !== null ? schoolGrp.wheelchairs : null,
+          earliestTime: schoolGrp.earliestTime || '',
+          latestTime: schoolGrp.latestTime || '',
+          unavailable: schoolGrp.unavailable || '',
+          conflictPerformers: schoolGrp.conflictPerformers || '',
+          __typename: schoolGrp.__typename || 'SchoolGroup',
+        })
+      } catch (err) {
+        console.log(err)
+      }
     }
 
     /**
@@ -102,15 +107,15 @@ export const useSchoolGroup = defineStore(
     })
     async function loadSchoolGroups(registrationId: number) {
       ;(await schoolGroupsLoad(null, { registrationId })) ||
-        (await refetchSchoolGroups({ registrationId }))
+        (await refetchSchoolGroups())
     }
     watch(resultSchoolGroups, (newResult) => {
       if (newResult?.registration.school?.schoolGroups) {
         const schoolGroups = <SchoolGroup[]>(
           newResult.registration.school?.schoolGroups
         )
-        for (let i = 0; i < schoolGroups.length; i++)
-          addToStore(schoolGroups[i])
+        const length = schoolGroups.length
+        for (let i = 0; i < length; i++) addToStore(schoolGroups[i])
       }
     })
     onSchoolGroupsError((error) => {
@@ -153,7 +158,7 @@ export const useSchoolGroup = defineStore(
     /**
      * Updates all School Group info to the db
      */
-    async function updateAllSchoolGroups(): Promise<void> {
+    async function updateAllSchoolGroups() {
       for (let i = 0; i < schoolGroup.value.length; i++)
         await updateSchoolGroup(schoolGroup.value[i].id)
     }
@@ -168,12 +173,11 @@ export const useSchoolGroup = defineStore(
       onDone: onSchoolGroupDeleteDone,
       onError: onSchoolGroupDeleteError,
     } = useMutation(SchoolGroupDeleteDocument)
+
     async function deleteSchoolGroup(schoolGroupId: number) {
       await schoolGroupDelete({ schoolGroupId })
-      onSchoolGroupDeleteDone(() => {
-        const index = schoolGroup.value.findIndex((e) => e.id === schoolGroupId)
-        schoolGroup.value.splice(index, 1)
-      })
+      const index = schoolGroup.value.findIndex((e) => e.id === schoolGroupId)
+      schoolGroup.value.splice(index, 1)
     }
     onSchoolGroupDeleteError((error) => {
       console.log(error)

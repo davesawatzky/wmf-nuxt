@@ -104,8 +104,7 @@ export const useGroup = defineStore(
       onError: onGroupLoadError,
     } = useLazyQuery(GroupInfoDocument, undefined, { fetchPolicy: 'no-cache' })
     async function loadGroup(registrationId: number) {
-      ;(await groupLoad(null, { registrationId })) ||
-        (await refetchGroup({ registrationId }))
+      ;(await groupLoad(null, { registrationId })) || (await refetchGroup())
     }
     watch(resultGroup, (newResult) => {
       if (newResult?.registration.group) {

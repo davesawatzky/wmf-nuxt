@@ -104,7 +104,7 @@ export const useCommunityGroup = defineStore(
     })
     async function loadCommunityGroups(registrationId: number) {
       ;(await communityGroupsLoad(null, { registrationId })) ||
-        (await refetchCommunityGroups({ registrationId }))
+        (await refetchCommunityGroups())
     }
     watch(resultCommunityGroups, (newResult) => {
       if (newResult?.registration.community?.communityGroups) {
@@ -177,12 +177,10 @@ export const useCommunityGroup = defineStore(
     } = useMutation(CommunityGroupDeleteDocument)
     async function deleteCommunityGroup(communityGroupId: number) {
       await communityGroupDelete({ communityGroupId })
-      onCommunityGroupDeleteDone(() => {
-        const index = communityGroup.value.findIndex(
-          (e) => e.id === communityGroupId
-        )
-        communityGroup.value.splice(index, 1)
-      })
+      const index = communityGroup.value.findIndex(
+        (e) => e.id === communityGroupId
+      )
+      communityGroup.value.splice(index, 1)
     }
     onCommunityGroupDeleteError((error) => {
       console.log(error)
