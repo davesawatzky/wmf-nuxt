@@ -1277,7 +1277,7 @@ export type TeacherInput = {
 
 export type TeacherPayload = {
   __typename: 'TeacherPayload';
-  teacher: Teacher;
+  teacher?: Maybe<Teacher>;
   userErrors: Array<UserError>;
 };
 
@@ -1564,14 +1564,14 @@ export type TeacherCreateMutationVariables = Exact<{
 }>;
 
 
-export type TeacherCreateMutation = { __typename: 'Mutation', teacherCreate: { __typename: 'TeacherPayload', teacher: { __typename: 'Teacher', id: number, email?: string | null, firstName?: string | null, lastName?: string | null, privateTeacher?: boolean | null, schoolTeacher?: boolean | null }, userErrors: Array<{ __typename: 'UserError', message: string }> } };
+export type TeacherCreateMutation = { __typename: 'Mutation', teacherCreate: { __typename: 'TeacherPayload', teacher?: { __typename: 'Teacher', id: number, email?: string | null, firstName?: string | null, lastName?: string | null, privateTeacher?: boolean | null, schoolTeacher?: boolean | null } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type TeacherDeleteMutationVariables = Exact<{
   teacherId: Scalars['Int']['input'];
 }>;
 
 
-export type TeacherDeleteMutation = { __typename: 'Mutation', teacherDelete: { __typename: 'TeacherPayload', teacher: { __typename: 'Teacher', id: number }, userErrors: Array<{ __typename: 'UserError', message: string }> } };
+export type TeacherDeleteMutation = { __typename: 'Mutation', teacherDelete: { __typename: 'TeacherPayload', teacher?: { __typename: 'Teacher', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type TeacherUpdateMutationVariables = Exact<{
   teacherId: Scalars['Int']['input'];
@@ -1579,7 +1579,7 @@ export type TeacherUpdateMutationVariables = Exact<{
 }>;
 
 
-export type TeacherUpdateMutation = { __typename: 'Mutation', teacherUpdate: { __typename: 'TeacherPayload', teacher: { __typename: 'Teacher', id: number }, userErrors: Array<{ __typename: 'UserError', message: string }> } };
+export type TeacherUpdateMutation = { __typename: 'Mutation', teacherUpdate: { __typename: 'TeacherPayload', teacher?: { __typename: 'Teacher', id: number } | null, userErrors: Array<{ __typename: 'UserError', message: string }> } };
 
 export type UserUpdateMutationVariables = Exact<{
   userId: Scalars['Int']['input'];

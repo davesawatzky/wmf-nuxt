@@ -195,7 +195,10 @@
   })
   onDeactivated(async () => {
     if (
-      (!values.email || !values.firstName || !values.lastName) &&
+      (!values.email ||
+        !values.phone ||
+        !values.firstName ||
+        !values.lastName) &&
       !!teacherCreated.value
     ) {
       await removeTeacher()
@@ -209,42 +212,16 @@
   // const editingDisabled = ref(true)
   // Checks if a newly created record is actually a duplicate
   // of an existing record.
-  const duplicateCheck = ref(<Teacher>{})
+  const duplicateCheck = ref({} as Teacher | null)
   // Flag to show if this teacher was just created and
   // did not exist in the user db before now.
   const teacherCreated = ref(false)
 
-  /**
-   * Watching the Teacher page action flow
-   *
-   * Creates a new teacher account when Unlisted Teacher is selected.
-   * Empty Teacher Record is automatically created in the db
-   **/
-  watch(unlistedTeacher, async (newValue, oldValue) => {
-    if (newValue === true) {
-      teacherStore.$resetTeacher()
-      registrationStore.registration.teacherID = null
-
-      privateTeacher.value = appStore.performerType !== 'SCHOOL' ? true : false
-      schoolTeacher.value = appStore.performerType === 'SCHOOL' ? true : false
-
-      await teacherStore.createTeacher(
-        privateTeacher.value,
-        schoolTeacher.value
-      )
-      registrationStore.registration.teacherID = teacherStore.teacher.id
-      teacherCreated.value = true
-    } else if (
-      newValue === false &&
-      teacherCreated.value === true &&
-      !emailAlreadyExists.value
-    ) {
-      await removeTeacher()
-    }
-  })
-
   async function removeTeacher() {
-    if (registrationStore.registration.teacherID) {
+    if (
+      !!registrationStore.registration.teacherID &&
+      registrationStore.registration.teacherID !== 2
+    ) {
       await teacherStore.deleteTeacher(registrationStore.registration.teacherID)
     }
     registrationStore.registration.teacherID = null
@@ -252,18 +229,38 @@
     teacherCreated.value = false
   }
 
+  // Adds teacher id to registration store
+  // unless it's an unlisted teacher
+  // if unlisted then the unlisted teacher watcher will run
   watch(
     chosenTeacher,
-    async (newTeacher) => {
+    async (newTeacher, oldTeacher) => {
       if (newTeacher.firstName === 'Unlisted') {
         unlistedTeacher.value = true
-        return
+        teacherStore.$resetTeacher()
+        registrationStore.registration.teacherID = null
+        privateTeacher.value =
+          appStore.performerType !== 'SCHOOL' ? true : false
+        schoolTeacher.value = appStore.performerType === 'SCHOOL' ? true : false
+        await teacherStore.createTeacher(
+          privateTeacher.value,
+          schoolTeacher.value
+        )
+        registrationStore.registration.teacherID = teacherStore.teacher.id
+        teacherCreated.value = true
       } else {
-        unlistedTeacher.value = false
+        if (
+          oldTeacher.firstName === 'Unlisted' &&
+          teacherCreated.value === true &&
+          !emailAlreadyExists.value
+        ) {
+          await removeTeacher()
+          unlistedTeacher.value = false
+          teacherCreated.value = false
+        }
         registrationStore.registration.teacherID = newTeacher.id
         await teacherStore.loadTeacher(newTeacher.id, undefined)
         await registrationStore.updateRegistration('teacherID')
-        registrationStore.registration.teacherID = newTeacher.id
       }
     }
     // { flush: 'post' }
@@ -275,7 +272,7 @@
       duplicateCheck.value = await teacherStore.duplicateTeacherCheck(
         teacherStore.teacher?.email
       )
-      if (!!duplicateCheck.value.id) {
+      if (duplicateCheck.value?.id) {
         emailAlreadyExists.value = true
         toast.warning(
           'Email already exists. Changing the teacher details to an existing teacher if available'
@@ -284,11 +281,27 @@
         await removeTeacher()
         registrationStore.registration.teacherID = duplicateCheck.value.id
         await teacherStore.loadTeacher(duplicateCheck.value.id, undefined)
-        await registrationStore
-          .updateRegistration('teacherID')
-          .catch((error) => {
-            console.log('Error updating registration from teacherID', error)
-          })
+        if (
+          !!teacherStore.teacher.privateTeacher ||
+          !!teacherStore.teacher.schoolTeacher
+        ) {
+          await registrationStore
+            .updateRegistration('teacherID')
+            .catch((error) => {
+              console.log('Error updating registration from teacherID', error)
+            })
+          chosenTeacher.value = <FilteredTeacher>(
+            teacherStore.allTeachers.find(
+              (teacher) => teacher.id === duplicateCheck.value?.id
+            )
+          )
+        } else {
+          toast.error('Teacher must be listed as a private or school teacher.')
+          teacherStore.$resetTeacher()
+          chosenTeacher.value = <FilteredTeacher>(
+            teacherStore.allTeachers.find((teacher) => teacher.id === 2)
+          )
+        }
         emailAlreadyExists.value = false
       }
     }

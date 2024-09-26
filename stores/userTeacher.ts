@@ -243,19 +243,15 @@ export const useTeacher = defineStore(
     }
     async function duplicateTeacherCheck(
       teacherEmail: string
-    ): Promise<Teacher> {
+    ): Promise<Teacher | null> {
       await teacherDuplicateLoad(undefined, teacherEmail)
-      let duplicateTeacher = {} as Teacher
-      onTeacherDuplicateResult((result) => {
-        if (!result) {
-          duplicateTeacher = {} as Teacher
-        } else {
-          console.log('Duplicate Teacher: ', result.data.teacher)
-          duplicateTeacher = result.data.teacher
-        }
-      })
-      return duplicateTeacher
+      return resultTeacherDuplicate.value?.teacher ?? null
     }
+
+    onTeacherDuplicateResult((result) => {
+      console.log(result.data)
+    })
+
     onTeacherDuplicateError((error) => {
       console.log(error)
     })

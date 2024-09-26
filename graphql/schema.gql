@@ -760,7 +760,7 @@ input TeacherInput {
 }
 
 type TeacherPayload {
-  teacher: Teacher!
+  teacher: Teacher
   userErrors: [UserError!]!
 }
 
