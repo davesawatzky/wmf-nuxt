@@ -60,11 +60,6 @@ export default defineNuxtConfig({
       // },
     },
   },
-  app: {
-    head: {
-      script: ['https://www.polyfill.io/v3/polyfill.min.js'],
-    },
-  },
   experimental: {
     typedPages: true,
     componentIslands: true,
