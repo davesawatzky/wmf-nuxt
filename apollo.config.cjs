@@ -4,7 +4,7 @@ module.exports = {
       name: 'wmf-nest',
       // URL to the GraphQL API
       // url: 'https://wmfapi.diatonic.ca/graphql',
-      url: process.env.NUXT_GRAPHQL_SERVER,
+      url: 'http://localhost:3001/graphql',
     },
     // Files processed by the extension
     includes: ['**/*.vue', 'graphql/**/*.gql', 'graphql/**/*.graphql'],

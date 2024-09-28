@@ -12,3 +12,6 @@ node_modules
 # build files
 dist
 .DS_Store
+
+# Other files
+apollo.config.cjs
