@@ -43,8 +43,8 @@ export default defineNuxtConfig({
     },
     clients: {
       default: {
-        // httpEndpoint: 'https://wmfapi.diatonic.ca/graphql',
-        httpEndpoint: <string>process.env.NUXT_GRAPHQL_SERVER,
+        httpEndpoint: 'https://wmfapi.diatonic.ca/graphql',
+        // httpEndpoint: 'http://localhost:3000/graphql',
         tokenName: 'diatonicToken',
         authHeader: 'Authorization',
         authType: 'Bearer',
@@ -53,12 +53,6 @@ export default defineNuxtConfig({
           credentials: 'include',
         },
       },
-      // cookieAttributes: {
-      //   sameSite: 'none',
-      //   domain: 'localhost:3000',
-      //   path: '/graphql',
-      //   maxAge: 1000 * 60 * 1, // 1 hour
-      // },
     },
   },
   experimental: {
