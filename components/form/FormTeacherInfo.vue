@@ -7,7 +7,7 @@
   import { useUser } from '~/stores/useUser'
   import type { Teacher } from '~/graphql/gql/graphql'
   import { useToast } from 'vue-toastification'
-  import { provinces, StatusEnum } from '#imports'
+  import { StatusEnum } from '#imports'
 
   interface FilteredTeacher {
     id: number
@@ -77,18 +77,6 @@
     id: props.teacherId ? StatusEnum.saved : StatusEnum.null,
     firstName: props.modelValue.firstName ? StatusEnum.saved : StatusEnum.null,
     lastName: props.modelValue.lastName ? StatusEnum.saved : StatusEnum.null,
-    // apartment: props.modelValue.apartment ? StatusEnum.saved : StatusEnum.null,
-    // streetNumber: props.modelValue.streetNumber
-    //   ? StatusEnum.saved
-    //   : StatusEnum.null,
-    // streetName: props.modelValue.streetName
-    //   ? StatusEnum.saved
-    //   : StatusEnum.null,
-    // city: props.modelValue.city ? StatusEnum.saved : StatusEnum.null,
-    // province: props.modelValue.province ? StatusEnum.saved : StatusEnum.null,
-    // postalCode: props.modelValue.postalCode
-    //   ? StatusEnum.saved
-    //   : StatusEnum.null,
     email: props.modelValue.email ? StatusEnum.saved : StatusEnum.null,
     phone: props.modelValue.phone ? StatusEnum.saved : StatusEnum.null,
     instrument: props.modelValue.instrument
@@ -101,32 +89,6 @@
       id: yup.number(),
       firstName: yup.string().trim().required('First name is required'),
       lastName: yup.string().trim().required('Last name is required'),
-      // apartment: yup
-      //   .string()
-      //   .notRequired()
-      //   .trim()
-      //   .nullable()
-      //   .max(10, '10 characters maximum'),
-      // streetNumber: yup
-      //   .string()
-      //   .trim()
-      //   .max(5, '5 characters maximum')
-      //   .required('Enter a valid street number'),
-      // streetName: yup.string().trim().required('Enter a valid street name'),
-      // city: yup
-      //   .string()
-      //   .trim()
-      //   .max(20, 'Too many characters')
-      //   .required('Enter a city name'),
-      // province: yup.string().max(3).required(),
-      // postalCode: yup
-      //   .string()
-      //   .trim()
-      //   .matches(
-      //     /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i,
-      //     'Enter a valid postal code'
-      //   )
-      //   .required('Enter a valid postal code'),
       phone: yup
         .string()
         .trim()

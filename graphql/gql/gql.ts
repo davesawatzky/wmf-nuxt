@@ -25,6 +25,15 @@ const documents = {
     "mutation GroupCreate($registrationId: Int!) {\n  groupCreate(registrationID: $registrationId) {\n    group {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.GroupCreateDocument,
     "mutation GroupDelete($groupId: Int!) {\n  groupDelete(groupID: $groupId) {\n    group {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.GroupDeleteDocument,
     "mutation GroupUpdate($groupId: Int!, $group: GroupInput!) {\n  groupUpdate(groupID: $groupId, groupInput: $group) {\n    group {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.GroupUpdateDocument,
+    "mutation ItemCreate($itemInput: ItemInput!) {\n  itemCreate(ItemInput: $itemInput) {\n    item {\n      id\n    }\n    userErrors {\n      field\n      message\n    }\n  }\n}": types.ItemCreateDocument,
+    "mutation ItemDelete($itemDeleteId: Int!) {\n  itemDelete(id: $itemDeleteId) {\n    item {\n      id\n    }\n    userErrors {\n      field\n      message\n    }\n  }\n}": types.ItemDeleteDocument,
+    "mutation ItemUpdate($itemUpdateId: Int!, $itemInput: ItemInput!) {\n  itemUpdate(id: $itemUpdateId, itemInput: $itemInput) {\n    item {\n      id\n    }\n    userErrors {\n      field\n      message\n    }\n  }\n}": types.ItemUpdateDocument,
+    "mutation OrderCreate($orderInput: OrderInput!) {\n  orderCreate(orderInput: $orderInput) {\n    order {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.OrderCreateDocument,
+    "mutation OrderDelete($orderId: Int!) {\n  orderDelete(orderID: $orderId) {\n    order {\n      id\n    }\n    userErrors {\n      field\n      message\n    }\n  }\n}": types.OrderDeleteDocument,
+    "mutation OrderItemCreate($orderId: Int!, $orderItemInput: OrderItemInput!) {\n  orderItemCreate(orderID: $orderId, orderItemInput: $orderItemInput) {\n    orderItem {\n      orderID\n      itemID\n    }\n    userErrors {\n      field\n      message\n    }\n  }\n}": types.OrderItemCreateDocument,
+    "mutation OrderItemDelete($itemId: Int!, $orderId: Int!) {\n  orderItemDelete(itemID: $itemId, orderID: $orderId) {\n    orderItem {\n      orderID\n      itemID\n    }\n    userErrors {\n      field\n      message\n    }\n  }\n}": types.OrderItemDeleteDocument,
+    "mutation OrderItemUpdate($itemId: Int!, $orderId: Int!, $orderItemInput: OrderItemInput!) {\n  orderItemUpdate(\n    itemID: $itemId\n    orderID: $orderId\n    orderItemInput: $orderItemInput\n  ) {\n    orderItem {\n      itemID\n      orderID\n    }\n    userErrors {\n      field\n      message\n    }\n  }\n}": types.OrderItemUpdateDocument,
+    "mutation OrderUpdate($orderId: Int!, $orderInput: OrderInput!) {\n  orderUpdate(orderID: $orderId, orderInput: $orderInput) {\n    order {\n      id\n    }\n    userErrors {\n      field\n      message\n    }\n  }\n}": types.OrderUpdateDocument,
     "mutation PerformerCreate($registrationId: Int!, $performer: PerformerInput!) {\n  performerCreate(registrationID: $registrationId, performerInput: $performer) {\n    performer {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.PerformerCreateDocument,
     "mutation PerformerDelete($performerId: Int!) {\n  performerDelete(performerID: $performerId) {\n    performer {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.PerformerDeleteDocument,
     "mutation PerformerUpdate($performerId: Int!, $performer: PerformerInput!) {\n  performerUpdate(performerID: $performerId, performerInput: $performer) {\n    performer {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.PerformerUpdateDocument,
@@ -46,13 +55,13 @@ const documents = {
     "mutation UserUpdate($userId: Int!, $user: UserInput!) {\n  userUpdate(userID: $userId, userInput: $user) {\n    user {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}": types.UserUpdateDocument,
     "mutation SignIn($credentials: CredentialsSignin!) {\n  signin(credentials: $credentials) {\n    userErrors {\n      message\n    }\n    diatonicToken\n    user {\n      email\n      firstName\n      lastName\n      privateTeacher\n      hasSignedIn\n    }\n  }\n}": types.SignInDocument,
     "mutation SignUp($credentials: CredentialsSignup!) {\n  signup(credentials: $credentials) {\n    userErrors {\n      message\n    }\n    user {\n      email\n    }\n  }\n}": types.SignUpDocument,
-    "query CommunityGroupInfo($registrationId: Int!) {\n  registration(id: $registrationId) {\n    community {\n      communityGroups {\n        id\n        name\n        groupSize\n        chaperones\n        wheelchairs\n        earliestTime\n        latestTime\n        unavailable\n        conflictPerformers\n      }\n    }\n  }\n}": types.CommunityGroupInfoDocument,
+    "query CommunityGroupInfo($registrationId: Int!) {\n  registration(id: $registrationId) {\n    community {\n      communityGroups {\n        id\n        name\n        groupSize\n        chaperones\n        wheelchairs\n        earliestTime\n        latestTime\n        unavailable\n        conflictPerformers\n        photoPermission\n      }\n    }\n  }\n}": types.CommunityGroupInfoDocument,
     "query CommunityInfo($registrationId: Int!) {\n  registration(id: $registrationId) {\n    community {\n      id\n      name\n      streetNumber\n      streetName\n      city\n      province\n      postalCode\n      phone\n      email\n    }\n  }\n}": types.CommunityInfoDocument,
     "query DisciplinesByType($performerType: PerformerType!) {\n  disciplines(performerType: $performerType) {\n    id\n    name\n    instruments {\n      id\n      name\n      mozart\n    }\n  }\n}": types.DisciplinesByTypeDocument,
     "query GroupInfo($registrationId: Int!) {\n  registration(id: $registrationId) {\n    group {\n      id\n      age\n      groupType\n      instruments\n      name\n      numberOfPerformers\n    }\n  }\n}": types.GroupInfoDocument,
-    "query Performers($registrationId: Int!) {\n  performers(registrationID: $registrationId) {\n    id\n    firstName\n    lastName\n    age\n    apartment\n    streetNumber\n    streetName\n    city\n    province\n    postalCode\n    phone\n    email\n    instrument\n    level\n  }\n}": types.PerformersDocument,
+    "query Performers($registrationId: Int!) {\n  performers(registrationID: $registrationId) {\n    id\n    pronouns\n    firstName\n    lastName\n    age\n    apartment\n    streetNumber\n    streetName\n    city\n    province\n    postalCode\n    phone\n    email\n    instrument\n    level\n    otherClasses\n    unavailable\n    photoPermission\n  }\n}": types.PerformersDocument,
     "query RegisteredClasses($registrationId: Int!) {\n  registration(id: $registrationId) {\n    registeredClasses {\n      category\n      classType\n      classNumber\n      discipline\n      id\n      level\n      minSelections\n      maxSelections\n      numberOfSelections\n      price\n      subdiscipline\n      schoolGroupID\n      selections {\n        composer\n        duration\n        id\n        largerWork\n        movement\n        title\n      }\n    }\n  }\n}": types.RegisteredClassesDocument,
-    "query SchoolGroupInfo($registrationId: Int!) {\n  registration(id: $registrationId) {\n    school {\n      schoolGroups {\n        id\n        name\n        groupSize\n        chaperones\n        wheelchairs\n        earliestTime\n        latestTime\n        unavailable\n        conflictPerformers\n      }\n    }\n  }\n}": types.SchoolGroupInfoDocument,
+    "query SchoolGroupInfo($registrationId: Int!) {\n  registration(id: $registrationId) {\n    school {\n      schoolGroups {\n        id\n        name\n        groupSize\n        chaperones\n        wheelchairs\n        earliestTime\n        latestTime\n        unavailable\n        conflictPerformers\n        photoPermission\n      }\n    }\n  }\n}": types.SchoolGroupInfoDocument,
     "query SchoolInfo($registrationId: Int!) {\n  registration(id: $registrationId) {\n    school {\n      id\n      name\n      division\n      streetNumber\n      streetName\n      city\n      province\n      postalCode\n      phone\n    }\n  }\n}": types.SchoolInfoDocument,
     "query TeacherInfo($teacherID: Int, $teacherEmail: String) {\n  teacher(teacherID: $teacherID, teacherEmail: $teacherEmail) {\n    id\n    firstName\n    lastName\n    apartment\n    streetNumber\n    streetName\n    city\n    province\n    postalCode\n    phone\n    email\n    instrument\n  }\n}": types.TeacherInfoDocument,
     "query AllTeachersSearch($teacherType: String!) {\n  teachers(teacherType: $teacherType) {\n    id\n    firstName\n    lastName\n    instrument\n  }\n}": types.AllTeachersSearchDocument,
@@ -65,8 +74,12 @@ const documents = {
     "query FieldConfigs {\n  fieldConfigs {\n    tableName\n    fieldName\n    communityRequired\n    groupRequired\n    schoolRequired\n    soloRequired\n    customField\n    customFieldType\n  }\n}": types.FieldConfigsDocument,
     "query instrument($instrumentId: Int, $instrumentName: String) {\n  instrument(id: $instrumentId, name: $instrumentName) {\n    name\n    mozart\n    discipline {\n      name\n    }\n  }\n}": types.instrumentDocument,
     "query Instruments {\n  instruments {\n    id\n    name\n    mozart\n    discipline {\n      name\n    }\n  }\n}": types.InstrumentsDocument,
+    "query Item($itemId: Int!) {\n  item(id: $itemId) {\n    name\n    description\n    startDate\n    endDate\n    price\n    taxable\n    transferable\n    createdAt\n    updatedAt\n  }\n}": types.ItemDocument,
+    "query Items {\n  items {\n    id\n    name\n    description\n    startDate\n    endDate\n    price\n    taxable\n    transferable\n    createdAt\n    updatedAt\n  }\n}": types.ItemsDocument,
     "query Levels($subdisciplineId: Int, $categoryId: Int) {\n  levels(categoryID: $categoryId, subdisciplineID: $subdisciplineId) {\n    id\n    name\n    description\n  }\n}": types.LevelsDocument,
     "query MyUser {\n  myUser {\n    id\n    firstName\n    lastName\n    apartment\n    streetNumber\n    streetName\n    city\n    province\n    postalCode\n    phone\n    email\n    emailConfirmed\n    instrument\n    privateTeacher\n    schoolTeacher\n    hasSignedIn\n  }\n}": types.MyUserDocument,
+    "query Order($orderId: Int!) {\n  order(id: $orderId) {\n    id\n    totalAmount\n    payedAmount\n    purchaseDate\n    deliveryDate\n    methodDelivered\n    createdAt\n    updatedAt\n    orderItems {\n      itemID\n      namesOnItems\n      notes\n      quantity\n      item {\n        id\n        name\n        description\n        startDate\n        endDate\n        price\n        notes\n        taxable\n        transferable\n      }\n    }\n  }\n}": types.OrderDocument,
+    "query Orders {\n  orders {\n    id\n    totalAmount\n    payedAmount\n    purchaseDate\n    deliveryDate\n    methodDelivered\n    createdAt\n    updatedAt\n    orderItems {\n      itemID\n      namesOnItems\n      notes\n      quantity\n      item {\n        id\n        name\n        description\n        startDate\n        endDate\n        price\n        notes\n        taxable\n        transferable\n      }\n    }\n  }\n}": types.OrdersDocument,
     "query Registrations($performerType: PerformerType) {\n  registrations(performerType: $performerType) {\n    id\n    confirmation\n    label\n    payedAmt\n    performerType\n    submittedAt\n    teacher {\n      id\n    }\n    totalAmt\n    transactionInfo\n    createdAt\n    updatedAt\n  }\n}": types.RegistrationsDocument,
     "query StudentRegistrations {\n  myStudents {\n    registrations {\n      confirmation\n      createdAt\n      id\n      label\n      performerType\n      submittedAt\n      updatedAt\n      performers {\n        firstName\n        lastName\n      }\n      group {\n        name\n      }\n      school {\n        name\n      }\n      community {\n        name\n      }\n    }\n  }\n}": types.StudentRegistrationsDocument,
     "query SubDisciplines($disciplineId: Int!, $performerType: PerformerType!) {\n  subdisciplines(disciplineID: $disciplineId, performerType: $performerType) {\n    id\n    name\n    description\n  }\n}": types.SubDisciplinesDocument,
@@ -135,6 +148,42 @@ export function graphql(source: "mutation GroupDelete($groupId: Int!) {\n  group
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "mutation GroupUpdate($groupId: Int!, $group: GroupInput!) {\n  groupUpdate(groupID: $groupId, groupInput: $group) {\n    group {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}"): (typeof documents)["mutation GroupUpdate($groupId: Int!, $group: GroupInput!) {\n  groupUpdate(groupID: $groupId, groupInput: $group) {\n    group {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "mutation ItemCreate($itemInput: ItemInput!) {\n  itemCreate(ItemInput: $itemInput) {\n    item {\n      id\n    }\n    userErrors {\n      field\n      message\n    }\n  }\n}"): (typeof documents)["mutation ItemCreate($itemInput: ItemInput!) {\n  itemCreate(ItemInput: $itemInput) {\n    item {\n      id\n    }\n    userErrors {\n      field\n      message\n    }\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "mutation ItemDelete($itemDeleteId: Int!) {\n  itemDelete(id: $itemDeleteId) {\n    item {\n      id\n    }\n    userErrors {\n      field\n      message\n    }\n  }\n}"): (typeof documents)["mutation ItemDelete($itemDeleteId: Int!) {\n  itemDelete(id: $itemDeleteId) {\n    item {\n      id\n    }\n    userErrors {\n      field\n      message\n    }\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "mutation ItemUpdate($itemUpdateId: Int!, $itemInput: ItemInput!) {\n  itemUpdate(id: $itemUpdateId, itemInput: $itemInput) {\n    item {\n      id\n    }\n    userErrors {\n      field\n      message\n    }\n  }\n}"): (typeof documents)["mutation ItemUpdate($itemUpdateId: Int!, $itemInput: ItemInput!) {\n  itemUpdate(id: $itemUpdateId, itemInput: $itemInput) {\n    item {\n      id\n    }\n    userErrors {\n      field\n      message\n    }\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "mutation OrderCreate($orderInput: OrderInput!) {\n  orderCreate(orderInput: $orderInput) {\n    order {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}"): (typeof documents)["mutation OrderCreate($orderInput: OrderInput!) {\n  orderCreate(orderInput: $orderInput) {\n    order {\n      id\n    }\n    userErrors {\n      message\n    }\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "mutation OrderDelete($orderId: Int!) {\n  orderDelete(orderID: $orderId) {\n    order {\n      id\n    }\n    userErrors {\n      field\n      message\n    }\n  }\n}"): (typeof documents)["mutation OrderDelete($orderId: Int!) {\n  orderDelete(orderID: $orderId) {\n    order {\n      id\n    }\n    userErrors {\n      field\n      message\n    }\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "mutation OrderItemCreate($orderId: Int!, $orderItemInput: OrderItemInput!) {\n  orderItemCreate(orderID: $orderId, orderItemInput: $orderItemInput) {\n    orderItem {\n      orderID\n      itemID\n    }\n    userErrors {\n      field\n      message\n    }\n  }\n}"): (typeof documents)["mutation OrderItemCreate($orderId: Int!, $orderItemInput: OrderItemInput!) {\n  orderItemCreate(orderID: $orderId, orderItemInput: $orderItemInput) {\n    orderItem {\n      orderID\n      itemID\n    }\n    userErrors {\n      field\n      message\n    }\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "mutation OrderItemDelete($itemId: Int!, $orderId: Int!) {\n  orderItemDelete(itemID: $itemId, orderID: $orderId) {\n    orderItem {\n      orderID\n      itemID\n    }\n    userErrors {\n      field\n      message\n    }\n  }\n}"): (typeof documents)["mutation OrderItemDelete($itemId: Int!, $orderId: Int!) {\n  orderItemDelete(itemID: $itemId, orderID: $orderId) {\n    orderItem {\n      orderID\n      itemID\n    }\n    userErrors {\n      field\n      message\n    }\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "mutation OrderItemUpdate($itemId: Int!, $orderId: Int!, $orderItemInput: OrderItemInput!) {\n  orderItemUpdate(\n    itemID: $itemId\n    orderID: $orderId\n    orderItemInput: $orderItemInput\n  ) {\n    orderItem {\n      itemID\n      orderID\n    }\n    userErrors {\n      field\n      message\n    }\n  }\n}"): (typeof documents)["mutation OrderItemUpdate($itemId: Int!, $orderId: Int!, $orderItemInput: OrderItemInput!) {\n  orderItemUpdate(\n    itemID: $itemId\n    orderID: $orderId\n    orderItemInput: $orderItemInput\n  ) {\n    orderItem {\n      itemID\n      orderID\n    }\n    userErrors {\n      field\n      message\n    }\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "mutation OrderUpdate($orderId: Int!, $orderInput: OrderInput!) {\n  orderUpdate(orderID: $orderId, orderInput: $orderInput) {\n    order {\n      id\n    }\n    userErrors {\n      field\n      message\n    }\n  }\n}"): (typeof documents)["mutation OrderUpdate($orderId: Int!, $orderInput: OrderInput!) {\n  orderUpdate(orderID: $orderId, orderInput: $orderInput) {\n    order {\n      id\n    }\n    userErrors {\n      field\n      message\n    }\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -222,7 +271,7 @@ export function graphql(source: "mutation SignUp($credentials: CredentialsSignup
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "query CommunityGroupInfo($registrationId: Int!) {\n  registration(id: $registrationId) {\n    community {\n      communityGroups {\n        id\n        name\n        groupSize\n        chaperones\n        wheelchairs\n        earliestTime\n        latestTime\n        unavailable\n        conflictPerformers\n      }\n    }\n  }\n}"): (typeof documents)["query CommunityGroupInfo($registrationId: Int!) {\n  registration(id: $registrationId) {\n    community {\n      communityGroups {\n        id\n        name\n        groupSize\n        chaperones\n        wheelchairs\n        earliestTime\n        latestTime\n        unavailable\n        conflictPerformers\n      }\n    }\n  }\n}"];
+export function graphql(source: "query CommunityGroupInfo($registrationId: Int!) {\n  registration(id: $registrationId) {\n    community {\n      communityGroups {\n        id\n        name\n        groupSize\n        chaperones\n        wheelchairs\n        earliestTime\n        latestTime\n        unavailable\n        conflictPerformers\n        photoPermission\n      }\n    }\n  }\n}"): (typeof documents)["query CommunityGroupInfo($registrationId: Int!) {\n  registration(id: $registrationId) {\n    community {\n      communityGroups {\n        id\n        name\n        groupSize\n        chaperones\n        wheelchairs\n        earliestTime\n        latestTime\n        unavailable\n        conflictPerformers\n        photoPermission\n      }\n    }\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -238,7 +287,7 @@ export function graphql(source: "query GroupInfo($registrationId: Int!) {\n  reg
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "query Performers($registrationId: Int!) {\n  performers(registrationID: $registrationId) {\n    id\n    firstName\n    lastName\n    age\n    apartment\n    streetNumber\n    streetName\n    city\n    province\n    postalCode\n    phone\n    email\n    instrument\n    level\n  }\n}"): (typeof documents)["query Performers($registrationId: Int!) {\n  performers(registrationID: $registrationId) {\n    id\n    firstName\n    lastName\n    age\n    apartment\n    streetNumber\n    streetName\n    city\n    province\n    postalCode\n    phone\n    email\n    instrument\n    level\n  }\n}"];
+export function graphql(source: "query Performers($registrationId: Int!) {\n  performers(registrationID: $registrationId) {\n    id\n    pronouns\n    firstName\n    lastName\n    age\n    apartment\n    streetNumber\n    streetName\n    city\n    province\n    postalCode\n    phone\n    email\n    instrument\n    level\n    otherClasses\n    unavailable\n    photoPermission\n  }\n}"): (typeof documents)["query Performers($registrationId: Int!) {\n  performers(registrationID: $registrationId) {\n    id\n    pronouns\n    firstName\n    lastName\n    age\n    apartment\n    streetNumber\n    streetName\n    city\n    province\n    postalCode\n    phone\n    email\n    instrument\n    level\n    otherClasses\n    unavailable\n    photoPermission\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -246,7 +295,7 @@ export function graphql(source: "query RegisteredClasses($registrationId: Int!) 
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "query SchoolGroupInfo($registrationId: Int!) {\n  registration(id: $registrationId) {\n    school {\n      schoolGroups {\n        id\n        name\n        groupSize\n        chaperones\n        wheelchairs\n        earliestTime\n        latestTime\n        unavailable\n        conflictPerformers\n      }\n    }\n  }\n}"): (typeof documents)["query SchoolGroupInfo($registrationId: Int!) {\n  registration(id: $registrationId) {\n    school {\n      schoolGroups {\n        id\n        name\n        groupSize\n        chaperones\n        wheelchairs\n        earliestTime\n        latestTime\n        unavailable\n        conflictPerformers\n      }\n    }\n  }\n}"];
+export function graphql(source: "query SchoolGroupInfo($registrationId: Int!) {\n  registration(id: $registrationId) {\n    school {\n      schoolGroups {\n        id\n        name\n        groupSize\n        chaperones\n        wheelchairs\n        earliestTime\n        latestTime\n        unavailable\n        conflictPerformers\n        photoPermission\n      }\n    }\n  }\n}"): (typeof documents)["query SchoolGroupInfo($registrationId: Int!) {\n  registration(id: $registrationId) {\n    school {\n      schoolGroups {\n        id\n        name\n        groupSize\n        chaperones\n        wheelchairs\n        earliestTime\n        latestTime\n        unavailable\n        conflictPerformers\n        photoPermission\n      }\n    }\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -298,11 +347,27 @@ export function graphql(source: "query Instruments {\n  instruments {\n    id\n 
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function graphql(source: "query Item($itemId: Int!) {\n  item(id: $itemId) {\n    name\n    description\n    startDate\n    endDate\n    price\n    taxable\n    transferable\n    createdAt\n    updatedAt\n  }\n}"): (typeof documents)["query Item($itemId: Int!) {\n  item(id: $itemId) {\n    name\n    description\n    startDate\n    endDate\n    price\n    taxable\n    transferable\n    createdAt\n    updatedAt\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "query Items {\n  items {\n    id\n    name\n    description\n    startDate\n    endDate\n    price\n    taxable\n    transferable\n    createdAt\n    updatedAt\n  }\n}"): (typeof documents)["query Items {\n  items {\n    id\n    name\n    description\n    startDate\n    endDate\n    price\n    taxable\n    transferable\n    createdAt\n    updatedAt\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function graphql(source: "query Levels($subdisciplineId: Int, $categoryId: Int) {\n  levels(categoryID: $categoryId, subdisciplineID: $subdisciplineId) {\n    id\n    name\n    description\n  }\n}"): (typeof documents)["query Levels($subdisciplineId: Int, $categoryId: Int) {\n  levels(categoryID: $categoryId, subdisciplineID: $subdisciplineId) {\n    id\n    name\n    description\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "query MyUser {\n  myUser {\n    id\n    firstName\n    lastName\n    apartment\n    streetNumber\n    streetName\n    city\n    province\n    postalCode\n    phone\n    email\n    emailConfirmed\n    instrument\n    privateTeacher\n    schoolTeacher\n    hasSignedIn\n  }\n}"): (typeof documents)["query MyUser {\n  myUser {\n    id\n    firstName\n    lastName\n    apartment\n    streetNumber\n    streetName\n    city\n    province\n    postalCode\n    phone\n    email\n    emailConfirmed\n    instrument\n    privateTeacher\n    schoolTeacher\n    hasSignedIn\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "query Order($orderId: Int!) {\n  order(id: $orderId) {\n    id\n    totalAmount\n    payedAmount\n    purchaseDate\n    deliveryDate\n    methodDelivered\n    createdAt\n    updatedAt\n    orderItems {\n      itemID\n      namesOnItems\n      notes\n      quantity\n      item {\n        id\n        name\n        description\n        startDate\n        endDate\n        price\n        notes\n        taxable\n        transferable\n      }\n    }\n  }\n}"): (typeof documents)["query Order($orderId: Int!) {\n  order(id: $orderId) {\n    id\n    totalAmount\n    payedAmount\n    purchaseDate\n    deliveryDate\n    methodDelivered\n    createdAt\n    updatedAt\n    orderItems {\n      itemID\n      namesOnItems\n      notes\n      quantity\n      item {\n        id\n        name\n        description\n        startDate\n        endDate\n        price\n        notes\n        taxable\n        transferable\n      }\n    }\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "query Orders {\n  orders {\n    id\n    totalAmount\n    payedAmount\n    purchaseDate\n    deliveryDate\n    methodDelivered\n    createdAt\n    updatedAt\n    orderItems {\n      itemID\n      namesOnItems\n      notes\n      quantity\n      item {\n        id\n        name\n        description\n        startDate\n        endDate\n        price\n        notes\n        taxable\n        transferable\n      }\n    }\n  }\n}"): (typeof documents)["query Orders {\n  orders {\n    id\n    totalAmount\n    payedAmount\n    purchaseDate\n    deliveryDate\n    methodDelivered\n    createdAt\n    updatedAt\n    orderItems {\n      itemID\n      namesOnItems\n      notes\n      quantity\n      item {\n        id\n        name\n        description\n        startDate\n        endDate\n        price\n        notes\n        taxable\n        transferable\n      }\n    }\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

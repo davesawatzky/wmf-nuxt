@@ -11,6 +11,7 @@ query CommunityGroupInfo($registrationId: Int!) {
         latestTime
         unavailable
         conflictPerformers
+        photoPermission
       }
     }
   }

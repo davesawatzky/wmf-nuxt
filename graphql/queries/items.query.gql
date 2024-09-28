@@ -1,0 +1,14 @@
+query Items {
+  items {
+    id
+    name
+    description
+    startDate
+    endDate
+    price
+    taxable
+    transferable
+    createdAt
+    updatedAt
+  }
+}

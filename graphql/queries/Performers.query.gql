@@ -1,6 +1,7 @@
 query Performers($registrationId: Int!) {
   performers(registrationID: $registrationId) {
     id
+    pronouns
     firstName
     lastName
     age
@@ -14,5 +15,8 @@ query Performers($registrationId: Int!) {
     email
     instrument
     level
+    otherClasses
+    unavailable
+    photoPermission
   }
 }

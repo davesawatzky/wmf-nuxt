@@ -1,0 +1,29 @@
+query Order($orderId: Int!) {
+  order(id: $orderId) {
+    id
+    totalAmount
+    payedAmount
+    purchaseDate
+    deliveryDate
+    methodDelivered
+    createdAt
+    updatedAt
+    orderItems {
+      itemID
+      namesOnItems
+      notes
+      quantity
+      item {
+        id
+        name
+        description
+        startDate
+        endDate
+        price
+        notes
+        taxable
+        transferable
+      }
+    }
+  }
+}

@@ -46,6 +46,9 @@
     conflictPerformers: props.modelValue.conflictPerformers
       ? StatusEnum.saved
       : StatusEnum.null,
+    photoPermission: props.modelValue.photoPermission
+      ? StatusEnum.saved
+      : StatusEnum.null,
   })
 
   const totalParticipants = computed<number>(() => {
@@ -107,6 +110,7 @@
         .trim()
         .required('Please indicate unavailable dates/times.'),
       conflictPerformers: yup.string().trim().nullable(),
+      photoPermission: yup.boolean().default(false),
     })
   )
 
@@ -234,6 +238,13 @@
         scheduling conflicts:
       </p>
     </div>
+    <BaseCheckbox
+      id="photo-permission"
+      v-model="communityGroup.photoPermission"
+      :status="status.photoPermission"
+      name="photoPermission"
+      label="I give permission for the Festival to use photographs of this participant in marketing materials."
+      @change-status="(stat: string) => fieldStatus(stat, 'photoPermission')" />
   </div>
 </template>
 

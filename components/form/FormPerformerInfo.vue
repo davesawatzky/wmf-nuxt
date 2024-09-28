@@ -3,7 +3,7 @@
   import 'yup-phone-lite'
   import { usePerformers } from '@/stores/userPerformer'
   import { InstrumentsDocument } from '~/graphql/gql/graphql'
-  import { provinces } from '#imports'
+  import { provinces, StatusEnum } from '#imports'
   import BaseSelect from '../base/BaseSelect.vue'
 
   type Pronouns = {}
@@ -66,6 +66,9 @@
       : StatusEnum.null,
     email: props.modelValue.email ? StatusEnum.saved : StatusEnum.null,
     phone: props.modelValue.phone ? StatusEnum.saved : StatusEnum.null,
+    photoPermission: props.modelValue.photoPermission
+      ? StatusEnum.saved
+      : StatusEnum.null,
   })
 
   async function fieldStatus(stat: string, fieldName: string) {
@@ -133,6 +136,7 @@
       level: yup.string().trim().required('Please indicate grade or level'),
       otherClasses: yup.string().trim().notRequired().nullable(),
       unavailable: yup.string().trim().notRequired().nullable(),
+      photoPermission: yup.boolean().default(false),
     })
   )
 
@@ -293,6 +297,13 @@
         label="Instrument"
         @change-status="(stat: string) => fieldStatus(stat, 'instrument')" />
     </div>
+    <BaseCheckbox
+      id="photo-permission"
+      v-model="contact.photoPermission"
+      :status="status.photoPermission"
+      name="photoPermission"
+      label="I give permission for the Festival to use photographs of this participant in marketing materials."
+      @change-status="(stat: string) => fieldStatus(stat, 'photoPermission')" />
     <div
       v-if="groupperformer"
       class="col-span-6 sm:col-span-6">

@@ -48,7 +48,7 @@
     loading.value = true
     const options: StripeElementsOptions = {
       mode: 'payment',
-      amount: Math.round(+registrationStore.registration.totalAmt * 100),
+      amount: Math.round(+registrationStore.registration.totalAmt! * 100),
       currency: 'cad',
       appearance: { theme: 'stripe' },
     }

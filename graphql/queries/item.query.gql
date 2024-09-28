@@ -1,0 +1,13 @@
+query Item($itemId: Int!) {
+  item(id: $itemId) {
+    name
+    description
+    startDate
+    endDate
+    price
+    taxable
+    transferable
+    createdAt
+    updatedAt
+  }
+}

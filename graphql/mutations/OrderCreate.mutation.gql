@@ -1,0 +1,10 @@
+mutation OrderCreate($orderInput: OrderInput!) {
+  orderCreate(orderInput: $orderInput) {
+    order {
+      id
+    }
+    userErrors {
+      message
+    }
+  }
+}
