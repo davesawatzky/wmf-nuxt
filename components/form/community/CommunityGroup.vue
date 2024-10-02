@@ -221,12 +221,12 @@
         v-model="communityGroup.unavailable"
         :status="status.unavailable"
         name="unavailable"
-        label="Unavailable Dates/Times"
+        label="Known conflicts"
         rows="3"
         @change-status="(stat: string) => fieldStatus(stat, 'unavailable')" />
       <p class="text-sm mb-2">
-        List any date/time when you are unavailable for performance using
-        <strong>calendar dates</strong>, between February 23 and March 20, 2025.
+        List any known conflicts. The Festival cannot guarantee that submitted
+        requests can be accommodated. Entry fees are non-refundable
       </p>
 
       <BaseTextarea

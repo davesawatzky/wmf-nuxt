@@ -139,33 +139,33 @@
       const Mozart = disciplineQuery.value.disciplines.filter((item) => {
         return item.name.toLowerCase().includes('mozart')
       })
-      if (performerStore.performers[0].instrument.toLowerCase() === 'voice') {
-        return (
-          disciplineQuery.value.disciplines.filter((item) => {
-            return (
-              item.name.toLowerCase() === 'vocal' ||
-              item.name.toLowerCase() === 'musical theatre' ||
-              item.name.toLowerCase().includes('mozart')
-            )
-          }) ?? []
+      // if (performerStore.performers[0].instrument.toLowerCase() === 'voice') {
+      //   return (
+      //     disciplineQuery.value.disciplines.filter((item) => {
+      //       return (
+      //         item.name.toLowerCase() === 'vocal' ||
+      //         item.name.toLowerCase() === 'musical theatre' ||
+      //         item.name.toLowerCase().includes('mozart')
+      //       )
+      //     }) ?? []
+      //   )
+      // } else {
+      // Adds Mozart Classes to all the other instruments
+      let isMozart = false
+      const discipline = disciplineQuery.value?.disciplines.filter((item) => {
+        const disc = item.instruments?.find(
+          (el) => el.name === performerStore.performers[0].instrument
         )
-      } else {
-        // Adds Mozart Classes to all the other instruments
-        let isMozart = false
-        const discipline = disciplineQuery.value?.disciplines.filter((item) => {
-          const disc = item.instruments?.find(
-            (el) => el.name === performerStore.performers[0].instrument
-          )
-          if (!isMozart) {
-            disc?.mozart === true ? (isMozart = true) : (isMozart = false)
-          }
-          return disc
-        })
-        if (isMozart && Mozart) {
-          discipline?.push(Mozart[0])
+        if (!isMozart) {
+          disc?.mozart === true ? (isMozart = true) : (isMozart = false)
         }
-        return discipline ?? ''
+        return disc
+      })
+      if (isMozart && Mozart) {
+        discipline?.push(Mozart[0])
       }
+      return discipline ?? ''
+      // }
     } else if (
       appStore.performerType === 'GROUP' &&
       disciplineQuery.value.disciplines
@@ -173,10 +173,13 @@
       if (groupStore.group.groupType === 'vocal') {
         return (
           disciplineQuery.value?.disciplines.filter((item) => {
-            return (
-              item.name.toLowerCase().includes('vocal') ||
-              item.name.toLowerCase().includes('musical theatre')
-            )
+            return item.name.toLowerCase().includes('vocal')
+          }) ?? []
+        )
+      } else if (groupStore.group.groupType === 'musicalTheatre') {
+        return (
+          disciplineQuery.value?.disciplines.filter((item) => {
+            return item.name.toLowerCase().includes('musical theatre')
           }) ?? []
         )
       } else if (groupStore.group.groupType === 'instrumental') {
@@ -206,6 +209,7 @@
   // chosenDiscipline is the discipline chosen from the template
   // through the vmodel on selectedClasses.discipline
   const chosenDiscipline = computed(() => {
+    console.log('Running computed')
     return (
       disciplines.value?.find((item) => {
         return item.name === selectedClasses.value.discipline
@@ -387,13 +391,15 @@
       selectedClasses.value.subdiscipline = null
       if (newDiscipline !== oldDiscipline) {
         status.discipline = StatusEnum.pending
+        console.log('Props.classId', props.classId)
         await classesStore.updateClass(props.classId, 'discipline')
         newDiscipline !== null
           ? (status.discipline = StatusEnum.saved)
           : (status.discipline = StatusEnum.null)
       }
       if (!!chosenDiscipline.value.id) {
-        loadSubdisciplines()
+        console.log('chosenDiscipline', chosenDiscipline.value.id)
+        await loadSubdisciplines()
       }
     }
   )
@@ -410,7 +416,7 @@
           : (status.subdiscipline = StatusEnum.null)
       }
       if (!!chosenSubdiscipline.value.id) {
-        loadLevels()
+        await loadLevels()
       }
     }
   )
@@ -427,7 +433,7 @@
           : (status.level = StatusEnum.null)
       }
       if (!!chosenSubdiscipline.value.id && !!chosenGradeLevel.value.id) {
-        loadCategories()
+        await loadCategories()
       }
     }
   )
@@ -445,7 +451,7 @@
       if (selectedClasses.value.category === null) {
         selectedClasses.value.classNumber = null
       } else {
-        loadClassInformation()
+        await loadClassInformation()
       }
     }
   )

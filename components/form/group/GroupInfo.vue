@@ -8,21 +8,25 @@
   const isOpen = ref(false)
   const previousGroupType = ref('')
   const cancelGroupChange = ref(false)
-  const changeGroupType = ref(false)
+  const changeGroupType = ref('')
 
   watch(
     () => groupStore.group.groupType,
     async (newGroupType, oldGroupType) => {
       if (
-        !!oldGroupType &&
-        cancelGroupChange.value === false &&
-        !!classesStore.registeredClasses[0].discipline
+        !!newGroupType &&
+        !!classesStore.registeredClasses[0].discipline &&
+        !cancelGroupChange.value
       ) {
-        previousGroupType.value = oldGroupType
+        previousGroupType.value = oldGroupType ?? ''
         setIsOpen(true)
-      } else if (cancelGroupChange.value === true) {
+      } else if (cancelGroupChange.value) {
         cancelGroupChange.value = false
         setIsOpen(false)
+      } else {
+        cancelGroupChange.value = false
+        setIsOpen(false)
+        await fieldStatus(changeGroupType.value, 'groupType')
       }
     },
     { flush: 'post' }
@@ -35,7 +39,8 @@
       regClassIdNumbers.push(classesStore.registeredClasses[i].id)
     for (const number of regClassIdNumbers)
       await classesStore.deleteClass(number)
-    classesStore.createClass(registrationStore.registrationId)
+    await classesStore.createClass(registrationStore.registrationId)
+    await fieldStatus(changeGroupType.value, 'groupType')
   }
 
   function cancelGroupTypeChange() {
@@ -52,6 +57,11 @@
       label: 'Vocal Group',
       description: 'Duets, Trios, Quartets, and Ensembles',
       value: 'vocal',
+    },
+    {
+      label: 'Musical Theatre',
+      description: 'Musical Theatre Duets, Trios, Quartets, and Ensembles',
+      value: 'musicalTheatre',
     },
     {
       label: 'Instrumental Group',
@@ -125,7 +135,7 @@
             label="Selections"
             :options="typeOptions"
             :status="status.groupType"
-            @change-status="(stat: string) => fieldStatus(stat, 'groupType')" />
+            @change-status="(stat: string) => (changeGroupType = stat)" />
         </div>
       </div>
     </div>

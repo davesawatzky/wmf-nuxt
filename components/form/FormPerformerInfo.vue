@@ -255,7 +255,7 @@
         :status="status.instrument"
         name="instrument"
         :options="instruments"
-        label="Instrument"
+        label="Instrument/Discipline"
         @change-status="(stat: string) => fieldStatus(stat, 'instrument')" />
     </div>
     <div class="col-span-11 col-start-2 sm:col-span-5 sm:col-start-8">
@@ -299,14 +299,14 @@
       v-else
       class="col-span-12">
       <p>
-        List ay date/time when you are unavailable for performance, using
-        <strong>calendar dates</strong>, between February 23 and March 20, 2025.
+        List any known conflicts. The Festival cannot guarantee that submitted
+        requests can be accommodated. Entry fees are non-refundable.
       </p>
       <BaseTextarea
         v-model.trim="contact.unavailable"
         :status="status.unavailable"
         name="unavailable"
-        label="Unavailable Dates/Times"
+        label="Known conflicts"
         @change-status="(stat: string) => fieldStatus(stat, 'unavailable')" />
     </div>
   </div>

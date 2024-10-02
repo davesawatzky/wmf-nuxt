@@ -19,6 +19,7 @@ export const useGroup = defineStore(
     const registrationStore = useRegistration()
     const performerStore = usePerformers()
     const fieldConfigStore = useFieldConfig()
+    const appStore = useAppStore()
     function $reset() {
       group.value = <Group>{}
     }
@@ -36,18 +37,30 @@ export const useGroup = defineStore(
 
     watch(
       () => performerStore.numberOfPerformers,
-      (newValue, oldValue) => {
-        group.value.numberOfPerformers = newValue
+      async (newValue, oldValue) => {
+        if (
+          group.value.numberOfPerformers !== newValue &&
+          appStore.performerType === 'GROUP'
+        ) {
+          group.value.numberOfPerformers = newValue
+          await updateGroup('numberOfPerformers')
+        }
       },
-      { immediate: true }
+      { flush: 'post' }
     )
 
     watch(
       () => performerStore.averageAge,
-      (newValue, oldValue) => {
-        group.value.age = newValue
+      async (newValue, oldValue) => {
+        if (
+          group.value.age !== newValue &&
+          appStore.performerType === 'GROUP'
+        ) {
+          group.value.age = newValue
+          await updateGroup('age')
+        }
       },
-      { immediate: true }
+      { flush: 'post' }
     )
 
     /**
