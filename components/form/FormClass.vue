@@ -501,10 +501,10 @@
 
   const validationSchema = toTypedSchema(
     yup.object({
-      discipline: yup.string().required('Choose a discipline'),
-      subdiscipline: yup.string().required('Choose a subdiscipline'),
-      level: yup.string().required('Choose a grade/level'),
-      category: yup.string().required('Choose a category'),
+      discipline: yup.string().required('Required'),
+      subdiscipline: yup.string().required('Required'),
+      level: yup.string().required('Required'),
+      category: yup.string().required('Required'),
     })
   )
 

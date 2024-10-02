@@ -47,15 +47,15 @@
 
   const validationSchema = toTypedSchema(
     yup.object({
-      title: yup.string().trim().required('Enter the title of the selection'),
-      composer: yup.string().trim().required('Enter the name of the composer'),
+      title: yup.string().trim().required('Required'),
+      composer: yup.string().trim().required('Required'),
       largerWork: yup.string().trim().nullable(),
       movement: yup.string().trim().nullable(),
       duration: yup
         .string()
         .matches(/[0-5]{0,1}[0-9]:(?<!00:)[0-5][0-9]/, 'Minimum - 01:00')
         .trim()
-        .required('Enter valid duration - mm:ss'),
+        .required('Required'),
     })
   )
 

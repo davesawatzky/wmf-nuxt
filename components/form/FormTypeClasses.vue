@@ -61,12 +61,12 @@
     yup.object({
       schoolGroups: yup.array().of(
         yup.object({
-          id: yup.number().integer().required('Please select a group'),
+          id: yup.number().integer().required('Required'),
         })
       ),
       communityGroups: yup.array().of(
         yup.object({
-          id: yup.number().integer().required('Please select a group'),
+          id: yup.number().integer().required('Required'),
         })
       ),
     })
@@ -115,7 +115,7 @@
             :status="status[classIndex]?.schoolGroupID"
             :name="`schoolGroups[${classIndex}].id`"
             return-id
-            label="Select a school Group"
+            label="Select a School Group"
             :options="schoolGroupsList"
             @change-status="
               (stat: string) => {
@@ -131,7 +131,7 @@
             :status="status[classIndex].communityGroupID"
             :name="`communityGroups[${classIndex}].id`"
             return-id
-            label="Select a community Group"
+            label="Select a Community Group"
             :options="communityGroupsList"
             @change-status="
               (stat: string) => {

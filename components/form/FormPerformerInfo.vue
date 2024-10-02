@@ -81,18 +81,18 @@
         .trim()
         .notRequired()
         .oneOf(['', 'She/Her', 'He/Him', 'They/Them']),
-      firstName: yup.string().trim().required('First name is required'),
-      lastName: yup.string().trim().required('Last name is required'),
+      firstName: yup.string().trim().required('Required'),
+      lastName: yup.string().trim().required('Required'),
       age: yup
         .number()
         .positive('Enter age')
         .integer('Enter age')
         .min(1)
         .max(100, 'Enter age')
-        .required('Enter age'),
-      address: yup.string().notRequired().trim().required(),
-      city: yup.string().trim().required(),
-      province: yup.string().max(3).required(),
+        .required('Required'),
+      address: yup.string().trim().required('Required'),
+      city: yup.string().trim().required('Required'),
+      province: yup.string().max(3).required('Required'),
       postalCode: yup
         .string()
         .trim()
@@ -100,19 +100,19 @@
           /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i,
           'Enter a valid postal code'
         )
-        .required(),
+        .required('Required'),
       phone: yup
         .string()
         .trim()
         .phone('CA', 'Please enter a valid phone number')
-        .required(),
+        .required('Required'),
       email: yup
         .string()
         .trim()
         .email('Must be a valid email address')
-        .required(),
-      instrument: yup.string().trim().required('Please indicate an instrument'),
-      level: yup.string().trim().required('Please indicate grade or level'),
+        .required('Required'),
+      instrument: yup.string().trim().required('Required'),
+      level: yup.string().trim().required('Enter Grade or Level'),
       otherClasses: yup.string().trim().notRequired().nullable(),
       unavailable: yup.string().trim().notRequired().nullable(),
       photoPermission: yup.boolean().default(false),
@@ -144,7 +144,7 @@
 
 <template>
   <div class="grid grid-cols-12 gap-x-3 gap-y-1 items-center">
-    <div class="col-span-12 sm:col-span-2">
+    <div class="col-span-4 sm:col-span-3">
       <BaseSelect
         v-model.trim="contact.pronouns"
         :status="status.pronouns"
@@ -153,7 +153,7 @@
         :options="pronounOptions"
         @change-status="(stat: string) => fieldStatus(stat, 'pronouns')" />
     </div>
-    <div class="col-span-12 sm:col-span-4">
+    <div class="col-span-8 sm:col-span-4">
       <BaseInput
         v-model.trim="contact.firstName"
         :status="status.firstName"
@@ -162,7 +162,7 @@
         label="First Name"
         @change-status="(stat: string) => fieldStatus(stat, 'firstName')" />
     </div>
-    <div class="col-span-12 sm:col-span-4">
+    <div class="col-span-12 sm:col-span-5">
       <BaseInput
         v-model.trim="contact.lastName"
         :status="status.lastName"
@@ -171,7 +171,7 @@
         label="Last Name"
         @change-status="(stat: string) => fieldStatus(stat, 'lastName')" />
     </div>
-    <div class="col-span-3 sm:col-span-2">
+    <div class="col-span-3 sm:col-span-3">
       <BaseInput
         v-model.number="contact.age"
         :status="status.age"
@@ -184,7 +184,7 @@
         :help-message="`Age as of December 31, ${currentYear}`"
         @change-status="(stat: string) => fieldStatus(stat, 'age')" />
     </div>
-    <div class="col-span-4 sm:col-span-3">
+    <div class="col-span-9 sm:col-span-9">
       <BaseInput
         v-model.trim="contact.address"
         :status="status.address"
@@ -193,7 +193,7 @@
         label="Address"
         @change-status="(stat: string) => fieldStatus(stat, 'address')" />
     </div>
-    <div class="col-span-8 sm:col-span-7">
+    <div class="col-span-8 sm:col-span-5">
       <BaseInput
         v-model.trim="contact.city"
         :status="status.city"
@@ -202,7 +202,7 @@
         label="City/Town"
         @change-status="(stat: string) => fieldStatus(stat, 'city')" />
     </div>
-    <div class="col-span-4 sm:col-span-2 self-start">
+    <div class="col-span-4 sm:col-span-3 self-start">
       <BaseSelect
         v-model.trim="contact.province"
         :status="status.province"
@@ -211,7 +211,7 @@
         :options="provinces"
         @change-status="(stat: string) => fieldStatus(stat, 'province')" />
     </div>
-    <div class="col-span-6 sm:col-span-3">
+    <div class="col-span-6 sm:col-span-4">
       <BaseInput
         v-model.trim="contact.postalCode"
         v-maska:[maskaUcaseOption]

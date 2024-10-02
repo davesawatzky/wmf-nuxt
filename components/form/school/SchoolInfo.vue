@@ -95,7 +95,7 @@
           type="text"
           @change-status="(stat: string) => fieldStatus(stat, 'division')" />
       </div>
-      <div class="col-span-4 sm:col-span-3">
+      <div class="col-span-12 sm:col-span-8">
         <BaseInput
           v-model.trim="schoolStore.school.address"
           :status="status.address"
@@ -105,7 +105,7 @@
           label="Address"
           @change-status="(stat: string) => fieldStatus(stat, 'address')" />
       </div>
-      <div class="col-span-12 sm:col-span-4">
+      <div class="col-span-8 sm:col-span-4">
         <BaseInput
           v-model.trim="schoolStore.school.city"
           :status="status.city"
@@ -115,7 +115,7 @@
           label="City/Town"
           @change-status="(stat: string) => fieldStatus(stat, 'city')" />
       </div>
-      <div class="col-span-6 sm:col-span-3">
+      <div class="col-span-4 sm:col-span-3">
         <BaseSelect
           v-model.trim="schoolStore.school.province"
           :status="status.province"

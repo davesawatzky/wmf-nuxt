@@ -68,8 +68,8 @@
 
   const validationSchema = toTypedSchema(
     yup.object({
-      name: yup.string().trim().required('Enter a group name'),
-      groupType: yup.string().required('Please select a group type'),
+      name: yup.string().trim().required('Required'),
+      groupType: yup.string().required('Required'),
     })
   )
 

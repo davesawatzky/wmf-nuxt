@@ -87,35 +87,35 @@
   const teacherSchema = toTypedSchema(
     yup.object({
       id: yup.number(),
-      firstName: yup.string().trim().required('First name is required'),
-      lastName: yup.string().trim().required('Last name is required'),
+      firstName: yup.string().trim().required('Required'),
+      lastName: yup.string().trim().required('Required'),
       phone: yup
         .string()
         .trim()
         .phone('CA', 'Please enter a valid phone number')
-        .required('A phone number is required'),
+        .required('Required'),
       email: yup
         .string()
         .trim()
         .email('Must be a valid email address')
-        .required('Email address is required'),
-      instrument: yup.string().trim().required('Instrument is required'),
+        .required('Required'),
+      instrument: yup.string().trim().required('Required'),
     })
   )
 
   const schoolTeacherSchema = toTypedSchema(
     yup.object({
       id: yup.number(),
-      firstName: yup.string().trim().required('First name is required'),
-      lastName: yup.string().trim().required('Last name is required'),
+      firstName: yup.string().trim().required('Required'),
+      lastName: yup.string().trim().required('Required'),
       phone: yup
         .string()
         .phone('CA', 'Please enter a valid phone number')
-        .required('A phone number is required'),
+        .required('Required'),
       email: yup
         .string()
         .email('Must be a valid email address')
-        .required('Email address is required'),
+        .required('Required'),
     })
   )
 
@@ -320,7 +320,9 @@
         </template>
       </PrimeAutoComplete>
     </div>
-    <div v-if="unlistedTeacher === true">
+    <div
+      v-show="unlistedTeacher === true"
+      v-auto-animate>
       <p>
         Please enter the contact information for your teacher so that we may
         contact them regarding your entry and include them in our database.
