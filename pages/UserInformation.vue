@@ -74,7 +74,7 @@
         .string()
         .trim()
         .max(20, 'Too many characters')
-        .required('Enter a city name'),
+        .required('Required'),
       province: yup.string().max(3).required(),
       postalCode: yup
         .string()
@@ -88,8 +88,8 @@
         .string()
         .trim()
         .phone('CA', 'Please enter a valid phone number')
-        .required('A phone number is required'),
-      instrument: yup.string().trim().required('Please indicate an instrument'),
+        .required('Required'),
+      instrument: yup.string().trim().required('Required'),
     })
   )
 
@@ -130,7 +130,7 @@
         v-model="userStore.user.privateTeacher"
         :status="status.privateTeacher"
         name="privateTeacher"
-        label="Private Teacher and/or Community Ensemble Leader"
+        label="Private Teacher"
         class="px-4 inline-block"
         @change-status="
           (stat: string) => fieldStatus(stat, 'privateTeacher')
@@ -139,11 +139,11 @@
         v-model="userStore.user.schoolTeacher"
         :status="status.schoolTeacher"
         name="schoolTeacher"
-        label="Grade School Teacher"
+        label="School Teacher and/or Community Conductor"
         class="px-4 inline-block"
         @change-status="(stat: string) => fieldStatus(stat, 'schoolTeacher')" />
     </fieldset>
-    <div class="col-span-4 sm:col-span-3">
+    <div class="col-span-12 sm:col-span-8">
       <BaseInput
         v-model.trim="userStore.user.address"
         :status="status.address"
@@ -152,7 +152,7 @@
         label="Address"
         @change-status="(stat: string) => fieldStatus(stat, 'address')" />
     </div>
-    <div class="col-span-8 sm:col-span-7">
+    <div class="col-span-12 sm:col-span-4">
       <BaseInput
         v-model.trim="userStore.user.city"
         :status="status.city"
@@ -161,7 +161,7 @@
         label="City/Town"
         @change-status="(stat: string) => fieldStatus(stat, 'city')" />
     </div>
-    <div class="col-span-4 sm:col-span-2 self-start">
+    <div class="col-span-6 sm:col-span-2 self-start">
       <BaseSelect
         v-model.trim="userStore.user.province"
         :status="status.province"
@@ -170,7 +170,7 @@
         :options="provinces"
         @change-status="(stat: string) => fieldStatus(stat, 'province')" />
     </div>
-    <div class="col-span-6 sm:col-span-3">
+    <div class="col-span-6 sm:col-span-4">
       <BaseInput
         v-model.trim="userStore.user.postalCode"
         v-maska:[maskaUcaseOption]
@@ -184,7 +184,7 @@
         label="Postal Code"
         @change-status="(stat: string) => fieldStatus(stat, 'postalCode')" />
     </div>
-    <div class="col-span-6 sm:col-span-5">
+    <div class="col-span-6 sm:col-span-6">
       <BaseInput
         v-model.trim="userStore.user.phone"
         v-maska
@@ -197,9 +197,21 @@
         label="Phone Number"
         @change-status="(stat: string) => fieldStatus(stat, 'phone')" />
     </div>
+    <div class="col-span-6 sm:col-span-6">
+      <BaseInput
+        v-model.trim="userStore.user.email"
+        class="off"
+        disabled="true"
+        :status="status.email"
+        placeholder="example@email.com"
+        data-maska-eager
+        name="email"
+        type="email"
+        label="Email" />
+    </div>
     <div
       v-if="teacherView"
-      class="col-span-12 sm:col-span-7">
+      class="col-span-12 sm:col-span-6">
       <BaseInput
         v-model.trim="userStore.user.instrument"
         :status="status.instrument"

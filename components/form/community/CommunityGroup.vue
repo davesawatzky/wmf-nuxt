@@ -73,42 +73,39 @@
 
   const validationSchema = toTypedSchema(
     yup.object({
-      groupName: yup.string().trim().required('Enter a name for your group'),
+      groupName: yup.string().trim().required('Required'),
       earliestTime: yup
         .string()
         .matches(/[0-1]{0,1}[0-9]:[0-5][0-9]/, 'Enter a time')
         .default('08:00')
-        .required('Enter a time'),
+        .required('Required'),
       latestTime: yup
         .string()
         .matches(/[0-1]{0,1}[0-9]:[0-5][0-9]/, 'Enter a time')
         .default('17:00')
-        .required('Enter a time'),
+        .required('Required'),
       groupSize: yup
         .number()
         .min(2)
         .max(300)
         .integer()
         .typeError('Please enter a valid number')
-        .required('Enter the # of performers'),
+        .required('Required'),
       chaperones: yup
         .number()
         .min(0)
         .max(100)
         .integer()
         .typeError('Please enter a valid number')
-        .required('Enter the # of chaperones.'),
+        .required('Required'),
       wheelchairs: yup
         .number()
         .min(0)
         .max(100)
         .integer()
         .typeError('Please enter a valid number')
-        .required('Enter the # of wheelchairs'),
-      unavailable: yup
-        .string()
-        .trim()
-        .required('Please indicate unavailable dates/times.'),
+        .required('Required'),
+      unavailable: yup.string().trim().required('Required'),
       conflictPerformers: yup.string().trim().nullable(),
       photoPermission: yup.boolean().default(false),
     })

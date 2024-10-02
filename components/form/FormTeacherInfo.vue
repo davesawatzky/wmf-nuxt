@@ -20,7 +20,8 @@
     modelValue: ContactInfo
     teacher?: boolean
     teacherId?: number
-    schoolteacher?: boolean
+    schoolTeacher?: boolean
+    communityConductor?: boolean
     school?: boolean
     groupperformer?: boolean
   }>()
@@ -51,7 +52,10 @@
   const chosenTeacher = ref({} as FilteredTeacher)
 
   onMounted(async () => {
-    if (appStore.performerType === 'SCHOOL') {
+    if (
+      appStore.performerType === 'SCHOOL' ||
+      appStore.performerType === 'COMMUNITY'
+    ) {
       privateTeacher.value = false
       schoolTeacher.value = true
     } else {
@@ -120,7 +124,7 @@
   )
 
   let validationSchema
-  if (props.schoolteacher) {
+  if (props.schoolTeacher || props.communityConductor) {
     validationSchema = schoolTeacherSchema
   } else {
     validationSchema = teacherSchema
@@ -269,6 +273,14 @@
     }
   }
 
+  const teacherType = computed(() => {
+    if (appStore.performerType === 'COMMUNITY') {
+      return 'conductor'
+    } else {
+      return 'teacher'
+    }
+  })
+
   const filteredTeachers = ref([] as FilteredTeacher[])
   function search(event: any) {
     filteredTeachers.value = teacherStore.allTeachers.filter((teacher) => {
@@ -289,18 +301,20 @@
 
 <template>
   <div>
-    <div class="pb-5 z-10 text-center">
-      <div class="flex items-center ml-2">
-        <div class="flex-none">
-          <label class="baseLabel"> Select a Teacher from the list </label>
+    <div class="w-full lg:w-1/2 md:w-3/4 pb-5 z-10 mx-auto">
+      <div class="flex justify-between ml-2">
+        <div>
+          <label class="baseLabel">
+            Select a {{ teacherType }} from the list
+          </label>
         </div>
-        <div class="grow" />
         <BaseSaved
-          class="flex-none mr-2"
+          class="mr-2"
           :status="status.id" />
       </div>
+
       <PrimeAutoComplete
-        class="w-full lg:w-1/2 md:w-3/4"
+        class="w-full"
         v-model="chosenTeacher"
         dropdown
         forceSelection
@@ -376,7 +390,7 @@
             " />
         </div>
         <div
-          v-if="!schoolteacher && teacher"
+          v-if="!schoolTeacher && !communityConductor && teacher"
           class="col-span-12 sm:col-span-4">
           <BaseInput
             v-model.trim="contact.instrument"

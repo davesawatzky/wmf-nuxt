@@ -10,7 +10,7 @@
     <FormTeacherInfo
       v-model="teacherStore.teacher"
       :teacher-id="teacherStore.teacher.id"
-      schoolteacher />
+      schoolTeacher />
   </div>
 </template>
 

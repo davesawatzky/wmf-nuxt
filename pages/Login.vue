@@ -328,12 +328,12 @@
           <BaseCheckbox
             v-model="privateTeacher"
             name="privateTeacher"
-            label="Private Teacher or Community Ensemble Leader"
+            label="Private Teacher"
             class="py-2 px-4" />
           <BaseCheckbox
             v-model="schoolTeacher"
             name="schoolTeacher"
-            label="Grade School Teacher"
+            label="School Teacher and/or Community Conductor"
             class="py-2 px-4" />
         </fieldset>
         <BaseInput

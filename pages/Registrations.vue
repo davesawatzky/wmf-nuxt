@@ -155,7 +155,7 @@
         appStore.dataLoading = true
         await communityStore.loadCommunity(registrationId)
         await communityGroupStore.loadCommunityGroups(registrationId)
-        await teacherStore.loadAllTeachers('privateTeacher')
+        await teacherStore.loadAllTeachers('schoolTeacher')
         appStore.dataLoading = false
         break
     }
@@ -229,7 +229,7 @@
         await communityGroupStore.createCommunityGroup(
           communityStore.community.id!
         )
-        await teacherStore.loadAllTeachers('privateTeacher')
+        await teacherStore.loadAllTeachers('schoolTeacher')
     }
     await classesStore.createClass(registrationId.value)
     await fieldConfigStore.loadRequiredFields()
@@ -380,8 +380,9 @@
               all their choirs; a parent for their family etc.)
             </li>
             <li>
-              Only one teacher/discipline allowed per form. Performers with
-              multiple disciplines and/or teachers require separate forms.
+              Only one teacher/one discipline allowed per form. Performers
+              wanting to register in multiple disciplines and/or with multiple
+              teachers require separate forms.
             </li>
             <li>
               Applications can be saved and completed/edited later before
