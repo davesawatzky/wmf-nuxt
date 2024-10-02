@@ -2,6 +2,8 @@ mutation OrderCreate($orderInput: OrderInput!) {
   orderCreate(orderInput: $orderInput) {
     order {
       id
+      totalAmount
+      purchaseDate
     }
     userErrors {
       message

@@ -3,8 +3,7 @@ query CommunityInfo($registrationId: Int!) {
     community {
       id
       name
-      streetNumber
-      streetName
+      address
       city
       province
       postalCode

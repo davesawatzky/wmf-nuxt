@@ -4,8 +4,7 @@ query SchoolInfo($registrationId: Int!) {
       id
       name
       division
-      streetNumber
-      streetName
+      address
       city
       province
       postalCode

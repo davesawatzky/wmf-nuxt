@@ -1,7 +1,7 @@
 <script lang="ts" setup>
   import * as yup from 'yup'
   import 'yup-phone-lite'
-  import { useRegistration } from '~/stores/userRegistration'
+  import { useRegistration } from '~/stores/useRegistration'
   import { useUser } from '~/stores/useUser'
   import { MyUserDocument } from '~/graphql/gql/graphql'
   import { provinces } from '#imports'
@@ -49,11 +49,7 @@
       ? StatusEnum.saved
       : StatusEnum.null,
     instrument: userStore.user.instrument ? StatusEnum.saved : StatusEnum.null,
-    apartment: userStore.user.apartment ? StatusEnum.saved : StatusEnum.null,
-    streetNumber: userStore.user.streetNumber
-      ? StatusEnum.saved
-      : StatusEnum.null,
-    streetName: userStore.user.streetName ? StatusEnum.saved : StatusEnum.null,
+    address: userStore.user.address ? StatusEnum.saved : StatusEnum.null,
     city: userStore.user.city ? StatusEnum.saved : StatusEnum.null,
     province: userStore.user.province ? StatusEnum.saved : StatusEnum.null,
     postalCode: userStore.user.postalCode ? StatusEnum.saved : StatusEnum.null,
@@ -73,18 +69,7 @@
     yup.object({
       privateTeacher: yup.boolean().default(false),
       schoolTeacher: yup.boolean().default(false),
-      apartment: yup
-        .string()
-        .notRequired()
-        .trim()
-        .nullable()
-        .max(10, '10 characters maximum'),
-      streetNumber: yup
-        .string()
-        .trim()
-        .max(5, '5 characters maximum')
-        .required('Enter a valid street number'),
-      streetName: yup.string().trim().required('Enter a valid street name'),
+      address: yup.string().trim().required(),
       city: yup
         .string()
         .trim()
@@ -145,7 +130,7 @@
         v-model="userStore.user.privateTeacher"
         :status="status.privateTeacher"
         name="privateTeacher"
-        label="Private Teacher or Community Ensemble Leader"
+        label="Private Teacher and/or Community Ensemble Leader"
         class="px-4 inline-block"
         @change-status="
           (stat: string) => fieldStatus(stat, 'privateTeacher')
@@ -160,30 +145,12 @@
     </fieldset>
     <div class="col-span-4 sm:col-span-3">
       <BaseInput
-        v-model.trim="userStore.user.apartment"
-        :status="status.apartment"
-        name="apartment"
+        v-model.trim="userStore.user.address"
+        :status="status.address"
+        name="address"
         type="text"
-        label="Apt."
-        @change-status="(stat: string) => fieldStatus(stat, 'apartment')" />
-    </div>
-    <div class="col-span-5 sm:col-span-3">
-      <BaseInput
-        v-model.trim="userStore.user.streetNumber"
-        :status="status.streetNumber"
-        name="streetNumber"
-        type="text"
-        label="Street #"
-        @change-status="(stat: string) => fieldStatus(stat, 'streetNumber')" />
-    </div>
-    <div class="col-span-12 sm:col-span-6">
-      <BaseInput
-        v-model.trim="userStore.user.streetName"
-        :status="status.streetName"
-        name="streetName"
-        type="text"
-        label="Street Name"
-        @change-status="(stat: string) => fieldStatus(stat, 'streetName')" />
+        label="Address"
+        @change-status="(stat: string) => fieldStatus(stat, 'address')" />
     </div>
     <div class="col-span-8 sm:col-span-7">
       <BaseInput

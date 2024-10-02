@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { useTeacher } from '@/stores/userTeacher'
+  import { useTeacher } from '@/stores/useTeacher'
 
   const teacherStore = useTeacher()
 </script>

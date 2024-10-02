@@ -1,13 +1,13 @@
 <script setup lang="ts">
   import { DateTime } from 'luxon'
-  import { usePerformers } from '../stores/userPerformer'
-  import { useTeacher } from '../stores/userTeacher'
-  import { useGroup } from '../stores/userGroup'
-  import { useSchool } from '../stores/userSchool'
-  import { useSchoolGroup } from '../stores/userSchoolGroup'
-  import { useCommunity } from '../stores/userCommunity'
-  import { useClasses } from '../stores/userClasses'
-  import { useRegistration } from '../stores/userRegistration'
+  import { usePerformers } from '../stores/usePerformer'
+  import { useTeacher } from '../stores/useTeacher'
+  import { useGroup } from '../stores/useGroup'
+  import { useSchool } from '../stores/useSchool'
+  import { useSchoolGroup } from '../stores/useSchoolGroup'
+  import { useCommunity } from '../stores/useCommunity'
+  import { useClasses } from '../stores/useClasses'
+  import { useRegistration } from '../stores/useRegistration'
   import { useAppStore } from '../stores/appStore'
   import { useUser } from '../stores/useUser'
 
@@ -201,13 +201,7 @@
             <mj-column>
               <mj-text>
                 <div><strong>Address:</strong></div>
-                <div v-if="performer.apartment">
-                  {{ performer.apartment }} - {{ performer.streetNumber }}
-                  {{ performer.streetName }}
-                </div>
-                <div v-else>
-                  {{ performer.streetNumber }} {{ performer.streetName }}
-                </div>
+                <div>{{ performer.address }}</div>
                 <div>{{ performer.city }}, {{ performer.province }}</div>
                 <div>{{ performer.postalCode }}</div>
                 <div>Phone: {{ performer.phone }}</div>
@@ -249,7 +243,7 @@
                   {{ school.name }}
                 </div>
                 <div class="h4">Division: {{ school.division }}</div>
-                <div>{{ school.streetNumber }}, {{ school.streetName }}</div>
+                <div>{{ school.address }}</div>
                 <div>{{ school.city }}, {{ school.province }}</div>
                 <div>{{ school.postalCode }}</div>
                 <div>Phone: {{ school.phone }}</div>
@@ -312,9 +306,7 @@
                 <div class="h3">
                   {{ community.name }}
                 </div>
-                <div>
-                  {{ community.streetNumber }}, {{ community.streetName }}
-                </div>
+                <div>{{ community.address }}</div>
                 <div>{{ community.city }}, {{ community.province }}</div>
                 <div>{{ community.postalCode }}</div>
                 <div>Phone: {{ community.phone }}</div>
@@ -376,13 +368,7 @@
               <div class="h3">
                 {{ teacher.firstName }} {{ teacher.lastName }}
               </div>
-              <div v-if="teacher.apartment">
-                {{ teacher.apartment }} - {{ teacher.streetNumber }}
-                {{ teacher.streetName }}
-              </div>
-              <div v-else>
-                {{ teacher.streetNumber }} {{ teacher.streetName }}
-              </div>
+              <div>{{ teacher.address }}</div>
               <div>{{ teacher.city }}, {{ teacher.province }}</div>
               <div>{{ teacher.postalCode }}</div>
               <div>Phone: {{ teacher.phone }}</div>

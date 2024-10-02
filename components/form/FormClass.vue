@@ -10,10 +10,10 @@
     SubdisciplinesByTypeDocument,
   } from '@/graphql/gql/graphql'
   import { logErrorMessages } from '@vue/apollo-util'
-  import { useClasses } from '@/stores/userClasses'
+  import { useClasses } from '@/stores/useClasses'
   import { useAppStore } from '@/stores/appStore'
-  import { usePerformers } from '@/stores/userPerformer'
-  import { useGroup } from '@/stores/userGroup'
+  import { usePerformers } from '@/stores/usePerformer'
+  import { useGroup } from '@/stores/useGroup'
   import type {
     Category,
     Discipline,
@@ -72,7 +72,7 @@
 
   /**
    * Registration first gets loaded form the 'Registration' page
-   * if these values are present in userClasses.registeredClasses,
+   * if these values are present in useClasses.registeredClasses,
    * then the background data is loaded for the attributes
    * and used on the page.  It allows for filling the comboboxes with
    * pre-saved data from an existing registration.
@@ -476,7 +476,6 @@
         classesStore.registeredClasses[props.classIndex].selections!.length
       if (oldNumber < newNumber!) {
         while (oldNumber < newNumber!) {
-          console.log(props.classId)
           await classesStore.createSelection(props.classId)
           oldNumber += 1
         }

@@ -16,7 +16,7 @@
     <PrimeProgressBar
       v-if="queryLoading || mutationLoading || appStore.dataLoading"
       mode="indeterminate"
-      class="absolute top-[89px] w-full h-[3px] bg-sky-600 text-blue-300">
+      class="fixed top-[0px] z-50 w-full h-[5px]">
     </PrimeProgressBar>
     <div class="bg-sky-600 pt-5 pb-8 section-min-height">
       <div

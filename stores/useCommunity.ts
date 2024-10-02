@@ -37,8 +37,7 @@ export const useCommunity = defineStore(
     function addToStore(comm: Partial<Community>) {
       community.value.id = comm.id!
       community.value.name = comm.name || ''
-      community.value.streetNumber = comm.streetNumber || ''
-      community.value.streetName = comm.streetName || ''
+      community.value.address = comm.address || ''
       community.value.city = comm.city || 'Winnipeg'
       community.value.province = comm.province || 'MB'
       community.value.postalCode = comm.postalCode || ''

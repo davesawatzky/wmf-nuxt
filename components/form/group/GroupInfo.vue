@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import * as yup from 'yup'
-  import { useGroup } from '@/stores/userGroup'
+  import { useGroup } from '@/stores/useGroup'
 
   const groupStore = useGroup()
   const classesStore = useClasses()

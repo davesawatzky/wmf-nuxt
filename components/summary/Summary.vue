@@ -1,13 +1,13 @@
 <script setup lang="ts">
-  import { usePerformers } from '@/stores/userPerformer'
-  import { useTeacher } from '@/stores/userTeacher'
-  import { useGroup } from '@/stores/userGroup'
-  import { useSchool } from '@/stores/userSchool'
-  import { useSchoolGroup } from '@/stores/userSchoolGroup'
-  import { useCommunity } from '@/stores/userCommunity'
-  import { useCommunityGroup } from '@/stores/userCommunityGroup'
-  import { useClasses } from '@/stores/userClasses'
-  import { useRegistration } from '@/stores/userRegistration'
+  import { usePerformers } from '@/stores/usePerformer'
+  import { useTeacher } from '@/stores/useTeacher'
+  import { useGroup } from '@/stores/useGroup'
+  import { useSchool } from '@/stores/useSchool'
+  import { useSchoolGroup } from '@/stores/useSchoolGroup'
+  import { useCommunity } from '@/stores/useCommunity'
+  import { useCommunityGroup } from '@/stores/useCommunityGroup'
+  import { useClasses } from '@/stores/useClasses'
+  import { useRegistration } from '@/stores/useRegistration'
   import { useAppStore } from '@/stores/appStore'
   import { formErrors } from '@/composables/formErrors'
 
@@ -151,8 +151,7 @@
                 <tr>
                   <td>Address:</td>
                   <td>
-                    {{ communityStore.community.streetNumber }}
-                    {{ communityStore.community.streetName }}
+                    {{ communityStore.community.address }}
                   </td>
                 </tr>
                 <tr>
@@ -263,8 +262,7 @@
                 <tr>
                   <td>Address:</td>
                   <td>
-                    {{ schoolStore.school.streetNumber }}
-                    {{ schoolStore.school.streetName }}
+                    {{ schoolStore.school.address }}
                   </td>
                 </tr>
                 <tr>

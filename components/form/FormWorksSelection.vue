@@ -1,82 +1,77 @@
 <script setup lang="ts">
-import * as yup from 'yup'
-import { useClasses } from '@/stores/userClasses'
-import type { SelectionInput } from '~/graphql/gql/graphql'
+  import * as yup from 'yup'
+  import { useClasses } from '@/stores/useClasses'
+  import type { SelectionInput } from '~/graphql/gql/graphql'
 
-const props = defineProps<{
-  modelValue: SelectionInput
-  selectionIndex: number
-  selectionId: number
-  classIndex: number
-  classId: number
-}>()
+  const props = defineProps<{
+    modelValue: SelectionInput
+    selectionIndex: number
+    selectionId: number
+    classIndex: number
+    classId: number
+  }>()
 
-const emits = defineEmits<{
-  'update:modelValue': [value: SelectionInput]
-}>()
+  const emits = defineEmits<{
+    'update:modelValue': [value: SelectionInput]
+  }>()
 
-const classesStore = useClasses()
+  const classesStore = useClasses()
 
-const work = computed({
-  get: () => props.modelValue,
-  set: value => emits('update:modelValue', value),
-})
+  const work = computed({
+    get: () => props.modelValue,
+    set: (value) => emits('update:modelValue', value),
+  })
 
-const status = reactive<Status>({
-  title: props.modelValue.title ? StatusEnum.saved : StatusEnum.null,
-  largerWork: props.modelValue.largerWork
-    ? StatusEnum.saved
-    : StatusEnum.null,
-  movement: props.modelValue.movement ? StatusEnum.saved : StatusEnum.null,
-  composer: props.modelValue.composer ? StatusEnum.saved : StatusEnum.null,
-  duration: props.modelValue.duration ? StatusEnum.saved : StatusEnum.null,
-})
+  const status = reactive<Status>({
+    title: props.modelValue.title ? StatusEnum.saved : StatusEnum.null,
+    largerWork: props.modelValue.largerWork
+      ? StatusEnum.saved
+      : StatusEnum.null,
+    movement: props.modelValue.movement ? StatusEnum.saved : StatusEnum.null,
+    composer: props.modelValue.composer ? StatusEnum.saved : StatusEnum.null,
+    duration: props.modelValue.duration ? StatusEnum.saved : StatusEnum.null,
+  })
 
-async function fieldStatus(stat: string, fieldName: string) {
-  await nextTick()
-  status[fieldName] = StatusEnum.pending
-  await classesStore.updateSelection(
-    props.classId,
-    props.selectionId,
-    fieldName,
+  async function fieldStatus(stat: string, fieldName: string) {
+    await nextTick()
+    status[fieldName] = StatusEnum.pending
+    await classesStore.updateSelection(
+      props.classId,
+      props.selectionId,
+      fieldName
+    )
+    if (stat === 'saved') status[fieldName] = StatusEnum.saved
+    else if (stat === 'remove') status[fieldName] = StatusEnum.removed
+    else status[fieldName] = StatusEnum.null
+  }
+
+  const validationSchema = toTypedSchema(
+    yup.object({
+      title: yup.string().trim().required('Enter the title of the selection'),
+      composer: yup.string().trim().required('Enter the name of the composer'),
+      largerWork: yup.string().trim().nullable(),
+      movement: yup.string().trim().nullable(),
+      duration: yup
+        .string()
+        .matches(/[0-5]{0,1}[0-9]:(?<!00:)[0-5][0-9]/, 'Minimum - 01:00')
+        .trim()
+        .required('Enter valid duration - mm:ss'),
+    })
   )
-  if (stat === 'saved')
-    status[fieldName] = StatusEnum.saved
-  else if (stat === 'remove')
-    status[fieldName] = StatusEnum.removed
-  else
-    status[fieldName] = StatusEnum.null
-}
 
-const validationSchema = toTypedSchema(
-  yup.object({
-    title: yup.string().trim().required('Enter the title of the selection'),
-    composer: yup.string().trim().required('Enter the name of the composer'),
-    largerWork: yup.string().trim().nullable(),
-    movement: yup.string().trim().nullable(),
-    duration: yup
-      .string()
-      .matches(/[0-5]{0,1}[0-9]:(?<!00:)[0-5][0-9]/, 'Minimum - 01:00')
-      .trim()
-      .required('Enter valid duration - mm:ss'),
-  }),
-)
+  const { errors, validate } = useForm({
+    validationSchema,
+    validateOnMount: true,
+  })
 
-const { errors, validate } = useForm({
-  validationSchema,
-  validateOnMount: true,
-})
-
-onActivated(async () => {
-  await validate()
-})
+  onActivated(async () => {
+    await validate()
+  })
 </script>
 
 <template>
   <div>
-    <h3 class="pt-6">
-      Selection {{ selectionIndex + 1 }}
-    </h3>
+    <h3 class="pt-6">Selection {{ selectionIndex + 1 }}</h3>
     <div class="grid grid-cols-12 gap-x-3 gap-y-1 pt-4 items-end">
       <div class="col-span-12 sm:col-span-7">
         <BaseInput
@@ -85,8 +80,7 @@ onActivated(async () => {
           name="title"
           label="Title (including Opus number if applicable)"
           type="text"
-          @change-status="(stat: string) => fieldStatus(stat, 'title')"
-        />
+          @change-status="(stat: string) => fieldStatus(stat, 'title')" />
       </div>
       <div class="col-span-12 sm:col-span-5">
         <BaseInput
@@ -95,8 +89,7 @@ onActivated(async () => {
           name="composer"
           label="Composer"
           type="text"
-          @change-status="(stat: string) => fieldStatus(stat, 'composer')"
-        />
+          @change-status="(stat: string) => fieldStatus(stat, 'composer')" />
       </div>
       <div class="col-span-12 sm:col-span-5">
         <BaseInput
@@ -105,8 +98,7 @@ onActivated(async () => {
           name="largerWork"
           label="Title of Larger Work (if applicable)"
           type="text"
-          @change-status="(stat: string) => fieldStatus(stat, 'largerWork')"
-        />
+          @change-status="(stat: string) => fieldStatus(stat, 'largerWork')" />
       </div>
       <div class="col-span-6 sm:col-span-4">
         <BaseInput
@@ -115,8 +107,7 @@ onActivated(async () => {
           name="movement"
           label="Movement (if applicable)"
           type="text"
-          @change-status="(stat: string) => fieldStatus(stat, 'movement')"
-        />
+          @change-status="(stat: string) => fieldStatus(stat, 'movement')" />
       </div>
       <div class="col-span-6 sm:col-span-3">
         <BaseInput
@@ -130,8 +121,7 @@ onActivated(async () => {
           name="duration"
           label="Duration"
           type="text"
-          @change-status="(stat: string) => fieldStatus(stat, 'duration')"
-        />
+          @change-status="(stat: string) => fieldStatus(stat, 'duration')" />
       </div>
     </div>
   </div>

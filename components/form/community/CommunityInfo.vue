@@ -1,17 +1,14 @@
 <script lang="ts" setup>
   import * as yup from 'yup'
   import 'yup-phone-lite'
-  import { useCommunity } from '@/stores/userCommunity'
+  import { useCommunity } from '@/stores/useCommunity'
   import { provinces } from '#imports'
 
   const communityStore = useCommunity()
 
   const status = reactive<Status>({
     name: communityStore.community.name ? StatusEnum.saved : StatusEnum.null,
-    streetNumber: communityStore.community.streetNumber
-      ? StatusEnum.saved
-      : StatusEnum.null,
-    streetName: communityStore.community.streetName
+    address: communityStore.community.address
       ? StatusEnum.saved
       : StatusEnum.null,
     city: communityStore.community.city ? StatusEnum.saved : StatusEnum.null,
@@ -40,12 +37,7 @@
         .string()
         .trim()
         .required('Enter the name of the community organization'),
-      streetNumber: yup
-        .string()
-        .trim()
-        .max(7, '7 characters maximum')
-        .required('Enter a valid street number'),
-      streetName: yup.string().trim().required('Enter a valid street name'),
+      address: yup.string().trim().required(),
       city: yup
         .string()
         .trim()
@@ -92,7 +84,7 @@
     class="pt-8">
     <h2 class="pb-4">Community Information</h2>
     <div class="grid grid-cols-12 gap-x-3 gap-y-2">
-      <div class="col-span-12 sm:col-span-6">
+      <div class="col-span-12 md:col-span-5">
         <BaseInput
           v-model="communityStore.community.name"
           :status="status.name"
@@ -101,27 +93,15 @@
           label="Community Name"
           @change-status="(stat: string) => fieldStatus(stat, 'name')" />
       </div>
-      <div class="col-span-4 sm:col-span-3">
+      <div class="col-span-4 sm:col-span-2">
         <BaseInput
-          v-model.trim="communityStore.community.streetNumber"
-          :status="status.streetNumber"
+          v-model.trim="communityStore.community.address"
+          :status="status.address"
           required
-          name="streetNumber"
+          name="address"
           type="text"
-          label="Street #"
-          @change-status="
-            (stat: string) => fieldStatus(stat, 'streetNumber')
-          " />
-      </div>
-      <div class="col-span-8 sm:col-span-5">
-        <BaseInput
-          v-model.trim="communityStore.community.streetName"
-          :status="status.streetName"
-          requried
-          name="streetName"
-          type="text"
-          label="Street Name"
-          @change-status="(stat: string) => fieldStatus(stat, 'streetName')" />
+          label="Address"
+          @change-status="(stat: string) => fieldStatus(stat, 'address')" />
       </div>
       <div class="col-span-12 sm:col-span-4">
         <BaseInput
@@ -133,7 +113,7 @@
           label="City/Town"
           @change-status="(stat: string) => fieldStatus(stat, 'city')" />
       </div>
-      <div class="col-span-6 sm:col-span-3">
+      <div class="col-span-6 sm:col-span-3 md:col-span-2">
         <BaseSelect
           v-model.trim="communityStore.community.province"
           :status="status.province"
@@ -143,7 +123,7 @@
           :options="provinces"
           @change-status="(stat: string) => fieldStatus(stat, 'province')" />
       </div>
-      <div class="col-span-6 sm:col-span-4">
+      <div class="col-span-6 sm:col-span-4 md:col-span-3">
         <BaseInput
           v-model.trim="communityStore.community.postalCode"
           v-maska:[maskaUcaseOption]
@@ -158,7 +138,7 @@
           label="Postal Code"
           @change-status="(stat: string) => fieldStatus(stat, 'postalCode')" />
       </div>
-      <div class="col-span-12 sm:col-span-5">
+      <div class="col-span-12 sm:col-span-5 md:col-span-3">
         <BaseInput
           v-model.trim="communityStore.community.phone"
           v-maska

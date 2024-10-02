@@ -5,7 +5,7 @@ import {
   testFullPerformer2,
   testPartialPerformer,
 } from '../utils/testData'
-import { usePerformers } from '@/stores/userPerformer'
+import { usePerformers } from '@/stores/usePerformer'
 
 let performerStore: any
 

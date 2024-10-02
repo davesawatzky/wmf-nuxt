@@ -1,6 +1,6 @@
 <script setup lang="ts">
-  import { useCommunityGroup } from '@/stores/userCommunityGroup'
-  import { useCommunity } from '@/stores/userCommunity'
+  import { useCommunityGroup } from '@/stores/useCommunityGroup'
+  import { useCommunity } from '@/stores/useCommunity'
 
   const communityGroupStore = useCommunityGroup()
   const communityStore = useCommunity()

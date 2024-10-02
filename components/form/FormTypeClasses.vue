@@ -1,9 +1,9 @@
 <script setup lang="ts">
   import * as yup from 'yup'
-  import { useClasses } from '@/stores/userClasses'
-  import { useRegistration } from '@/stores/userRegistration'
-  import { useSchoolGroup } from '@/stores/userSchoolGroup'
-  import { useCommunityGroup } from '@/stores/userCommunityGroup'
+  import { useClasses } from '@/stores/useClasses'
+  import { useRegistration } from '@/stores/useRegistration'
+  import { useSchoolGroup } from '@/stores/useSchoolGroup'
+  import { useCommunityGroup } from '@/stores/useCommunityGroup'
   import { useAppStore } from '@/stores/appStore'
   import { PerformerType } from '~/graphql/gql/graphql'
 

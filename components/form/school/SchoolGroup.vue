@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import * as yup from 'yup'
-  import { useSchoolGroup } from '@/stores/userSchoolGroup'
+  import { useSchoolGroup } from '@/stores/useSchoolGroup'
   import type { SchoolGroupInput } from '@/graphql/gql/graphql'
 
   const props = defineProps<{
@@ -150,9 +150,18 @@
           label="Latest time your group can perform"
           type="time"
           @change-status="(stat: string) => fieldStatus(stat, 'latestTime')" />
+        <BaseCheckbox
+          id="photo-permission"
+          v-model="schoolGroup.photoPermission"
+          :status="status.photoPermission"
+          name="photoPermission"
+          label="I give permission for the Festival to use photographs of this school group in marketing materials."
+          @change-status="
+            (stat: string) => fieldStatus(stat, 'photoPermission')
+          " />
       </div>
       <div
-        class="col-span-12 sm:col-span-4 lg:col-span-4 grid grid-cols-2 gap-x-3 items-end">
+        class="col-span-12 sm:col-span-4 lg:col-span-4 grid grid-cols-2 gap-x-3 items-start">
         <div class="col-1 sm:col-span-2">
           <BaseInput
             v-model.number="schoolGroup.groupSize"
@@ -237,13 +246,6 @@
         scheduling conflicts:
       </p>
     </div>
-    <BaseCheckbox
-      id="photo-permission"
-      v-model="schoolGroup.photoPermission"
-      :status="status.photoPermission"
-      name="photoPermission"
-      label="I give permission for the Festival to use photographs of this participant in marketing materials."
-      @change-status="(stat: string) => fieldStatus(stat, 'photoPermission')" />
   </div>
 </template>
 

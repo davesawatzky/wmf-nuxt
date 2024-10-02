@@ -5,9 +5,7 @@ query Performers($registrationId: Int!) {
     firstName
     lastName
     age
-    apartment
-    streetNumber
-    streetName
+    address
     city
     province
     postalCode

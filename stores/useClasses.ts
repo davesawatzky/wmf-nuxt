@@ -250,7 +250,6 @@ export const useClasses = defineStore(
       await selectionCreate({ registeredClassId })
     }
     onCreateSelectionDone((result) => {
-      console.log('Result: ', result)
       if (result.data?.selectionCreate.selection) {
         const selection: Selection = result.data.selectionCreate.selection
         addSelectionToStore(selection, registeredClassSelectionId)

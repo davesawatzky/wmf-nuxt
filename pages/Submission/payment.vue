@@ -7,7 +7,7 @@
     StripePaymentElementOptions,
   } from '@stripe/stripe-js'
   import { useToast } from 'vue-toastification'
-  import { useRegistration } from '@/stores/userRegistration'
+  import { useRegistration } from '@/stores/useRegistration'
   import { useUser } from '@/stores/useUser'
   import { useAppStore } from '@/stores/appStore'
 
@@ -96,9 +96,7 @@
         firstName,
         lastName,
         email,
-        apartment,
-        streetNumber,
-        streetName,
+        address,
         city,
         province,
         postalCode,

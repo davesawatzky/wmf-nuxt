@@ -1,8 +1,8 @@
 <script lang="ts" setup>
   import * as yup from 'yup'
   import 'yup-phone-lite'
-  import { useTeacher } from '@/stores/userTeacher'
-  import { useRegistration } from '~/stores/userRegistration'
+  import { useTeacher } from '@/stores/useTeacher'
+  import { useRegistration } from '~/stores/useRegistration'
   import { useAppStore } from '~/stores/appStore'
   import { useUser } from '~/stores/useUser'
   import type { Teacher } from '~/graphql/gql/graphql'

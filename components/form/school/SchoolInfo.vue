@@ -1,7 +1,7 @@
 <script lang="ts" setup>
   import * as yup from 'yup'
   import 'yup-phone-lite'
-  import { useSchool } from '@/stores/userSchool'
+  import { useSchool } from '@/stores/useSchool'
   import { provinces } from '#imports'
 
   const schoolStore = useSchool()
@@ -9,12 +9,7 @@
   const status = reactive<Status>({
     name: schoolStore.school.name ? StatusEnum.saved : StatusEnum.null,
     division: schoolStore.school.division ? StatusEnum.saved : StatusEnum.null,
-    streetNumber: schoolStore.school.streetNumber
-      ? StatusEnum.saved
-      : StatusEnum.null,
-    streetName: schoolStore.school.streetName
-      ? StatusEnum.saved
-      : StatusEnum.null,
+    address: schoolStore.school.address ? StatusEnum.saved : StatusEnum.null,
     city: schoolStore.school.city ? StatusEnum.saved : StatusEnum.null,
     province: schoolStore.school.province ? StatusEnum.saved : StatusEnum.null,
     postalCode: schoolStore.school.postalCode
@@ -30,12 +25,7 @@
         .string()
         .trim()
         .required('Enter the name of the school divison'),
-      streetNumber: yup
-        .string()
-        .trim()
-        .max(7, '7 characters maximum')
-        .required('Enter a valid street number'),
-      streetName: yup.string().trim().required('Enter a valid street name'),
+      address: yup.string().trim().required(),
       city: yup
         .string()
         .trim()
@@ -107,25 +97,13 @@
       </div>
       <div class="col-span-4 sm:col-span-3">
         <BaseInput
-          v-model.trim="schoolStore.school.streetNumber"
-          :status="status.streetNumber"
+          v-model.trim="schoolStore.school.address"
+          :status="status.address"
           required
-          name="streetNumber"
+          name="address"
           type="text"
-          label="Street #"
-          @change-status="
-            (stat: string) => fieldStatus(stat, 'streetNumber')
-          " />
-      </div>
-      <div class="col-span-8 sm:col-span-5">
-        <BaseInput
-          v-model.trim="schoolStore.school.streetName"
-          :status="status.streetName"
-          requried
-          name="streetName"
-          type="text"
-          label="Street Name"
-          @change-status="(stat: string) => fieldStatus(stat, 'streetName')" />
+          label="Address"
+          @change-status="(stat: string) => fieldStatus(stat, 'address')" />
       </div>
       <div class="col-span-12 sm:col-span-4">
         <BaseInput

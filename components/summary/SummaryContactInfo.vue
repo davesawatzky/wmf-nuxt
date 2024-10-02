@@ -38,12 +38,8 @@
             </tr>
             <tr class="">
               <td>Address:</td>
-              <td v-if="contact.apartment">
-                {{ contact.apartment }} - {{ contact?.streetNumber }}
-                {{ contact.streetName }}
-              </td>
-              <td v-else>
-                {{ contact.streetNumber }} {{ contact.streetName }}
+              <td>
+                {{ contact.address }}
               </td>
               <td v-if="contact.level">Grade Level:</td>
               <td v-if="contact.level">

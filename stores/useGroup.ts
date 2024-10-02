@@ -1,5 +1,5 @@
 import { useFieldConfig } from '@/stores/useFieldConfig'
-import { usePerformers } from '@/stores/userPerformer'
+import { usePerformers } from '@/stores/usePerformer'
 import {
   GroupCreateDocument,
   GroupDeleteDocument,

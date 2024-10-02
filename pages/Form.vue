@@ -2,7 +2,7 @@
   import * as yup from 'yup'
   import type { Component } from 'vue'
   import { useAppStore } from '@/stores/appStore'
-  import { useRegistration } from '@/stores/userRegistration'
+  import { useRegistration } from '@/stores/useRegistration'
   import type { Status } from '#imports'
   import {
     useStorage,

@@ -33,7 +33,7 @@ export async function renderSubmissionEmail(payload: any) {
           if (date) {
             const dateString = date.toString()
             return DateTime.fromISO(dateString).toLocaleString(
-              DateTime.DATETIME_MED,
+              DateTime.DATETIME_MED
             )
           }
         },
@@ -187,13 +187,7 @@ export async function renderSubmissionEmail(payload: any) {
               <mj-column>
                 <mj-text>
                   <div><strong>Address:</strong></div>
-                  <div v-if="performer.apartment">
-                    {{ performer.apartment }} - {{ performer.streetNumber }} {{
-                    performer.streetName }}
-                  </div>
-                  <div v-else>
-                    {{ performer.streetNumber }} {{ performer.streetName }}
-                  </div>
+                  <div>{{ performer.address }}</div>
                   <div>{{ performer.city }}, {{ performer.province }}</div>
                   <div>{{ performer.postalCode }}</div>
                   <div>Phone: {{ performer.phone }}</div>
@@ -233,7 +227,7 @@ export async function renderSubmissionEmail(payload: any) {
                   <div class="h2">School</div>
                   <div class="h3">{{ school.name }}</div>
                   <div class="h4">Division: {{ school.division }}</div>
-                  <div>{{ school.streetNumber }}, {{ school.streetName }}</div>
+                  <div>{{ school.address }}</div>
                   <div>{{school.city }}, {{ school.province }}</div>
                   <div>{{ school.postalCode }}</div>
                   <div>Phone: {{ school.phone }}</div>
@@ -323,13 +317,7 @@ export async function renderSubmissionEmail(payload: any) {
               <mj-text>
                 <div class="h2">Teacher</div>
                 <div class="h3">{{ teacher.firstName }} {{ teacher.lastName }}</div>
-                <div v-if="teacher.apartment">
-                  {{ teacher.apartment }} - {{ teacher.streetNumber }} {{
-                  teacher.streetName }}
-                </div>
-                <div v-else>
-                  {{ teacher.streetNumber }} {{ teacher.streetName }}
-                </div>
+                <div>{{ teacher.address }}</div>
                 <div>{{ teacher.city }}, {{ teacher.province }}</div>
                 <div>{{ teacher.postalCode }}</div>
                 <div>Phone: {{ teacher.phone }}</div>
@@ -510,8 +498,7 @@ export async function renderSubmissionEmail(payload: any) {
 
     // Let mjml do its magic
     return mjml2html(html).html
-  }
-  catch (error) {
+  } catch (error) {
     console.log('Error: ', error)
   }
 }

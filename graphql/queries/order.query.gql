@@ -1,5 +1,5 @@
 query Order($orderId: Int!) {
-  order(id: $orderId) {
+  order(orderID: $orderId) {
     id
     totalAmount
     payedAmount
@@ -8,22 +8,5 @@ query Order($orderId: Int!) {
     methodDelivered
     createdAt
     updatedAt
-    orderItems {
-      itemID
-      namesOnItems
-      notes
-      quantity
-      item {
-        id
-        name
-        description
-        startDate
-        endDate
-        price
-        notes
-        taxable
-        transferable
-      }
-    }
   }
 }

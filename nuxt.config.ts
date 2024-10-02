@@ -2,7 +2,7 @@
 import { resolve } from 'node:path'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
-import Aura from '@primevue/themes/aura'
+import { WMFPreset } from './utils/wmfpreset'
 
 export default defineNuxtConfig({
   compatibilityDate: '2024-08-28',
@@ -73,7 +73,7 @@ export default defineNuxtConfig({
     options: {
       ripple: true,
       theme: {
-        preset: Aura,
+        preset: WMFPreset,
         options: {
           darkModeSelector: '.fake-dark-selector',
           prefix: 'p',
