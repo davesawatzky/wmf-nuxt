@@ -55,7 +55,7 @@ export const useSchoolGroup = defineStore(
           latestTime: schoolGrp.latestTime || '',
           unavailable: schoolGrp.unavailable || '',
           conflictPerformers: schoolGrp.conflictPerformers || '',
-          photoPermission: schoolGrp.photoPermission || false,
+          photoPermission: schoolGrp.photoPermission || null,
           __typename: schoolGrp.__typename || 'SchoolGroup',
         })
       } catch (err) {

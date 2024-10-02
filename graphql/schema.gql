@@ -72,7 +72,7 @@ type CommunityGroup {
   id: Int!
   latestTime: String
   name: String
-  photoPermission: Boolean
+  photoPermission: String
   unavailable: String
   wheelchairs: Int
 }
@@ -84,7 +84,7 @@ input CommunityGroupInput {
   groupSize: Int
   latestTime: String
   name: String
-  photoPermission: Boolean
+  photoPermission: String
   unavailable: String
   wheelchairs: Int
 }
@@ -529,7 +529,7 @@ type Performer {
   level: String
   otherClasses: String
   phone: String
-  photoPermission: Boolean
+  photoPermission: String
   postalCode: String
   pronouns: String
   province: String
@@ -548,7 +548,7 @@ input PerformerInput {
   level: String
   otherClasses: String
   phone: String
-  photoPermission: Boolean
+  photoPermission: String
   postalCode: String
   pronouns: String
   province: String
@@ -683,7 +683,7 @@ type Registration {
   payedAmt: Float
   performerType: PerformerType!
   performers: [Performer!]
-  photoPermission: Boolean
+  photoPermission: String
   registeredClasses: [RegisteredClass!]
   school: School
   submittedAt: DateTime
@@ -699,7 +699,7 @@ input RegistrationInput {
   label: String
   payedAmt: Float
   performerType: PerformerType
-  photoPermission: Boolean
+  photoPermission: String
   submittedAt: DateTime
   teacherID: Int
   totalAmt: Float
@@ -732,7 +732,7 @@ type SchoolGroup {
   id: Int!
   latestTime: String
   name: String
-  photoPermission: Boolean
+  photoPermission: String
   school: School
   unavailable: String
   wheelchairs: Int
@@ -745,7 +745,7 @@ input SchoolGroupInput {
   groupSize: Int
   latestTime: String
   name: String
-  photoPermission: Boolean
+  photoPermission: String
   unavailable: String
   wheelchairs: Int
 }

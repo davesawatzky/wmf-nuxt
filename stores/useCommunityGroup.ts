@@ -55,7 +55,7 @@ export const useCommunityGroup = defineStore(
         latestTime: communityGrp.latestTime || '',
         unavailable: communityGrp.unavailable || '',
         conflictPerformers: communityGrp.conflictPerformers || '',
-        photoPermission: communityGrp.photoPermission || false,
+        photoPermission: communityGrp.photoPermission || null,
         __typename: communityGrp.__typename || 'CommunityGroup',
       })
     }

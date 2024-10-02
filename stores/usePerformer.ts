@@ -82,7 +82,7 @@ export const usePerformers = defineStore(
         postalCode: performer.postalCode || '',
         email: performer.email || '',
         phone: performer.phone || '',
-        photoPermission: performer.photoPermission || false,
+        photoPermission: performer.photoPermission || null,
         __typename: performer.__typename || 'Performer',
       })
     }

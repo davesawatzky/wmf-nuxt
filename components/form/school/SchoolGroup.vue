@@ -104,7 +104,11 @@
         .required('Required'),
       unavailable: yup.string().trim().required('Required'),
       conflictPerformers: yup.string().trim().nullable(),
-      photoPermission: yup.boolean().default(false),
+      photoPermission: yup
+        .string()
+        .trim()
+        .required('Required')
+        .oneOf(['Yes', 'No']),
     })
   )
 
@@ -147,15 +151,6 @@
           label="Latest time your group can perform"
           type="time"
           @change-status="(stat: string) => fieldStatus(stat, 'latestTime')" />
-        <BaseCheckbox
-          id="photo-permission"
-          v-model="schoolGroup.photoPermission"
-          :status="status.photoPermission"
-          name="photoPermission"
-          label="I give permission for the Festival to use photographs of this school group in marketing materials."
-          @change-status="
-            (stat: string) => fieldStatus(stat, 'photoPermission')
-          " />
       </div>
       <div
         class="col-span-12 sm:col-span-4 lg:col-span-4 grid grid-cols-2 gap-x-3 items-start">
@@ -212,13 +207,31 @@
           Total Number: {{ totalParticipants }}
         </div>
       </div>
+      <div class="col-span-3 sm:col-span-2 lg:col-span-2 self-end">
+        <BaseSelect
+          id="photo-permission"
+          v-model="schoolGroup.photoPermission"
+          :status="status.photoPermission"
+          :options="[
+            { id: 'Yes', name: 'Yes' },
+            { id: 'No', name: 'No' },
+          ]"
+          name="photoPermission"
+          @change-status="
+            (stat: string) => fieldStatus(stat, 'photoPermission')
+          " />
+      </div>
+      <div class="col-span-9 sm:col-span-10 lg:col-span-8 text-sm self-center">
+        I give permission to use photographs of this school group for social
+        media/marketing, newsletter, funding requests and archival purposes.
+      </div>
     </div>
     <div class="col-span-12 lg:col-span-5">
       <BaseTextarea
         v-model="schoolGroup.unavailable"
         :status="status.unavailable"
         name="unavailable"
-        label="Unavailable Dates/Times"
+        label="Known Conflicts"
         rows="3"
         @change-status="(stat: string) => fieldStatus(stat, 'unavailable')" />
       <p class="text-sm mb-2">

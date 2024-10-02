@@ -100,7 +100,7 @@ export type CommunityGroup = {
   id: Scalars['Int']['output'];
   latestTime?: Maybe<Scalars['String']['output']>;
   name?: Maybe<Scalars['String']['output']>;
-  photoPermission?: Maybe<Scalars['Boolean']['output']>;
+  photoPermission?: Maybe<Scalars['String']['output']>;
   unavailable?: Maybe<Scalars['String']['output']>;
   wheelchairs?: Maybe<Scalars['Int']['output']>;
 };
@@ -112,7 +112,7 @@ export type CommunityGroupInput = {
   groupSize?: InputMaybe<Scalars['Int']['input']>;
   latestTime?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
-  photoPermission?: InputMaybe<Scalars['Boolean']['input']>;
+  photoPermission?: InputMaybe<Scalars['String']['input']>;
   unavailable?: InputMaybe<Scalars['String']['input']>;
   wheelchairs?: InputMaybe<Scalars['Int']['input']>;
 };
@@ -879,7 +879,7 @@ export type Performer = {
   level?: Maybe<Scalars['String']['output']>;
   otherClasses?: Maybe<Scalars['String']['output']>;
   phone?: Maybe<Scalars['String']['output']>;
-  photoPermission?: Maybe<Scalars['Boolean']['output']>;
+  photoPermission?: Maybe<Scalars['String']['output']>;
   postalCode?: Maybe<Scalars['String']['output']>;
   pronouns?: Maybe<Scalars['String']['output']>;
   province?: Maybe<Scalars['String']['output']>;
@@ -898,7 +898,7 @@ export type PerformerInput = {
   level?: InputMaybe<Scalars['String']['input']>;
   otherClasses?: InputMaybe<Scalars['String']['input']>;
   phone?: InputMaybe<Scalars['String']['input']>;
-  photoPermission?: InputMaybe<Scalars['Boolean']['input']>;
+  photoPermission?: InputMaybe<Scalars['String']['input']>;
   postalCode?: InputMaybe<Scalars['String']['input']>;
   pronouns?: InputMaybe<Scalars['String']['input']>;
   province?: InputMaybe<Scalars['String']['input']>;
@@ -1256,7 +1256,7 @@ export type Registration = {
   payedAmt?: Maybe<Scalars['Float']['output']>;
   performerType: PerformerType;
   performers?: Maybe<Array<Performer>>;
-  photoPermission?: Maybe<Scalars['Boolean']['output']>;
+  photoPermission?: Maybe<Scalars['String']['output']>;
   registeredClasses?: Maybe<Array<RegisteredClass>>;
   school?: Maybe<School>;
   submittedAt?: Maybe<Scalars['DateTime']['output']>;
@@ -1272,7 +1272,7 @@ export type RegistrationInput = {
   label?: InputMaybe<Scalars['String']['input']>;
   payedAmt?: InputMaybe<Scalars['Float']['input']>;
   performerType?: InputMaybe<PerformerType>;
-  photoPermission?: InputMaybe<Scalars['Boolean']['input']>;
+  photoPermission?: InputMaybe<Scalars['String']['input']>;
   submittedAt?: InputMaybe<Scalars['DateTime']['input']>;
   teacherID?: InputMaybe<Scalars['Int']['input']>;
   totalAmt?: InputMaybe<Scalars['Float']['input']>;
@@ -1308,7 +1308,7 @@ export type SchoolGroup = {
   id: Scalars['Int']['output'];
   latestTime?: Maybe<Scalars['String']['output']>;
   name?: Maybe<Scalars['String']['output']>;
-  photoPermission?: Maybe<Scalars['Boolean']['output']>;
+  photoPermission?: Maybe<Scalars['String']['output']>;
   school?: Maybe<School>;
   unavailable?: Maybe<Scalars['String']['output']>;
   wheelchairs?: Maybe<Scalars['Int']['output']>;
@@ -1321,7 +1321,7 @@ export type SchoolGroupInput = {
   groupSize?: InputMaybe<Scalars['Int']['input']>;
   latestTime?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
-  photoPermission?: InputMaybe<Scalars['Boolean']['input']>;
+  photoPermission?: InputMaybe<Scalars['String']['input']>;
   unavailable?: InputMaybe<Scalars['String']['input']>;
   wheelchairs?: InputMaybe<Scalars['Int']['input']>;
 };
@@ -1847,7 +1847,7 @@ export type CommunityGroupInfoQueryVariables = Exact<{
 }>;
 
 
-export type CommunityGroupInfoQuery = { __typename: 'Query', registration: { __typename: 'Registration', community?: { __typename: 'Community', communityGroups?: Array<{ __typename: 'CommunityGroup', id: number, name?: string | null, groupSize?: number | null, chaperones?: number | null, wheelchairs?: number | null, earliestTime?: string | null, latestTime?: string | null, unavailable?: string | null, conflictPerformers?: string | null, photoPermission?: boolean | null }> | null } | null } };
+export type CommunityGroupInfoQuery = { __typename: 'Query', registration: { __typename: 'Registration', community?: { __typename: 'Community', communityGroups?: Array<{ __typename: 'CommunityGroup', id: number, name?: string | null, groupSize?: number | null, chaperones?: number | null, wheelchairs?: number | null, earliestTime?: string | null, latestTime?: string | null, unavailable?: string | null, conflictPerformers?: string | null, photoPermission?: string | null }> | null } | null } };
 
 export type CommunityInfoQueryVariables = Exact<{
   registrationId: Scalars['Int']['input'];
@@ -1875,7 +1875,7 @@ export type PerformersQueryVariables = Exact<{
 }>;
 
 
-export type PerformersQuery = { __typename: 'Query', performers: Array<{ __typename: 'Performer', id: number, pronouns?: string | null, firstName?: string | null, lastName?: string | null, age?: number | null, address?: string | null, city?: string | null, province?: string | null, postalCode?: string | null, phone?: string | null, email?: string | null, instrument?: string | null, level?: string | null, otherClasses?: string | null, unavailable?: string | null, photoPermission?: boolean | null }> };
+export type PerformersQuery = { __typename: 'Query', performers: Array<{ __typename: 'Performer', id: number, pronouns?: string | null, firstName?: string | null, lastName?: string | null, age?: number | null, address?: string | null, city?: string | null, province?: string | null, postalCode?: string | null, phone?: string | null, email?: string | null, instrument?: string | null, level?: string | null, otherClasses?: string | null, unavailable?: string | null, photoPermission?: string | null }> };
 
 export type RegisteredClassesQueryVariables = Exact<{
   registrationId: Scalars['Int']['input'];
@@ -1889,7 +1889,7 @@ export type SchoolGroupInfoQueryVariables = Exact<{
 }>;
 
 
-export type SchoolGroupInfoQuery = { __typename: 'Query', registration: { __typename: 'Registration', school?: { __typename: 'School', schoolGroups?: Array<{ __typename: 'SchoolGroup', id: number, name?: string | null, groupSize?: number | null, chaperones?: number | null, wheelchairs?: number | null, earliestTime?: string | null, latestTime?: string | null, unavailable?: string | null, conflictPerformers?: string | null, photoPermission?: boolean | null }> | null } | null } };
+export type SchoolGroupInfoQuery = { __typename: 'Query', registration: { __typename: 'Registration', school?: { __typename: 'School', schoolGroups?: Array<{ __typename: 'SchoolGroup', id: number, name?: string | null, groupSize?: number | null, chaperones?: number | null, wheelchairs?: number | null, earliestTime?: string | null, latestTime?: string | null, unavailable?: string | null, conflictPerformers?: string | null, photoPermission?: string | null }> | null } | null } };
 
 export type SchoolInfoQueryVariables = Exact<{
   registrationId: Scalars['Int']['input'];

@@ -201,7 +201,7 @@
   watch(
     chosenTeacher,
     async (newTeacher, oldTeacher) => {
-      if (newTeacher.firstName === 'Unlisted') {
+      if (newTeacher.lastName === 'Unlisted') {
         unlistedTeacher.value = true
         teacherStore.$resetTeacher()
         registrationStore.registration.teacherID = null
@@ -213,10 +213,11 @@
           schoolTeacher.value
         )
         registrationStore.registration.teacherID = teacherStore.teacher.id
+        await registrationStore.updateRegistration('teacherID')
         teacherCreated.value = true
       } else {
         if (
-          oldTeacher.firstName === 'Unlisted' &&
+          oldTeacher?.lastName === 'Unlisted' &&
           teacherCreated.value === true &&
           !emailAlreadyExists.value
         ) {
@@ -284,17 +285,17 @@
   const filteredTeachers = ref([] as FilteredTeacher[])
   function search(event: any) {
     filteredTeachers.value = teacherStore.allTeachers.filter((teacher) => {
-      return `${teacher.firstName} ${teacher.lastName}`
+      return `${teacher.lastName}, ${teacher.firstName}`
         .toLowerCase()
         .includes(event.query.toLowerCase())
     })
   }
 
   function displayName(teacher: FilteredTeacher) {
-    if (teacher.instrument) {
-      return `${teacher.firstName} ${teacher.lastName}, ${teacher.instrument}`
+    if (teacher.lastName === 'Unlisted' || teacher.id === 2) {
+      return `${teacher.lastName} ${teacher.firstName}`
     } else {
-      return `${teacher.firstName} ${teacher.lastName}`
+      return `${teacher.lastName}, ${teacher.firstName}`
     }
   }
 </script>
@@ -324,12 +325,8 @@
         :suggestions="filteredTeachers"
         @complete="search">
         <template #option="slotProps">
-          <div v-if="slotProps.option.instrument">
-            {{ slotProps.option.firstName }} {{ slotProps.option.lastName }},
-            {{ slotProps.option.instrument }}
-          </div>
-          <div v-else>
-            {{ slotProps.option.firstName }} {{ slotProps.option.lastName }}
+          <div>
+            {{ slotProps.option.lastName }}, {{ slotProps.option.firstName }}
           </div>
         </template>
       </PrimeAutoComplete>

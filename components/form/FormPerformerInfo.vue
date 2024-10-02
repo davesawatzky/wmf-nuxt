@@ -115,7 +115,11 @@
       level: yup.string().trim().required('Enter Grade or Level'),
       otherClasses: yup.string().trim().notRequired().nullable(),
       unavailable: yup.string().trim().notRequired().nullable(),
-      photoPermission: yup.boolean().default(false),
+      photoPermission: yup
+        .string()
+        .trim()
+        .required('Required')
+        .oneOf(['Yes', 'No']),
     })
   )
 
@@ -248,7 +252,7 @@
         label="Email"
         @change-status="(stat: string) => fieldStatus(stat, 'email')" />
     </div>
-    <div class="col-span-12 sm:col-span-6">
+    <div class="col-span-12 sm:col-span-4">
       <BaseSelect
         id="instrument"
         v-model="contact.instrument"
@@ -258,17 +262,25 @@
         label="Instrument/Discipline"
         @change-status="(stat: string) => fieldStatus(stat, 'instrument')" />
     </div>
-    <div class="col-span-11 col-start-2 sm:col-span-5 sm:col-start-8">
-      <BaseCheckbox
+    <div class="col-span-3 sm:col-span-2 lg:col-start-6">
+      <BaseSelect
         id="photo-permission"
         v-model="contact.photoPermission"
         :status="status.photoPermission"
+        :options="[
+          { id: 'Yes', name: 'Yes' },
+          { id: 'No', name: 'No' },
+        ]"
         name="photoPermission"
-        label="I give permission for the Festival to use photographs of this participant in marketing materials."
+        label=""
         @change-status="
           (stat: string) => fieldStatus(stat, 'photoPermission')
         " />
     </div>
+    <p class="col-span-9 sm:col-span-6 lg:col-span-5 text-sm">
+      I give permission to use photographs of this participant for social
+      media/marketing, newsletter, funding requests and archival purposes.
+    </p>
     <div
       v-if="groupperformer"
       class="col-span-6 sm:col-span-6">
