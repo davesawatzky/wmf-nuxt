@@ -35,11 +35,10 @@
     if (registrationStore.registration.performerType === 'SOLO') {
       if (performerStore.performers[0].age! < 18) {
         return true
-      } else {
-        readConfirmation.value.parentGuardian = true
-        return false
-      }
-    } else if (registrationStore.registration.performerType === 'GROUP') {
+      } 
+    } else {
+      readConfirmation.value.parentGuardian = true
+      return false
     }
   })
 

@@ -149,7 +149,7 @@
         :status="status.address"
         name="address"
         type="text"
-        label="Address"
+        label="Mailing Address"
         @change-status="(stat: string) => fieldStatus(stat, 'address')" />
     </div>
     <div class="col-span-12 sm:col-span-4">
@@ -193,7 +193,7 @@
         data-maska="(###) ###-####"
         data-maska-eager
         name="phone"
-        type="tel"
+        type="text"
         label="Phone Number"
         @change-status="(stat: string) => fieldStatus(stat, 'phone')" />
     </div>
@@ -204,7 +204,6 @@
         disabled="true"
         :status="status.email"
         placeholder="example@email.com"
-        data-maska-eager
         name="email"
         type="email"
         label="Email" />

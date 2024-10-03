@@ -71,9 +71,7 @@
 
   async function confirmPayment() {
     submitDisabled.value = true
-    registrationStore.registration.confirmation = `WMF-${
-      registrationStore.registrationId
-    }-${_.random(1000, 9999)}`
+    registrationStore.registration.confirmation = WMFNumber(registrationStore.registrationId)
     const PaymentIntent: any = await $fetch(
       `${config.public.serverAddress}/payment/create-payment-intent`,
       {

@@ -1,16 +1,6 @@
 <script setup lang="ts">
   import _ from 'lodash'
   import { DateTime } from 'luxon'
-  import { usePerformers } from '@/stores/usePerformer'
-  import { useTeacher } from '@/stores/useTeacher'
-  import { useGroup } from '@/stores/useGroup'
-  import { useSchool } from '@/stores/useSchool'
-  import { useSchoolGroup } from '@/stores/useSchoolGroup'
-  import { useCommunity } from '@/stores/useCommunity'
-  import { useClasses } from '@/stores/useClasses'
-  import { useAppStore } from '@/stores/appStore'
-  import { useRegistration } from '@/stores/useRegistration'
-  import { useUser } from '@/stores/useUser'
 
   // import type { LocationQueryValue } from '#vue-router'
 
@@ -55,10 +45,9 @@
 
   onBeforeMount(async () => {
     const regExist = registrationStore?.registrationId
-    const confirmed = registrationStore.registration?.confirmation
     const submitted = registrationStore.registration?.submittedAt
 
-    if (!regExist || confirmed || submitted) await navigateTo('/Registrations')
+    if (!regExist || submitted) await navigateTo('/Registrations')
   })
 
   onMounted(async () => {

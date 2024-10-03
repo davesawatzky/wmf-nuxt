@@ -131,9 +131,18 @@
       <!-- Teacher -->
       <div v-if="!props.teacherSummary">
         <h3 class="pt-4 pb-4">Teacher</h3>
-        <SummaryContactInfo
-          :contact="teacherStore.teacher"
-          :full-name="teacherStore.fullName" />
+        <div
+          class="mb-4 flex align-bottom p-2 text-white bg-sky-700 border border-sky-700 shadow-md rounded-lg">
+          <div>
+            <h4 class="text-lg sm:text-xl">
+              {{ teacherStore.fullName }}
+            </h4>
+          </div>
+          <div class="text-sm sm:text-base px-2 sm:px-10">
+            <div>Phone: {{ teacherStore.teacher.phone }}</div>
+            <div>Email: {{ teacherStore.teacher.email }}</div>
+          </div>
+        </div>
       </div>
 
       <!-- Community Groups -->
@@ -149,7 +158,7 @@
             <table>
               <tbody class="text-sm sm:text-base">
                 <tr>
-                  <td>Address:</td>
+                  <td>Mailing Address:</td>
                   <td>
                     {{ communityStore.community.address }}
                   </td>
@@ -260,7 +269,7 @@
             <table>
               <tbody class="text-sm sm:text-base">
                 <tr>
-                  <td>Address:</td>
+                  <td>Mailing Address:</td>
                   <td>
                     {{ schoolStore.school.address }}
                   </td>

@@ -74,6 +74,7 @@ export const useClasses = defineStore(
           numberOfSelections: regClass.numberOfSelections || undefined,
           price: (regClass.price as number) || 0.0,
           schoolGroupID: regClass.schoolGroupID || null,
+          communityGroupID: regClass.communityGroupID || null,
           selections: regClass.selections || <Selection[]>[],
           __typename: regClass.__typename || 'RegisteredClass',
         })
@@ -159,6 +160,7 @@ export const useClasses = defineStore(
       if (newResult?.registration.registeredClasses) {
         const returnedClasses: RegisteredClass[] =
           newResult.registration.registeredClasses
+        console.log(returnedClasses)
         const length = returnedClasses.length
         for (let i = 0; i < length; i++) addClassToStore(returnedClasses[i])
       }

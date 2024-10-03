@@ -97,7 +97,7 @@
           required
           name="address"
           type="text"
-          label="Address"
+          label="Mailing Address"
           @change-status="(stat: string) => fieldStatus(stat, 'address')" />
       </div>
       <div class="col-span-6 sm:col-span-4 md:col-span-5">
@@ -145,20 +145,16 @@
           data-maska="(###) ###-####"
           data-maska-eager
           name="phone"
-          type="tel"
+          type="text"
           label="Phone Number"
           @change-status="(stat: string) => fieldStatus(stat, 'phone')" />
       </div>
       <div class="col-span-12 sm:col-span-12 md:col-span-6">
         <BaseInput
           v-model.trim="communityStore.community.email"
-          v-maska
           :status="status.email"
           required
           placeholder="example@email.com"
-          data-maska="a*@a*.a*"
-          data-maska-tokens="a:[a-zA-Z0-9]|*:[a-zA-Z0-9._%+-]"
-          data-maska-eager
           name="email"
           type="email"
           label="Email Address"

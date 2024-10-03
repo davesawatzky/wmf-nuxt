@@ -200,7 +200,7 @@
           <mj-section>
             <mj-column>
               <mj-text>
-                <div><strong>Address:</strong></div>
+                <div><strong>Mailing Address:</strong></div>
                 <div>{{ performer.address }}</div>
                 <div>{{ performer.city }}, {{ performer.province }}</div>
                 <div>{{ performer.postalCode }}</div>
@@ -368,9 +368,6 @@
               <div class="h3">
                 {{ teacher.firstName }} {{ teacher.lastName }}
               </div>
-              <div>{{ teacher.address }}</div>
-              <div>{{ teacher.city }}, {{ teacher.province }}</div>
-              <div>{{ teacher.postalCode }}</div>
               <div>Phone: {{ teacher.phone }}</div>
               <div>Email: {{ teacher.email }}</div>
             </mj-text>

@@ -140,10 +140,7 @@
           name="earliestTime"
           label="Earliest time your group can perform"
           type="time"
-          @change-status="
-            (stat: string) => fieldStatus(stat, 'earliestTime')
-          " />
-
+          @change-status="(stat: string) => fieldStatus(stat, 'earliestTime')" />
         <BaseInput
           v-model="schoolGroup.latestTime"
           :status="status.latestTime"
@@ -157,13 +154,10 @@
         <div class="col-1 sm:col-span-2">
           <BaseInput
             v-model.number="schoolGroup.groupSize"
-            v-maska
             :status="status.groupSize"
             min="2"
             max="300"
             step="1"
-            data-maska="###"
-            data-maska-eager
             name="groupSize"
             label="Number of performers"
             type="number"
@@ -172,14 +166,11 @@
         <div class="col-1 sm:col-span-2">
           <BaseInput
             v-model.number="schoolGroup.chaperones"
-            v-maska
             :status="status.chaperones"
             name="chaperones"
             min="0"
             max="100"
             step="1"
-            data-maska="###"
-            data-maska-eager
             label="Number of chaperones"
             type="number"
             @change-status="
@@ -189,14 +180,11 @@
         <div class="col-1 sm:col-span-2">
           <BaseInput
             v-model.number="schoolGroup.wheelchairs"
-            v-maska
             :status="status.wheelchairs"
             name="wheelchairs"
             min="0"
             max="100"
             step="1"
-            data-maska="###"
-            data-maska-eager
             label="Number of wheelchairs"
             type="number"
             @change-status="

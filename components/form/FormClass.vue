@@ -209,7 +209,6 @@
   // chosenDiscipline is the discipline chosen from the template
   // through the vmodel on selectedClasses.discipline
   const chosenDiscipline = computed(() => {
-    console.log('Running computed')
     return (
       disciplines.value?.find((item) => {
         return item.name === selectedClasses.value.discipline
@@ -391,14 +390,12 @@
       selectedClasses.value.subdiscipline = null
       if (newDiscipline !== oldDiscipline) {
         status.discipline = StatusEnum.pending
-        console.log('Props.classId', props.classId)
         await classesStore.updateClass(props.classId, 'discipline')
         newDiscipline !== null
           ? (status.discipline = StatusEnum.saved)
           : (status.discipline = StatusEnum.null)
       }
       if (!!chosenDiscipline.value.id) {
-        console.log('chosenDiscipline', chosenDiscipline.value.id)
         await loadSubdisciplines()
       }
     }

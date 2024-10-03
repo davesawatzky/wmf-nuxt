@@ -37,7 +37,7 @@
               </td>
             </tr>
             <tr class="">
-              <td>Address:</td>
+              <td>Mailing Address:</td>
               <td>
                 {{ contact.address }}
               </td>

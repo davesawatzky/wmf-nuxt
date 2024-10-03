@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import _ from 'lodash'
   import { loadStripe } from '@stripe/stripe-js'
   import type {
     Stripe,
@@ -17,7 +18,7 @@
   const loading = ref(false)
   const spinnerHidden = ref(true)
   const registrationStore = useRegistration()
-  const submitDisabled = ref(false)
+  const submitDisabled = ref(true)
   let clientSec: string = ''
   // const total = ref(0)
 
@@ -77,17 +78,18 @@
     loading.value = true
     spinnerHidden.value = false
 
-    if (!stripe || !elements) return
-
     if (appStore.stripePayment === 'cash') {
       loading.value = false
+      registrationStore.registration.confirmation = WMFNumber(registrationStore.registrationId)
       spinnerHidden.value = true
-      await navigateTo('/submission/result')
+      await navigateTo('/Submission/result')
       return
     } else if (appStore.stripePayment === 'ccard') {
       if (submitDisabled.value) {
         return
       }
+
+      if ( !stripe || !elements ) return
 
       submitDisabled.value = true
 
@@ -128,7 +130,7 @@
       spinnerHidden.value = true
       loading.value = false
 
-      await navigateTo('/submission/ConfirmPayment')
+      await navigateTo('/Submission/ConfirmPayment')
     }
   }
 
@@ -180,14 +182,14 @@
         class="btn w-[200px] h-[150px] text-xl font-semibold"
         :class="appStore.stripePayment === 'cash' ? 'btn-green' : 'btn-blue'"
         label="Cash, Cheque, E-Transfer"
-        @click="appStore.stripePayment = 'cash'">
+        @click="appStore.stripePayment = 'cash'; submitDisabled = false">
         Cash, Cheque, E-Transfer
       </BaseButton>
       <BaseButton
         class="btn w-[200px] h-[150px] text-xl font-semibold"
         :class="appStore.stripePayment === 'ccard' ? 'btn-green' : 'btn-blue'"
         label="Pay by Credit Card"
-        @click="appStore.stripePayment = 'ccard'">
+        @click="appStore.stripePayment = 'ccard'; submitDisabled = false">
         Credit Card
       </BaseButton>
     </div>
@@ -221,7 +223,7 @@
           <ul class="list-disc">
             <li>
               Payment may be made by cash, cheque, or e-transfer to the Winnipeg
-              Music Festival (<a href="mailto:wmf@mts.net"
+              Music Festival (<a class="text-sky-600" href="mailto:wmf@mts.net"
                 ><strong>wmf@mts.net</strong></a
               >).
             </li>
@@ -316,7 +318,7 @@
   .spinner:before {
     width: 10.4px;
     height: 20.4px;
-    background: #5469d4;
+    background: #0284c7;
     border-radius: 20.4px 0 0 20.4px;
     top: -0.2px;
     left: -0.2px;
@@ -328,7 +330,7 @@
   .spinner:after {
     width: 10.4px;
     height: 10.2px;
-    background: #5469d4;
+    background: #0284c7;
     border-radius: 0 10.2px 10.2px 0;
     top: -0.1px;
     left: 10.2px;
