@@ -70,12 +70,14 @@ export const useTeacher = defineStore(
     function findInitialTeacherErrors() {
       const teacherKeys = fieldConfigStore.performerTypeFields('Teacher')
       let count = 0
-      if (appStore.teacherHasPassword || teacher.value.id != 2) {
+      if (teacher.value.id === 1) {
         for (const key of teacherKeys) {
           if (!teacher.value[key as keyof Teacher]) {
             count++
           }
         }
+      } else if ( !teacher.value.id ) {
+        count++
       }
       teacherErrors.value = count
     }
@@ -140,7 +142,7 @@ export const useTeacher = defineStore(
     watch(resultTeacher, (newResult) => {
       if (newResult?.teacher) {
         addToStore(<Teacher>newResult.teacher)
-        findInitialTeacherErrors()
+        // findInitialTeacherErrors()
       }
     })
     onLoadTeacherError((error) => {

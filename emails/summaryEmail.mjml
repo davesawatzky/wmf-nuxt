@@ -224,7 +224,7 @@
               <mj-text>
                 <div>Earliest Time: {{ group.earliestTime }}</div>
                 <div>Latest Time: {{ group.latestTime }}</div>
-                <div>Unavailable Time {{ group.unavailable }}</div>
+                <div>Scheduling Requests: {{ group.unavailable }}</div>
                 <div>
                   Performers in other classes: {{ group.conflictPerformers }}
                 </div>
@@ -286,7 +286,7 @@
               <mj-text>
                 <div>Earliest Time: {{ commgroup.earliestTime }}</div>
                 <div>Latest Time: {{ commgroup.latestTime }}</div>
-                <div>Unavailable Time {{ commgroup.unavailable }}</div>
+                <div>Scheduling Requests: {{ commgroup.unavailable }}</div>
                 <div>
                   Performers in other classes: {{ commgroup.conflictPerformers }}
                 </div>

@@ -53,7 +53,7 @@
       movement: yup.string().trim().nullable(),
       duration: yup
         .string()
-        .matches(/[0-5]{0,1}[0-9]:(?<!00:)[0-5][0-9]/, 'Minimum - 01:00')
+        .matches(/[0-5]{0,1}[0-9]:(?<!00:)[0-5][0-9]/, 'use 01:30 format')
         .trim()
         .required('Required'),
     })

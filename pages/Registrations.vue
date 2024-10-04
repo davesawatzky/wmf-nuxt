@@ -161,7 +161,7 @@
         break
     }
     appStore.dataLoading = true
-    if (registration?.teacher) {
+    if (!!registration?.teacher?.id) {
       registrationStore.registration.teacherID = registration.teacher.id
       await teacherStore.loadTeacher(
         registrationStore.registration.teacherID,

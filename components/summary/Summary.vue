@@ -208,7 +208,7 @@
                         <td>{{ commGrp.latestTime }}</td>
                       </tr>
                       <tr>
-                        <td>Unavailable Times:</td>
+                        <td>Scheduling Requests:</td>
                         <td>{{ commGrp.unavailable }}</td>
                       </tr>
                       <tr>
@@ -291,7 +291,7 @@
                         <td>{{ schlGrp.latestTime }}</td>
                       </tr>
                       <tr>
-                        <td>Known Conflicts:</td>
+                        <td>Scheduling Requests:</td>
                         <td>{{ schlGrp.unavailable }}</td>
                       </tr>
                       <tr>

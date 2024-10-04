@@ -109,7 +109,7 @@
         .integer()
         .typeError('Please enter a valid number')
         .required('Required'),
-      unavailable: yup.string().trim().required('Required'),
+      unavailable: yup.string().trim(),
       conflictPerformers: yup.string().trim().nullable(),
       photoPermission: yup
         .string()
@@ -235,8 +235,9 @@
           " />
       </div>
       <div class="col-span-9 sm:col-span-10 lg:col-span-8 text-sm self-center">
-        I give permission to use photographs of this group for social
-        media/marketing, newsletter, funding requests and archival purposes.
+        I give permission to use photographs of this participant in Winnipeg
+        Music Festival newsletters, funding requests, archival purposes,
+        marketing and social media.
       </div>
     </div>
     <div class="col-span-12 lg:col-span-5">
@@ -244,12 +245,12 @@
         v-model="communityGroup.unavailable"
         :status="status.unavailable"
         name="unavailable"
-        label="Known conflicts"
+        label="Scheduling Requests"
         rows="3"
         @change-status="(stat: string) => fieldStatus(stat, 'unavailable')" />
       <p class="text-sm mb-2">
-        List any known conflicts. The Festival cannot guarantee that submitted
-        requests can be accommodated. Entry fees are non-refundable
+        List any scheduling requests. The Festival cannot guarantee that
+        submitted requests can be accommodated. Entry fees are non-refundable
       </p>
 
       <BaseTextarea

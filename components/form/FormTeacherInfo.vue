@@ -160,15 +160,20 @@
   const teacherKeys = fieldConfigStore.performerTypeFields('Teacher')
   watchEffect(() => {
     let count = 0
-    if (appStore.teacherHasPassword || teacherStore.teacher.id != 2) {
+    if (teacherStore.teacher.id === 1) {
       for (const key of teacherKeys) {
         if (status[key as keyof Teacher] !== StatusEnum.saved) {
           count++
         }
       }
+    } else if ( status.id !== StatusEnum.saved ) {
+      console.log( 'Here I am' )
+      console.log('Status: ',status)
+      count++
     }
     teacherStore.teacherErrors = count
-  })
+  },
+  {flush: 'post'})
 
   onActivated(() => {
     validate()
@@ -334,11 +339,14 @@
         v-model="chosenTeacher"
         dropdown
         forceSelection
+        :status="status.id"
+        name="id"
         :optionLabel="
           (chosenTeacher: FilteredTeacher) => displayName(chosenTeacher)
         "
         :suggestions="filteredTeachers"
-        @complete="search">
+        @complete="search"
+        @change-status="(stat: string) => fieldStatus(stat, 'id')">
         <template #option="slotProps">
           <div>
             {{ slotProps.option.lastName }}, {{ slotProps.option.firstName }}

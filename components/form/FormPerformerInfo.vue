@@ -294,8 +294,9 @@
         " />
     </div>
     <p class="col-span-9 sm:col-span-6 lg:col-span-5 text-sm">
-      I give permission to use photographs of this participant for social
-      media/marketing, newsletter, funding requests and archival purposes.
+      I give permission to use photographs of this participant in Winnipeg Music
+      Festival newsletters, funding requests, archival purposes, marketing and
+      social media.
     </p>
     <div
       v-if="groupperformer"
@@ -327,14 +328,14 @@
       v-else
       class="col-span-12">
       <p>
-        List any known conflicts. The Festival cannot guarantee that submitted
-        requests can be accommodated. Entry fees are non-refundable.
+        List any scheduling requests. The Festival cannot guarantee that
+        submitted requests can be accommodated. Entry fees are non-refundable.
       </p>
       <BaseTextarea
         v-model.trim="contact.unavailable"
         :status="status.unavailable"
         name="unavailable"
-        label="Known conflicts"
+        label="Scheduling Requests"
         @change-status="(stat: string) => fieldStatus(stat, 'unavailable')" />
     </div>
   </div>
