@@ -1,25 +1,27 @@
-<mjml>
+  <mjml>
   <mj-head>
     <mj-title>Winnipeg Music Festival</mj-title>
     <mj-font
       name="Raleway"
       href="https://fonts.googleapis.com/css?family=Raleway" />
     <mj-attributes>
-      <mj-all font-family="Raleway, Helvetica, Arial, sans-serif" />
+      <mj-all font-family="Raleway, Helvetica, Arial, sans-serif"></mj-all>
       <mj-text
         padding="0px"
         font-weight="400"
         font-size="14px"
         color="#005984"
         line-height="20px"
-        font-family="Raleway, Helvetica, Arial, sans-serif" />
+        font-family="Raleway, Helvetica, Arial, sans-serif">
+      </mj-text>
       <mj-section
         padding="0px 25px"
-        background-color="#ffffff" />
+        background-color="#ffffff">
+      </mj-section>
       <mj-divider
         padding="25px 25px"
         border-color="#DFE3E8"
-        border-width="2px" />
+        border-width="2px"></mj-divider>
     </mj-attributes>
     <mj-style inline="inline">
       .body-section { -webkit-box-shadow: 1px 4px 11px 0px rgba(0, 0, 0, 0.15);
@@ -120,9 +122,9 @@
       </mj-section>
       <mj-wrapper
         v-for="(performer, perfidx) in performers"
-        :key="performer.id"
+        v-bind:key="performer.id"
         background-color="#ffffff"
-        padding="0px 0px 10px 0px">
+        padding="0px 0px 20px 0px">
         <mj-section>
           <mj-column>
             <mj-text>
@@ -199,16 +201,14 @@
           </mj-column>
         </mj-section>
         <mj-wrapper
-          v-for="group in school.schoolGroups"
-          :key="group.id"
+          v-for="group in schoolGroups"
+          v-bind:key="group.id"
           background-color="#ffffff"
           padding-top="15px">
           <mj-section>
             <mj-column>
               <mj-text>
-                <div>
-                  <strong>Group: {{ group.name }}</strong>
-                </div>
+                <div><strong>Group: {{ group.name }}</strong></div>
               </mj-text>
             </mj-column>
           </mj-section>
@@ -238,7 +238,7 @@
       <mj-wrapper
         v-if="performerType === 'COMMUNITY'"
         background-color="#ffffff">
-        <mj-section background-color="#ffffff">
+        <mj-section>
           <mj-column>
             <mj-divider />
             <mj-text>
@@ -261,8 +261,8 @@
           </mj-column>
         </mj-section>
         <mj-wrapper
-          v-for="commgroup in community.communityGroups"
-          :key="commgroup.id"
+          v-for="commgroup in communityGroups"
+          v-bind:key="commgroup.id"
           background-color="#ffffff"
           padding-top="15px">
           <mj-section>
@@ -288,8 +288,7 @@
                 <div>Latest Time: {{ commgroup.latestTime }}</div>
                 <div>Unavailable Time {{ commgroup.unavailable }}</div>
                 <div>
-                  Performers in other classes: {{ commgroup.conflictPerformers
-                  }}
+                  Performers in other classes: {{ commgroup.conflictPerformers }}
                 </div>
               </mj-text>
             </mj-column>
@@ -318,8 +317,9 @@
             <div class="h2">Registered Classes</div>
             <div
               v-for="registeredClass in festivalClasses"
-              :key="registeredClass.id"
+              v-bind:key="registeredClass.id"
               style="padding-bottom: 10px">
+              <br />
               <div class="h3">
                 Festival Class Number: {{ registeredClass.classNumber }}
               </div>
@@ -331,22 +331,25 @@
               <div
                 v-if="performerType === 'SCHOOL'"
                 class="h4">
-                School Group: {{ !!registeredClass.schoolGroupID ?
-                schoolClassGroup(registeredClass.schoolGroupID)?.name : '' }}
+                School Group: {{ registeredClass.schoolGroupID ? 
+                  schoolClassGroup( registeredClass.schoolGroupID )?.name : '' }}
+              </div>
+              <div
+                v-else-if="performerType === 'COMMUNITY'"
+                class="h4">
+                Community Group: {{ registeredClass.communityGroupID ?
+                communityClassGroup(registeredClass.communityGroupID)?.name : '' }}
               </div>
               <div>
-                Subdiscipline: {{ registeredClass.subdiscipline?.toUpperCase()
-                }}
+                Subdiscipline: {{ registeredClass.subdiscipline?.toUpperCase() }}
               </div>
               <div>Category: {{ registeredClass.category }}</div>
               <div style="padding-bottom: 10px">
                 Level: {{ registeredClass.level }}
               </div>
               <div
-                v-for="(
-                    selection, selectionIndex
-                  ) in registeredClass.selections"
-                :key="selection.id"
+                v-for="(selection, selectionIndex) in registeredClass.selections"
+                v-bind:key="selection.id"
                 style="padding-bottom: 10px">
                 <div class="h4">Selection {{ selectionIndex + 1 }}</div>
                 <div>Title: {{ selection.title }}</div>

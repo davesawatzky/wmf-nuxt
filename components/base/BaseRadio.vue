@@ -1,15 +1,15 @@
 <script setup lang="ts">
-const props = defineProps<{
-  label?: string
-  description?: string
-  name: string
-  modelValue?: string | number
-  value: string | number
-}>()
+  const props = defineProps<{
+    label?: string
+    description?: string
+    name: string
+    modelValue?: string | number
+    value: string | number
+  }>()
 
-const emit = defineEmits<{
-  'update:modelValue': [value: string | number]
-}>()
+  const emit = defineEmits<{
+    'update:modelValue': [value: string | number]
+  }>()
 </script>
 
 <template>
@@ -21,18 +21,18 @@ const emit = defineEmits<{
       :checked="modelValue === value"
       :value="value"
       :name="name"
+      autocomplete="off"
       v-bind="{ ...$attrs }"
-      @change="$emit('update:modelValue', value)"
-    >
+      @change="$emit('update:modelValue', value)" />
     <label
       v-if="label"
       :for="String(value)"
       class="baseLabel pl-2"
-    >{{ label }}</label>
+      >{{ label }}</label
+    >
     <p
       v-if="description"
-      class="text-sm sm:text-md"
-    >
+      class="text-sm sm:text-md">
       {{ description }}
     </p>
   </div>

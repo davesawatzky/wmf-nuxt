@@ -1,7 +1,10 @@
 <script setup lang="ts">
   import * as yup from 'yup'
   import { useCommunityGroup } from '@/stores/useCommunityGroup'
-  import type { CommunityGroupInput } from '@/graphql/gql/graphql'
+  import type {
+    CommunityGroup,
+    CommunityGroupInput,
+  } from '@/graphql/gql/graphql'
 
   const props = defineProps<{
     modelValue: CommunityGroupInput
@@ -14,6 +17,7 @@
   }>()
 
   const communityGroupStore = useCommunityGroup()
+  const fieldConfigStore = useFieldConfig()
 
   const communityGroup = computed({
     get: () => props.modelValue,
@@ -118,6 +122,21 @@
   const { errors, validate } = useForm({
     validationSchema,
     validateOnMount: true,
+  })
+
+  const communityGroupKeys =
+    fieldConfigStore.performerTypeFields('CommunityGroup')
+  watchEffect(() => {
+    let count = 0
+    for (const key of communityGroupKeys) {
+      if (status[key as keyof CommunityGroup] !== StatusEnum.saved) {
+        count++
+      }
+    }
+    let index = communityGroupStore.communityGroupErrors.findIndex(
+      (item) => item.id === props.communityGroupId
+    )
+    communityGroupStore.communityGroupErrors[index].count = count
   })
 
   onActivated(() => {

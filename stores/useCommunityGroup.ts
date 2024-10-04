@@ -1,4 +1,5 @@
 import { useFieldConfig } from '@/stores/useFieldConfig'
+import { number } from 'yup'
 import {
   CommunityGroupCreateDocument,
   CommunityGroupDeleteDocument,
@@ -16,26 +17,12 @@ export const useCommunityGroup = defineStore(
   () => {
     const communityGroup = ref([] as CommunityGroup[])
     const fieldConfigStore = useFieldConfig()
-    function $reset() {
-      communityGroup.value = <CommunityGroup[]>[]
-    }
+    const communityGroupErrors = ref<{ id: number; count: number }[]>([])
 
-    const communityGroupErrors = computed(() => {
-      const communityGroupKeys =
-        fieldConfigStore.performerTypeFields('CommunityGroup')
-      let count = 0
-      for (const group of communityGroup.value) {
-        for (const key of communityGroupKeys) {
-          if (
-            !!group[key as keyof CommunityGroup] === false &&
-            group[key as keyof CommunityGroup] !== 0
-          ) {
-            count++
-          }
-        }
-      }
-      return count
-    })
+    function $reset() {
+      communityGroup.value.splice(0, communityGroup.value.length)
+      communityGroupErrors.value.splice(0, communityGroupErrors.value.length)
+    }
 
     /**
      * Adds Community Group store array
@@ -58,6 +45,24 @@ export const useCommunityGroup = defineStore(
         photoPermission: communityGrp.photoPermission || null,
         __typename: communityGrp.__typename || 'CommunityGroup',
       })
+      communityGroupErrors.value.push({ id: communityGrp.id, count: 0 })
+    }
+
+    function findInitialCommunityGroupErrors() {
+      const communityGroupKeys =
+        fieldConfigStore.performerTypeFields('CommunityGroup')
+      for (const group of communityGroup.value) {
+        let count = 0
+        for (const key of communityGroupKeys) {
+          if (!group[key as keyof CommunityGroup]) {
+            count++
+          }
+        }
+        let index = communityGroupErrors.value.findIndex(
+          (item) => item.id === group.id
+        )
+        communityGroupErrors.value[index].count = count
+      }
     }
 
     /**
@@ -112,8 +117,10 @@ export const useCommunityGroup = defineStore(
         const communityGroups = <CommunityGroup[]>(
           newResult.registration.community?.communityGroups
         )
-        for (let i = 0; i < communityGroups.length; i++)
+        for (let i = 0; i < communityGroups.length; i++) {
           addToStore(communityGroups[i])
+        }
+        findInitialCommunityGroupErrors()
       }
     })
     onCommunityGroupsError((error) => {
@@ -182,6 +189,7 @@ export const useCommunityGroup = defineStore(
         (e) => e.id === communityGroupId
       )
       communityGroup.value.splice(index, 1)
+      communityGroupErrors.value.splice(index, 1)
     }
     onCommunityGroupDeleteError((error) => {
       console.log(error)

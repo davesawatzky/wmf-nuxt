@@ -11,6 +11,8 @@ import type {
   PerformerCreateMutation,
   PerformerInput,
 } from '~/graphql/gql/graphql'
+import { number } from 'yup'
+import type { count } from 'console'
 
 export const usePerformers = defineStore(
   'performers',
@@ -18,8 +20,10 @@ export const usePerformers = defineStore(
     const performers = ref([] as Performer[])
     const fieldConfigStore = useFieldConfig()
     const registrationStore = useRegistration()
+    const performerErrors = ref<{ id: number; count: number }[]>([])
     function $reset() {
       performers.value.splice(0, performers.value.length)
+      performerErrors.value.splice(0, performerErrors.value.length)
     }
 
     const numberOfPerformers = computed(() => {
@@ -34,18 +38,18 @@ export const usePerformers = defineStore(
       return Math.round(totalAge / performers.value.length)
     })
 
-    const performerErrors = computed(() => {
-      const performerKeys = fieldConfigStore.performerTypeFields('Performer')
-      let count = 0
-      for (const performer of performers.value) {
-        for (const key of performerKeys) {
-          if (!!performer[key as keyof Performer] === false) {
-            count++
-          }
-        }
-      }
-      return count
-    })
+    // const performerErrors = computed(() => {
+    //   const performerKeys = fieldConfigStore.performerTypeFields('Performer')
+    //   let count = 0
+    //   for (const performer of performers.value) {
+    //     for (const key of performerKeys) {
+    //       if (!!performer[key as keyof Performer] === false) {
+    //         count++
+    //       }
+    //     }
+    //   }
+    //   return count
+    // })
 
     /**
      * Returns first name plus last name
@@ -68,23 +72,40 @@ export const usePerformers = defineStore(
     function addToStore(performer: Partial<Performer>): void {
       performers.value.push(<Performer>{
         id: performer.id,
-        pronouns: performer.pronouns || '',
-        firstName: performer.firstName || '',
-        lastName: performer.lastName || '',
+        pronouns: performer.pronouns || undefined,
+        firstName: performer.firstName || undefined,
+        lastName: performer.lastName || undefined,
         age: performer.age || undefined,
-        level: performer.level || '',
-        instrument: performer.instrument || '',
-        otherClasses: performer.otherClasses || '',
-        unavailable: performer.unavailable || '',
-        address: performer.address || '',
+        level: performer.level || undefined,
+        instrument: performer.instrument || undefined,
+        otherClasses: performer.otherClasses || undefined,
+        unavailable: performer.unavailable || undefined,
+        address: performer.address || undefined,
         city: performer.city || 'Winnipeg',
         province: performer.province || 'MB',
-        postalCode: performer.postalCode || '',
-        email: performer.email || '',
-        phone: performer.phone || '',
+        postalCode: performer.postalCode || undefined,
+        email: performer.email || undefined,
+        phone: performer.phone || undefined,
         photoPermission: performer.photoPermission || null,
         __typename: performer.__typename || 'Performer',
       })
+      performerErrors.value.push({ id: performer.id!, count: 0 })
+    }
+
+    function findInitialPerformerErrors() {
+      const performerKeys = fieldConfigStore.performerTypeFields('Performer')
+      for (const performer of performers.value) {
+        let count = 0
+        for (const key of performerKeys) {
+          if (!performer[key as keyof Performer]) {
+            count++
+          }
+        }
+        let index = performerErrors.value.findIndex(
+          (item) => item.id === performer.id
+        )
+        performerErrors.value[index].count = count
+      }
     }
 
     /**
@@ -137,7 +158,10 @@ export const usePerformers = defineStore(
     watch(resultPerformers, (newResult) => {
       if (newResult?.performers) {
         const performers: Performer[] = newResult.performers
-        for (let i = 0; i < performers.length; i++) addToStore(performers[i])
+        for (let i = 0; i < performers.length; i++) {
+          addToStore(performers[i])
+          findInitialPerformerErrors()
+        }
       }
     })
     onPerformersError((error) => {
@@ -204,6 +228,7 @@ export const usePerformers = defineStore(
         (item) => item.id === performerId
       )
       performers.value.splice(performerIndex, 1)
+      performerErrors.value.splice(performerIndex, 1)
     }
     onPerformerDeleteError((error) => {
       console.log(error)

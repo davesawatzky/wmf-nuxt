@@ -2,9 +2,11 @@
   import * as yup from 'yup'
   import 'yup-phone-lite'
   import { useSchool } from '@/stores/useSchool'
-  import { provinces } from '#imports'
+  import { provinces, StatusEnum } from '#imports'
+  import type { School } from '~/graphql/gql/graphql'
 
   const schoolStore = useSchool()
+  const fieldConfigStore = useFieldConfig()
 
   const status = reactive<Status>({
     name: schoolStore.school.name ? StatusEnum.saved : StatusEnum.null,
@@ -60,6 +62,17 @@
   const { errors, validate } = useForm({
     validationSchema,
     validateOnMount: true,
+  })
+
+  const schoolKeys = fieldConfigStore.performerTypeFields('School')
+  watchEffect(() => {
+    let count = 0
+    for (const key of schoolKeys) {
+      if (status[key as keyof School] !== StatusEnum.saved) {
+        count++
+      }
+    }
+    schoolStore.schoolErrors = count
   })
 
   onActivated(() => {

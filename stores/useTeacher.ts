@@ -28,26 +28,16 @@ export const useTeacher = defineStore(
     const teacher = ref(<Teacher>{})
     const allTeachers = ref<AllTeachers[]>([])
     const fieldConfigStore = useFieldConfig()
+    const teacherErrors = ref(0)
+
     function $resetTeacher() {
       teacher.value = <Teacher>{}
     }
     function $resetAllTeachers() {
       teacher.value = <Teacher>{}
       allTeachers.value = <AllTeachers[]>[]
+      teacherErrors.value = 0
     }
-
-    const teacherErrors = computed(() => {
-      if (!!appStore.teacherHasPassword || teacher.value.id == 2) return 0
-
-      const teacherKeys = fieldConfigStore.performerTypeFields('Teacher')
-      let count = 0
-      for (const key of teacherKeys) {
-        if (!!teacher.value[key as keyof Teacher] === false) {
-          count++
-        }
-      }
-      return count
-    })
 
     /**
      * First name plus last name
@@ -74,6 +64,19 @@ export const useTeacher = defineStore(
       teacher.value.phone = teach.phone || ''
       teacher.value.instrument = teach.instrument || ''
       teacher.value.__typename = teach.__typename || 'Teacher'
+    }
+
+    function findInitialTeacherErrors() {
+      const teacherKeys = fieldConfigStore.performerTypeFields('Teacher')
+      let count = 0
+      if (appStore.teacherHasPassword || teacher.value.id != 2) {
+        for (const key of teacherKeys) {
+          if (!teacher.value[key as keyof Teacher]) {
+            count++
+          }
+        }
+      }
+      teacherErrors.value = count
     }
 
     /**
@@ -136,6 +139,7 @@ export const useTeacher = defineStore(
     watch(resultTeacher, (newResult) => {
       if (newResult?.teacher) {
         addToStore(<Teacher>newResult.teacher)
+        findInitialTeacherErrors()
       }
     })
     onLoadTeacherError((error) => {

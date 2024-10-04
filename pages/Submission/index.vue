@@ -11,7 +11,6 @@
   const performerStore = usePerformers()
   const registrationStore = useRegistration()
 
-  const confirmationNumber = ref('')
   const submissionComplete = ref(false)
   const readConfirmation = ref(<Confirmed>{
     importantNotes: false,

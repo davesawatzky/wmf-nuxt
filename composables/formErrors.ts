@@ -17,7 +17,7 @@ export const formErrors = computed(() => {
   switch (appStore.performerType) {
     case 'SOLO':
       tabName.value = {
-        Performer: performerStore.performerErrors,
+        Performer: performerStore.performerErrors[0].count,
         Teacher: teacherStore.teacherErrors,
         'Solo Classes': classesStore.classErrors,
         Summary: 0,
@@ -26,7 +26,10 @@ export const formErrors = computed(() => {
     case 'GROUP':
       tabName.value = {
         Group: groupStore.groupErrors,
-        Performers: performerStore.performerErrors,
+        Performers: performerStore.performerErrors.reduce(
+          (a, b) => a + b.count,
+          0
+        ),
         Teacher: teacherStore.teacherErrors,
         'Group Classes': classesStore.classErrors,
         Summary: 0,
@@ -36,7 +39,10 @@ export const formErrors = computed(() => {
       tabName.value = {
         School: schoolStore.schoolErrors,
         Teacher: teacherStore.teacherErrors,
-        Groups: schoolGroupStore.schoolGroupErrors,
+        Groups: schoolGroupStore.schoolGroupErrors.reduce(
+          (a, b) => a + b.count,
+          0
+        ),
         'School Classes': classesStore.classErrors,
         Summary: 0,
       }
@@ -45,7 +51,10 @@ export const formErrors = computed(() => {
       tabName.value = {
         Community: communityStore.communityErrors,
         Contact: teacherStore.teacherErrors,
-        Groups: communityGroupStore.communityGroupErrors,
+        Groups: communityGroupStore.communityGroupErrors.reduce(
+          (a, b) => a + b.count,
+          0
+        ),
         'Community Classes': classesStore.classErrors,
         Summary: 0,
       }

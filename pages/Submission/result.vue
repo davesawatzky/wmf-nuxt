@@ -117,7 +117,7 @@
           userEmail,
         }
       )
-      await $fetch('/api/send-email', {
+      await $fetch('/api/send-email', { 
         watch: false,
         method: 'POST',
         body: payload,
@@ -135,11 +135,13 @@
     <div
       v-if="paymentIntentStatus === 'succeeded' || stripePayment === 'cash'"
       class="pb-8">
-      <strong>
-        <h3 class="mx-auto">Confirmation Number</h3>
-        <h3 class="mx-auto">{{ confirmationNumber }}</h3>
-        <h4 class="mx-auto">{{ formattedDate }}</h4>
-      </strong>
+      <div class="p-8 m-4 border-2 border-red-600 rounded-lg text-center">
+        <strong>
+          <h3 class="mx-auto">Confirmation Number</h3>
+          <h3 class="mx-auto">{{ confirmationNumber }}</h3>
+          <h5 class="mx-auto">{{ formattedDate }}</h5>
+        </strong>
+      </div>
 
       <p
         v-if="stripePayment === 'cash'"
@@ -162,6 +164,7 @@
         We look forward to having you participate in this year's
       </h4>
       <h3 class="pb-6 text-center">Winnipeg Music Festival</h3>
+      <div class="flex justify-center flex-wrap">
       <BaseRouteButton
         v-if="paymentIntentStatus === 'succeeded' || stripePayment === 'cash'"
         class="btn btn-blue"
@@ -171,10 +174,11 @@
 
       <BaseButton
         v-if="paymentIntentStatus === 'succeeded' || stripePayment === 'cash'"
-        class="btn btn-blue h-14"
+        class="btn btn-blue h-16"
         @click="printWindow">
         Print this page
       </BaseButton>
+      </div>
     </div>
     <div v-else-if="paymentIntentStatus === 'failed'">
       <h4>Payment failed</h4>

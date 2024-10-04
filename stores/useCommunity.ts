@@ -16,20 +16,11 @@ export const useCommunity = defineStore(
   () => {
     const community = ref(<Community>{})
     const fieldConfigStore = useFieldConfig()
+    const communityErrors = ref(0)
     function $reset() {
       community.value = <Community>{}
     }
 
-    const communityErrors = computed(() => {
-      const communityKeys = fieldConfigStore.performerTypeFields('Community')
-      let count = 0
-      for (const key of communityKeys) {
-        if (!!community.value[key as keyof Community] === false) {
-          count++
-        }
-      }
-      return count
-    })
     /**
      * Adds Community Object to the store. Only one
      * @param comm Community object must have valid id property value
@@ -44,6 +35,17 @@ export const useCommunity = defineStore(
       community.value.phone = comm.phone || ''
       community.value.email = comm.email || ''
       community.value.__typename = comm.__typename || 'Community'
+    }
+
+    function findInitialCommunityErrors() {
+      const communityKeys = fieldConfigStore.performerTypeFields('Community')
+      let count = 0
+      for (const key of communityKeys) {
+        if (!community.value[key as keyof Community]) {
+          count++
+        }
+      }
+      communityErrors.value = count
     }
 
     /**
@@ -99,6 +101,7 @@ export const useCommunity = defineStore(
     watch(resultCommunity, (newResult) => {
       if (newResult?.registration.community) {
         addToStore(<Community>newResult.registration.community)
+        findInitialCommunityErrors()
       }
     })
     onLoadCommunityError((error) => {

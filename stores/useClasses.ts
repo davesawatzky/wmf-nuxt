@@ -160,7 +160,6 @@ export const useClasses = defineStore(
       if (newResult?.registration.registeredClasses) {
         const returnedClasses: RegisteredClass[] =
           newResult.registration.registeredClasses
-        console.log(returnedClasses)
         const length = returnedClasses.length
         for (let i = 0; i < length; i++) addClassToStore(returnedClasses[i])
       }

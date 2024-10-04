@@ -16,20 +16,12 @@ export const useSchool = defineStore(
   () => {
     const school = ref(<School>{})
     const fieldConfigStore = useFieldConfig()
+    const schoolErrors = ref(0)
     function $reset() {
       school.value = <School>{}
+      schoolErrors.value = 0
     }
 
-    const schoolErrors = computed(() => {
-      const schoolKeys = fieldConfigStore.performerTypeFields('School')
-      let count = 0
-      for (const key of schoolKeys) {
-        if (!!school.value[key as keyof School] === false) {
-          count++
-        }
-      }
-      return count
-    })
     /**
      * Adds School Object to the store. Only one
      * @param schl School object must have valid id property value
@@ -44,6 +36,17 @@ export const useSchool = defineStore(
       school.value.postalCode = schl.postalCode || ''
       school.value.phone = schl.phone || ''
       school.value.__typename = schl.__typename || 'School'
+    }
+
+    function findInitialSchoolErrors() {
+      const schoolKeys = fieldConfigStore.performerTypeFields('School')
+      let count = 0
+      for (const key of schoolKeys) {
+        if (!school.value[key as keyof School]) {
+          count++
+        }
+      }
+      schoolErrors.value = count
     }
 
     /**
@@ -98,6 +101,7 @@ export const useSchool = defineStore(
     watch(resultSchool, (newResult) => {
       if (newResult?.registration.school) {
         addToStore(<School>newResult.registration.school)
+        findInitialSchoolErrors()
       }
     })
     onLoadSchoolError((error) => {

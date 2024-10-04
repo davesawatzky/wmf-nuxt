@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import * as yup from 'yup'
   import { useGroup } from '@/stores/useGroup'
+  import type { Group } from '~/graphql/gql/graphql'
 
   const groupStore = useGroup()
   const classesStore = useClasses()
@@ -9,6 +10,7 @@
   const previousGroupType = ref('')
   const cancelGroupChange = ref(false)
   const changeGroupType = ref('')
+  const fieldConfigStore = useFieldConfig()
 
   watch(
     () => groupStore.group.groupType,
@@ -102,6 +104,17 @@
     validateOnMount: true,
   })
 
+  const groupKeys = fieldConfigStore.performerTypeFields('Group')
+  watchEffect(() => {
+    let count = 0
+    for (const key of groupKeys) {
+      if (status[key as keyof Group] !== StatusEnum.saved) {
+        count++
+      }
+    }
+    groupStore.groupErrors = count
+  })
+
   onActivated(() => {
     validate()
   })
@@ -121,9 +134,6 @@
           type="text"
           :status="status.name"
           @change-status="(stat: string) => fieldStatus(stat, 'name')" />
-
-        <p>Number of Performers: {{ groupStore.group.numberOfPerformers }}</p>
-        <p>Average Age: {{ groupStore.group.age }}</p>
       </div>
       <div
         class="col-span-6 md:col-span-3 border border-spacing-1 border-sky-500 shadow-md rounded-lg px-6 pt-6">

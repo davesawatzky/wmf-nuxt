@@ -63,6 +63,7 @@
       class="baseSelect"
       :value="value"
       :name="name"
+      autocomplete="off"
       v-bind="{ ...$attrs }"
       :aria-describedby="errorMessage ? `${uuid}-error` : ''"
       :aria-invalid="errorMessage ? true : false"

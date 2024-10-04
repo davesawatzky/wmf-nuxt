@@ -16,26 +16,11 @@ export const useSchoolGroup = defineStore(
   () => {
     const schoolGroup = ref([] as SchoolGroup[])
     const fieldConfigStore = useFieldConfig()
+    const schoolGroupErrors = ref<{ id: number; count: number }[]>([])
     function $reset() {
-      schoolGroup.value = <SchoolGroup[]>[]
+      schoolGroup.value.splice(0, schoolGroup.value.length)
+      schoolGroupErrors.value.splice(0, schoolGroupErrors.value.length)
     }
-
-    const schoolGroupErrors = computed(() => {
-      const schoolGroupKeys =
-        fieldConfigStore.performerTypeFields('SchoolGroup')
-      let count = 0
-      for (const group of schoolGroup.value) {
-        for (const key of schoolGroupKeys) {
-          if (
-            !!group[key as keyof SchoolGroup] === false &&
-            group[key as keyof SchoolGroup] !== 0
-          ) {
-            count++
-          }
-        }
-      }
-      return count
-    })
 
     /**
      * Adds School Group store array
@@ -58,8 +43,26 @@ export const useSchoolGroup = defineStore(
           photoPermission: schoolGrp.photoPermission || null,
           __typename: schoolGrp.__typename || 'SchoolGroup',
         })
+        schoolGroupErrors.value.push({ id: schoolGrp.id, count: 0 })
       } catch (err) {
         console.log(err)
+      }
+    }
+
+    function findInitialSchoolGroupErrors() {
+      const schoolGroupKeys =
+        fieldConfigStore.performerTypeFields('SchoolGroup')
+      for (const group of schoolGroup.value) {
+        let count = 0
+        for (const key of schoolGroupKeys) {
+          if (!group[key as keyof SchoolGroup]) {
+            count++
+          }
+        }
+        let index = schoolGroupErrors.value.findIndex(
+          (item) => item.id === group.id
+        )
+        schoolGroupErrors.value[index].count = count
       }
     }
 
@@ -117,6 +120,7 @@ export const useSchoolGroup = defineStore(
         )
         const length = schoolGroups.length
         for (let i = 0; i < length; i++) addToStore(schoolGroups[i])
+        findInitialSchoolGroupErrors()
       }
     })
     onSchoolGroupsError((error) => {
@@ -179,6 +183,7 @@ export const useSchoolGroup = defineStore(
       await schoolGroupDelete({ schoolGroupId })
       const index = schoolGroup.value.findIndex((e) => e.id === schoolGroupId)
       schoolGroup.value.splice(index, 1)
+      schoolGroupErrors.value.splice(index, 1)
     }
     onSchoolGroupDeleteError((error) => {
       console.log(error)

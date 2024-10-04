@@ -20,20 +20,10 @@ export const useGroup = defineStore(
     const performerStore = usePerformers()
     const fieldConfigStore = useFieldConfig()
     const appStore = useAppStore()
+    const groupErrors = ref(0)
     function $reset() {
       group.value = <Group>{}
     }
-
-    const groupErrors = computed(() => {
-      const groupKeys = fieldConfigStore.performerTypeFields('Group')
-      let count = 0
-      for (const key of groupKeys) {
-        if (!!group.value[key as keyof Group] === false) {
-          count++
-        }
-      }
-      return count
-    })
 
     watch(
       () => performerStore.numberOfPerformers,
@@ -75,6 +65,17 @@ export const useGroup = defineStore(
       group.value.instruments = grp.instruments || ''
       group.value.age = grp.age || undefined
       group.value.__typename = grp.__typename || 'Group'
+    }
+
+    function findInitialGroupErrors() {
+      const groupKeys = fieldConfigStore.performerTypeFields('Group')
+      let count = 0
+      for (const key of groupKeys) {
+        if (!group.value[key as keyof Group]) {
+          count++
+        }
+      }
+      groupErrors.value = count
     }
 
     /**
@@ -122,6 +123,7 @@ export const useGroup = defineStore(
     watch(resultGroup, (newResult) => {
       if (newResult?.registration.group) {
         addToStore(<Group>newResult.registration.group)
+        findInitialGroupErrors()
       }
     })
     onGroupLoadError((error) => {

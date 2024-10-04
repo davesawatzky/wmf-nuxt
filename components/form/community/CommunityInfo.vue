@@ -3,8 +3,10 @@
   import 'yup-phone-lite'
   import { useCommunity } from '@/stores/useCommunity'
   import { provinces } from '#imports'
+  import type { Community } from '~/graphql/gql/graphql'
 
   const communityStore = useCommunity()
+  const fieldConfigStore = useFieldConfig()
 
   const status = reactive<Status>({
     name: communityStore.community.name ? StatusEnum.saved : StatusEnum.null,
@@ -66,9 +68,26 @@
     validationSchema,
     validateOnMount: true,
   })
+  onMounted(() => {
+    validate()
+  })
   onActivated(() => {
     validate()
   })
+
+  const communityKeys = fieldConfigStore.performerTypeFields('Community')
+  watchEffect(
+    () => {
+      let count = 0
+      for (const key of communityKeys) {
+        if (status[key as keyof Community] !== StatusEnum.saved) {
+          count++
+        }
+      }
+      communityStore.communityErrors = count
+    },
+    { flush: 'post' }
+  )
 
   const maskaUcaseOption = {
     preProcess: (val: string) => val.toUpperCase(),

@@ -5,6 +5,7 @@
   import { InstrumentsDocument } from '~/graphql/gql/graphql'
   import { provinces, StatusEnum } from '#imports'
   import BaseSelect from '../base/BaseSelect.vue'
+  import type { Performer } from '~/graphql/gql/graphql'
 
   type Pronouns = {}
 
@@ -22,6 +23,7 @@
     'update:modelValue': [value: ContactInfo]
   }>()
 
+  const fieldConfigStore = useFieldConfig()
   const performerStore = usePerformers()
   const appStore = useAppStore()
 
@@ -128,8 +130,22 @@
     validateOnMount: true,
   })
 
-  onActivated(async () => {
-    await validate()
+  onActivated(() => {
+    validate()
+  })
+
+  const performerKeys = fieldConfigStore.performerTypeFields('Performer')
+  watchEffect(() => {
+    let count = 0
+    for (const key of performerKeys) {
+      if (status[key as keyof Performer] !== StatusEnum.saved) {
+        count++
+      }
+    }
+    let index = performerStore.performerErrors.findIndex(
+      (item) => item.id === props.performerId
+    )
+    performerStore.performerErrors[index].count = count
   })
 
   const maskaUcaseOption = {

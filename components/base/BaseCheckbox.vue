@@ -52,6 +52,7 @@
         class="baseCheckbox"
         v-bind="{ ...$attrs }"
         type="checkbox"
+        autocomplete="off"
         :checked="checked"
         :value="value"
         :name="name"

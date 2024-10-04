@@ -151,43 +151,22 @@
         <BaseSummaryCard>
           <template #heading1>
             <h4 class="text-lg sm:text-xl py-2">
-              Community Organization: {{ communityStore.community.name }}
+              {{ communityStore.community.name }}
             </h4>
           </template>
           <template #details>
-            <table>
-              <tbody class="text-sm sm:text-base">
-                <tr>
-                  <td>Mailing Address:</td>
-                  <td>
-                    {{ communityStore.community.address }}
-                  </td>
-                </tr>
-                <tr>
-                  <td />
-                  <td>
-                    {{ communityStore.community.city }},
-                    {{ communityStore.community.province }}
-                  </td>
-                </tr>
-                <tr>
-                  <td />
-                  <td>{{ communityStore.community.postalCode }},</td>
-                </tr>
-                <tr>
-                  <td />
-                  <td>
-                    {{ communityStore.community.phone }}
-                  </td>
-                </tr>
-                <tr>
-                  <td />
-                  <td>
-                    {{ communityStore.community.email }}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+            <div class="flex justify-evenly">
+              <div>
+                <div>{{ communityStore.community.address }}</div>
+                <div>
+                  {{ communityStore.community.city }},
+                  {{ communityStore.community.province }}
+                </div>
+                <div>{{ communityStore.community.postalCode }},</div>
+                <div>{{ communityStore.community.phone }}</div>
+                <div>{{ communityStore.community.email }}</div>
+              </div>
+            </div>
           </template>
         </BaseSummaryCard>
 
@@ -195,7 +174,7 @@
         <BaseSummaryCard>
           <template #heading1> Community Group(s) </template>
           <template #details>
-            <div class="flex gap-5">
+            <div class="flex justify-evenly">
               <div
                 v-for="(
                   commGrp, commGrpIndex
@@ -203,15 +182,11 @@
                 :key="commGrp.id"
                 class="">
                 <div>
-                  <h4 class="text-lg sm:text-xl">
-                    Group {{ commGrpIndex + 1 }}:
+                  <h4 class="py-1 pl-2 text-lg sm:text-xl">
+                    Group {{ commGrpIndex + 1 }}: {{ commGrp.name }}
                   </h4>
                   <table>
                     <tbody class="text-sm sm:text-base">
-                      <tr>
-                        <td>Name:</td>
-                        <td>{{ commGrp.name }}</td>
-                      </tr>
                       <tr>
                         <td>Size:</td>
                         <td>{{ commGrp.groupSize }}</td>
@@ -237,7 +212,7 @@
                         <td>{{ commGrp.unavailable }}</td>
                       </tr>
                       <tr>
-                        <td>Multiple Class Participants:</td>
+                        <td>Multi-Class Participants:</td>
                         <td>
                           {{ commGrp.conflictPerformers }}
                         </td>
@@ -256,43 +231,27 @@
         <h3 class="pt-4 pb-4">School Information</h3>
         <BaseSummaryCard>
           <template #heading1>
-            <h4 class="py-2 text-lg sm:text-xl">
+            <h4 class="text-lg sm:text-xl">
               {{ schoolStore.school.name }}
             </h4>
           </template>
           <template
             #heading3
             class="text-sm sm:text-base">
-            School Division: {{ schoolStore.school.division }}
+            {{ schoolStore.school.division }}
           </template>
           <template #details>
-            <table>
-              <tbody class="text-sm sm:text-base">
-                <tr>
-                  <td>Mailing Address:</td>
-                  <td>
-                    {{ schoolStore.school.address }}
-                  </td>
-                </tr>
-                <tr>
-                  <td />
-                  <td>
-                    {{ schoolStore.school.city }},
-                    {{ schoolStore.school.province }}
-                  </td>
-                </tr>
-                <tr>
-                  <td />
-                  <td>{{ schoolStore.school.postalCode }},</td>
-                </tr>
-                <tr>
-                  <td />
-                  <td>
-                    {{ schoolStore.school.phone }}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+            <div class="flex justify-evenly">
+              <div>
+                <div>{{ schoolStore.school.address }}</div>
+                <div>
+                  {{ schoolStore.school.city }},
+                  {{ schoolStore.school.province }}
+                </div>
+                <div>{{ schoolStore.school.postalCode }},</div>
+                <div>{{ schoolStore.school.phone }}</div>
+              </div>
+            </div>
           </template>
         </BaseSummaryCard>
 
@@ -300,21 +259,17 @@
         <BaseSummaryCard>
           <template #heading1> School Group(s) </template>
           <template #details>
-            <div class="flex gap-5">
+            <div class="flex justify-evenly">
               <div
                 v-for="(schlGrp, schlGrpIndex) in schoolGroupStore.schoolGroup"
                 :key="schlGrp.id"
                 class="">
                 <div>
-                  <h4 class="text-lg sm:text-xl">
-                    Group {{ schlGrpIndex + 1 }}:
+                  <h4 class="py-1 pl-2 text-lg sm:text-xl">
+                    Group {{ schlGrpIndex + 1 }}: {{ schlGrp.name }}
                   </h4>
                   <table>
                     <tbody class="text-sm sm:text-base">
-                      <tr>
-                        <td>Name:</td>
-                        <td>{{ schlGrp.name }}</td>
-                      </tr>
                       <tr>
                         <td>Size:</td>
                         <td>{{ schlGrp.groupSize }}</td>
@@ -336,11 +291,11 @@
                         <td>{{ schlGrp.latestTime }}</td>
                       </tr>
                       <tr>
-                        <td>Unavailable Times:</td>
+                        <td>Known Conflicts:</td>
                         <td>{{ schlGrp.unavailable }}</td>
                       </tr>
                       <tr>
-                        <td>Multiple Class Participants:</td>
+                        <td>Multi-Class Participants:</td>
                         <td>
                           {{ schlGrp.conflictPerformers }}
                         </td>
@@ -367,11 +322,9 @@
           </template>
           <template #heading3>
             <h5 v-if="appStore.performerType === 'SCHOOL'">
-              School Group:
               {{ schoolClassGroup(registeredClass.schoolGroupID!)?.name }}
             </h5>
             <h5 v-else-if="appStore.performerType === 'COMMUNITY'">
-              Community Group:
               {{ communityClassGroup(registeredClass.communityGroupID!)?.name }}
             </h5>
           </template>
@@ -384,14 +337,14 @@
             Number of Selections: {{ registeredClass.numberOfSelections }}
           </div> -->
           <template #details>
-            <div class="flex">
+            <div class="flex justify-evenly flex-wrap">
               <div
                 v-for="(
                   selection, selectionIndex
                 ) in registeredClass.selections"
                 :key="selection.id"
-                class="sm:px-4">
-                <h5 class="py-2">Selection {{ selectionIndex + 1 }}</h5>
+                class="sm:px-4 py-4">
+                <h5 class="py-1 pl-2">Selection {{ selectionIndex + 1 }}</h5>
                 <table>
                   <tbody>
                     <tr class="">

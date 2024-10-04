@@ -118,6 +118,7 @@
     registrationId: number,
     performerType: PerformerType
   ) {
+    await fieldConfigStore.loadRequiredFields()
     const registration = registrations.value.find((reg) => {
       return reg.id === registrationId
     })
@@ -166,9 +167,11 @@
         registrationStore.registration.teacherID,
         undefined
       )
+    } else {
+      teacherStore.teacherErrors = 1
     }
     await classesStore.loadClasses(registrationId)
-    await fieldConfigStore.loadRequiredFields()
+
     appStore.dataLoading = false
     await navigateTo('/form')
   }
@@ -180,6 +183,7 @@
    * @param label A given label for the registration form
    */
   async function newRegistration(performerType: PerformerType, label?: string) {
+    await fieldConfigStore.loadRequiredFields()
     if (!label || label.length === 0) label = 'Registration Form'
 
     await registrationStore.createRegistration(performerType, label)
@@ -232,9 +236,7 @@
         await teacherStore.loadAllTeachers('schoolTeacher')
     }
     await classesStore.createClass(registrationId.value)
-    await fieldConfigStore.loadRequiredFields()
     appStore.dataLoading = false
-
     await navigateTo('/form')
   }
 

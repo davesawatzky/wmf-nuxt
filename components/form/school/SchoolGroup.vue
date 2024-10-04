@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import * as yup from 'yup'
   import { useSchoolGroup } from '@/stores/useSchoolGroup'
-  import type { SchoolGroupInput } from '@/graphql/gql/graphql'
+  import type { SchoolGroup, SchoolGroupInput } from '@/graphql/gql/graphql'
 
   const props = defineProps<{
     modelValue: SchoolGroupInput
@@ -14,6 +14,7 @@
   }>()
 
   const schoolGroupStore = useSchoolGroup()
+  const fieldConfigStore = useFieldConfig()
 
   const schoolGroup = computed({
     get: () => props.modelValue,
@@ -117,6 +118,20 @@
     validateOnMount: true,
   })
 
+  const schoolGroupKeys = fieldConfigStore.performerTypeFields('SchoolGroup')
+  watchEffect(() => {
+    let count = 0
+    for (const key of schoolGroupKeys) {
+      if (status[key as keyof SchoolGroup] !== StatusEnum.saved) {
+        count++
+      }
+    }
+    let index = schoolGroupStore.schoolGroupErrors.findIndex(
+      (item) => item.id === props.schoolGroupId
+    )
+    schoolGroupStore.schoolGroupErrors[index].count = count
+  })
+
   onActivated(() => {
     validate()
   })
@@ -140,7 +155,9 @@
           name="earliestTime"
           label="Earliest time your group can perform"
           type="time"
-          @change-status="(stat: string) => fieldStatus(stat, 'earliestTime')" />
+          @change-status="
+            (stat: string) => fieldStatus(stat, 'earliestTime')
+          " />
         <BaseInput
           v-model="schoolGroup.latestTime"
           :status="status.latestTime"
