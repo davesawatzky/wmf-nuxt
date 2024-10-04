@@ -188,6 +188,7 @@ export const useGroup = defineStore(
       loadGroup,
       updateGroup,
       deleteGroup,
+      findInitialGroupErrors,
     }
   },
   {

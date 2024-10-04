@@ -32,6 +32,7 @@ export const useTeacher = defineStore(
 
     function $resetTeacher() {
       teacher.value = <Teacher>{}
+      teacherErrors.value = 0
     }
     function $resetAllTeachers() {
       teacher.value = <Teacher>{}
@@ -271,6 +272,7 @@ export const useTeacher = defineStore(
       addToStore,
       fullName,
       duplicateTeacherCheck,
+      findInitialTeacherErrors,
     }
   },
   {

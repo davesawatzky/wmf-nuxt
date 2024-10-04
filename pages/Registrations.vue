@@ -199,15 +199,18 @@
         appStore.performerType = PerformerType.SOLO
         appStore.dataLoading = true
         await performerStore.createPerformer(registrationId.value)
+        performerStore.findInitialPerformerErrors()
         await teacherStore.loadAllTeachers('privateTeacher')
         break
       case 'GROUP':
         appStore.performerType = PerformerType.GROUP
         appStore.dataLoading = true
         await groupStore.createGroup(registrationId.value)
+        groupStore.findInitialGroupErrors()
         // require at least 2 performers for groups
         await performerStore.createPerformer(registrationId.value)
         await performerStore.createPerformer(registrationId.value)
+        performerStore.findInitialPerformerErrors()
         await teacherStore.loadAllTeachers('privateTeacher')
         break
       case 'SCHOOL':
@@ -223,18 +226,23 @@
           teacherStore.teacher.phone = userStore.user.phone
         }
         await schoolStore.createSchool(registrationId.value)
+        schoolStore.findInitialSchoolErrors()
         await schoolGroupStore.createSchoolGroup(schoolStore.school.id!)
+        schoolGroupStore.findInitialSchoolGroupErrors()
         await teacherStore.loadAllTeachers('schoolTeacher')
         break
       case 'COMMUNITY':
         appStore.performerType = PerformerType.COMMUNITY
         appStore.dataLoading = true
         await communityStore.createCommunity(registrationId.value)
+        communityStore.findInitialCommunityErrors()
         await communityGroupStore.createCommunityGroup(
           communityStore.community.id!
         )
+        communityGroupStore.findInitialCommunityGroupErrors()
         await teacherStore.loadAllTeachers('schoolTeacher')
     }
+    teacherStore.teacherErrors = 1
     await classesStore.createClass(registrationId.value)
     appStore.dataLoading = false
     await navigateTo('/form')

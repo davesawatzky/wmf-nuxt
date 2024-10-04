@@ -247,6 +247,7 @@ export const usePerformers = defineStore(
       loadPerformers,
       updateAllPerformers,
       deletePerformer,
+      findInitialPerformerErrors,
     }
   },
   {

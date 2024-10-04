@@ -199,6 +199,7 @@ export const useSchoolGroup = defineStore(
       addToStore,
       createSchoolGroup,
       loadSchoolGroups,
+      findInitialSchoolGroupErrors,
     }
   },
   {

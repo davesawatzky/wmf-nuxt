@@ -168,6 +168,7 @@ export const useCommunity = defineStore(
       createCommunity,
       community,
       addToStore,
+      findInitialCommunityErrors,
     }
   },
   {

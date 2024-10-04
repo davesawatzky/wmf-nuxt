@@ -205,6 +205,7 @@ export const useCommunityGroup = defineStore(
       addToStore,
       createCommunityGroup,
       loadCommunityGroups,
+      findInitialCommunityGroupErrors,
     }
   },
   {

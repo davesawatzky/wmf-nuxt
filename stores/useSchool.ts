@@ -166,6 +166,7 @@ export const useSchool = defineStore(
       createSchool,
       school,
       addToStore,
+      findInitialSchoolErrors,
     }
   },
   {

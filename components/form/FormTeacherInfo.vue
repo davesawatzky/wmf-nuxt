@@ -157,6 +157,19 @@
     validateOnMount: true,
   })
 
+  const teacherKeys = fieldConfigStore.performerTypeFields('Teacher')
+  watchEffect(() => {
+    let count = 0
+    if (appStore.teacherHasPassword || teacherStore.teacher.id != 2) {
+      for (const key of teacherKeys) {
+        if (status[key as keyof Teacher] !== StatusEnum.saved) {
+          count++
+        }
+      }
+    }
+    teacherStore.teacherErrors = count
+  })
+
   onActivated(() => {
     validate()
   })
@@ -173,19 +186,6 @@
       emailAlreadyExists.value = false
       // teacherRadio.value = 'existing'
     }
-  })
-
-  const teacherKeys = fieldConfigStore.performerTypeFields('Teacher')
-  watchEffect(() => {
-    let count = 0
-    if (appStore.teacherHasPassword || teacherStore.teacher.id != 2) {
-      for (const key of teacherKeys) {
-        if (status[key as keyof Teacher] !== StatusEnum.saved) {
-          count++
-        }
-      }
-    }
-    teacherStore.teacherErrors = count
   })
 
   // Working with the new Teacher ComboBox
