@@ -9,12 +9,14 @@
   import { useToast } from 'vue-toastification'
   import { StatusEnum } from '#imports'
 
-  interface FilteredTeacher {
+  type FilteredTeacher = {
     id: number
     firstName: string
     lastName: string
+    phone?: string
+    email?: string
     instrument?: string
-  }
+  } | null
 
   const props = defineProps<{
     modelValue: ContactInfo
@@ -51,6 +53,8 @@
   const appStore = useAppStore()
   const emailAlreadyExists = ref(false)
   const chosenTeacher = ref({} as FilteredTeacher)
+  const duplicateCheck = ref({} as Teacher | null)
+  const teacherCreated = ref(false)
 
   onMounted(async () => {
     if (
@@ -137,10 +141,12 @@
     if (!emailAlreadyExists.value) {
       await nextTick()
       status[fieldName] = StatusEnum.pending
-      await teacherStore.updateTeacher(fieldName).catch((err) => {
-        console.log('Trying to remove non-existant teacher', err)
-        stat = ''
-      })
+      if (!!teacherStore.teacher.id && fieldName !== 'id') {
+        await teacherStore.updateTeacher(fieldName).catch((err) => {
+          console.log('Trying to remove non-existant teacher', err)
+          stat = ''
+        })
+      }
       if (stat === 'saved') {
         status[fieldName] = StatusEnum.saved
       } else if (stat === 'remove') {
@@ -155,30 +161,32 @@
   const { errors, validate, values } = useForm({
     validationSchema,
     validateOnMount: true,
-  } )
+  })
 
   const { handleChange } = useField(() => 'id', undefined)
 
-  function newStatus(event: any,fieldName: string) {
+  function newStatus(event: any, fieldName: string) {
     handleChange(event, true)
-    fieldStatus('saved',fieldName)
+    fieldStatus('saved', fieldName)
   }
 
   const teacherKeys = fieldConfigStore.performerTypeFields('Teacher')
-  watchEffect(() => {
-    let count = 0
-    if (teacherStore.teacher.id === 1) {
-      for (const key of teacherKeys) {
-        if (status[key as keyof Teacher] !== StatusEnum.saved) {
-          count++
+  watchEffect(
+    () => {
+      let count = 0
+      if (unlistedTeacher.value) {
+        for (const key of teacherKeys) {
+          if (status[key as keyof Teacher] !== StatusEnum.saved) {
+            count++
+          }
         }
+      } else if (status.id !== StatusEnum.saved) {
+        count++
       }
-    } else if ( status.id !== StatusEnum.saved ) {
-      count++
-    }
-    teacherStore.teacherErrors = count
-  },
-  {flush: 'post'})
+      teacherStore.teacherErrors = count
+    },
+    { flush: 'post' }
+  )
 
   onActivated(() => {
     validate()
@@ -193,18 +201,33 @@
       !!teacherCreated.value
     ) {
       await removeTeacher()
+      teacherStore.$resetTeacher()
+      chosenTeacher.value = null
       emailAlreadyExists.value = false
-      // teacherRadio.value = 'existing'
+      unlistedTeacher.value = false
+      teacherStore.teacherErrors = 1
+    } else if (unlistedTeacher.value) {
+      chosenTeacher.value = {
+        id: teacherStore.teacher.id,
+        firstName: teacherStore.teacher.firstName!,
+        lastName: teacherStore.teacher.lastName!,
+        phone: teacherStore.teacher.phone!,
+        email: teacherStore.teacher.email!,
+        instrument: teacherStore.teacher.instrument ?? undefined,
+      }
+      unlistedTeacher.value = false
+      teacherCreated.value = false
+      teacherStore.$resetAllTeachers()
+      if (
+        appStore.performerType === 'SCHOOL' ||
+        appStore.performerType === 'COMMUNITY'
+      ) {
+        await teacherStore.loadAllTeachers('schoolTeacher')
+      } else {
+        await teacherStore.loadAllTeachers('privateTeacher')
+      }
     }
   })
-
-
-  // Checks if a newly created record is actually a duplicate
-  // of an existing record.
-  const duplicateCheck = ref({} as Teacher | null)
-  // Flag to show if this teacher was just created and
-  // did not exist in the user db before now.
-  const teacherCreated = ref(false)
 
   async function removeTeacher() {
     if (
@@ -224,7 +247,7 @@
   watch(
     chosenTeacher,
     async (newTeacher, oldTeacher) => {
-      if (newTeacher.lastName === 'Unlisted') {
+      if (newTeacher?.lastName === 'Unlisted') {
         unlistedTeacher.value = true
         teacherStore.$resetTeacher()
         registrationStore.registration.teacherID = null
@@ -236,6 +259,8 @@
           schoolTeacher.value
         )
         registrationStore.registration.teacherID = teacherStore.teacher.id
+        teacherStore.findInitialTeacherErrors()
+        validate()
         await registrationStore.updateRegistration('teacherID')
         teacherCreated.value = true
       } else {
@@ -248,8 +273,8 @@
           unlistedTeacher.value = false
           teacherCreated.value = false
         }
-        registrationStore.registration.teacherID = newTeacher.id
-        await teacherStore.loadTeacher(newTeacher.id, undefined)
+        registrationStore.registration.teacherID = newTeacher?.id
+        await teacherStore.loadTeacher(newTeacher?.id, undefined)
         await registrationStore.updateRegistration('teacherID')
       }
     }
@@ -315,10 +340,10 @@
   }
 
   function displayName(teacher: FilteredTeacher) {
-    if (teacher.lastName === 'Unlisted' || teacher.id === 2) {
+    if (teacher?.lastName === 'Unlisted' || teacher?.id === 2) {
       return `${teacher.lastName} ${teacher.firstName}`
     } else {
-      return `${teacher.lastName}, ${teacher.firstName}`
+      return `${teacher?.lastName}, ${teacher?.firstName}`
     }
   }
 </script>
@@ -348,8 +373,7 @@
         "
         :suggestions="filteredTeachers"
         @complete="search"
-        @change="(event: any) => newStatus(event, 'id')"
-        >
+        @change="(event: any) => newStatus(event, 'id')">
         <template #option="slotProps">
           <div>
             {{ slotProps.option.lastName }}, {{ slotProps.option.firstName }}
@@ -358,7 +382,7 @@
       </PrimeAutoComplete>
     </div>
     <div
-      v-show="unlistedTeacher === true"
+      v-if="unlistedTeacher === true"
       v-auto-animate>
       <p>
         Please enter the contact information for your teacher so that we may

@@ -32,8 +32,10 @@ export const useSchoolGroup = defineStore(
           id: schoolGrp.id,
           name: schoolGrp.name || null,
           groupSize: schoolGrp.groupSize !== null ? schoolGrp.groupSize : null,
-          chaperones: schoolGrp.chaperones !== null ? schoolGrp.chaperones : null,
-          wheelchairs: schoolGrp.wheelchairs !== null ? schoolGrp.wheelchairs : null,
+          chaperones:
+            schoolGrp.chaperones !== null ? schoolGrp.chaperones : null,
+          wheelchairs:
+            schoolGrp.wheelchairs !== null ? schoolGrp.wheelchairs : null,
           earliestTime: schoolGrp.earliestTime || null,
           latestTime: schoolGrp.latestTime || null,
           unavailable: schoolGrp.unavailable || null,
@@ -41,8 +43,7 @@ export const useSchoolGroup = defineStore(
           photoPermission: schoolGrp.photoPermission || null,
           __typename: schoolGrp.__typename || 'SchoolGroup',
         })
-        schoolGroupErrors.value.push( {id: schoolGrp.id, count: 0} )
-        console.log(schoolGroup.value)
+        schoolGroupErrors.value.push({ id: schoolGrp.id, count: 0 })
       } catch (err) {
         console.log(err)
       }
@@ -56,7 +57,6 @@ export const useSchoolGroup = defineStore(
         for (const key of schoolGroupKeys) {
           if (group[key as keyof SchoolGroup] === null) {
             count++
-            console.log(key, group[key as keyof SchoolGroup])
           }
         }
         let index = schoolGroupErrors.value.findIndex(

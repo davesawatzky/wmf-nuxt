@@ -36,7 +36,7 @@ export const useTeacher = defineStore(
     }
     function $resetAllTeachers() {
       teacher.value = <Teacher>{}
-      allTeachers.value = <AllTeachers[]>[]
+      allTeachers.value.splice(0, allTeachers.value.length)
       teacherErrors.value = 0
     }
 
@@ -68,16 +68,14 @@ export const useTeacher = defineStore(
     }
 
     function findInitialTeacherErrors() {
+      console.log('Running Teacher Errors')
       const teacherKeys = fieldConfigStore.performerTypeFields('Teacher')
       let count = 0
-      if (teacher.value.id === 1) {
-        for (const key of teacherKeys) {
-          if (teacher.value[key as keyof Teacher] === null) {
-            count++
-          }
+      for (const key of teacherKeys) {
+        console.log(key, teacher.value[key as keyof Teacher])
+        if (teacher.value[key as keyof Teacher] === null) {
+          count++
         }
-      } else if ( !teacher.value.id ) {
-        count++
       }
       teacherErrors.value = count
     }
@@ -142,7 +140,6 @@ export const useTeacher = defineStore(
     watch(resultTeacher, (newResult) => {
       if (newResult?.teacher) {
         addToStore(<Teacher>newResult.teacher)
-        // findInitialTeacherErrors()
       }
     })
     onLoadTeacherError((error) => {
@@ -253,7 +250,7 @@ export const useTeacher = defineStore(
     }
 
     onTeacherDuplicateResult((result) => {
-      console.log(result.data)
+      console.log("If not null then there's a duplicate entry.", result.data)
     })
 
     onTeacherDuplicateError((error) => {
