@@ -28,13 +28,13 @@ export const useSchool = defineStore(
      */
     function addToStore(schl: Partial<School>) {
       school.value.id = schl.id!
-      school.value.division = schl.division || ''
-      school.value.name = schl.name || ''
-      school.value.address = schl.address || ''
+      school.value.division = schl.division || null
+      school.value.name = schl.name || null
+      school.value.address = schl.address || null
       school.value.city = schl.city || 'Winnipeg'
       school.value.province = schl.province || 'MB'
-      school.value.postalCode = schl.postalCode || ''
-      school.value.phone = schl.phone || ''
+      school.value.postalCode = schl.postalCode || null
+      school.value.phone = schl.phone || null
       school.value.__typename = schl.__typename || 'School'
     }
 
@@ -42,7 +42,7 @@ export const useSchool = defineStore(
       const schoolKeys = fieldConfigStore.performerTypeFields('School')
       let count = 0
       for (const key of schoolKeys) {
-        if (!school.value[key as keyof School]) {
+        if (school.value[key as keyof School] === null) {
           count++
         }
       }

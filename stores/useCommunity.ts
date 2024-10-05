@@ -19,6 +19,7 @@ export const useCommunity = defineStore(
     const communityErrors = ref(0)
     function $reset() {
       community.value = <Community>{}
+      communityErrors.value = 0
     }
 
     /**
@@ -27,13 +28,13 @@ export const useCommunity = defineStore(
      */
     function addToStore(comm: Partial<Community>) {
       community.value.id = comm.id!
-      community.value.name = comm.name || ''
-      community.value.address = comm.address || ''
+      community.value.name = comm.name || null
+      community.value.address = comm.address || null
       community.value.city = comm.city || 'Winnipeg'
       community.value.province = comm.province || 'MB'
-      community.value.postalCode = comm.postalCode || ''
-      community.value.phone = comm.phone || ''
-      community.value.email = comm.email || ''
+      community.value.postalCode = comm.postalCode || null
+      community.value.phone = comm.phone || null
+      community.value.email = comm.email || null
       community.value.__typename = comm.__typename || 'Community'
     }
 
@@ -41,7 +42,7 @@ export const useCommunity = defineStore(
       const communityKeys = fieldConfigStore.performerTypeFields('Community')
       let count = 0
       for (const key of communityKeys) {
-        if (!community.value[key as keyof Community]) {
+        if (community.value[key as keyof Community] === null) {
           count++
         }
       }

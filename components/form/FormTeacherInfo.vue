@@ -155,7 +155,14 @@
   const { errors, validate, values } = useForm({
     validationSchema,
     validateOnMount: true,
-  })
+  } )
+
+  const { handleChange } = useField(() => 'id', undefined)
+
+  function newStatus(event: any,fieldName: string) {
+    handleChange(event, true)
+    fieldStatus('saved',fieldName)
+  }
 
   const teacherKeys = fieldConfigStore.performerTypeFields('Teacher')
   watchEffect(() => {
@@ -167,8 +174,6 @@
         }
       }
     } else if ( status.id !== StatusEnum.saved ) {
-      console.log( 'Here I am' )
-      console.log('Status: ',status)
       count++
     }
     teacherStore.teacherErrors = count
@@ -193,9 +198,7 @@
     }
   })
 
-  // Working with the new Teacher ComboBox
 
-  // const editingDisabled = ref(true)
   // Checks if a newly created record is actually a duplicate
   // of an existing record.
   const duplicateCheck = ref({} as Teacher | null)
@@ -339,14 +342,14 @@
         v-model="chosenTeacher"
         dropdown
         forceSelection
-        :status="status.id"
         name="id"
         :optionLabel="
           (chosenTeacher: FilteredTeacher) => displayName(chosenTeacher)
         "
         :suggestions="filteredTeachers"
         @complete="search"
-        @change-status="(stat: string) => fieldStatus(stat, 'id')">
+        @change="(event: any) => newStatus(event, 'id')"
+        >
         <template #option="slotProps">
           <div>
             {{ slotProps.option.lastName }}, {{ slotProps.option.firstName }}

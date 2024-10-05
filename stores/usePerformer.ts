@@ -38,18 +38,6 @@ export const usePerformers = defineStore(
       return Math.round(totalAge / performers.value.length)
     })
 
-    // const performerErrors = computed(() => {
-    //   const performerKeys = fieldConfigStore.performerTypeFields('Performer')
-    //   let count = 0
-    //   for (const performer of performers.value) {
-    //     for (const key of performerKeys) {
-    //       if (!!performer[key as keyof Performer] === false) {
-    //         count++
-    //       }
-    //     }
-    //   }
-    //   return count
-    // })
 
     /**
      * Returns first name plus last name
@@ -72,20 +60,20 @@ export const usePerformers = defineStore(
     function addToStore(performer: Partial<Performer>): void {
       performers.value.push(<Performer>{
         id: performer.id,
-        pronouns: performer.pronouns || undefined,
-        firstName: performer.firstName || undefined,
-        lastName: performer.lastName || undefined,
-        age: performer.age || undefined,
-        level: performer.level || undefined,
-        instrument: performer.instrument || undefined,
-        otherClasses: performer.otherClasses || undefined,
-        unavailable: performer.unavailable || undefined,
-        address: performer.address || undefined,
+        pronouns: performer.pronouns || null,
+        firstName: performer.firstName || null,
+        lastName: performer.lastName || null,
+        age: performer.age || null,
+        level: performer.level || null,
+        instrument: performer.instrument || null,
+        otherClasses: performer.otherClasses || null,
+        unavailable: performer.unavailable || null,
+        address: performer.address || null,
         city: performer.city || 'Winnipeg',
         province: performer.province || 'MB',
-        postalCode: performer.postalCode || undefined,
-        email: performer.email || undefined,
-        phone: performer.phone || undefined,
+        postalCode: performer.postalCode || null,
+        email: performer.email || null,
+        phone: performer.phone || null,
         photoPermission: performer.photoPermission || null,
         __typename: performer.__typename || 'Performer',
       })
@@ -97,7 +85,7 @@ export const usePerformers = defineStore(
       for (const performer of performers.value) {
         let count = 0
         for (const key of performerKeys) {
-          if (!performer[key as keyof Performer]) {
+          if (performer[key as keyof Performer] === null) {
             count++
           }
         }

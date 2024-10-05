@@ -59,11 +59,11 @@ export const useGroup = defineStore(
      */
     function addToStore(grp: Partial<Group>): void {
       group.value.id = grp.id!
-      group.value.groupType = grp.groupType || ''
-      group.value.name = grp.name || ''
-      group.value.numberOfPerformers = grp.numberOfPerformers || undefined
-      group.value.instruments = grp.instruments || ''
-      group.value.age = grp.age || undefined
+      group.value.groupType = grp.groupType || null
+      group.value.name = grp.name || null
+      group.value.numberOfPerformers = grp.numberOfPerformers || null
+      group.value.instruments = grp.instruments || null
+      group.value.age = grp.age || null
       group.value.__typename = grp.__typename || 'Group'
     }
 
@@ -71,7 +71,7 @@ export const useGroup = defineStore(
       const groupKeys = fieldConfigStore.performerTypeFields('Group')
       let count = 0
       for (const key of groupKeys) {
-        if (!group.value[key as keyof Group]) {
+        if (group.value[key as keyof Group] === null) {
           count++
         }
       }

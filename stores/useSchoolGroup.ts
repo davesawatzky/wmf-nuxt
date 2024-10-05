@@ -30,20 +30,19 @@ export const useSchoolGroup = defineStore(
       try {
         schoolGroup.value.push({
           id: schoolGrp.id,
-          name: schoolGrp.name || '',
+          name: schoolGrp.name || null,
           groupSize: schoolGrp.groupSize !== null ? schoolGrp.groupSize : null,
-          chaperones:
-            schoolGrp.chaperones !== null ? schoolGrp.chaperones : null,
-          wheelchairs:
-            schoolGrp.wheelchairs !== null ? schoolGrp.wheelchairs : null,
-          earliestTime: schoolGrp.earliestTime || '',
-          latestTime: schoolGrp.latestTime || '',
-          unavailable: schoolGrp.unavailable || '',
-          conflictPerformers: schoolGrp.conflictPerformers || '',
+          chaperones: schoolGrp.chaperones !== null ? schoolGrp.chaperones : null,
+          wheelchairs: schoolGrp.wheelchairs !== null ? schoolGrp.wheelchairs : null,
+          earliestTime: schoolGrp.earliestTime || null,
+          latestTime: schoolGrp.latestTime || null,
+          unavailable: schoolGrp.unavailable || null,
+          conflictPerformers: schoolGrp.conflictPerformers || null,
           photoPermission: schoolGrp.photoPermission || null,
           __typename: schoolGrp.__typename || 'SchoolGroup',
         })
-        schoolGroupErrors.value.push({ id: schoolGrp.id, count: 0 })
+        schoolGroupErrors.value.push( {id: schoolGrp.id, count: 0} )
+        console.log(schoolGroup.value)
       } catch (err) {
         console.log(err)
       }
@@ -55,8 +54,9 @@ export const useSchoolGroup = defineStore(
       for (const group of schoolGroup.value) {
         let count = 0
         for (const key of schoolGroupKeys) {
-          if (!group[key as keyof SchoolGroup]) {
+          if (group[key as keyof SchoolGroup] === null) {
             count++
+            console.log(key, group[key as keyof SchoolGroup])
           }
         }
         let index = schoolGroupErrors.value.findIndex(

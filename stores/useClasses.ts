@@ -36,13 +36,13 @@ export const useClasses = defineStore(
       for (let festclass of registeredClasses.value) {
         for (let key of classKeys) {
           if (key !== 'selections') {
-            if (!!festclass[key as keyof RegisteredClass] === false) {
+            if (festclass[key as keyof RegisteredClass] === null) {
               count++
             }
           } else {
             for (let select of festclass.selections!) {
               for (let key2 of selectionKeys) {
-                if (!!select[key2 as keyof Selection] === false) {
+                if (select[key2 as keyof Selection] === null) {
                   count++
                 }
               }
@@ -64,15 +64,15 @@ export const useClasses = defineStore(
         registeredClasses.value.push(<RegisteredClass>{
           id: regClass.id,
           classType: regClass.classType || 'CLASS',
-          classNumber: regClass.classNumber || '',
-          discipline: regClass.discipline || '',
-          subdiscipline: regClass.subdiscipline || '',
-          level: regClass.level || '',
-          category: regClass.category || '',
-          minSelections: regClass.minSelections || undefined,
-          maxSelections: regClass.maxSelections || undefined,
-          numberOfSelections: regClass.numberOfSelections || undefined,
-          price: (regClass.price as number) || 0.0,
+          classNumber: regClass.classNumber || null,
+          discipline: regClass.discipline || null,
+          subdiscipline: regClass.subdiscipline || null,
+          level: regClass.level || null,
+          category: regClass.category || null,
+          minSelections: regClass.minSelections || null,
+          maxSelections: regClass.maxSelections || null,
+          numberOfSelections: regClass.numberOfSelections || null,
+          price: (regClass.price as number) || 0.00,
           schoolGroupID: regClass.schoolGroupID || null,
           communityGroupID: regClass.communityGroupID || null,
           selections: regClass.selections || <Selection[]>[],
@@ -97,11 +97,11 @@ export const useClasses = defineStore(
         )
         registeredClasses.value[classIndex].selections!.push({
           id: selection.id,
-          title: selection.title || '',
-          largerWork: selection.largerWork || '',
-          movement: selection.movement || '',
-          composer: selection.composer || '',
-          duration: selection.duration || '',
+          title: selection.title || null,
+          largerWork: selection.largerWork || null,
+          movement: selection.movement || null,
+          composer: selection.composer || null,
+          duration: selection.duration || null,
           __typename: selection.__typename || 'Selection',
         })
       } catch (err) {

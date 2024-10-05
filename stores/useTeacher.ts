@@ -53,17 +53,17 @@ export const useTeacher = defineStore(
      */
     function addToStore(teach: Teacher): void {
       teacher.value.id = teach.id
-      teacher.value.firstName = teach.firstName || ''
-      teacher.value.lastName = teach.lastName || ''
+      teacher.value.firstName = teach.firstName || null
+      teacher.value.lastName = teach.lastName || null
       teacher.value.privateTeacher = teach.privateTeacher || true
       teacher.value.schoolTeacher = teach.schoolTeacher || false
-      teacher.value.address = teach.address || ''
+      teacher.value.address = teach.address || null
       teacher.value.city = teach.city || 'Winnipeg'
       teacher.value.province = teach.province || 'MB'
-      teacher.value.postalCode = teach.postalCode || ''
-      teacher.value.email = teach.email || ''
-      teacher.value.phone = teach.phone || ''
-      teacher.value.instrument = teach.instrument || ''
+      teacher.value.postalCode = teach.postalCode || null
+      teacher.value.email = teach.email || null
+      teacher.value.phone = teach.phone || null
+      teacher.value.instrument = teach.instrument || null
       teacher.value.__typename = teach.__typename || 'Teacher'
     }
 
@@ -72,7 +72,7 @@ export const useTeacher = defineStore(
       let count = 0
       if (teacher.value.id === 1) {
         for (const key of teacherKeys) {
-          if (!teacher.value[key as keyof Teacher]) {
+          if (teacher.value[key as keyof Teacher] === null) {
             count++
           }
         }
