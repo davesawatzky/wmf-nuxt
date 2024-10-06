@@ -57,8 +57,8 @@ export const useRegistration = defineStore(
       registration.value.createdAt = reg.createdAt || null
       registration.value.submittedAt = reg.submittedAt || null
       registration.value.transactionInfo = reg.transactionInfo || null
-      registration.value.payedAmt = Number(reg.payedAmt) || 0.00
-      registration.value.totalAmt = Number(reg.totalAmt) || 0.00
+      registration.value.payedAmt = Number(reg.payedAmt) || 0.0
+      registration.value.totalAmt = Number(reg.totalAmt) || 0.0
       registration.value.updatedAt = reg.updatedAt || null
       registration.value.teacherID = reg.teacherID || null
       registration.value.__typename = 'Registration'
@@ -106,7 +106,7 @@ export const useRegistration = defineStore(
     } = useMutation(RegistrationUpdateDocument, {
       fetchPolicy: 'network-only',
     })
-    async function updateRegistration(field?: string) {
+    async function updateRegistration(field?: string, regId?: number) {
       const { id, __typename, updatedAt, createdAt, ...regProps } =
         registration.value
       let registrationField = null
@@ -116,7 +116,7 @@ export const useRegistration = defineStore(
         )
       }
       await registrationUpdate({
-        registrationId: registrationId.value,
+        registrationId: regId || registrationId.value,
         registrationInput: <RegistrationInput>(registrationField || regProps),
       })
     }

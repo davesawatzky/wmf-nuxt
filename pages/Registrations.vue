@@ -59,7 +59,8 @@
     middleware: ['auth'],
   })
 
-  onBeforeMount(() => {
+  onMounted(() => {
+    console.log('Registration Mounted')
     registrationStore.$reset()
     appStore.$reset()
     performerStore.$reset()
@@ -72,6 +73,7 @@
     schoolGroupStore.$reset()
     classesStore.$reset()
     fieldConfigStore.$reset()
+    refetchRegistrations()
   })
 
   /**
@@ -94,6 +96,7 @@
    */
   const {
     result,
+    loading,
     refetch: refetchRegistrations,
     onError,
   } = useQuery(RegistrationsDocument, null, () => ({

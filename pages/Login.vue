@@ -159,6 +159,8 @@
         } else if (!userStore.checkPassword) {
           signupAccount()
         }
+      } else {
+        await signupAccount()
       }
     } else {
       await signupAccount()
@@ -179,7 +181,7 @@
         }
       }
     `,
-    { email: email.value },
+    { email },
     { fetchPolicy: 'network-only' }
   )
   async function doesTeacherExistLoad() {

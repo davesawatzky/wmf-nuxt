@@ -6,6 +6,7 @@
 
   const showMenu = ref(false)
   const route = useRoute()
+  const teacherStore = useTeacher()
 
   function toggleNav() {
     showMenu.value = !showMenu.value
@@ -47,7 +48,9 @@
           aria-label="main">
           <div class="md:flex">
             <UIMenu>
-              <UIMenuButton class="px-3 py-1 mx-1 hover:bg-sky-600 rounded-md">
+              <UIMenuButton
+                class="px-3 py-1 mx-1 hover:bg-sky-600 rounded-md"
+                @click="teacherStore.removeUnlistedTeacher">
                 <Icon
                   class="text-2xl"
                   name="ic:round-app-registration" />
@@ -75,6 +78,7 @@
                           },
                         ]"
                         to="/Registrations"
+                        no-prefetch
                         @click="close">
                         <Icon
                           class="text-2xl w-8 pr-2"

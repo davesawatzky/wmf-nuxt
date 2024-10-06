@@ -924,7 +924,7 @@ export type Query = {
   categories: Array<Category>;
   category: Category;
   checkIfPasswordExists: PasswordExists;
-  checkUser: User;
+  checkUser?: Maybe<User>;
   classType: ClassType;
   classTypes: Array<ClassType>;
   communities: Array<Community>;

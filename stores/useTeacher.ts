@@ -68,11 +68,9 @@ export const useTeacher = defineStore(
     }
 
     function findInitialTeacherErrors() {
-      console.log('Running Teacher Errors')
       const teacherKeys = fieldConfigStore.performerTypeFields('Teacher')
       let count = 0
       for (const key of teacherKeys) {
-        console.log(key, teacher.value[key as keyof Teacher])
         if (teacher.value[key as keyof Teacher] === null) {
           count++
         }
@@ -257,6 +255,26 @@ export const useTeacher = defineStore(
       console.log(error)
     })
 
+    async function removeUnlistedTeacher() {
+      console.log('Removing Unlisted Teacher')
+      if (
+        !teacher.value.email ||
+        !teacher.value.phone ||
+        !teacher.value.firstName ||
+        !teacher.value.lastName
+      ) {
+        if (teacher.value.id !== 2) {
+          await deleteTeacher(teacher.value.id)
+          registrationStore.registration.teacherID = null
+        }
+        await registrationStore.updateRegistration(
+          'teacherID',
+          registrationStore.registration.id
+        )
+        $resetTeacher()
+      }
+    }
+
     return {
       teacher,
       allTeachers,
@@ -272,6 +290,7 @@ export const useTeacher = defineStore(
       fullName,
       duplicateTeacherCheck,
       findInitialTeacherErrors,
+      removeUnlistedTeacher,
     }
   },
   {
