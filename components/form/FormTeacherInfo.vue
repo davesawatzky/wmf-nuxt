@@ -8,15 +8,7 @@
   import type { Teacher } from '~/graphql/gql/graphql'
   import { useToast } from 'vue-toastification'
   import { StatusEnum } from '#imports'
-
-  type FilteredTeacher = {
-    id: number
-    firstName: string
-    lastName: string
-    phone?: string
-    email?: string
-    instrument?: string
-  } | null
+  import type { FilteredTeacher } from '@/stores/useTeacher'
 
   const props = defineProps<{
     modelValue: ContactInfo
@@ -43,7 +35,6 @@
   })
   const privateTeacher = ref(false)
   const schoolTeacher = ref(false)
-  const unlistedTeacher = ref(false)
 
   const fieldConfigStore = useFieldConfig()
   const userStore = useUser()
@@ -51,20 +42,8 @@
   const teacherStore = useTeacher()
   const registrationStore = useRegistration()
   const appStore = useAppStore()
-  const emailAlreadyExists = ref(false)
-  const chosenTeacher = ref({} as FilteredTeacher)
-  const duplicateCheck = ref({} as Teacher | null)
-  const teacherCreated = ref(false)
-  const unmountAlreadyRan = ref(false)
-
-  // The next 2 variables are only needed when removing an
-  // incomplete unlisted teacher when deactivating the page,
-  // either by tab or by returning to the registrations page
-  const localTeacherId = ref<number | undefined>()
-  const localRegId = ref(0)
 
   onMounted(async () => {
-    localRegId.value = registrationStore.registration.id
     if (
       appStore.performerType === 'SCHOOL' ||
       appStore.performerType === 'COMMUNITY'
@@ -80,7 +59,7 @@
       firstName = firstName ?? ''
       lastName = lastName ?? ''
       instrument = instrument ?? undefined
-      chosenTeacher.value = { id, firstName, lastName, instrument }
+      teacherStore.chosenTeacher = { id, firstName, lastName, instrument }
       checkForPassword(registrationStore.registration.teacherID)
     }
   })
@@ -146,7 +125,7 @@
   const currentYear = new Date().getFullYear()
 
   async function fieldStatus(stat: string, fieldName: string) {
-    if (!emailAlreadyExists.value) {
+    if (!teacherStore.emailAlreadyExists) {
       await nextTick()
       status[fieldName] = StatusEnum.pending
       if (!!teacherStore.teacher.id && fieldName !== 'id') {
@@ -163,7 +142,7 @@
         status[fieldName] = StatusEnum.null
       }
     }
-    emailAlreadyExists.value = false
+    teacherStore.emailAlreadyExists = false
   }
 
   const { errors, validate, values } = useForm({
@@ -183,7 +162,7 @@
   watchEffect(
     () => {
       let count = 0
-      if (unlistedTeacher.value) {
+      if (teacherStore.unlistedTeacher) {
         for (const key of teacherKeys) {
           if (status[key as keyof Teacher] !== StatusEnum.saved) {
             count++
@@ -201,75 +180,30 @@
     validate()
   })
 
-  onUnmounted(async () => {
-    console.log('Teacher Unmounted')
-  })
+  onBeforeUnmount(() => {})
 
-  // onBeforeUnmount(async () => {
-  //   console.log('Teacher Before Unmount')
-  //   appStore.dataLoading = true
-  //   await cleanUp()
-  //   setTimeout(() => (appStore.dataLoading = false), 5000)
-  // })
+  watch(
+    () => teacherStore.fieldStatusRef,
+    (newStatus, oldStatus) => {
+      if (newStatus?.stat === 'remove' && newStatus?.field === 'id') {
+        fieldStatus(newStatus.stat, newStatus?.field)
+      }
+    }
+  )
 
   onDeactivated(async () => {
     console.log('Teacher Deactivated')
-    await cleanUp()
+    await teacherStore.removeUnlistedTeacher()
   })
-
-  async function cleanUp() {
-    console.log('Teacher Clean Up')
-    if (teacherCreated.value) {
-      await teacherStore.removeUnlistedTeacher()
-      fieldStatus('remove', 'id')
-      chosenTeacher.value = null
-      emailAlreadyExists.value = false
-      unlistedTeacher.value = false
-    } else if (unlistedTeacher.value) {
-      console.log('Does this actually run too')
-      chosenTeacher.value = {
-        id: teacherStore.teacher.id,
-        firstName: teacherStore.teacher.firstName!,
-        lastName: teacherStore.teacher.lastName!,
-        phone: teacherStore.teacher.phone!,
-        email: teacherStore.teacher.email!,
-        instrument: teacherStore.teacher.instrument ?? undefined,
-      }
-      unlistedTeacher.value = false
-      teacherCreated.value = false
-      teacherStore.$resetAllTeachers()
-      if (
-        appStore.performerType === 'SCHOOL' ||
-        appStore.performerType === 'COMMUNITY'
-      ) {
-        await teacherStore.loadAllTeachers('schoolTeacher')
-      } else {
-        await teacherStore.loadAllTeachers('privateTeacher')
-      }
-    }
-  }
-
-  async function removeTeacher(teacherId: number) {
-    console.log('teacherId', teacherId)
-    if (teacherId !== 2) {
-      registrationStore.registration.teacherID = null
-      await teacherStore.deleteTeacher(teacherId)
-      console.log('Deleted teacher', teacherId)
-    }
-    await registrationStore.updateRegistration('teacherID', localRegId.value)
-    console.log('Registration updated')
-    teacherCreated.value = false
-    localTeacherId.value = undefined
-  }
 
   // Adds teacher id to registration store
   // unless it's an unlisted teacher
   // if unlisted then the unlisted teacher watcher will run
   watch(
-    chosenTeacher,
+    () => teacherStore.chosenTeacher,
     async (newTeacher, oldTeacher) => {
       if (newTeacher?.lastName === 'Unlisted') {
-        unlistedTeacher.value = true
+        teacherStore.unlistedTeacher = true
         teacherStore.$resetTeacher()
         for (const key of teacherKeys) {
           if (status[key as keyof Teacher] !== StatusEnum.null) {
@@ -285,22 +219,21 @@
           schoolTeacher.value
         )
         registrationStore.registration.teacherID = teacherStore.teacher.id
-        localTeacherId.value = teacherStore.teacher.id
         teacherStore.findInitialTeacherErrors()
         validate()
         await registrationStore.updateRegistration('teacherID')
-        teacherCreated.value = true
+        teacherStore.teacherCreated = true
       } else {
         if (
           oldTeacher?.lastName === 'Unlisted' &&
-          teacherCreated.value === true &&
-          !emailAlreadyExists.value
+          teacherStore.teacherCreated === true &&
+          !teacherStore.emailAlreadyExists
         ) {
-          if (localTeacherId.value) {
-            await removeTeacher(localTeacherId.value)
+          if (teacherStore.teacher.id) {
+            await teacherStore.removeTeacherFromDatabaseAndRegistration()
           }
-          unlistedTeacher.value = false
-          teacherCreated.value = false
+          teacherStore.unlistedTeacher = false
+          teacherStore.teacherCreated = false
         }
         registrationStore.registration.teacherID = newTeacher?.id
         await teacherStore.loadTeacher(newTeacher?.id, undefined)
@@ -311,22 +244,26 @@
   )
 
   async function checkForDuplicate() {
-    emailAlreadyExists.value = false
-    if (unlistedTeacher.value === true && teacherStore.teacher.email) {
-      duplicateCheck.value = await teacherStore.duplicateTeacherCheck(
+    teacherStore.emailAlreadyExists = false
+    if (teacherStore.unlistedTeacher === true && teacherStore.teacher.email) {
+      teacherStore.duplicateCheck = await teacherStore.duplicateTeacherCheck(
         teacherStore.teacher?.email
       )
-      if (duplicateCheck.value?.id) {
-        emailAlreadyExists.value = true
+      if (teacherStore.duplicateCheck?.id) {
+        teacherStore.emailAlreadyExists = true
         toast.warning(
           'Email already exists. Changing the teacher details to an existing teacher if available'
         )
-        unlistedTeacher.value = false
-        if (localTeacherId.value) {
-          await removeTeacher(localTeacherId.value)
+        teacherStore.unlistedTeacher = false
+        if (teacherStore.teacher.id) {
+          await teacherStore.removeTeacherFromDatabaseAndRegistration()
         }
-        registrationStore.registration.teacherID = duplicateCheck.value.id
-        await teacherStore.loadTeacher(duplicateCheck.value.id, undefined)
+        registrationStore.registration.teacherID =
+          teacherStore.duplicateCheck.id
+        await teacherStore.loadTeacher(
+          teacherStore.duplicateCheck.id,
+          undefined
+        )
         if (
           !!teacherStore.teacher.privateTeacher ||
           !!teacherStore.teacher.schoolTeacher
@@ -336,19 +273,19 @@
             .catch((error) => {
               console.log('Error updating registration from teacherID', error)
             })
-          chosenTeacher.value = <FilteredTeacher>(
+          teacherStore.chosenTeacher = <FilteredTeacher>(
             teacherStore.allTeachers.find(
-              (teacher) => teacher.id === duplicateCheck.value?.id
+              (teacher) => teacher.id === teacherStore.duplicateCheck?.id
             )
           )
         } else {
           toast.error('Teacher must be listed as a private or school teacher.')
           teacherStore.$resetTeacher()
-          chosenTeacher.value = <FilteredTeacher>(
+          teacherStore.chosenTeacher = <FilteredTeacher>(
             teacherStore.allTeachers.find((teacher) => teacher.id === 2)
           )
         }
-        emailAlreadyExists.value = false
+        teacherStore.emailAlreadyExists = false
       }
     }
   }
@@ -395,7 +332,7 @@
 
       <PrimeAutoComplete
         class="w-full"
-        v-model="chosenTeacher"
+        v-model="teacherStore.chosenTeacher"
         dropdown
         forceSelection
         name="id"
@@ -413,7 +350,7 @@
       </PrimeAutoComplete>
     </div>
     <div
-      v-if="unlistedTeacher === true"
+      v-if="teacherStore.unlistedTeacher === true"
       v-auto-animate>
       <p>
         Please enter the contact information for your teacher so that we may

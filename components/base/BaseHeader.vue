@@ -11,6 +11,10 @@
   function toggleNav() {
     showMenu.value = !showMenu.value
   }
+
+  async function cleanUpTeachers() {
+    if (route.name === 'Form') await teacherStore.removeUnlistedTeacher()
+  }
 </script>
 
 <template>
@@ -50,7 +54,7 @@
             <UIMenu>
               <UIMenuButton
                 class="px-3 py-1 mx-1 hover:bg-sky-600 rounded-md"
-                @click="teacherStore.removeUnlistedTeacher">
+                @click="cleanUpTeachers">
                 <Icon
                   class="text-2xl"
                   name="ic:round-app-registration" />
@@ -112,7 +116,9 @@
               </transition>
             </UIMenu>
             <UIMenu>
-              <UIMenuButton class="px-3 py-1 mx-1 hover:bg-sky-600 rounded-md">
+              <UIMenuButton
+                class="px-3 py-1 mx-1 hover:bg-sky-600 rounded-md"
+                @click="cleanUpTeachers">
                 <Icon
                   class="text-2xl"
                   name="fluent:inprivate-account-24-filled" />

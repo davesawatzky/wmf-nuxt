@@ -12,6 +12,7 @@ import type {
   TeacherCreateMutation,
   TeacherInput,
 } from '~/graphql/gql/graphql'
+import { string } from 'yup'
 
 export interface AllTeachers {
   id: number
@@ -19,6 +20,15 @@ export interface AllTeachers {
   lastName: string
   instrument: string
 }
+
+export type FilteredTeacher = {
+  id: number
+  firstName: string
+  lastName: string
+  phone?: string
+  email?: string
+  instrument?: string
+} | null
 
 export const useTeacher = defineStore(
   'teacher',
@@ -29,6 +39,12 @@ export const useTeacher = defineStore(
     const allTeachers = ref<AllTeachers[]>([])
     const fieldConfigStore = useFieldConfig()
     const teacherErrors = ref(0)
+
+    const emailAlreadyExists = ref(false)
+    const chosenTeacher = ref({} as FilteredTeacher)
+    const duplicateCheck = ref({} as Teacher | null)
+    const teacherCreated = ref(false)
+    const unlistedTeacher = ref(false)
 
     function $resetTeacher() {
       teacher.value = <Teacher>{}
@@ -233,6 +249,7 @@ export const useTeacher = defineStore(
     } = useLazyQuery(TeacherInfoDocument, undefined, {
       fetchPolicy: 'no-cache',
     })
+
     async function teacherDuplicateLoad(
       teacherID?: number,
       teacherEmail?: string
@@ -246,33 +263,64 @@ export const useTeacher = defineStore(
       await teacherDuplicateLoad(undefined, teacherEmail)
       return resultTeacherDuplicate.value?.teacher ?? null
     }
-
     onTeacherDuplicateResult((result) => {
       console.log("If not null then there's a duplicate entry.", result.data)
     })
-
     onTeacherDuplicateError((error) => {
       console.log(error)
     })
 
+    const fieldStatusRef = ref<{ stat: string; field: string }>()
+
     async function removeUnlistedTeacher() {
       console.log('Removing Unlisted Teacher')
       if (
-        !teacher.value.email ||
-        !teacher.value.phone ||
-        !teacher.value.firstName ||
-        !teacher.value.lastName
+        (!teacher.value.email ||
+          !teacher.value.phone ||
+          !teacher.value.firstName ||
+          !teacher.value.lastName) &&
+        teacherCreated.value
       ) {
-        if (teacher.value.id !== 2) {
-          await deleteTeacher(teacher.value.id)
-          registrationStore.registration.teacherID = null
+        await removeTeacherFromDatabaseAndRegistration()
+        fieldStatusRef.value = {
+          stat: 'remove',
+          field: 'id',
         }
-        await registrationStore.updateRegistration(
-          'teacherID',
-          registrationStore.registration.id
-        )
-        $resetTeacher()
+        chosenTeacher.value = null
+        emailAlreadyExists.value = false
+        unlistedTeacher.value = false
+      } else if (unlistedTeacher.value) {
+        chosenTeacher.value = {
+          id: teacher.value.id,
+          firstName: teacher.value.firstName!,
+          lastName: teacher.value.lastName!,
+          phone: teacher.value.phone!,
+          email: teacher.value.email!,
+          instrument: teacher.value.instrument ?? undefined,
+        }
+        unlistedTeacher.value = false
+        teacherCreated.value = false
+        $resetAllTeachers()
+        if (
+          appStore.performerType === 'SCHOOL' ||
+          appStore.performerType === 'COMMUNITY'
+        ) {
+          await loadAllTeachers('schoolTeacher')
+        } else {
+          await loadAllTeachers('privateTeacher')
+        }
       }
+    }
+    async function removeTeacherFromDatabaseAndRegistration() {
+      if (teacher.value.id !== 2) {
+        await deleteTeacher(teacher.value.id)
+        registrationStore.registration.teacherID = null
+      }
+      await registrationStore.updateRegistration(
+        'teacherID',
+        registrationStore.registration.id
+      )
+      $resetTeacher()
     }
 
     return {
@@ -291,6 +339,13 @@ export const useTeacher = defineStore(
       duplicateTeacherCheck,
       findInitialTeacherErrors,
       removeUnlistedTeacher,
+      emailAlreadyExists,
+      chosenTeacher,
+      duplicateCheck,
+      teacherCreated,
+      unlistedTeacher,
+      removeTeacherFromDatabaseAndRegistration,
+      fieldStatusRef,
     }
   },
   {
