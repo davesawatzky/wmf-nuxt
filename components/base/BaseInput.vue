@@ -3,6 +3,7 @@
     type?: string
     label?: string
     helpMessage?: string
+    autocomplete?: string
     status?: StatusEnum
     name: string
     placeholder?: string
@@ -73,7 +74,7 @@
       :type="props.type"
       :name="name"
       :placeholder="placeholder"
-      autocomplete="off"
+      :autocomplete="props.autocomplete || 'off'"
       v-bind="{ ...$attrs }"
       :value="value"
       :aria-describedby="errorMessage ? `${uuid}-error` : ''"

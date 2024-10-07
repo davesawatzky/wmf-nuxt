@@ -1,4 +1,9 @@
 <script setup lang="ts">
+  import * as yup from 'yup'
+  import YupPassword from 'yup-password'
+
+  YupPassword(yup)
+
   const password1 = ref('')
   const password2 = ref('')
   const passwordChanged = ref(false)
@@ -6,6 +11,23 @@
 
   const route = useRoute()
   const tokenParam = route.query.token
+
+  const { handleSubmit } = useForm({
+    validationSchema: toTypedSchema(
+      yup.object({
+        password1: yup.string().trim().password().required().label('Password'),
+        password2: yup
+          .string()
+          .trim()
+          .oneOf([yup.ref('password1')], 'Passwords must match')
+          .required('Please enter your password again'),
+      })
+    ),
+  })
+
+  const submitPasswordChange = handleSubmit(async () => {
+    await changePassword()
+  })
 
   const {
     mutate: changePassword,
@@ -75,7 +97,7 @@
 
         <BaseButton
           class="w-full mx-auto mt-4 btn btn-blue"
-          @click="changePassword()">
+          @click="submitPasswordChange()">
           Reset Password
         </BaseButton>
       </form>

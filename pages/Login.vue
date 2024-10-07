@@ -366,7 +366,7 @@
       <BaseInput
         v-model="email"
         v-auto-animate
-        autocomplete="off"
+        :autocomplete="isRegister ? 'off' : 'on'"
         autofocus
         name="email"
         type="email"
@@ -375,7 +375,7 @@
       <BaseInput
         v-model="password"
         v-auto-animate
-        autocomplete="off"
+        :autocomplete="isRegister ? 'off' : 'on'"
         name="password"
         type="password"
         label="Password"

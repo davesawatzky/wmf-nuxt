@@ -109,7 +109,7 @@
         .integer()
         .typeError('Please enter a valid number')
         .required('Required'),
-      unavailable: yup.string().trim(),
+      unavailable: yup.string().trim().nullable(),
       conflictPerformers: yup.string().trim().nullable(),
       photoPermission: yup
         .string()

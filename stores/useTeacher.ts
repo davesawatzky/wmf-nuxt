@@ -48,10 +48,12 @@ export const useTeacher = defineStore(
 
     function $resetTeacher() {
       teacher.value = <Teacher>{}
+      chosenTeacher.value = <FilteredTeacher>{}
       teacherErrors.value = 0
     }
     function $resetAllTeachers() {
       teacher.value = <Teacher>{}
+      chosenTeacher.value = <FilteredTeacher>{}
       allTeachers.value.splice(0, allTeachers.value.length)
       teacherErrors.value = 0
     }

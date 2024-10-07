@@ -49,6 +49,8 @@
       ? StatusEnum.saved
       : StatusEnum.null,
     instrument: userStore.user.instrument ? StatusEnum.saved : StatusEnum.null,
+    firstName: userStore.user.firstName ? StatusEnum.saved : StatusEnum.null,
+    lastName: userStore.user.lastName ? StatusEnum.saved : StatusEnum.null,
     address: userStore.user.address ? StatusEnum.saved : StatusEnum.null,
     city: userStore.user.city ? StatusEnum.saved : StatusEnum.null,
     province: userStore.user.province ? StatusEnum.saved : StatusEnum.null,
@@ -69,13 +71,11 @@
     yup.object({
       privateTeacher: yup.boolean().default(false),
       schoolTeacher: yup.boolean().default(false),
-      address: yup.string().trim().required(),
-      city: yup
-        .string()
-        .trim()
-        .max(20, 'Too many characters')
-        .required('Required'),
-      province: yup.string().max(3).required(),
+      firstName: yup.string().trim().required('Required'),
+      lastName: yup.string().trim().required('Required'),
+      address: yup.string().trim().nullable(),
+      city: yup.string().trim().max(20, 'Too many characters').nullable(),
+      province: yup.string().max(3).nullable(),
       postalCode: yup
         .string()
         .trim()
@@ -83,13 +83,13 @@
           /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i,
           'Enter a valid postal code'
         )
-        .required('Enter a valid postal code'),
+        .nullable(),
       phone: yup
         .string()
         .trim()
         .phone('CA', 'Please enter a valid phone number')
-        .required('Required'),
-      instrument: yup.string().trim().required('Required'),
+        .nullable(),
+      instrument: yup.string().trim().nullable(),
     })
   )
 
@@ -143,6 +143,24 @@
         class="px-4 inline-block"
         @change-status="(stat: string) => fieldStatus(stat, 'schoolTeacher')" />
     </fieldset>
+    <div class="col-span-12 sm:col-span-6">
+      <BaseInput
+        v-model.trim="userStore.user.firstName"
+        :status="status.firstName"
+        name="firstName"
+        type="text"
+        label="First Name"
+        @change-status="(stat: string) => fieldStatus(stat, 'firstName')" />
+    </div>
+    <div class="col-span-12 sm:col-span-6">
+      <BaseInput
+        v-model.trim="userStore.user.lastName"
+        :status="status.lastName"
+        name="lastName"
+        type="text"
+        label="Last Name"
+        @change-status="(stat: string) => fieldStatus(stat, 'lastName')" />
+    </div>
     <div class="col-span-12 sm:col-span-8">
       <BaseInput
         v-model.trim="userStore.user.address"
@@ -196,17 +214,6 @@
         type="text"
         label="Phone Number"
         @change-status="(stat: string) => fieldStatus(stat, 'phone')" />
-    </div>
-    <div class="col-span-6 sm:col-span-6">
-      <BaseInput
-        v-model.trim="userStore.user.email"
-        class="off"
-        disabled="true"
-        :status="status.email"
-        placeholder="example@email.com"
-        name="email"
-        type="email"
-        label="Email" />
     </div>
     <div
       v-if="teacherView"
