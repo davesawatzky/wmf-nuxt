@@ -275,7 +275,6 @@ export const useTeacher = defineStore(
     const fieldStatusRef = ref<{ stat: string; field: string }>()
 
     async function removeUnlistedTeacher() {
-      console.log('Removing Unlisted Teacher')
       if (
         (!teacher.value.email ||
           !teacher.value.phone ||

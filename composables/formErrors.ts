@@ -1,3 +1,4 @@
+import { sum } from 'lodash'
 import { b } from 'vitest/dist/chunks/suite.BMWOKiTe.js'
 import type { ClassErrors } from '~/utils/types'
 
@@ -36,7 +37,7 @@ export const formErrors = computed(() => {
       tabName.value = {
         Performer: performerStore.performerErrors[0].count,
         Teacher: teacherStore.teacherErrors,
-        'Solo Classes': classesStore.totalClassErrors,
+        'Solo Classes': sumErrorsArray(classesStore.classErrors),
         Summary: 0,
       }
       break
@@ -45,7 +46,7 @@ export const formErrors = computed(() => {
         Group: groupStore.groupErrors,
         Performers: performerStore.totalPerformerErrors,
         Teacher: teacherStore.teacherErrors,
-        'Group Classes': classesStore.totalClassErrors,
+        'Group Classes': sumErrorsArray(classesStore.classErrors),
         Summary: 0,
       }
       break
@@ -57,7 +58,7 @@ export const formErrors = computed(() => {
           (a, b) => a + b.count,
           0
         ),
-        'School Classes': classesStore.totalClassErrors,
+        'School Classes': sumErrorsArray(classesStore.classErrors),
         Summary: 0,
       }
       break
@@ -69,7 +70,7 @@ export const formErrors = computed(() => {
           (a, b) => a + b.count,
           0
         ),
-        'Community Classes': classesStore.totalClassErrors,
+        'Community Classes': sumErrorsArray(classesStore.classErrors),
         Summary: 0,
       }
       break
