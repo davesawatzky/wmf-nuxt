@@ -336,7 +336,7 @@
         forceSelection
         name="id"
         :optionLabel="
-          (chosenTeacher: FilteredTeacher) => displayName(chosenTeacher)
+          (filteredTeacher: FilteredTeacher) => displayName(filteredTeacher)
         "
         :suggestions="filteredTeachers"
         @complete="search"

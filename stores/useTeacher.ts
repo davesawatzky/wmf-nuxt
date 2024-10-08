@@ -45,10 +45,11 @@ export const useTeacher = defineStore(
     const duplicateCheck = ref({} as Teacher | null)
     const teacherCreated = ref(false)
     const unlistedTeacher = ref(false)
+    const fieldStatusRef = ref<{stat: string; field: string}>()
+    
 
     function $resetTeacher() {
       teacher.value = <Teacher>{}
-      chosenTeacher.value = <FilteredTeacher>{}
       teacherErrors.value = 0
     }
     function $resetAllTeachers() {
@@ -276,7 +277,7 @@ export const useTeacher = defineStore(
       console.log(error)
     })
 
-    const fieldStatusRef = ref<{ stat: string; field: string }>()
+
 
     async function removeUnlistedTeacher() {
       if (
@@ -294,7 +295,7 @@ export const useTeacher = defineStore(
         chosenTeacher.value = null
         emailAlreadyExists.value = false
         unlistedTeacher.value = false
-      } else if (unlistedTeacher.value) {
+      } else if (!!unlistedTeacher.value) {
         chosenTeacher.value = {
           id: teacher.value.id,
           firstName: teacher.value.firstName!,
