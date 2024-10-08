@@ -56,7 +56,7 @@
                 class="px-3 py-1 mx-1 hover:bg-sky-600 rounded-md"
                 @click="cleanUpTeachers">
                 <Icon
-                  class="text-2xl"
+                  class="align-middle text-2xl"
                   name="ic:round-app-registration" />
                 Registrations
               </UIMenuButton>
@@ -85,7 +85,7 @@
                         no-prefetch
                         @click="close">
                         <Icon
-                          class="text-2xl w-8 pr-2"
+                          class="text-2xl w-8 align-middle mr-2"
                           :class="[{ 'bg-white text-sky-600': !active }]"
                           name="ic:round-app-registration" />
                         My Registrations
@@ -105,7 +105,7 @@
                         ]"
                         to="/Students">
                         <Icon
-                          class="text-2xl w-8 pr-2"
+                          class="text-2xl w-8 align-middle mr-2"
                           :class="[{ 'bg-white text-sky-600': !active }]"
                           name="mdi:account-music" />
                         My Students
@@ -120,7 +120,7 @@
                 class="px-3 py-1 mx-1 hover:bg-sky-600 rounded-md"
                 @click="cleanUpTeachers">
                 <Icon
-                  class="text-2xl"
+                  class="align-middle text-2xl"
                   name="fluent:inprivate-account-24-filled" />
                 Account
               </UIMenuButton>
@@ -148,7 +148,7 @@
                         to="/UserInformation"
                         @click="close">
                         <Icon
-                          class="text-2xl w-8 pr-2"
+                          class="text-2xl w-8 align-middle mr-2"
                           :class="[{ 'bg-white text-sky-600': !active }]"
                           name="fluent:inprivate-account-24-filled" />
                         User Account
@@ -166,7 +166,7 @@
                           },
                         ]">
                         <Icon
-                          class="text-2xl w-8 pr-2"
+                          class="text-2xl w-8 align-middle mr-2"
                           :class="[{ 'bg-white text-sky-600': !active }]"
                           name="heroicons-outline:logout" />
                       </BaseLogout>

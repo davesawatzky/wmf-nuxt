@@ -50,7 +50,6 @@
   }
 
   let response: any
-  console.log('client token: ', appStore.stripeTokenId)
 
   if (appStore.stripePayment === 'ccard') {
     response = await $fetch<PaymentDetails>(
@@ -105,7 +104,8 @@
     }
   }
 
-  async function cancelPayment() {
+async function cancelPayment() {
+    toast.info('Payment cancelled')
     await navigateTo('/registrations')
   }
 </script>

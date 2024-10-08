@@ -145,7 +145,7 @@
             </li>
             <li>
               Click on the 'View' icon (<Icon
-                class="text-sky-600 text-xl"
+                class="align-middle text-sky-600 text-xl"
                 name="fa-solid:eye" />) to see more details.
             </li>
           </ul>

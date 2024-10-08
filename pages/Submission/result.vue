@@ -135,7 +135,7 @@
     <div
       v-if="paymentIntentStatus === 'succeeded' || stripePayment === 'cash'"
       class="pb-8">
-      <div class="p-8 m-4 border-2 border-red-600 rounded-lg text-center">
+      <div class="p-8 m-4 border-2 border-green-600 rounded-lg text-center">
         <strong>
           <h3 class="mx-auto">Confirmation Number</h3>
           <h3 class="mx-auto">{{ confirmationNumber }}</h3>
@@ -145,15 +145,15 @@
 
       <p
         v-if="stripePayment === 'cash'"
-        class="m-4 p-3 text-center font-bold text-xl bg-red-600 rounded-xl text-white">
+        class="m-4 p-3 text-center font-bold text-xl bg-green-600 rounded-xl text-white">
         Please include this confirmation number when submitting payment. This
         number will be required with any correspondence with the festival
         regarding your registration.
       </p>
       <p
         v-else-if="stripePayment === 'ccard'"
-        class="m-4 p-3 text-center font-bold text-xl bg-red-600 rounded-xl text-white">
-        Please mark down this confirmation number. This number will be required
+        class="m-4 p-3 text-center font-bold text-xl bg-green-600 rounded-xl text-white">
+        Please record this confirmation number. This number will be required
         with any correspondence with the festival regarding your registration.
       </p>
       <p>

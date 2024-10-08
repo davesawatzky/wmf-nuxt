@@ -105,6 +105,7 @@
   const maskaUcaseOption = {
     preProcess: (val: string) => val.toUpperCase(),
   }
+  defineExpose({ maskaUcaseOption })
 
   const currentYear = new Date().getFullYear()
 </script>

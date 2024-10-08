@@ -129,7 +129,7 @@
             v-model.number="
               classesStore.registeredClasses[classIndex].communityGroupID
             "
-            :status="status[classIndex].communityGroupID"
+            :status="status[classIndex]?.communityGroupID"
             :name="`communityGroups[${classIndex}].id`"
             return-id
             label="Select a Community Group"

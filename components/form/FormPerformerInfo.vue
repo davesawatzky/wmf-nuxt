@@ -152,6 +152,8 @@
     preProcess: (val: string) => val.toUpperCase(),
   }
 
+  defineExpose({maskaUcaseOption})
+
   const currentYear = new Date().getFullYear()
 
   const pronounOptions = [

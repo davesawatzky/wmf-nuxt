@@ -79,6 +79,7 @@
   const maskaUcaseOption = {
     preProcess: (val: string) => val.toUpperCase(),
   }
+  defineExpose({ maskaUcaseOption })
 </script>
 
 <template>

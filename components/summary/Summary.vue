@@ -138,7 +138,9 @@
               {{ teacherStore.fullName }}
             </h4>
           </div>
-          <div class="text-sm sm:text-base px-2 sm:px-10">
+          <div
+            v-if="teacherStore.teacher.id !== 2"
+            class="text-sm sm:text-base px-2 sm:px-10">
             <div>Phone: {{ teacherStore.teacher.phone }}</div>
             <div>Email: {{ teacherStore.teacher.email }}</div>
           </div>

@@ -163,7 +163,6 @@
               <div>Group Type: {{ group.groupType }}</div>
               <div>Number of Performers: {{ group.numberOfPerformers }}</div>
               <div>Average age: {{ group.age }}</div>
-              <div>Instruments: {{ group.instruments }}</div>
             </mj-text>
           </mj-column>
         </mj-section>
@@ -225,7 +224,7 @@
                 </div>
                 <div v-if="performer.otherClasses">
                   <div>
-                    Participating in other classes: {{ performer.otherClasses }}
+                    Other classes: {{ performer.otherClasses }}
                   </div>
                 </div>
               </mj-text>
@@ -364,11 +363,16 @@
             <mj-divider />
             <mj-text>
               <div class="h2">Teacher</div>
-              <div class="h3">
-                {{ teacher.firstName }} {{ teacher.lastName }}
+              <div v-if="teacher.id === 2 || teacher.lastName === 'Unlisted'" class="h3">
+                {{ teacher.lastName }} {{ teacher.firstName }}
               </div>
-              <div>Phone: {{ teacher.phone }}</div>
-              <div>Email: {{ teacher.email }}</div>
+              <div v-else>
+                <div class="h3">
+                  {{ teacher.firstName }} {{ teacher.lastName }}
+                </div>
+                <div>Phone: {{ teacher.phone }}</div>
+                <div>Email: {{ teacher.email }}</div>
+              </div>
             </mj-text>
           </mj-column>
         </mj-section>
@@ -454,7 +458,7 @@
           </mj-column>
         </mj-section>
 
-        <!-- Immportant Notes -->
+        <!-- Important Notes -->
 
         <mj-section
           background-color="#ffffff"
@@ -493,14 +497,16 @@
                 has been submitted. Incomplete entries will not be accepted.
               </p>
               <p>
-                Notification, including date, time and location of each class
-                will be forwarded to the participant's teacher prior to the
-                publication of the program. Teachers are responsible to advise
-                their students of this information and to notify the office of
-                any errors. Participants and teachers are to notify the Festival
-                office of any change of personal information following
-                submission of entry form. Participants who wish to withdraw must
-                notify the Festival office in writing as early as possible.
+                Confirmation of registered participant entries including class,
+                selection and composer will be sent to the teachers for
+                verification. Festival programs including dates, times and
+                locations will be available for purchase for $10 with an
+                anticipated availability February 1, 2025. Participants and
+                teachers are to notify the Festival office of any change of
+                personal information following submission of entry form.
+                Participants who wish to withdraw must notify the Festival
+                office in writing as early as possible. Entry fees are
+                non-refundable.
               </p>
             </mj-text>
           </mj-column>

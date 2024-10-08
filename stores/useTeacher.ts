@@ -62,7 +62,11 @@ export const useTeacher = defineStore(
      * First name plus last name
      */
     const fullName = computed(() => {
-      return `${teacher.value.firstName} ${teacher.value.lastName}`
+      if (teacher.value.lastName === 'Unlisted' || teacher.value.id === 2) {
+        return `${teacher.value.lastName} ${teacher.value.firstName}`
+      } else {
+        return `${teacher.value.firstName} ${teacher.value.lastName}`
+      }
     })
 
     /**

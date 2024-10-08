@@ -3,7 +3,11 @@
   import { useRegistration } from '@/stores/useRegistration'
 
   const classesStore = useClasses()
-  const registrationStore = useRegistration()
+const registrationStore = useRegistration()
+const communityGroupStore = useCommunityGroup()
+const schoolGroupStore = useSchoolGroup()
+const appStore = useAppStore()
+
 </script>
 
 <template>
@@ -29,6 +33,11 @@
             scope="col">
             Level
           </th>
+          <th v-if="appStore.performerType === 'SCHOOL' || appStore.performerType === 'COMMUNITY'"
+            class="text-left bg-sky-700"
+            scope="col">
+            Group
+          </th>
           <th
             class="text-left bg-sky-700"
             scope="col">
@@ -47,7 +56,7 @@
           :key="registeredClass.id"
           class="print:text-xs">
           <td
-            class="p-8 border-l border-sky-700 bg-white"
+            class="p-8 border-l border-b border-sky-700 bg-white"
             :class="
               index === classesStore.registeredClasses.length - 1
                 ? 'border-b rounded-bl-lg'
@@ -56,7 +65,7 @@
             {{ registeredClass.classNumber }}
           </td>
           <td
-            class="p-8 bg-white"
+            class="p-8 border-b border-sky-700 bg-white"
             :class="
               index === classesStore.registeredClasses.length - 1
                 ? 'border-b border-sky-700'
@@ -65,7 +74,7 @@
             {{ registeredClass.subdiscipline }}
           </td>
           <td
-            class="p-8 bg-white"
+            class="p-8 border-b border-sky-700 bg-white"
             :class="
               index === classesStore.registeredClasses.length - 1
                 ? 'border-b border-sky-700'
@@ -74,7 +83,19 @@
             {{ registeredClass.level }}
           </td>
           <td
-            class="p-8 bg-white"
+          v-if="appStore.performerType === 'SCHOOL'"
+            class="p-8 border-b border-sky-700 bg-white"
+            :class="index === classesStore.registeredClasses.length - 1 ? 'border-b border-sky-700' : ''">
+            {{ schoolGroupStore.schoolGroup.find((item) => item.id === registeredClass.schoolGroupID)?.name }}
+          </td>
+          <td
+          v-if="appStore.performerType === 'COMMUNITY'"
+            class="p-8 border-b border-sky-700 bg-white"
+            :class="index === classesStore.registeredClasses.length - 1 ? 'border-b border-sky-700' : ''">
+            {{ communityGroupStore.communityGroup.find((item) => item.id === registeredClass.communityGroupID)?.name }}
+          </td>
+          <td
+            class="p-8 border-b border-sky-700 bg-white"
             :class="
               index === classesStore.registeredClasses.length - 1
                 ? 'border-b border-sky-700'
@@ -83,7 +104,7 @@
             {{ registeredClass.category }}
           </td>
           <td
-            class="p-8 border-r border-sky-700 bg-white"
+            class="p-8 border-b border-r border-sky-700 bg-white"
             :class="
               index === classesStore.registeredClasses.length - 1
                 ? 'border-b rounded-br-lg'
@@ -94,6 +115,7 @@
         </tr>
         <tr class="font-bold">
           <td />
+          <td v-if="appStore.performerType === 'SCHOOL' || appStore.performerType === 'COMMUNITY'"/>
           <td />
           <td />
           <td class="text-right">Total:</td>

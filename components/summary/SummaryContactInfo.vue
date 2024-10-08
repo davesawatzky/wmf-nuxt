@@ -52,9 +52,7 @@
                 {{ contact.city }},
                 {{ contact.province }}
               </td>
-              <td v-if="contact.otherClasses">
-                Participating in other classes:
-              </td>
+              <td v-if="contact.otherClasses">Other classes:</td>
               <td v-if="contact.otherClasses">
                 {{ contact.otherClasses }}
               </td>
