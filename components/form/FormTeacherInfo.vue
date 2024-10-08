@@ -192,7 +192,6 @@
   )
 
   onDeactivated(async () => {
-    console.log('Teacher Deactivated')
     await teacherStore.removeUnlistedTeacher()
   })
 

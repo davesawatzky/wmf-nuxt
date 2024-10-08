@@ -60,7 +60,6 @@
   })
 
   onMounted(() => {
-    console.log('Registration Mounted')
     registrationStore.$reset()
     appStore.$reset()
     performerStore.$reset()

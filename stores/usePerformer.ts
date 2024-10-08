@@ -21,7 +21,6 @@ export const usePerformers = defineStore(
     const fieldConfigStore = useFieldConfig()
     const registrationStore = useRegistration()
     const performerErrors = ref<{ id: number; count: number }[]>([])
-    const performerKeys = fieldConfigStore.performerTypeFields('Performer')
 
     function $reset() {
       performers.value.splice(0, performers.value.length)
@@ -82,6 +81,7 @@ export const usePerformers = defineStore(
     }
 
     function findInitialPerformerErrors() {
+      const performerKeys = fieldConfigStore.performerTypeFields('Performer')
       for (const performer of performers.value) {
         let count = 0
         for (const key of performerKeys) {
@@ -95,6 +95,13 @@ export const usePerformers = defineStore(
         performerErrors.value[index].count = count
       }
     }
+
+    const totalPerformerErrors = computed(() => {
+      return performerErrors.value.reduce(
+        (total, item) => total + item.count,
+        0
+      )
+    })
 
     /**
      * Adds new Performer to db and store
@@ -236,6 +243,7 @@ export const usePerformers = defineStore(
       updateAllPerformers,
       deletePerformer,
       findInitialPerformerErrors,
+      totalPerformerErrors,
     }
   },
   {

@@ -136,7 +136,6 @@
 
   const performerKeys = fieldConfigStore.performerTypeFields('Performer')
   watchEffect(() => {
-    console.log('Performer WatchEffect')
     let count = 0
     for (const key of performerKeys) {
       if (status[key as keyof Performer] !== StatusEnum.saved) {

@@ -18,7 +18,6 @@
           }
         },
       })
-      console.log('Token Response: ', tokenResponse.value)
     } catch (err) {
       tokenError.value = true
       console.log(err)

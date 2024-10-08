@@ -36,19 +36,16 @@ export const formErrors = computed(() => {
       tabName.value = {
         Performer: performerStore.performerErrors[0].count,
         Teacher: teacherStore.teacherErrors,
-        'Solo Classes': sumErrorsArray(classesStore.classErrors),
+        'Solo Classes': classesStore.totalClassErrors,
         Summary: 0,
       }
       break
     case 'GROUP':
       tabName.value = {
         Group: groupStore.groupErrors,
-        Performers: performerStore.performerErrors.reduce(
-          (a, b) => a + b.count,
-          0
-        ),
+        Performers: performerStore.totalPerformerErrors,
         Teacher: teacherStore.teacherErrors,
-        'Group Classes': sumErrorsArray(classesStore.classErrors),
+        'Group Classes': classesStore.totalClassErrors,
         Summary: 0,
       }
       break
@@ -72,7 +69,7 @@ export const formErrors = computed(() => {
           (a, b) => a + b.count,
           0
         ),
-        'Community Classes': sumErrorsArray(classesStore.classErrors),
+        'Community Classes': classesStore.totalClassErrors,
         Summary: 0,
       }
       break
