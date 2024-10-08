@@ -33,11 +33,20 @@ export const useCommunityGroup = defineStore(
         id: communityGrp.id,
         name: communityGrp.name || null,
         groupSize:
-          communityGrp.groupSize !== null ? communityGrp.groupSize : null,
+          communityGrp.groupSize !== null &&
+          communityGrp.groupSize !== undefined
+            ? communityGrp.groupSize
+            : null,
         chaperones:
-          communityGrp.chaperones !== null ? communityGrp.chaperones : null,
+          communityGrp.chaperones !== null &&
+          communityGrp.chaperones !== undefined
+            ? communityGrp.chaperones
+            : null,
         wheelchairs:
-          communityGrp.wheelchairs !== null ? communityGrp.wheelchairs : null,
+          communityGrp.wheelchairs !== null &&
+          communityGrp.wheelchairs !== undefined
+            ? communityGrp.wheelchairs
+            : null,
         earliestTime: communityGrp.earliestTime || null,
         latestTime: communityGrp.latestTime || null,
         unavailable: communityGrp.unavailable || null,
@@ -45,7 +54,7 @@ export const useCommunityGroup = defineStore(
         photoPermission: communityGrp.photoPermission || null,
         __typename: communityGrp.__typename || 'CommunityGroup',
       })
-      communityGroupErrors.value.push( {id: communityGrp.id, count: 0} )
+      communityGroupErrors.value.push({ id: communityGrp.id, count: 0 })
     }
 
     function findInitialCommunityGroupErrors() {
@@ -54,7 +63,7 @@ export const useCommunityGroup = defineStore(
       for (const group of communityGroup.value) {
         let count = 0
         for (const key of communityGroupKeys) {
-          if (group[key as keyof CommunityGroup]=== null) {
+          if (group[key as keyof CommunityGroup] === null) {
             count++
           }
         }

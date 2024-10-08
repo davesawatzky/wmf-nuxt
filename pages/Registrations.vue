@@ -174,7 +174,6 @@
       teacherStore.teacherErrors = 1
     }
     await classesStore.loadClasses(registrationId)
-
     appStore.dataLoading = false
     await navigateTo('/form')
   }
@@ -247,6 +246,7 @@
     }
     teacherStore.teacherErrors = 1
     await classesStore.createClass(registrationId.value)
+    classesStore.findInitialClassErrors()
     appStore.dataLoading = false
     await navigateTo('/form')
   }
@@ -406,10 +406,6 @@
               the left of the table.
             </li>
             <li>A copy can be printed for your records.</li>
-            <li>
-              Only school teachers with their own accounts can complete
-              registrations for their own school ensembles.
-            </li>
           </ul>
         </div>
         <h3>Start A New Registration Form</h3>

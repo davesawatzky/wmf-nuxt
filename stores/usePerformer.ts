@@ -21,6 +21,8 @@ export const usePerformers = defineStore(
     const fieldConfigStore = useFieldConfig()
     const registrationStore = useRegistration()
     const performerErrors = ref<{ id: number; count: number }[]>([])
+    const performerKeys = fieldConfigStore.performerTypeFields('Performer')
+
     function $reset() {
       performers.value.splice(0, performers.value.length)
       performerErrors.value.splice(0, performerErrors.value.length)
@@ -37,7 +39,6 @@ export const usePerformers = defineStore(
 
       return Math.round(totalAge / performers.value.length)
     })
-
 
     /**
      * Returns first name plus last name
@@ -81,7 +82,6 @@ export const usePerformers = defineStore(
     }
 
     function findInitialPerformerErrors() {
-      const performerKeys = fieldConfigStore.performerTypeFields('Performer')
       for (const performer of performers.value) {
         let count = 0
         for (const key of performerKeys) {
@@ -148,8 +148,8 @@ export const usePerformers = defineStore(
         const performers: Performer[] = newResult.performers
         for (let i = 0; i < performers.length; i++) {
           addToStore(performers[i])
-          findInitialPerformerErrors()
         }
+        findInitialPerformerErrors()
       }
     })
     onPerformersError((error) => {

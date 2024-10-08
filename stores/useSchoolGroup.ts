@@ -31,11 +31,19 @@ export const useSchoolGroup = defineStore(
         schoolGroup.value.push({
           id: schoolGrp.id,
           name: schoolGrp.name || null,
-          groupSize: schoolGrp.groupSize !== null ? schoolGrp.groupSize : null,
+          groupSize:
+            schoolGrp.groupSize !== null && schoolGrp.groupSize !== undefined
+              ? schoolGrp.groupSize
+              : null,
           chaperones:
-            schoolGrp.chaperones !== null ? schoolGrp.chaperones : null,
+            schoolGrp.chaperones !== null && schoolGrp.chaperones !== undefined
+              ? schoolGrp.chaperones
+              : null,
           wheelchairs:
-            schoolGrp.wheelchairs !== null ? schoolGrp.wheelchairs : null,
+            schoolGrp.wheelchairs !== null &&
+            schoolGrp.wheelchairs !== undefined
+              ? schoolGrp.wheelchairs
+              : null,
           earliestTime: schoolGrp.earliestTime || null,
           latestTime: schoolGrp.latestTime || null,
           unavailable: schoolGrp.unavailable || null,

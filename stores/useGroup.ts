@@ -23,6 +23,7 @@ export const useGroup = defineStore(
     const groupErrors = ref(0)
     function $reset() {
       group.value = <Group>{}
+      groupErrors.value = 0
     }
 
     watch(

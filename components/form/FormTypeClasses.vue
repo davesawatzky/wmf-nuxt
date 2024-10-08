@@ -14,7 +14,7 @@
   const appStore = useAppStore()
 
   const status = reactive<Status[]>([])
-  onBeforeMount(() => {
+  onMounted(() => {
     for (let i = 0; i < classesStore.registeredClasses.length; i++) {
       status.push({ schoolGroupID: StatusEnum.null })
       status.push({ communityGroupID: StatusEnum.null })
@@ -31,6 +31,7 @@
       status.push({ schoolGroupID: StatusEnum.null })
     if (appStore.performerType === PerformerType.COMMUNITY)
       status.push({ communityGroupID: StatusEnum.null })
+    validate()
   }
 
   async function removeClass(classId: number, index: number) {

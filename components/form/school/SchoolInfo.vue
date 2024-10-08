@@ -22,17 +22,14 @@
 
   const validationSchema = toTypedSchema(
     yup.object({
-      schoolName: yup.string().trim().required('Enter the name of the school'),
-      schoolDivision: yup
-        .string()
-        .trim()
-        .required('Enter the name of the school divison'),
-      address: yup.string().trim().required(),
+      schoolName: yup.string().trim().required('Required'),
+      schoolDivision: yup.string().trim().required('Required'),
+      address: yup.string().trim().required('Required'),
       city: yup
         .string()
         .trim()
         .max(20, 'Too many characters')
-        .required('Enter a city name'),
+        .required('Required'),
       province: yup.string().max(3).required(),
       postalCode: yup
         .string()
@@ -41,12 +38,12 @@
           /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i,
           'Enter a valid postal code'
         )
-        .required('Enter a valid postal code'),
+        .required('Required'),
       phone: yup
         .string()
         .trim()
         .phone('CA', 'Please enter a valid phone number')
-        .required('A phone number is required'),
+        .required('Required'),
     })
   )
 

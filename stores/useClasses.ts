@@ -21,37 +21,15 @@ export const useClasses = defineStore(
   'registeredClasses',
   () => {
     const registeredClasses = ref<RegisteredClass[]>([])
-    const selectionId = ref(0)
     const MOZART_CLASSES = ['7700', '7701', '7702', '7703', '7704', '7705']
     const fieldConfigStore = useFieldConfig()
     const registrationStore = useRegistration()
+    const classErrors = ref<ClassErrors[]>([])
+
     function $reset() {
       registeredClasses.value.splice(0, registeredClasses.value.length)
+      classErrors.value.splice(0, classErrors.value.length)
     }
-
-    const classErrors = computed(() => {
-      let classKeys = fieldConfigStore.performerTypeFields('FestivalClasses')
-      let selectionKeys = fieldConfigStore.performerTypeFields('Selection')
-      let count = 0
-      for (let festclass of registeredClasses.value) {
-        for (let key of classKeys) {
-          if (key !== 'selections') {
-            if (festclass[key as keyof RegisteredClass] === null) {
-              count++
-            }
-          } else {
-            for (let select of festclass.selections!) {
-              for (let key2 of selectionKeys) {
-                if (select[key2 as keyof Selection] === null) {
-                  count++
-                }
-              }
-            }
-          }
-        }
-      }
-      return count
-    })
 
     /**
      * Add empty class variables to store. Used when requiring a new
@@ -72,16 +50,62 @@ export const useClasses = defineStore(
           minSelections: regClass.minSelections || null,
           maxSelections: regClass.maxSelections || null,
           numberOfSelections: regClass.numberOfSelections || null,
-          price: (regClass.price as number) || 0.00,
+          price: (regClass.price as number) || 0.0,
           schoolGroupID: regClass.schoolGroupID || null,
           communityGroupID: regClass.communityGroupID || null,
           selections: regClass.selections || <Selection[]>[],
           __typename: regClass.__typename || 'RegisteredClass',
         })
+        classErrors.value.push({ id: regClass.id, count: 0, selections: [] })
+        if (regClass.selections?.length! > 0) {
+          for (let i = 0; i < regClass.selections?.length!; i++) {
+            classErrors.value[classErrors.value.length - 1].selections.push({
+              id: regClass.selections![i].id,
+              count: 0,
+            })
+          }
+        }
       } catch (err) {
         console.log(err)
       }
     }
+
+    function findInitialClassErrors() {
+      const classKeys = fieldConfigStore.performerTypeFields('FestivalClasses')
+      const selectionKeys = fieldConfigStore.performerTypeFields('Selection')
+      for (let festclass of registeredClasses.value) {
+        let classIndex = classErrors.value.findIndex(
+          (item) => item.id === festclass.id
+        )
+        let classErrorCount = 0
+        for (let key of classKeys) {
+          if (key !== 'selections') {
+            if (festclass[key as keyof RegisteredClass] === null) {
+              classErrorCount++
+            }
+          } else {
+            for (let selection of festclass.selections!) {
+              let selectionIndex = classErrors.value[
+                classIndex
+              ].selections.findIndex((item) => item.id === selection.id)
+              let selectionErrorCount = 0
+              for (let key2 of selectionKeys) {
+                if (selection[key2 as keyof Selection] === null) {
+                  selectionErrorCount++
+                }
+              }
+              classErrors.value[classIndex].selections[selectionIndex].count =
+                selectionErrorCount
+            }
+          }
+        }
+        classErrors.value[classIndex].count = classErrorCount
+      }
+    }
+
+    const totalClassErrors = computed(() => {
+      return sumErrorsArray(classErrors.value)
+    })
 
     /**
      * Add empty works variables to specific class in store. Used
@@ -103,6 +127,10 @@ export const useClasses = defineStore(
           composer: selection.composer || null,
           duration: selection.duration || null,
           __typename: selection.__typename || 'Selection',
+        })
+        classErrors.value[classIndex].selections.push({
+          id: selection.id,
+          count: 0,
         })
       } catch (err) {
         console.log(err)
@@ -161,11 +189,14 @@ export const useClasses = defineStore(
         const returnedClasses: RegisteredClass[] =
           newResult.registration.registeredClasses
         const length = returnedClasses.length
-        for (let i = 0; i < length; i++) addClassToStore(returnedClasses[i])
+        for (let i = 0; i < length; i++) {
+          addClassToStore(returnedClasses[i])
+        }
+        findInitialClassErrors()
       }
     })
     onLoadClassesError((error) => {
-      console.log(error)
+      console.log('Classes load error.', error)
     })
 
     /**
@@ -229,6 +260,7 @@ export const useClasses = defineStore(
         (item) => item.id === registeredClassId
       )
       registeredClasses.value.splice(classIndex, 1)
+      classErrors.value.splice(classIndex, 1)
       return classIndex
     }
     onClassDeleteError((error) => {
@@ -365,6 +397,8 @@ export const useClasses = defineStore(
       updateSelection,
       updateAllSelections,
       deleteSelection,
+      findInitialClassErrors,
+      totalClassErrors,
     }
   },
   {

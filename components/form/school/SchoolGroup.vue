@@ -79,8 +79,8 @@
         .required('Required'),
       latestTime: yup
         .string()
-        .matches(/[0-1]{0,1}[0-9]:[0-5][0-9]/, 'Enter a time')
         .default('17:00')
+        .matches(/[0-1]{0,1}[0-9]:[0-5][0-9]/, 'Enter a time')
         .required('Required'),
       groupSize: yup
         .number()

@@ -1,5 +1,22 @@
+import { b } from 'vitest/dist/chunks/suite.BMWOKiTe.js'
+import type { ClassErrors } from '~/utils/types'
+
 interface FormErrors {
   [key: string]: number
+}
+
+export function sumErrorsArray(arr: any) {
+  let sum = 0
+  arr.forEach((obj: any) => {
+    for (const key in obj) {
+      if (key === 'selections') {
+        sum += sumErrorsArray(obj[key])
+      } else if (key === 'count') {
+        sum += obj.count
+      }
+    }
+  })
+  return sum
 }
 
 export const formErrors = computed(() => {
@@ -19,7 +36,7 @@ export const formErrors = computed(() => {
       tabName.value = {
         Performer: performerStore.performerErrors[0].count,
         Teacher: teacherStore.teacherErrors,
-        'Solo Classes': classesStore.classErrors,
+        'Solo Classes': sumErrorsArray(classesStore.classErrors),
         Summary: 0,
       }
       break
@@ -31,7 +48,7 @@ export const formErrors = computed(() => {
           0
         ),
         Teacher: teacherStore.teacherErrors,
-        'Group Classes': classesStore.classErrors,
+        'Group Classes': sumErrorsArray(classesStore.classErrors),
         Summary: 0,
       }
       break
@@ -43,7 +60,7 @@ export const formErrors = computed(() => {
           (a, b) => a + b.count,
           0
         ),
-        'School Classes': classesStore.classErrors,
+        'School Classes': classesStore.totalClassErrors,
         Summary: 0,
       }
       break
@@ -55,7 +72,7 @@ export const formErrors = computed(() => {
           (a, b) => a + b.count,
           0
         ),
-        'Community Classes': classesStore.classErrors,
+        'Community Classes': sumErrorsArray(classesStore.classErrors),
         Summary: 0,
       }
       break

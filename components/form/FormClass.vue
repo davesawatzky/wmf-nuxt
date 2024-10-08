@@ -7,6 +7,7 @@
     FestivalClassesDocument,
     InstrumentsDocument,
     LevelsDocument,
+    RegisteredClassesDocument,
     SubdisciplinesByTypeDocument,
   } from '@/graphql/gql/graphql'
   import { logErrorMessages } from '@vue/apollo-util'
@@ -23,8 +24,10 @@
     Level,
     RegisteredClass,
     RegisteredClassInput,
+    Selection,
     Subdiscipline,
   } from '@/graphql/gql/graphql'
+  import { count } from 'console'
 
   const props = defineProps<{
     modelValue: RegisteredClass
@@ -36,39 +39,15 @@
     'update:modelValue': [value: RegisteredClassInput]
   }>()
 
-  const status = reactive<Status>({
-    discipline: props.modelValue.discipline
-      ? StatusEnum.saved
-      : StatusEnum.null,
-    subdiscipline: props.modelValue.subdiscipline
-      ? StatusEnum.saved
-      : StatusEnum.null,
-    level: props.modelValue.level ? StatusEnum.saved : StatusEnum.null,
-    category: props.modelValue.category ? StatusEnum.saved : StatusEnum.null,
-    schoolGroupID: props.modelValue.schoolGroupID
-      ? StatusEnum.saved
-      : StatusEnum.null,
-    communityGroupID: props.modelValue.communityGroupID
-      ? StatusEnum.saved
-      : StatusEnum.null,
-  })
-
   const instrumentRequired = ref(false) // used to be for mozart classes.  Might not need this anymore.
   const appStore = useAppStore()
   const performerStore = usePerformers()
   const groupStore = useGroup()
-
-  // TODO: Bug-prone - used for recording Registered Classes - but also for modelValue !!!!!!!
   const classesStore = useClasses()
   const classSelection = ref(<FestivalClass>{}) // Used for Festival Class Searchrd
   const loadInfoFirstRun = ref(true) // Flag to keep track of when to load extra information.
-
-  // This is the Registered Class varialbe - sent to parent as modelValue
-  // and then on to the classesStore.registeredClasses from there.
-  const selectedClasses = computed({
-    get: () => props.modelValue,
-    set: (value) => emits('update:modelValue', value),
-  })
+  const fieldConfigStore = useFieldConfig()
+  const allSelectionErrors = ref<{ selectionId: number; count: number }[]>([])
 
   /**
    * Registration first gets loaded form the 'Registration' page
@@ -92,6 +71,58 @@
       loadInfoFirstRun.value = true
       await loadClassInformation()
     }
+  })
+
+  const status = reactive<Status>({
+    discipline: props.modelValue.discipline
+      ? StatusEnum.saved
+      : StatusEnum.null,
+    subdiscipline: props.modelValue.subdiscipline
+      ? StatusEnum.saved
+      : StatusEnum.null,
+    level: props.modelValue.level ? StatusEnum.saved : StatusEnum.null,
+    category: props.modelValue.category ? StatusEnum.saved : StatusEnum.null,
+    schoolGroupID: props.modelValue.schoolGroupID
+      ? StatusEnum.saved
+      : StatusEnum.null,
+    communityGroupID: props.modelValue.communityGroupID
+      ? StatusEnum.saved
+      : StatusEnum.null,
+  })
+
+  // This is the Registered Class variable - sent to parent as modelValue
+  // and then on to the classesStore.registeredClasses from there.
+  const selectedClasses = computed({
+    get: () => props.modelValue,
+    set: (value) => emits('update:modelValue', value),
+  })
+
+  const classKeys = fieldConfigStore.performerTypeFields('FestivalClasses')
+  watchEffect(() => {
+    let index = classesStore.classErrors.findIndex(
+      (item) => item.id === props.classId
+    )
+    let count = 0
+    for (let key of classKeys) {
+      if (
+        key !== 'selections' &&
+        key !== 'schoolGroupID' &&
+        key !== 'communityGroupID'
+      ) {
+        if (status[key as keyof RegisteredClass] !== StatusEnum.saved) {
+          count++
+        }
+      }
+    }
+    if (
+      (appStore.performerType === 'SCHOOL' &&
+        !classesStore.registeredClasses[props.classIndex].schoolGroupID) ||
+      (appStore.performerType === 'COMMUNITY' &&
+        !classesStore.registeredClasses[props.classIndex].communityGroupID)
+    ) {
+      count++
+    }
+    classesStore.classErrors[index].count = count
   })
 
   // Loading the instruments table.
@@ -214,6 +245,17 @@
         return item.name === selectedClasses.value.discipline
       }) ?? <Discipline>{}
     )
+  })
+
+  const isDisciplineDisabled = computed(() => {
+    if (
+      appStore.performerType === 'SOLO' &&
+      !performerStore.performers[0].instrument
+    ) {
+      return true
+    } else {
+      return false
+    }
   })
 
   /**
@@ -528,7 +570,9 @@
       class="grid grid-cols-12 gap-x-3 gap-y-5 items-end">
       <div class="col-span-6 lg:col-span-2">
         <BaseSelect
-          id=""
+          id="disciplines"
+          :class="isDisciplineDisabled ? 'off' : ''"
+          :disabled="isDisciplineDisabled"
           v-model="selectedClasses.discipline"
           :status="status.discipline"
           label="Discipline"

@@ -325,6 +325,7 @@ export type Level = {
   festivalClasses?: Maybe<Array<FestivalClass>>;
   id: Scalars['Int']['output'];
   name: Scalars['String']['output'];
+  sortOrder?: Maybe<Scalars['Int']['output']>;
   subdisciplines?: Maybe<Array<Subdiscipline>>;
 };
 
@@ -338,6 +339,7 @@ export type LevelfestivalClassesArgs = {
 export type LevelInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   name: Scalars['String']['input'];
+  sortOrder?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type LevelPayload = {

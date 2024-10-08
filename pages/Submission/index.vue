@@ -34,7 +34,7 @@
     if (registrationStore.registration.performerType === 'SOLO') {
       if (performerStore.performers[0].age! < 18) {
         return true
-      } 
+      }
     } else {
       readConfirmation.value.parentGuardian = true
       return false
@@ -90,14 +90,14 @@
         be accepted.
       </p>
       <p>
-        Notification, including date, time and location of each class will be
-        forwarded to the participant's teacher prior to the publication of the
-        program. Teachers are responsible to advise their students of this
-        information and to notify the office of any errors. Participants and
-        teachers are to notify the Festival office of any change of personal
-        information following submission of entry form. Participants who wish to
-        withdraw must notify the Festival office in writing as early as
-        possible.
+        Confirmation of registered participant entries including class,
+        selection and composer will be sent to the teachers for verification.
+        Festival programs including dates, times and locations will be available
+        for purchase for $10 with an anticipated availability February 1, 2025.
+        Participants and teachers are to notify the Festival office of any
+        change of personal information following submission of entry form.
+        Participants who wish to withdraw must notify the Festival office in
+        writing as early as possible. Entry fees are non-refundable.
       </p>
       <BaseCheckbox
         v-model="readConfirmation.importantNotes"

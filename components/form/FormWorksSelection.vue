@@ -1,7 +1,12 @@
 <script setup lang="ts">
   import * as yup from 'yup'
   import { useClasses } from '@/stores/useClasses'
-  import type { SelectionInput } from '~/graphql/gql/graphql'
+  import type {
+    RegisteredClass,
+    Selection,
+    SelectionInput,
+  } from '~/graphql/gql/graphql'
+  import { emit } from 'process'
 
   const props = defineProps<{
     modelValue: SelectionInput
@@ -16,6 +21,8 @@
   }>()
 
   const classesStore = useClasses()
+  const fieldConfigStore = useFieldConfig()
+  // const selectionError = ref(0)
 
   const work = computed({
     get: () => props.modelValue,
@@ -58,6 +65,19 @@
         .required('Required'),
     })
   )
+
+  const selectionKeys = fieldConfigStore.performerTypeFields('Selection')
+  watchEffect(() => {
+    let count = 0
+    for (let key of selectionKeys) {
+      if (status[key as keyof Selection] !== StatusEnum.saved) {
+        count++
+      }
+    }
+    classesStore.classErrors[props.classIndex].selections[
+      props.selectionIndex
+    ].count = count
+  })
 
   const { errors, validate } = useForm({
     validationSchema,
