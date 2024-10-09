@@ -7,14 +7,19 @@
   const showMenu = ref(false)
   const route = useRoute()
   const teacherStore = useTeacher()
+  const appStore = useAppStore()
 
   function toggleNav() {
     showMenu.value = !showMenu.value
   }
 
-  async function cleanUpTeachers() {
-    if (route.name === 'Form') await teacherStore.removeUnlistedTeacher()
-  }
+  // async function cleanUpTeachers() {
+  //   if (route.name === 'Form') {
+  //     if (teacherStore.unlistedTeacher === true) {
+  //       await teacherStore.removeUnlistedTeacher()
+  //     }
+  //   }
+  // }
 </script>
 
 <template>
@@ -52,9 +57,7 @@
           aria-label="main">
           <div class="md:flex">
             <UIMenu>
-              <UIMenuButton
-                class="px-3 py-1 mx-1 hover:bg-sky-600 rounded-md"
-                @click="cleanUpTeachers">
+              <UIMenuButton class="px-3 py-1 mx-1 hover:bg-sky-600 rounded-md">
                 <Icon
                   class="align-middle text-2xl"
                   name="ic:round-app-registration" />
@@ -116,9 +119,7 @@
               </transition>
             </UIMenu>
             <UIMenu>
-              <UIMenuButton
-                class="px-3 py-1 mx-1 hover:bg-sky-600 rounded-md"
-                @click="cleanUpTeachers">
+              <UIMenuButton class="px-3 py-1 mx-1 hover:bg-sky-600 rounded-md">
                 <Icon
                   class="align-middle text-2xl"
                   name="fluent:inprivate-account-24-filled" />

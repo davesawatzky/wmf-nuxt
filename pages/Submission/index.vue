@@ -30,16 +30,18 @@
     return true
   })
 
-  const checkIfParentConsentRequired = computed(() => {
+  function checkIfParentConsentRequired() {
     if (registrationStore.registration.performerType === 'SOLO') {
       if (performerStore.performers[0].age! < 18) {
         return true
+      } else {
+        readConfirmation.value.parentGuardian = true
+        return false
       }
     } else {
       readConfirmation.value.parentGuardian = true
-      return false
     }
-  })
+  }
 
   function printWindow() {
     window.print()
@@ -108,7 +110,7 @@
         id="nonrefundable"
         label="I understand that ENTRY FEES ARE NON-REFUNDABLE." />
       <BaseCheckbox
-        v-if="checkIfParentConsentRequired"
+        v-if="checkIfParentConsentRequired()"
         v-model="readConfirmation.parentGuardian"
         id="parent-guardian"
         label="If participant is under 18 then I certify that I am the parent/guardian of this child." />

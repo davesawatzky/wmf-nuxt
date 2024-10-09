@@ -27,7 +27,6 @@ export type FilteredTeacher = {
   lastName: string
   phone?: string
   email?: string
-  instrument?: string
 } | null
 
 export const useTeacher = defineStore(
@@ -45,8 +44,8 @@ export const useTeacher = defineStore(
     const duplicateCheck = ref({} as Teacher | null)
     const teacherCreated = ref(false)
     const unlistedTeacher = ref(false)
-    const fieldStatusRef = ref<{stat: string; field: string}>()
-    
+    const runRemovalHook = ref(true)
+    const fieldStatusRef = ref<{ stat: string; field: string }>()
 
     function $resetTeacher() {
       teacher.value = <Teacher>{}
@@ -54,9 +53,12 @@ export const useTeacher = defineStore(
     }
     function $resetAllTeachers() {
       teacher.value = <Teacher>{}
-      chosenTeacher.value = <FilteredTeacher>{}
       allTeachers.value.splice(0, allTeachers.value.length)
       teacherErrors.value = 0
+    }
+
+    function $resetChosenTeacher() {
+      chosenTeacher.value = <FilteredTeacher>{}
     }
 
     /**
@@ -277,56 +279,85 @@ export const useTeacher = defineStore(
       console.log(error)
     })
 
-
-
     async function removeUnlistedTeacher() {
-      if (
-        (!teacher.value.email ||
-          !teacher.value.phone ||
-          !teacher.value.firstName ||
-          !teacher.value.lastName) &&
-        teacherCreated.value
-      ) {
-        await removeTeacherFromDatabaseAndRegistration()
-        fieldStatusRef.value = {
-          stat: 'remove',
-          field: 'id',
-        }
-        chosenTeacher.value = null
-        emailAlreadyExists.value = false
-        unlistedTeacher.value = false
-      } else if (!!unlistedTeacher.value) {
-        chosenTeacher.value = {
-          id: teacher.value.id,
-          firstName: teacher.value.firstName!,
-          lastName: teacher.value.lastName!,
-          phone: teacher.value.phone!,
-          email: teacher.value.email!,
-          instrument: teacher.value.instrument ?? undefined,
+      try {
+        if (
+          (!teacher.value.email ||
+            !teacher.value.phone ||
+            !teacher.value.firstName ||
+            !teacher.value.lastName) &&
+          !!teacherCreated.value
+        ) {
+          console.log('Removing teacher from Database and Registration')
+          await removeTeacherFromDatabaseAndRegistration()
+          console.log('Teacher removed from Database and Registration')
+          fieldStatusRef.value = {
+            stat: 'remove',
+            field: 'id',
+          }
+          chosenTeacher.value = null
+          emailAlreadyExists.value = false
+        } else if (!!unlistedTeacher.value) {
+          chosenTeacher.value = {
+            id: teacher.value.id,
+            firstName: teacher.value.firstName!,
+            lastName: teacher.value.lastName!,
+            phone: teacher.value.phone!,
+            email: teacher.value.email!,
+          }
         }
         unlistedTeacher.value = false
         teacherCreated.value = false
-        $resetAllTeachers()
-        if (
-          appStore.performerType === 'SCHOOL' ||
-          appStore.performerType === 'COMMUNITY'
-        ) {
-          await loadAllTeachers('schoolTeacher')
-        } else {
-          await loadAllTeachers('privateTeacher')
-        }
+        console.log(
+          'After removal of unlisted teacher',
+          teacherCreated.value,
+          unlistedTeacher.value
+        )
+      } catch (error) {
+        console.log('Error removing unlisted teacher', error)
       }
     }
-    async function removeTeacherFromDatabaseAndRegistration() {
-      if (teacher.value.id !== 2) {
-        await deleteTeacher(teacher.value.id)
-        registrationStore.registration.teacherID = null
+
+    async function removeUnlistedTeacherOnDeactivate() {
+      console.log('Removal Hook on deactivation', runRemovalHook.value)
+      try {
+        if (!!runRemovalHook.value) {
+          await removeUnlistedTeacher()
+        }
+      } catch (error) {
+        console.log('Error removing unlisted teachers on deactivation', error)
       }
-      await registrationStore.updateRegistration(
-        'teacherID',
-        registrationStore.registration.id
-      )
-      $resetTeacher()
+    }
+
+    async function removeUnlistedTeacherBeforeUnmount() {
+      runRemovalHook.value = false
+      try {
+        await removeUnlistedTeacher()
+      } catch (error) {
+        console.log('Error removing unlisted teachers before unmounting', error)
+      }
+    }
+
+    async function removeTeacherFromDatabaseAndRegistration() {
+      try {
+        if (teacher.value.id !== 2) {
+          console.log('Deleting Teacher')
+          await deleteTeacher(teacher.value.id)
+          console.log('Deletion complete')
+          // registrationStore.registration.teacherID = null
+        }
+        console.log('Skipping Updating Registration')
+        // await registrationStore.updateRegistration(  // TODO: Craps out here.
+        //   'teacherID',
+        //   registrationStore.registration.id
+        // )
+        console.log('Skipping Updating Registration complete')
+      } catch (error) {
+        console.log(
+          'Problem removing Teacher from Database and Registration',
+          error
+        )
+      }
     }
 
     return {
@@ -334,6 +365,7 @@ export const useTeacher = defineStore(
       allTeachers,
       $resetTeacher,
       $resetAllTeachers,
+      $resetChosenTeacher,
       teacherErrors,
       deleteTeacher,
       updateTeacher,
@@ -344,7 +376,8 @@ export const useTeacher = defineStore(
       fullName,
       duplicateTeacherCheck,
       findInitialTeacherErrors,
-      removeUnlistedTeacher,
+      removeUnlistedTeacherOnDeactivate,
+      removeUnlistedTeacherBeforeUnmount,
       emailAlreadyExists,
       chosenTeacher,
       duplicateCheck,
@@ -352,6 +385,7 @@ export const useTeacher = defineStore(
       unlistedTeacher,
       removeTeacherFromDatabaseAndRegistration,
       fieldStatusRef,
+      runRemovalHook,
     }
   },
   {

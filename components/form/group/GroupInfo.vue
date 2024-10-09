@@ -15,6 +15,7 @@
   watch(
     () => groupStore.group.groupType,
     async (newGroupType, oldGroupType) => {
+      console.log(changeGroupType.value)
       if (
         !!newGroupType &&
         !!classesStore.registeredClasses[0].discipline &&
@@ -28,10 +29,11 @@
       } else {
         cancelGroupChange.value = false
         setIsOpen(false)
+        console.log('The else GroupType', changeGroupType.value, newGroupType)
         await fieldStatus(changeGroupType.value, 'groupType')
       }
     },
-    { flush: 'post' }
+    { flush: 'post', immediate: true }
   )
 
   async function resetClasses() {
@@ -93,9 +95,10 @@
   async function fieldStatus(stat: string, fieldName: string) {
     await nextTick()
     status[fieldName] = StatusEnum.pending
-    await groupStore.updateGroup(fieldName)
-    if (stat === 'saved') status[fieldName] = StatusEnum.saved
-    else if (stat === 'remove') status[fieldName] = StatusEnum.removed
+    if (stat === 'saved') {
+      status[fieldName] = StatusEnum.saved
+      await groupStore.updateGroup(fieldName)
+    } else if (stat === 'remove') status[fieldName] = StatusEnum.removed
     else status[fieldName] = StatusEnum.null
   }
 

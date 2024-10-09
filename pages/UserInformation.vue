@@ -192,7 +192,7 @@
     <div class="col-span-6 sm:col-span-4">
       <BaseInput
         v-model.trim="userStore.user.postalCode"
-        v-maska:[maskaUcaseOption]
+        v-maska:maskaUcaseOption
         :status="status.postalCode"
         placeholder="A0A 0A0"
         data-maska="A#A #A#"

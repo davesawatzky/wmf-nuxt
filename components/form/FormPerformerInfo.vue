@@ -152,7 +152,7 @@
     preProcess: (val: string) => val.toUpperCase(),
   }
 
-  defineExpose({maskaUcaseOption})
+  defineExpose({ maskaUcaseOption })
 
   const currentYear = new Date().getFullYear()
 
@@ -236,7 +236,7 @@
     <div class="col-span-6 sm:col-span-4">
       <BaseInput
         v-model.trim="contact.postalCode"
-        v-maska:[maskaUcaseOption]
+        v-maska:maskaUcaseOption
         :status="status.postalCode"
         placeholder="A0A 0A0"
         data-maska="A#A #A#"
