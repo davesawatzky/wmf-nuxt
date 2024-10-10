@@ -31,12 +31,19 @@
     })
 
   const validationListeners = {
-    blur: (evt: Event) => handleBlur(evt, true),
+    blur: (evt: Event) => {
+      handleBlur(evt, true)
+    },
     change: (evt: Event) => {
       handleChange(evt, true)
+      console.log('Meta Dirty:', meta.dirty)
+      console.log('Meta Pending:', meta.pending)
+      console.log('Meta touched:', meta.touched)
+      console.log('Meta valid:', meta.valid)
       console.log('Meta Initial Value:', meta.initialValue)
-      if (meta.valid || !meta.initialValue) {
-        console.log('#1')
+      if (!!value.value) {
+        //meta.dirty || meta.valid || !meta.initialValue) {
+        console.log('#1', value.value)
         emit('changeStatus', 'saved')
         resetField({ value: value.value })
       } else if (meta.dirty && !value.value && !!meta.initialValue) {

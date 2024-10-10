@@ -15,7 +15,12 @@
   watch(
     () => groupStore.group.groupType,
     async (newGroupType, oldGroupType) => {
-      console.log(changeGroupType.value)
+      console.log(
+        'Radio Watcher',
+        newGroupType,
+        oldGroupType,
+        changeGroupType.value
+      )
       if (
         !!newGroupType &&
         !!classesStore.registeredClasses[0].discipline &&
@@ -30,10 +35,10 @@
         cancelGroupChange.value = false
         setIsOpen(false)
         console.log('The else GroupType', changeGroupType.value, newGroupType)
-        await fieldStatus(changeGroupType.value, 'groupType')
+        await fieldStatus('saved', 'groupType')
       }
     },
-    { flush: 'post', immediate: true }
+    { flush: 'post' }
   )
 
   async function resetClasses() {
