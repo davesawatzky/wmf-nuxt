@@ -288,9 +288,7 @@ export const useTeacher = defineStore(
             !teacher.value.lastName) &&
           !!teacherCreated.value
         ) {
-          console.log('Removing teacher from Database and Registration')
           await removeTeacherFromDatabaseAndRegistration()
-          console.log('Teacher removed from Database and Registration')
           fieldStatusRef.value = {
             stat: 'remove',
             field: 'id',
@@ -314,18 +312,17 @@ export const useTeacher = defineStore(
           unlistedTeacher.value
         )
       } catch (error) {
-        console.log('Error removing unlisted teacher', error)
+        console.log(error)
       }
     }
 
     async function removeUnlistedTeacherOnDeactivate() {
-      console.log('Removal Hook on deactivation', runRemovalHook.value)
       try {
         if (!!runRemovalHook.value) {
           await removeUnlistedTeacher()
         }
       } catch (error) {
-        console.log('Error removing unlisted teachers on deactivation', error)
+        console.log(error)
       }
     }
 
@@ -334,29 +331,17 @@ export const useTeacher = defineStore(
       try {
         await removeUnlistedTeacher()
       } catch (error) {
-        console.log('Error removing unlisted teachers before unmounting', error)
+        console.log(error)
       }
     }
 
     async function removeTeacherFromDatabaseAndRegistration() {
       try {
         if (teacher.value.id !== 2) {
-          console.log('Deleting Teacher')
           await deleteTeacher(teacher.value.id)
-          console.log('Deletion complete')
-          // registrationStore.registration.teacherID = null
         }
-        console.log('Skipping Updating Registration')
-        // await registrationStore.updateRegistration(  // TODO: Craps out here.
-        //   'teacherID',
-        //   registrationStore.registration.id
-        // )
-        console.log('Skipping Updating Registration complete')
       } catch (error) {
-        console.log(
-          'Problem removing Teacher from Database and Registration',
-          error
-        )
+        console.log(error)
       }
     }
 

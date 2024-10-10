@@ -60,7 +60,6 @@
   })
 
   onMounted(async () => {
-    console.log('Registration Mounted')
     registrationStore.$reset()
     appStore.$reset()
     performerStore.$reset()
@@ -74,7 +73,6 @@
     classesStore.$reset()
     fieldConfigStore.$reset()
     await refetchRegistrations()
-    console.log('Registration Mount and refetch Complete')
   })
 
   /**
@@ -122,7 +120,6 @@
     registrationId: number,
     performerType: PerformerType
   ) {
-    console.log('Refetching again')
     await refetchRegistrations()
     await fieldConfigStore.loadRequiredFields()
     teacherStore.chosenTeacher = null
@@ -169,7 +166,6 @@
     }
     appStore.dataLoading = true
     if (!!registration?.teacher?.id) {
-      console.log('Teacher ID', registration.teacher.id)
       registrationStore.registration.teacherID = registration.teacher.id
       await teacherStore.loadTeacher(
         registrationStore.registration.teacherID,

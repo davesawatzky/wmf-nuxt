@@ -164,38 +164,28 @@
    */
 
   onActivated(async () => {
-    console.log('------ FormTeacherInfo Activated ------')
     const teacherType =
       props.schoolTeacher || props.communityConductor
         ? 'schoolTeacher'
         : 'privateTeacher'
     teacherStore.loadAllTeachers(teacherType)
     teacherStore.runRemovalHook = true
-    console.log('Removal Hook on activation', teacherStore.runRemovalHook)
     validate()
   })
 
   onDeactivated(async () => {
-    console.log('FormTeacherInfo onDeactivated')
     await teacherStore.removeUnlistedTeacherOnDeactivate()
-    console.log('FormTeacherInfo onDeactivated Complete')
   })
 
   onBeforeUnmount(async () => {
-    console.log('FormTeacherInfo Before Unmount')
     await teacherStore.removeUnlistedTeacherBeforeUnmount()
-    console.log('FormTeacherInfo Before Unmount Complete')
   })
 
-  onUnmounted(async () => {
-    console.log('FormTeacherInfo Unmounted')
-  })
+  onUnmounted(async () => {})
 
   const teacherKeys = fieldConfigStore.performerTypeFields('Teacher')
   watchEffect(() => {
-    console.log('Status Watcher is running')
     let count = 0
-    console.log('Status Watcher Unlisted', teacherStore.unlistedTeacher)
     if (teacherStore.unlistedTeacher) {
       for (const key of teacherKeys) {
         if (status[key as keyof Teacher] !== StatusEnum.saved) {
@@ -227,8 +217,6 @@
         // turns everything null or default to
         // give a clean slate for a new teacher
         teacherStore.unlistedTeacher = true
-        console.log('Teacher is Unlisted', teacherStore.unlistedTeacher)
-
         teacherStore.$resetTeacher()
         for (const key of teacherKeys) {
           if (status[key as keyof Teacher] !== StatusEnum.null) {
@@ -263,11 +251,6 @@
           // Cancels signs of new teacher creation
           teacherStore.unlistedTeacher = false
           teacherStore.teacherCreated = false
-          console.log(
-            'Watch chosen teacher - new flag values',
-            teacherStore.unlistedTeacher,
-            teacherStore.teacherCreated
-          )
         }
         // Now we load the existing teacher record from the db.
         // and updae the registration
@@ -307,7 +290,7 @@
           await registrationStore
             .updateRegistration('teacherID')
             .catch((error) => {
-              console.log('Error updating registration from teacherID', error)
+              console.log(error)
             })
           teacherStore.chosenTeacher = <FilteredTeacher>(
             teacherStore.allTeachers.find(
