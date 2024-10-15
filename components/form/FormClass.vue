@@ -69,6 +69,7 @@
       selectedClasses.value.numberOfSelections =
         props.modelValue.numberOfSelections
       loadInfoFirstRun.value = true
+      appStore.dataLoading = true
       await loadClassInformation()
     }
   })
@@ -404,6 +405,7 @@
 
     classesStore.updateClass(props.classId)
     loadInfoFirstRun.value = false
+    appStore.dataLoading = false
   })
   errorClass((error) => {
     logErrorMessages(error)
@@ -490,6 +492,7 @@
       if (selectedClasses.value.category === null) {
         selectedClasses.value.classNumber = null
       } else {
+        appStore.dataLoading = true
         await loadClassInformation()
       }
     }

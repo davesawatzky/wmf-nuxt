@@ -306,11 +306,6 @@ export const useTeacher = defineStore(
         }
         unlistedTeacher.value = false
         teacherCreated.value = false
-        console.log(
-          'After removal of unlisted teacher',
-          teacherCreated.value,
-          unlistedTeacher.value
-        )
       } catch (error) {
         console.log(error)
       }
