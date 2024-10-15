@@ -57,7 +57,7 @@
           name="email"
           type="email"
           placeholder="Email Address"
-          label="Enter you email address" />
+          label="Account Email Address" />
         <p>
           An email verification link will be sent to this email address if it
           exists in our system. Click the link in the email to change your
