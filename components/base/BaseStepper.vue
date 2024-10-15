@@ -28,10 +28,6 @@
 </script>
 
 <template>
-  {{ queryLoading }}
-  {{ mutationLoading }}
-  {{ appStore.dataLoading }}
-  {{ disableButton }}
   <div
     id="stepperGridContainer"
     class="grid grid-flow-col auto-cols-fr md:mx-28 my-4 z-20">
@@ -40,7 +36,7 @@
       :key="tab"
       class="flex flex-col relative z-20">
       <button
-        class="text-white justify-self-center mx-auto w-[40px] h-[40px] sm:w-[50px] sm:h-[50px] rounded-full font-bold sm:text-lg z-20 relative disabled:bg-slate-300"
+        class="text-white justify-self-center mx-auto w-[40px] h-[40px] sm:w-[50px] sm:h-[50px] rounded-full font-bold sm:text-lg z-20 relative"
         :class="[
           { active: currentTab === tab },
           currentTab === tab
