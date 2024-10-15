@@ -168,6 +168,16 @@
   async function gotoRegistrations() {
     await navigateTo('/registrations')
   }
+
+  const queryLoading = useGlobalQueryLoading()
+  const mutationLoading = useGlobalMutationLoading()
+  const disableButton = computed(() => {
+    if (queryLoading.value || mutationLoading.value || appStore.dataLoading) {
+      return true
+    } else {
+      return false
+    }
+  })
 </script>
 
 <template>
@@ -207,15 +217,19 @@
         class="sm:flex sm:justify-between"
         :class="tabIndex === 0 ? 'flex-row-reverse' : ''">
         <BaseButton
+          id="desktop-previous-button"
           v-show="tabIndex > 0"
           class="btn btn-blue"
-          @click="previousTab">
+          @click="previousTab"
+          :disabled="disableButton">
           <Icon name="bxs:left-arrow" />Previous
         </BaseButton>
         <BaseButton
+          id="desktop-next-button"
           v-show="tabIndex < Object.keys(tabs).length - 1"
           class="btn btn-blue"
-          @click="nextTab">
+          @click="nextTab"
+          :disabled="disableButton">
           Next<Icon name="bxs:right-arrow" />
         </BaseButton>
       </div>
@@ -223,18 +237,25 @@
         <KeepAlive>
           <BaseBottomBar class="flex justify-around">
             <BaseButton
-              :disabled="!(tabIndex > 0)"
+              id="mobile-previous-button"
+              :disabled="!(tabIndex > 0) || disableButton"
               @click="previousTab"
               class="text-sky-700 text-3xl disabled:text-slate-300">
               <Icon name="bxs:left-arrow" />
             </BaseButton>
-            <BaseButton @click="gotoRegistrations()">
+            <BaseButton
+              id="mobile-registration-button"
+              @click="gotoRegistrations()">
               <Icon
                 name="ic:outline-app-registration"
-                class="text-sky-700 text-4xl" />
+                class="text-sky-700 text-4xl"
+                :disabled="disableButton" />
             </BaseButton>
             <BaseButton
-              :disabled="!(tabIndex < Object.keys(tabs).length - 1)"
+              id="mobile-next-button"
+              :disabled="
+                !(tabIndex < Object.keys(tabs).length - 1) || disableButton
+              "
               @click="nextTab"
               class="text-sky-700 text-3xl disabled:text-slate-300">
               <Icon name="bxs:right-arrow" />
