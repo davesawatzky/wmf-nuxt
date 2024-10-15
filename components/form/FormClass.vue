@@ -69,7 +69,6 @@
       selectedClasses.value.numberOfSelections =
         props.modelValue.numberOfSelections
       loadInfoFirstRun.value = true
-      appStore.dataLoading = true
       await loadClassInformation()
     }
   })
@@ -386,6 +385,7 @@
    * selectedClasses <-- classSelection
    */
   onClassSearchResult((result) => {
+    appStore.dataLoading = true
     classSelection.value = <FestivalClass>result.data.festivalClassSearch[0]
     selectedClasses.value.minSelections = classSelection.value.minSelections
     selectedClasses.value.maxSelections = classSelection.value.maxSelections
@@ -492,7 +492,6 @@
       if (selectedClasses.value.category === null) {
         selectedClasses.value.classNumber = null
       } else {
-        appStore.dataLoading = true
         await loadClassInformation()
       }
     }
