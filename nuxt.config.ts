@@ -19,6 +19,7 @@ export default defineNuxtConfig({
     '@nuxtjs/device',
     '@primevue/nuxt-module',
     '@nuxt/icon',
+    '@nuxt/image',
   ],
   devServer: {
     port: 3001,
@@ -60,6 +61,9 @@ export default defineNuxtConfig({
   },
   headlessui: {
     prefix: 'UI',
+  },
+  image: {
+    format: ['webp'],
   },
   pinia: {
     storesDirs: ['./stores'],

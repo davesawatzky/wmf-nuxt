@@ -28,8 +28,8 @@
       class="px-3 mx-auto lg:max-w-5xl flex justify-between items-center">
       <!-- Music Festival Logo -->
       <div class="flex">
-        <img
-          class="inline h-16"
+        <NuxtPicture
+          :imgAttrs="{ class: 'inline h-16' }"
           src="/images/wmf-logo-banner.jpg"
           alt="Winnipeg Music Festival Logo" />
         <div class="ml-4 font-semibold">Winnipeg<br />Music<br />Festival</div>
