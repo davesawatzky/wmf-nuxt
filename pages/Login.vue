@@ -296,10 +296,10 @@
         individual; a teacher for all their individual students, or for all
         their choirs; a parent for their family etc.)
       </p>
-      <!-- <p>
+      <p>
         <strong>Site best used with Google Chrome or Mozilla Firefox</strong>
       </p>
-      <p>
+      <!-- <p>
         <strong
           >Accounts from last year have been removed. Please make a new
           account.</strong
