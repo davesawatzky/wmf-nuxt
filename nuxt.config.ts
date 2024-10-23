@@ -55,6 +55,15 @@ export default defineNuxtConfig({
       },
     },
   },
+  app: {
+    head: {
+      script: [
+        {
+          src: 'https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?version=4.8.0&features=globalThis',
+        },
+      ],
+    },
+  },
   experimental: {
     typedPages: true,
     componentIslands: true,
@@ -136,7 +145,7 @@ export default defineNuxtConfig({
   },
   vite: {
     build: {
-      target: 'es6',
+      target: ['es2015', 'chrome87', 'safari11', 'ios12'],
     },
     vue: {
       script: {
