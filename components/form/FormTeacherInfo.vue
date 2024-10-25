@@ -142,7 +142,7 @@
         status[fieldName] = StatusEnum.null
       }
     }
-    teacherStore.emailAlreadyExists = false
+    // teacherStore.emailAlreadyExists = false
   }
 
   const { errors, validate, values } = useForm({
@@ -159,7 +159,7 @@
 
   /**
    *
-   * Everythingl wrong happens below here
+   * Everything wrong happens below here
    *
    */
 
@@ -180,8 +180,6 @@
   onBeforeUnmount(async () => {
     await teacherStore.removeUnlistedTeacherBeforeUnmount()
   })
-
-  onUnmounted(async () => {})
 
   const teacherKeys = fieldConfigStore.performerTypeFields('Teacher')
   watchEffect(() => {
@@ -252,12 +250,13 @@
           teacherStore.unlistedTeacher = false
           teacherStore.teacherCreated = false
         }
-        // Now we load the existing teacher record from the db.
-        // and updae the registration
 
+        // Now we load the existing teacher record from the db.
+        // and update the registration
         registrationStore.registration.teacherID = newTeacher?.id
         await teacherStore.loadTeacher(newTeacher?.id, undefined)
         await registrationStore.updateRegistration('teacherID')
+        teacherStore.emailAlreadyExists = false
       }
     }
   )
@@ -268,7 +267,10 @@
       teacherStore.duplicateCheck = await teacherStore.duplicateTeacherCheck(
         teacherStore.teacher?.email
       )
-      if (teacherStore.duplicateCheck?.id) {
+      if (
+        teacherStore.duplicateCheck?.id &&
+        teacherStore.duplicateCheck?.id !== props.teacherId
+      ) {
         teacherStore.emailAlreadyExists = true
         toast.warning(
           'Email already exists. Changing the teacher details to an existing teacher if available'
@@ -304,7 +306,6 @@
             teacherStore.allTeachers.find((teacher) => teacher.id === 2)
           )
         }
-        teacherStore.emailAlreadyExists = false
       }
     }
   }

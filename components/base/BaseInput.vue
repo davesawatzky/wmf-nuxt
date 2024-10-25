@@ -35,14 +35,14 @@
 
   const validationListeners = {
     blur: (evt: Event) => {
-      handleBlur(evt, true)
-      if (meta.valid) {
-        emit('changeStatus', 'saved')
-        resetField({ value: value.value })
-      } else if (!meta.valid && meta.initialValue) {
-        emit('changeStatus', 'remove')
-        resetField({ value: props.type === 'number' ? 0 : null })
-      }
+      // handleBlur(evt, true)
+      // if (meta.valid) {
+      //   emit('changeStatus', 'saved')
+      //   resetField({ value: value.value })
+      // } else if (!meta.valid && meta.initialValue) {
+      //   emit('changeStatus', 'remove')
+      //   resetField({ value: props.type === 'number' ? 0 : null })
+      // }
     },
     change: (evt: Event) => {
       handleChange(evt, true)

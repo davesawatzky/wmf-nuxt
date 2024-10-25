@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import _ from 'lodash'
+  import _ from 'lodash'
   import { loadStripe } from '@stripe/stripe-js'
   import type {
     Stripe,
     StripeElements,
     StripeElementsOptions,
+    StripeError,
     StripePaymentElementOptions,
   } from '@stripe/stripe-js'
   import { useToast } from 'vue-toastification'
@@ -39,7 +40,7 @@ import _ from 'lodash'
 
   const stripe: Stripe | null = await loadStripe(config.public.stripePubKey)
 
-  const handleError = (error: any) => {
+  const handleError = (error: StripeError) => {
     toast.error(error.message)
     submitDisabled.value = false
     return
@@ -80,16 +81,19 @@ import _ from 'lodash'
 
     if (appStore.stripePayment === 'cash') {
       loading.value = false
-      registrationStore.registration.confirmation = WMFNumber(registrationStore.registrationId)
+      registrationStore.registration.confirmation = WMFNumber(
+        registrationStore.registrationId
+      )
       spinnerHidden.value = true
       await navigateTo('/Submission/result')
       return
     } else if (appStore.stripePayment === 'ccard') {
       if (submitDisabled.value) {
+        //TODO: check this flag.
         return
       }
 
-      if ( !stripe || !elements ) return
+      if (!stripe || !elements) return
 
       submitDisabled.value = true
 
@@ -182,14 +186,14 @@ import _ from 'lodash'
         class="btn w-[200px] h-[150px] text-xl font-semibold"
         :class="appStore.stripePayment === 'cash' ? 'btn-green' : 'btn-blue'"
         label="Cash, Cheque, E-Transfer"
-        @click="appStore.stripePayment = 'cash'; submitDisabled = false">
+        @click="(appStore.stripePayment = 'cash'), (submitDisabled = false)">
         Cash, Cheque, E-Transfer
       </BaseButton>
       <BaseButton
         class="btn w-[200px] h-[150px] text-xl font-semibold"
         :class="appStore.stripePayment === 'ccard' ? 'btn-green' : 'btn-blue'"
         label="Pay by Credit Card"
-        @click="appStore.stripePayment = 'ccard'; submitDisabled = false">
+        @click="(appStore.stripePayment = 'ccard'), (submitDisabled = false)">
         Credit Card
       </BaseButton>
     </div>
@@ -223,7 +227,9 @@ import _ from 'lodash'
           <ul class="list-disc">
             <li>
               Payment may be made by cash, cheque, or e-transfer to the Winnipeg
-              Music Festival (<a class="text-sky-600" href="mailto:wmf@mts.net"
+              Music Festival (<a
+                class="text-sky-600"
+                href="mailto:wmf@mts.net"
                 ><strong>wmf@mts.net</strong></a
               >).
             </li>
