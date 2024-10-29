@@ -43,6 +43,8 @@
   const handleError = (error: StripeError) => {
     toast.error(error.message)
     submitDisabled.value = false
+    loading.value = false
+    spinnerHidden.value = true
     return
   }
 
