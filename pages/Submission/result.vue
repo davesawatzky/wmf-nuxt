@@ -33,6 +33,7 @@
   const communityGroups = toValue(communityGroupStore.communityGroup)
   const registeredClasses = toValue(classesStore.registeredClasses)
   const performerType = toValue(appStore.performerType)
+  const paymentType = toValue(appStore.stripePayment)
   const registration = toValue(registrationStore.registration)
   const lateFee = toValue(registrationStore.lateRegistrationFee())
   const userFirstName = toValue(userStore.user.firstName)
@@ -112,6 +113,7 @@
           communityGroups,
           registeredClasses,
           performerType,
+          paymentType,
           registration,
           lateFee,
           userFirstName,

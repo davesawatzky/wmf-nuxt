@@ -19,6 +19,7 @@ export async function renderSubmissionEmail(payload: any) {
           community: payload.community,
           festivalClasses: payload.registeredClasses,
           performerType: payload.performerType,
+          paymentType: payload.paymentType,
           registration: payload.registration,
           lateFee: payload.lateFee,
           userFirstName: payload.userFirstName,
@@ -132,6 +133,11 @@ export async function renderSubmissionEmail(payload: any) {
               class="h3"
               style="padding-bottom: 20px">
               Confirmation Number: {{ registration.confirmation }}
+            </div>
+            <div
+              class="h4"
+              style="padding-bottom: 20px">
+              Payment Type: {{ paymentType === 'cash' ? 'Cash / Cheque / E-transfer' : 'Credit Card' }}
             </div>
             <div>Submitted by:</div>
             <div>{{ userFirstName }} {{ userLastName }}</div>
@@ -445,15 +451,20 @@ export async function renderSubmissionEmail(payload: any) {
         padding-bottom="20px">
         <mj-column>
           <mj-divider />
-          <mj-text align="center">
+          <mj-text
+            v-if="paymentType === 'cash'"
+            align="center">
             <strong
               >Payment may be made by cheque or e-transfer to the<br />
               Winnipeg Music Festival (<a href="mailto:wmf@mts.net"
                 ><strong>wmf@mts.net</strong></a
               >).<br />
-              Please include the confirmation number when submitting payment.<br />
-              Entry fees are non-refundable.</strong
+              Please include the confirmation number when submitting
+              payment.</strong
             >
+          </mj-text>
+          <mj-text align="center">
+            <strong>Entry fees are non-refundable.</strong>
           </mj-text>
           <mj-divider />
           <mj-text>
