@@ -20,6 +20,7 @@ export const useRegistration = defineStore(
   'registrations',
   () => {
     const classesStore = useClasses()
+    const appStore = useAppStore()
     const registrationId = ref(0)
     const registration = ref(<Registration & RegistrationInput>{})
 
@@ -35,10 +36,22 @@ export const useRegistration = defineStore(
       let cost = 0.0
       for (const regClass of classesStore.registeredClasses)
         cost += Number(regClass.price)
-
-      registration.value.totalAmt = cost
-      return Number(cost).toFixed(2)
+      let total = cost + Number(lateRegistrationFee())
+      registration.value.totalAmt = total
+      return Number(total).toFixed(2)
     })
+
+    function lateRegistrationFee() {
+      const currentDate = new Date()
+      const lateDate = new Date(
+        lateDatesAndCosts[appStore.performerType].lateDate
+      )
+      let lateFee = 0.0
+      if (currentDate > lateDate) {
+        lateFee = lateDatesAndCosts[appStore.performerType].amount
+      }
+      return lateFee.toFixed(2)
+    }
 
     watch(totalClassAmt, async (newValue) => {
       if (Number.parseInt(newValue) > 0) await updateRegistration('totalAmt')
@@ -154,6 +167,7 @@ export const useRegistration = defineStore(
       createRegistration,
       updateRegistration,
       deleteRegistration,
+      lateRegistrationFee,
     }
   },
   {

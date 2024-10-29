@@ -1,5 +1,4 @@
 import _ from 'lodash'
-
 export const provinces = [
   { id: '1', name: 'BC' },
   { id: '2', name: 'AB' },
@@ -23,9 +22,32 @@ export const prefixes = [
   { id: '4', name: 'Dr.' },
 ]
 
-export const textAreaLabel
-  = 'To avoid scheduling conflicts, please list all other Festival classes entered but not included on this form.  Use only class numbers separated by commas.'
+export const textAreaLabel =
+  'To avoid scheduling conflicts, please list all other Festival classes entered but not included on this form.  Use only class numbers separated by commas.'
 
-export function WMFNumber( id: number ) {
+export function WMFNumber(id: number) {
   return `WMF-${id}-${_.random(1000, 9999)}`
+}
+
+export const lateDatesAndCosts = {
+  SOLO: {
+    lateDate: new Date(2024, 11 - 1, 1, 23, 59, 59),
+    amount: 20.0,
+    cutOffDate: new Date(2024, 11 - 1, 10, 23, 59, 59),
+  },
+  GROUP: {
+    lateDate: new Date(2024, 12 - 1, 1, 23, 59, 59),
+    amount: 20.0,
+    cutOffDate: new Date(2024, 12 - 1, 8, 23, 59, 59),
+  },
+  SCHOOL: {
+    lateDate: new Date(2024, 12 - 1, 1, 23, 59, 59),
+    amount: 20.0,
+    cutOffDate: new Date(2024, 12 - 1, 8, 23, 59, 59),
+  },
+  COMMUNITY: {
+    lateDate: new Date(2024, 12 - 1, 1, 23, 59, 59),
+    amount: 20.0,
+    cutOffDate: new Date(2024, 12 - 1, 8, 23, 59, 59),
+  },
 }

@@ -34,6 +34,7 @@
   const festivalClasses = classesStore.registeredClasses
   const performerType = appStore.performerType
   const registration = registrationStore.registration
+  const lateFee = registrationStore.lateRegistrationFee()
   const userFirstName = userStore.user.firstName
   const userLastName = userStore.user.lastName
   const userEmail = userStore.user.email
@@ -223,9 +224,7 @@
                   <div>Grade Level: {{ performer.level }}</div>
                 </div>
                 <div v-if="performer.otherClasses">
-                  <div>
-                    Other classes: {{ performer.otherClasses }}
-                  </div>
+                  <div>Other classes: {{ performer.otherClasses }}</div>
                 </div>
               </mj-text>
             </mj-column>
@@ -363,7 +362,9 @@
             <mj-divider />
             <mj-text>
               <div class="h2">Teacher</div>
-              <div v-if="teacher.id === 2 || teacher.lastName === 'Unlisted'" class="h3">
+              <div
+                v-if="teacher.id === 2 || teacher.lastName === 'Unlisted'"
+                class="h3">
                 {{ teacher.lastName }} {{ teacher.firstName }}
               </div>
               <div v-else>
@@ -453,7 +454,14 @@
           <mj-column>
             <mj-divider />
             <mj-text align="center">
-              <div class="h3">Total Cost: \${{ registration.totalAmt }}</div>
+              <div
+                v-if="Number(lateFee) > 0"
+                class="h4">
+                Late Fee: \${{ lateFee }}
+              </div>
+              <div class="h3">
+                Total Cost: \${{ Number(registration.totalAmt).toFixed(2) }}
+              </div>
             </mj-text>
           </mj-column>
         </mj-section>

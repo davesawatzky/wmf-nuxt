@@ -89,7 +89,6 @@
       return
     } else if (appStore.stripePayment === 'ccard') {
       if (submitDisabled.value) {
-        //TODO: check this flag.
         return
       }
 

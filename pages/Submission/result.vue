@@ -34,6 +34,7 @@
   const registeredClasses = toValue(classesStore.registeredClasses)
   const performerType = toValue(appStore.performerType)
   const registration = toValue(registrationStore.registration)
+  const lateFee = toValue(registrationStore.lateRegistrationFee())
   const userFirstName = toValue(userStore.user.firstName)
   const userLastName = toValue(userStore.user.lastName)
   const userEmail = toValue(userStore.user.email)
@@ -112,12 +113,13 @@
           registeredClasses,
           performerType,
           registration,
+          lateFee,
           userFirstName,
           userLastName,
           userEmail,
         }
       )
-      await $fetch('/api/send-email', { 
+      await $fetch('/api/send-email', {
         watch: false,
         method: 'POST',
         body: payload,
@@ -165,19 +167,19 @@
       </h4>
       <h3 class="pb-6 text-center">Winnipeg Music Festival</h3>
       <div class="flex justify-center flex-wrap">
-      <BaseRouteButton
-        v-if="paymentIntentStatus === 'succeeded' || stripePayment === 'cash'"
-        class="btn btn-blue"
-        to="/Registrations">
-        Return to Registrations
-      </BaseRouteButton>
+        <BaseRouteButton
+          v-if="paymentIntentStatus === 'succeeded' || stripePayment === 'cash'"
+          class="btn btn-blue"
+          to="/Registrations">
+          Return to Registrations
+        </BaseRouteButton>
 
-      <BaseButton
-        v-if="paymentIntentStatus === 'succeeded' || stripePayment === 'cash'"
-        class="btn btn-blue h-16"
-        @click="printWindow">
-        Print this page
-      </BaseButton>
+        <BaseButton
+          v-if="paymentIntentStatus === 'succeeded' || stripePayment === 'cash'"
+          class="btn btn-blue h-16"
+          @click="printWindow">
+          Print this page
+        </BaseButton>
       </div>
     </div>
     <div v-else-if="paymentIntentStatus === 'failed'">

@@ -2,7 +2,7 @@ import mjml2html from 'mjml'
 import { DateTime } from 'luxon'
 import { createSSRApp } from 'vue'
 import { renderToString } from '@vue/server-renderer'
-import type {CommunityGroup, SchoolGroup} from '~/graphql/gql/graphql'
+import type { CommunityGroup, SchoolGroup } from '~/graphql/gql/graphql'
 
 export async function renderSubmissionEmail(payload: any) {
   // Create an instance of vue
@@ -20,6 +20,7 @@ export async function renderSubmissionEmail(payload: any) {
           festivalClasses: payload.registeredClasses,
           performerType: payload.performerType,
           registration: payload.registration,
+          lateFee: payload.lateFee,
           userFirstName: payload.userFirstName,
           userLastName: payload.userLastName,
           userEmail: payload.userEmail,
@@ -27,11 +28,11 @@ export async function renderSubmissionEmail(payload: any) {
       },
 
       methods: {
-        schoolClassGroup(id: number):SchoolGroup | undefined {
+        schoolClassGroup(id: number): SchoolGroup | undefined {
           return this.schoolGroups.find((item: any) => item.id === id)
         },
 
-        communityClassGroup(id: number):CommunityGroup | undefined {
+        communityClassGroup(id: number): CommunityGroup | undefined {
           return this.communityGroups.find((item: any) => item.id === id)
         },
 
@@ -427,7 +428,12 @@ export async function renderSubmissionEmail(payload: any) {
         <mj-column>
           <mj-divider />
           <mj-text align="center">
-            <div class="h3">Total Cost: \${{ registration.totalAmt }}</div>
+            <div
+              v-if="Number(lateFee) > 0"
+              class="h4">
+              Late Fee: \${{ lateFee }}
+            </div>
+            <div class="h3">Total Cost: \${{ Number(registration.totalAmt).toFixed(2) }}</div>
           </mj-text>
         </mj-column>
       </mj-section>
