@@ -4,7 +4,7 @@ import { createSSRApp } from 'vue'
 import { renderToString } from '@vue/server-renderer'
 import type { CommunityGroup, SchoolGroup } from '~/graphql/gql/graphql'
 
-export async function renderSubmissionEmail(payload: any) {
+export async function renderSubmissionEmail( payload: any ) {
   // Create an instance of vue
   try {
     const app = createSSRApp({
@@ -37,12 +37,11 @@ export async function renderSubmissionEmail(payload: any) {
           return this.communityGroups.find((item: any) => item.id === id)
         },
 
-        dateFunction(date: Date | undefined) {
+        dateFunction( date: Date | undefined ) {
           if (date) {
             const dateString = date.toString()
-            return DateTime.fromISO(dateString).toLocaleString(
-              DateTime.DATETIME_MED
-            )
+            const newDate = DateTime.fromISO(dateString)
+            return newDate.setZone('America/Winnipeg').toLocaleString(DateTime.DATETIME_FULL)
           }
         },
       },

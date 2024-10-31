@@ -83,7 +83,7 @@
       :type="props.type"
       :name="name"
       :placeholder="placeholder"
-      autocomplete="off"
+      autocomplete="new-password"
       v-bind="{ ...$attrs }"
       :value="value"
       :aria-describedby="errorMessage ? `${uuid}-error` : ''"
