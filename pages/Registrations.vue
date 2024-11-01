@@ -386,7 +386,7 @@
                 <td>
                   <BaseButton
                     v-if="!registration.confirmation"
-                    class="text-red-600 text-xl md:ml-4 ml-3 my-3"
+                    class="text-red-600 text-xl md:ml-4 ml-3"
                     @click="deleteRegistration(registration.id)">
                     <Icon name="fa-solid:trash-alt" />
                   </BaseButton>

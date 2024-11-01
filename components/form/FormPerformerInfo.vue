@@ -280,7 +280,7 @@
         label="Instrument/Discipline"
         @change-status="(stat: string) => fieldStatus(stat, 'instrument')" />
     </div>
-    <div class="col-span-3 sm:col-span-2 lg:col-start-6">
+    <div class="self-end col-span-3 sm:col-span-2 lg:col-start-6">
       <BaseSelect
         id="photo-permission"
         v-model="contact.photoPermission"

@@ -80,12 +80,12 @@
     registrationId: number,
     performerType: PerformerType
   ) {
+    await refetchRegistrations()
     const registration = registrations.value.find((reg) => {
       return reg.id === registrationId
     })
 
     registrationStore.registrationId = registrationId
-
     registrationStore.addToStore(
       registration as Partial<Registration & RegistrationInput>
     )
