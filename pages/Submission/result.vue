@@ -41,6 +41,8 @@
   const userEmail = toValue(userStore.user.email)
   const dataSending = ref(false)
 
+  const emailWaiting = ref(true)
+
   function printWindow() {
     window.print()
   }
@@ -57,7 +59,7 @@
       await checkPaymentIntent()
     } else if (appStore.stripePayment === 'cash') {
       registrationStore.registration.transactionInfo = 'cash/cheque/e-transfer'
-      onSuccess()
+      await onSuccess()
     }
   })
 
@@ -66,7 +68,7 @@
     switch (paymentIntentStatus.value) {
       case 'succeeded':
         registrationStore.registration.transactionInfo = 'succeeded'
-        onSuccess()
+        await onSuccess()
         break
       case 'processing':
         registrationStore.registration.transactionInfo = 'processing'
@@ -131,6 +133,7 @@
       console.log(err)
     }
     dataSending.value = false
+    emailWaiting.value = false
   }
 </script>
 
@@ -172,7 +175,8 @@
         <BaseRouteButton
           v-if="paymentIntentStatus === 'succeeded' || stripePayment === 'cash'"
           class="btn btn-blue"
-          to="/Registrations">
+          to="/Registrations"
+          :disabled="emailWaiting">
           Return to Registrations
         </BaseRouteButton>
 
