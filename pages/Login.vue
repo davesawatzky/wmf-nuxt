@@ -296,8 +296,17 @@
         individual; a teacher for all their individual students, or for all
         their choirs; a parent for their family etc.)
       </p>
-      <p>
-        <strong>Site best used with Google Chrome or Mozilla Firefox</strong>
+      <p class="text-center">
+        <strong
+          >Site best used with Google Chrome or Mozilla Firefox, not
+          Safari</strong
+        >
+      </p>
+      <p class="text-center">
+        <strong
+          >Do not let your computer auto populate contact information, please
+          TYPE in all answers.</strong
+        >
       </p>
       <!-- <p>
         <strong

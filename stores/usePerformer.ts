@@ -187,10 +187,16 @@ export const usePerformers = defineStore(
           Array(Object.entries(personProps).find((item) => item[0] === field)!)
         )
       }
-      await performerUpdate({
-        performerId,
-        performer: <PerformerInput>(performerField || personProps),
-      })
+      try {
+        await performerUpdate({
+          performerId,
+          performer: <PerformerInput>(performerField || personProps),
+        })
+        return 'complete'
+      } catch (e) {
+        console.log(e)
+        return 'error'
+      }
     }
     onPerformerUpdateError((error) => {
       console.log(error)

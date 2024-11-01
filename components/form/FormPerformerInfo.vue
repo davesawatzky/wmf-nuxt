@@ -6,6 +6,7 @@
   import { provinces, StatusEnum } from '#imports'
   import BaseSelect from '../base/BaseSelect.vue'
   import type { Performer } from '~/graphql/gql/graphql'
+  import { useToast } from 'vue-toastification'
 
   type Pronouns = {}
 
@@ -25,6 +26,7 @@
 
   const fieldConfigStore = useFieldConfig()
   const performerStore = usePerformers()
+  const toast = useToast()
   const appStore = useAppStore()
 
   const contact = computed({
@@ -70,10 +72,18 @@
   async function fieldStatus(stat: string, fieldName: string) {
     await nextTick()
     status[fieldName] = StatusEnum.pending
-    await performerStore.updatePerformer(props.performerId, fieldName)
-    if (stat === 'saved') status[fieldName] = StatusEnum.saved
-    else if (stat === 'remove') status[fieldName] = StatusEnum.removed
-    else status[fieldName] = StatusEnum.null
+    const result = await performerStore.updatePerformer(
+      props.performerId,
+      fieldName
+    )
+    if (result === 'complete' && stat === 'saved')
+      status[fieldName] = StatusEnum.saved
+    else if (result === 'complete' && stat === 'remove')
+      status[fieldName] = StatusEnum.removed
+    else {
+      status[fieldName] = StatusEnum.null
+      toast.error('Something went wrong. Please try again')
+    }
   }
 
   const validationSchema = toTypedSchema(
