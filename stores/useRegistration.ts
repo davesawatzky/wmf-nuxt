@@ -37,7 +37,6 @@ export const useRegistration = defineStore(
       for (const regClass of classesStore.registeredClasses)
         cost += Number(regClass.price)
       let total = cost + Number(lateRegistrationFee())
-      registration.value.totalAmt = total
       return Number(total).toFixed(2)
     })
 
@@ -53,8 +52,11 @@ export const useRegistration = defineStore(
       return lateFee.toFixed(2)
     }
 
-    watch(totalClassAmt, async (newValue) => {
-      if (Number.parseInt(newValue) > 0) await updateRegistration('totalAmt')
+    watch(totalClassAmt, async (newValue, oldValue) => {
+      registration.value.totalAmt = Number(newValue)
+      if (registration.value.id > 0) {
+        await updateRegistration('totalAmt')
+      }
     })
 
     /**
@@ -128,6 +130,7 @@ export const useRegistration = defineStore(
           Array(Object.entries(regProps).find((item) => item[0] === field)!)
         )
       }
+      console.log(regId, registrationId.value)
       await registrationUpdate({
         registrationId: regId || registrationId.value,
         registrationInput: <RegistrationInput>(registrationField || regProps),
