@@ -126,23 +126,30 @@
 
   async function fieldStatus(stat: string, fieldName: string) {
     if (!teacherStore.emailAlreadyExists) {
-      await nextTick()
-      status[fieldName] = StatusEnum.pending
       if (!!props.teacherId && fieldName !== 'id') {
-        await teacherStore.updateTeacher(fieldName).catch((err) => {
-          console.log('Trying to remove non-existant teacher', err)
-          stat = ''
-        })
-      }
-      if (stat === 'saved') {
-        status[fieldName] = StatusEnum.saved
-      } else if (stat === 'remove') {
-        status[fieldName] = StatusEnum.removed
-      } else {
-        status[fieldName] = StatusEnum.null
+        await nextTick()
+        status[fieldName] = StatusEnum.pending
+        const result = await teacherStore
+          .updateTeacher(fieldName)
+          .catch((err) => {
+            console.log('Trying to remove non-existant teacher', err)
+            stat = ''
+          })
+        if (result === 'complete') {
+          if (contact.value[fieldName as keyof ContactInfo]) {
+            status[fieldName] = StatusEnum.saved
+          } else {
+            status[fieldName] = StatusEnum.removed
+          }
+        } else {
+          status[fieldName] = StatusEnum.null
+          contact.value[fieldName as keyof ContactInfo] = null
+          toast.error(
+            'Something went wrong. Please exit and reload Registration'
+          )
+        }
       }
     }
-    // teacherStore.emailAlreadyExists = false
   }
 
   const { errors, validate, values } = useForm({
@@ -156,12 +163,6 @@
     handleChange(event, true)
     fieldStatus('saved', fieldName)
   }
-
-  /**
-   *
-   * Everything wrong happens below here
-   *
-   */
 
   onActivated(async () => {
     const teacherType =
@@ -384,7 +385,9 @@
             name="firstName"
             type="text"
             label="First Name"
-            @change-status="(stat: string) => fieldStatus(stat, 'firstName')" />
+            @change-status="
+              async (stat: string) => await fieldStatus(stat, 'firstName')
+            " />
         </div>
         <div class="col-span-12 sm:col-span-6">
           <BaseInput
@@ -393,7 +396,9 @@
             name="lastName"
             type="text"
             label="Last Name"
-            @change-status="(stat: string) => fieldStatus(stat, 'lastName')" />
+            @change-status="
+              async (stat: string) => await fieldStatus(stat, 'lastName')
+            " />
         </div>
 
         <div class="col-span-6 sm:col-span-4">
@@ -407,7 +412,9 @@
             name="phone"
             type="tel"
             label="Phone Number"
-            @change-status="(stat: string) => fieldStatus(stat, 'phone')" />
+            @change-status="
+              async (stat: string) => await fieldStatus(stat, 'phone')
+            " />
         </div>
         <div class="col-span-12 sm:col-span-4">
           <BaseInput
@@ -418,9 +425,9 @@
             type="email"
             label="Email"
             @change-status="
-              (stat: string) => {
-                checkForDuplicate()
-                fieldStatus(stat, 'email')
+              async (stat: string) => {
+                await checkForDuplicate()
+                await fieldStatus(stat, 'email')
               }
             " />
         </div>

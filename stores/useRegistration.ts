@@ -130,11 +130,16 @@ export const useRegistration = defineStore(
           Array(Object.entries(regProps).find((item) => item[0] === field)!)
         )
       }
-      console.log(regId, registrationId.value)
-      await registrationUpdate({
-        registrationId: regId || registrationId.value,
-        registrationInput: <RegistrationInput>(registrationField || regProps),
-      })
+      try {
+        await registrationUpdate({
+          registrationId: regId || registrationId.value,
+          registrationInput: <RegistrationInput>(registrationField || regProps),
+        })
+        return 'complete'
+      } catch (error) {
+        console.log(error)
+        return 'error'
+      }
     }
     onRegistrationUpdateError((error) => {
       console.log(error)

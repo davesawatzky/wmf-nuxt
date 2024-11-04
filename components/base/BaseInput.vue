@@ -34,24 +34,18 @@
     })
 
   const validationListeners = {
-    blur: (evt: Event) => {
-      // handleBlur(evt, true)
-      // if (meta.valid) {
-      //   emit('changeStatus', 'saved')
-      //   resetField({ value: value.value })
-      // } else if (!meta.valid && meta.initialValue) {
-      //   emit('changeStatus', 'remove')
-      //   resetField({ value: props.type === 'number' ? 0 : null })
-      // }
-    },
     change: (evt: Event) => {
       handleChange(evt, true)
-      if (meta.valid) {
-        emit('changeStatus', 'saved')
-        resetField({ value: value.value })
-      } else if (!meta.valid && meta.initialValue) {
-        emit('changeStatus', 'remove')
+      console.log(value.value, meta.valid)
+      if (value.value && !meta.valid) {
+        emit('changeStatus', 'invalid')
         resetField({ value: props.type === 'number' ? 0 : null })
+      } else if (!value.value) {
+        emit('changeStatus', 'removed')
+        resetField({ value: props.type === 'number' ? 0 : null })
+      } else if (value.value) {
+        emit('changeStatus', 'valid')
+        resetField({ value: value.value })
       }
     },
     input: (evt: Event) => {
@@ -83,7 +77,6 @@
       :type="props.type"
       :name="name"
       :placeholder="placeholder"
-      autocomplete="new-password"
       v-bind="{ ...$attrs }"
       :value="value"
       :aria-describedby="errorMessage ? `${uuid}-error` : ''"

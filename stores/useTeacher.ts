@@ -214,10 +214,16 @@ export const useTeacher = defineStore(
           Array(Object.entries(teachProps).find((item) => item[0] === field)!)
         )
       }
-      await teacherUpdate({
-        teacherId: teacher.value.id,
-        teacher: <TeacherInput>(teacherField || teachProps),
-      })
+      try {
+        await teacherUpdate({
+          teacherId: teacher.value.id,
+          teacher: <TeacherInput>(teacherField || teachProps),
+        })
+        return 'complete'
+      } catch (error) {
+        console.log(error)
+        return 'error'
+      }
     }
     onTeacherUpdateError((error) => {
       console.log(error)
