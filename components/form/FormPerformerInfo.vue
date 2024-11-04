@@ -71,47 +71,46 @@
 
   async function fieldStatus(stat: string, fieldName: string) {
     await nextTick()
-    status[fieldName] = StatusEnum.pending
     if (stat === 'valid') {
+      status[fieldName] = StatusEnum.pending
       const result = await performerStore.updatePerformer(
         props.performerId,
         fieldName
       )
+      status[fieldName] = StatusEnum.null
       if (result === 'complete') {
         if (contact.value[fieldName as keyof ContactInfo]) {
           status[fieldName] = StatusEnum.saved
         } else {
-          status[fieldName] = StatusEnum.null
-          contact.value[fieldName as keyof ContactInfo] = null
           toast.error(
             'Could not update field.  Please exit and reload Registration'
           )
         }
       }
     } else if (stat === 'invalid') {
-      contact.value[fieldName as keyof ContactInfo] = null
+      status[fieldName] = StatusEnum.pending
       const result = await performerStore.updatePerformer(
         props.performerId,
         fieldName
       )
+      status[fieldName] = StatusEnum.null
       if (result === 'complete') {
         status[fieldName] = StatusEnum.null
       } else {
-        status[fieldName] = StatusEnum.null
         toast.error(
           'Could not remove invalid field.Please exit and reload Registration'
         )
       }
     } else if (stat === 'removed') {
+      status[fieldName] = StatusEnum.pending
       const result = await performerStore.updatePerformer(
         props.performerId,
         fieldName
       )
+      status[fieldName] = StatusEnum.null
       if (result === 'complete') {
         status[fieldName] = StatusEnum.removed
       } else {
-        status[fieldName] = StatusEnum.null
-        contact.value[fieldName as keyof ContactInfo] = null
         toast.error(
           'Could not remove field.  Please exit and reload Registration'
         )

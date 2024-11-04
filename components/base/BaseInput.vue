@@ -1,4 +1,6 @@
 <script setup lang="ts">
+  import { mapWritableState } from 'pinia'
+
   interface Props {
     type?: string
     label?: string
@@ -26,24 +28,33 @@
 
   const uuid = UniqueID().getID()
 
-  const { value, resetField, errorMessage, meta, handleChange, handleBlur } =
-    useField(() => props.name, undefined, {
-      validateOnValueUpdate: false,
+  const { value, resetField, errorMessage, meta, handleChange } = useField(
+    () => props.name,
+    undefined,
+    {
+      validateOnValueUpdate: true,
       initialValue: props.modelValue,
       syncVModel: true,
-    })
+    }
+  )
 
   const validationListeners = {
     change: (evt: Event) => {
       handleChange(evt, true)
-      console.log(value.value, meta.valid)
-      if (value.value && !meta.valid) {
+      console.log(
+        value.value,
+        meta.valid,
+        meta.dirty,
+        meta.initialValue,
+        meta.touched
+      )
+      if (!meta.valid) {
         emit('changeStatus', 'invalid')
         resetField({ value: props.type === 'number' ? 0 : null })
       } else if (!value.value) {
         emit('changeStatus', 'removed')
         resetField({ value: props.type === 'number' ? 0 : null })
-      } else if (value.value) {
+      } else if (meta.valid) {
         emit('changeStatus', 'valid')
         resetField({ value: value.value })
       }
