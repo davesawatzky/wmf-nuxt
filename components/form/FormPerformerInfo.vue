@@ -8,8 +8,6 @@
   import type { Performer } from '~/graphql/gql/graphql'
   import { useToast } from 'vue-toastification'
 
-  type Pronouns = {}
-
   const props = defineProps<{
     modelValue: ContactInfo
     teacher?: boolean
@@ -71,6 +69,7 @@
 
   async function fieldStatus(stat: string, fieldName: string) {
     await nextTick()
+    console.log('FieldStatus: ', fieldName, stat)
     if (stat === 'valid') {
       status[fieldName] = StatusEnum.pending
       const result = await performerStore.updatePerformer(
@@ -79,7 +78,7 @@
       )
       status[fieldName] = StatusEnum.null
       if (result === 'complete') {
-        if (contact.value[fieldName as keyof ContactInfo]) {
+        if (contact.value[fieldName as keyof ContactInfo] !== null) {
           status[fieldName] = StatusEnum.saved
         } else {
           toast.error(
@@ -95,10 +94,10 @@
       )
       status[fieldName] = StatusEnum.null
       if (result === 'complete') {
-        status[fieldName] = StatusEnum.null
+        status[fieldName] = StatusEnum.removed
       } else {
         toast.error(
-          'Could not remove invalid field.Please exit and reload Registration'
+          'Could not remove invalid field. Please exit and reload Registration'
         )
       }
     } else if (stat === 'removed') {
@@ -124,7 +123,8 @@
         .string()
         .trim()
         .notRequired()
-        .oneOf(['', 'She/Her', 'He/Him', 'They/Them']),
+        .oneOf(['', 'She/Her', 'He/Him', 'They/Them'])
+        .nullable(),
       firstName: yup.string().trim().required('Required'),
       lastName: yup.string().trim().required('Required'),
       age: yup
@@ -172,8 +172,8 @@
     validateOnMount: true,
   })
 
-  onActivated(() => {
-    validate()
+  onActivated(async () => {
+    await validate()
   })
 
   const performerKeys = fieldConfigStore.performerTypeFields('Performer')

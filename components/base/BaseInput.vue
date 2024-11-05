@@ -28,35 +28,26 @@
 
   const uuid = UniqueID().getID()
 
-  const { value, resetField, errorMessage, meta, handleChange } = useField(
-    () => props.name,
-    undefined,
-    {
+  const { value, resetField, errorMessage, meta, handleChange, validate } =
+    useField(() => props.name, undefined, {
       validateOnValueUpdate: true,
       initialValue: props.modelValue,
       syncVModel: true,
-    }
-  )
+    })
 
   const validationListeners = {
-    change: (evt: Event) => {
+    change: async (evt: Event) => {
       handleChange(evt, true)
-      console.log(
-        value.value,
-        meta.valid,
-        meta.dirty,
-        meta.initialValue,
-        meta.touched
-      )
-      if (!meta.valid) {
+      await validate()
+      if (value.value && !meta.valid) {
+        resetField({ value: props.type === 'number' ? 0 : null })
         emit('changeStatus', 'invalid')
+      } else if (!value.value && meta.initialValue) {
         resetField({ value: props.type === 'number' ? 0 : null })
-      } else if (!value.value) {
         emit('changeStatus', 'removed')
-        resetField({ value: props.type === 'number' ? 0 : null })
       } else if (meta.valid) {
-        emit('changeStatus', 'valid')
         resetField({ value: value.value })
+        emit('changeStatus', 'valid')
       }
     },
     input: (evt: Event) => {
@@ -103,3 +94,5 @@
     ><BaseErrorMessage>Value: {{ value }}</BaseErrorMessage> -->
   </div>
 </template>
+
+<style scoped></style>
