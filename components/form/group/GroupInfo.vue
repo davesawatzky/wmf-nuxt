@@ -2,6 +2,7 @@
   import * as yup from 'yup'
   import { useGroup } from '@/stores/useGroup'
   import type { Group } from '~/graphql/gql/graphql'
+  import { useToast } from 'vue-toastification'
 
   const groupStore = useGroup()
   const classesStore = useClasses()
@@ -11,6 +12,7 @@
   const cancelGroupChange = ref(false)
   const changeGroupType = ref('')
   const fieldConfigStore = useFieldConfig()
+  const toast = useToast()
 
   watch(
     () => groupStore.group.groupType,
@@ -90,14 +92,54 @@
     groupType: groupStore.group.groupType ? StatusEnum.saved : StatusEnum.null,
   })
 
+  // async function fieldStatus(stat: string, fieldName: string) {
+  //   await nextTick()
+  //   status[fieldName] = StatusEnum.pending
+  //   if (stat === 'saved') {
+  //     status[fieldName] = StatusEnum.saved
+  //     await groupStore.updateGroup(fieldName)
+  //   } else if (stat === 'remove') status[fieldName] = StatusEnum.removed
+  //   else status[fieldName] = StatusEnum.null
+  // }
+
   async function fieldStatus(stat: string, fieldName: string) {
     await nextTick()
-    status[fieldName] = StatusEnum.pending
-    if (stat === 'saved') {
-      status[fieldName] = StatusEnum.saved
-      await groupStore.updateGroup(fieldName)
-    } else if (stat === 'remove') status[fieldName] = StatusEnum.removed
-    else status[fieldName] = StatusEnum.null
+    if (stat === 'valid') {
+      status[fieldName] = StatusEnum.pending
+      const result = await groupStore.updateGroup(fieldName)
+      status[fieldName] = StatusEnum.null
+      if (result === 'complete') {
+        if (groupStore.group[fieldName as keyof Group] !== null) {
+          status[fieldName] = StatusEnum.saved
+        }
+      } else {
+        toast.error(
+          'Could not update field.  Please exit and reload Registration'
+        )
+      }
+    } else if (stat === 'invalid') {
+      status[fieldName] = StatusEnum.pending
+      const result = await groupStore.updateGroup(fieldName)
+      status[fieldName] = StatusEnum.null
+      if (result === 'complete') {
+        status[fieldName] = StatusEnum.removed
+      } else {
+        toast.error(
+          'Could not remove invalid field. Please exit and reload Registration'
+        )
+      }
+    } else if (stat === 'removed') {
+      status[fieldName] = StatusEnum.pending
+      const result = await groupStore.updateGroup(fieldName)
+      status[fieldName] = StatusEnum.null
+      if (result === 'complete') {
+        status[fieldName] = StatusEnum.removed
+      } else {
+        toast.error(
+          'Could not remove field.  Please exit and reload Registration'
+        )
+      }
+    }
   }
 
   const { errors, validate } = useForm({
@@ -134,7 +176,9 @@
           label="Group Name"
           type="text"
           :status="status.name"
-          @change-status="(stat: string) => fieldStatus(stat, 'name')" />
+          @change-status="
+            async (stat: string) => await fieldStatus(stat, 'name')
+          " />
       </div>
       <div
         class="col-span-6 md:col-span-3 border border-spacing-1 border-sky-500 shadow-md rounded-lg px-6 pt-6">

@@ -5,6 +5,7 @@
     CommunityGroup,
     CommunityGroupInput,
   } from '@/graphql/gql/graphql'
+  import { useToast } from 'vue-toastification'
 
   const props = defineProps<{
     modelValue: CommunityGroupInput
@@ -18,6 +19,7 @@
 
   const communityGroupStore = useCommunityGroup()
   const fieldConfigStore = useFieldConfig()
+  const toast = useToast()
 
   const communityGroup = computed({
     get: () => props.modelValue,
@@ -63,16 +65,67 @@
     )
   })
 
+  // async function fieldStatus(stat: string, fieldName: string) {
+  //   await nextTick()
+  //   status[fieldName] = StatusEnum.pending
+  //   await communityGroupStore.updateCommunityGroup(
+  //     props.communityGroupId,
+  //     fieldName
+  //   )
+  //   if (stat === 'saved') status[fieldName] = StatusEnum.saved
+  //   else if (stat === 'remove') status[fieldName] = StatusEnum.removed
+  //   else status[fieldName] = StatusEnum.null
+  // }
+
   async function fieldStatus(stat: string, fieldName: string) {
     await nextTick()
-    status[fieldName] = StatusEnum.pending
-    await communityGroupStore.updateCommunityGroup(
-      props.communityGroupId,
-      fieldName
-    )
-    if (stat === 'saved') status[fieldName] = StatusEnum.saved
-    else if (stat === 'remove') status[fieldName] = StatusEnum.removed
-    else status[fieldName] = StatusEnum.null
+    if (stat === 'valid') {
+      status[fieldName] = StatusEnum.pending
+      const result = await communityGroupStore.updateCommunityGroup(
+        props.communityGroupId,
+        fieldName
+      )
+      status[fieldName] = StatusEnum.null
+      if (result === 'complete') {
+        if (
+          communityGroup.value[fieldName as keyof CommunityGroupInput] !== null
+        ) {
+          status[fieldName] = StatusEnum.saved
+        }
+      } else {
+        toast.error(
+          'Could not update field.  Please exit and reload Registration'
+        )
+      }
+    } else if (stat === 'invalid') {
+      status[fieldName] = StatusEnum.pending
+      const result = await communityGroupStore.updateCommunityGroup(
+        props.communityGroupId,
+        fieldName
+      )
+      status[fieldName] = StatusEnum.null
+      if (result === 'complete') {
+        status[fieldName] = StatusEnum.removed
+      } else {
+        toast.error(
+          'Could not remove invalid field. Please exit and reload Registration'
+        )
+      }
+    } else if (stat === 'removed') {
+      status[fieldName] = StatusEnum.pending
+      const result = await communityGroupStore.updateCommunityGroup(
+        props.communityGroupId,
+        fieldName
+      )
+      status[fieldName] = StatusEnum.null
+      if (result === 'complete') {
+        status[fieldName] = StatusEnum.removed
+      } else {
+        toast.error(
+          'Could not remove field.  Please exit and reload Registration'
+        )
+      }
+    }
   }
 
   const validationSchema = toTypedSchema(
@@ -126,6 +179,7 @@
 
   const communityGroupKeys =
     fieldConfigStore.performerTypeFields('CommunityGroup')
+
   watchEffect(() => {
     let count = 0
     for (const key of communityGroupKeys) {
@@ -154,7 +208,9 @@
           label="Group Name"
           name="groupName"
           type="text"
-          @change-status="(stat: string) => fieldStatus(stat, 'name')" />
+          @change-status="
+            async (stat: string) => await fieldStatus(stat, 'name')
+          " />
 
         <BaseInput
           v-model="communityGroup.earliestTime"
@@ -163,7 +219,7 @@
           label="Earliest time your group can perform"
           type="time"
           @change-status="
-            (stat: string) => fieldStatus(stat, 'earliestTime')
+            async (stat: string) => await fieldStatus(stat, 'earliestTime')
           " />
 
         <BaseInput
@@ -172,7 +228,9 @@
           name="latestTime"
           label="Latest time your group can perform"
           type="time"
-          @change-status="(stat: string) => fieldStatus(stat, 'latestTime')" />
+          @change-status="
+            async (stat: string) => await fieldStatus(stat, 'latestTime')
+          " />
       </div>
       <div
         class="col-span-12 sm:col-span-4 lg:col-span-4 grid grid-cols-2 gap-x-3 items-start">
@@ -186,7 +244,9 @@
             name="groupSize"
             label="Number of performers"
             type="number"
-            @change-status="(stat: string) => fieldStatus(stat, 'groupSize')" />
+            @change-status="
+              async (stat: string) => await fieldStatus(stat, 'groupSize')
+            " />
         </div>
         <div class="col-1 sm:col-span-2">
           <BaseInput
@@ -199,7 +259,7 @@
             label="Number of chaperones"
             type="number"
             @change-status="
-              (stat: string) => fieldStatus(stat, 'chaperones')
+              async (stat: string) => await fieldStatus(stat, 'chaperones')
             " />
         </div>
         <div class="col-1 sm:col-span-2">
@@ -213,7 +273,7 @@
             label="Number of wheelchairs"
             type="number"
             @change-status="
-              (stat: string) => fieldStatus(stat, 'wheelchairs')
+              async (stat: string) => await fieldStatus(stat, 'wheelchairs')
             " />
         </div>
         <div class="off col-1 sm:col-span-2 text-sm font-bold">
@@ -231,7 +291,7 @@
           ]"
           name="photoPermission"
           @change-status="
-            (stat: string) => fieldStatus(stat, 'photoPermission')
+            async (stat: string) => await fieldStatus(stat, 'photoPermission')
           " />
       </div>
       <div class="col-span-9 sm:col-span-10 lg:col-span-8 text-sm self-center">
@@ -247,7 +307,9 @@
         name="unavailable"
         label="Scheduling Requests"
         rows="3"
-        @change-status="(stat: string) => fieldStatus(stat, 'unavailable')" />
+        @change-status="
+          async (stat: string) => await fieldStatus(stat, 'unavailable')
+        " />
       <p class="text-sm mb-2">
         List any scheduling requests. The Festival cannot guarantee that
         submitted requests can be accommodated. Entry fees are non-refundable
@@ -260,7 +322,7 @@
         label="Performers participating in other classes."
         rows="3"
         @change-status="
-          (stat: string) => fieldStatus(stat, 'conflictPerformers')
+          async (stat: string) => await fieldStatus(stat, 'conflictPerformers')
         " />
       <p class="text-sm mb-2">
         If there are any performers in your group participating in other

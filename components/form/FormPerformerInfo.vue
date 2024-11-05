@@ -69,7 +69,6 @@
 
   async function fieldStatus(stat: string, fieldName: string) {
     await nextTick()
-    console.log('FieldStatus: ', fieldName, stat)
     if (stat === 'valid') {
       status[fieldName] = StatusEnum.pending
       const result = await performerStore.updatePerformer(
@@ -80,11 +79,11 @@
       if (result === 'complete') {
         if (contact.value[fieldName as keyof ContactInfo] !== null) {
           status[fieldName] = StatusEnum.saved
-        } else {
-          toast.error(
-            'Could not update field.  Please exit and reload Registration'
-          )
         }
+      } else {
+        toast.error(
+          'Could not update field.  Please exit and reload Registration'
+        )
       }
     } else if (stat === 'invalid') {
       status[fieldName] = StatusEnum.pending

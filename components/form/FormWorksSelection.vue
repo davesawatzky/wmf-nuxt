@@ -41,24 +41,76 @@
     duration: props.modelValue.duration ? StatusEnum.saved : StatusEnum.null,
   })
 
+  // async function fieldStatus(stat: string, fieldName: string) {
+  //   await nextTick()
+  //   status[fieldName] = StatusEnum.pending
+  //   const result = await classesStore.updateSelection(
+  //     props.classId,
+  //     props.selectionId,
+  //     fieldName
+  //   )
+  //   if (result === 'complete') {
+  //     if (work.value[fieldName as keyof SelectionInput]) {
+  //       status[fieldName] = StatusEnum.saved
+  //     } else {
+  //       status[fieldName] = StatusEnum.removed
+  //     }
+  //   } else {
+  //     status[fieldName] = StatusEnum.null
+  //     work.value[fieldName as keyof SelectionInput] = null
+  //     toast.error('Something went wrong. Please exit and reload Registration')
+  //   }
+  // }
+
   async function fieldStatus(stat: string, fieldName: string) {
     await nextTick()
-    status[fieldName] = StatusEnum.pending
-    const result = await classesStore.updateSelection(
-      props.classId,
-      props.selectionId,
-      fieldName
-    )
-    if (result === 'complete') {
-      if (work.value[fieldName as keyof SelectionInput]) {
-        status[fieldName] = StatusEnum.saved
-      } else {
-        status[fieldName] = StatusEnum.removed
-      }
-    } else {
+    if (stat === 'valid') {
+      status[fieldName] = StatusEnum.pending
+      const result = await classesStore.updateSelection(
+        props.classId,
+        props.selectionId,
+        fieldName
+      )
       status[fieldName] = StatusEnum.null
-      work.value[fieldName as keyof SelectionInput] = null
-      toast.error('Something went wrong. Please exit and reload Registration')
+      if (result === 'complete') {
+        if (work.value[fieldName as keyof SelectionInput] !== null) {
+          status[fieldName] = StatusEnum.saved
+        }
+      } else {
+        toast.error(
+          'Could not update field.  Please exit and reload Registration'
+        )
+      }
+    } else if (stat === 'invalid') {
+      status[fieldName] = StatusEnum.pending
+      const result = await classesStore.updateSelection(
+        props.classId,
+        props.selectionId,
+        fieldName
+      )
+      status[fieldName] = StatusEnum.null
+      if (result === 'complete') {
+        status[fieldName] = StatusEnum.removed
+      } else {
+        toast.error(
+          'Could not remove invalid field. Please exit and reload Registration'
+        )
+      }
+    } else if (stat === 'removed') {
+      status[fieldName] = StatusEnum.pending
+      const result = await classesStore.updateSelection(
+        props.classId,
+        props.selectionId,
+        fieldName
+      )
+      status[fieldName] = StatusEnum.null
+      if (result === 'complete') {
+        status[fieldName] = StatusEnum.removed
+      } else {
+        toast.error(
+          'Could not remove field.  Please exit and reload Registration'
+        )
+      }
     }
   }
 

@@ -128,25 +128,54 @@
     if (!teacherStore.emailAlreadyExists) {
       if (!!props.teacherId && fieldName !== 'id') {
         await nextTick()
-        status[fieldName] = StatusEnum.pending
-        const result = await teacherStore
-          .updateTeacher(fieldName)
-          .catch((err) => {
-            console.log('Trying to remove non-existant teacher', err)
-            stat = ''
-          })
-        if (result === 'complete') {
-          if (contact.value[fieldName as keyof ContactInfo]) {
-            status[fieldName] = StatusEnum.saved
-          } else {
-            status[fieldName] = StatusEnum.removed
+        if (stat === 'valid') {
+          status[fieldName] = StatusEnum.pending
+          const result = await teacherStore
+            .updateTeacher(fieldName)
+            .catch((err) => {
+              console.log('Trying to remove non-existant teacher', err)
+              stat = ''
+            })
+          if (result === 'complete') {
+            if (contact.value[fieldName as keyof ContactInfo] !== null) {
+              status[fieldName] = StatusEnum.saved
+            } else {
+              toast.error(
+                'Could not update field. Please exit ant reload Registration'
+              )
+            }
           }
-        } else {
+        } else if (stat === 'invalid') {
+          status[fieldName] = StatusEnum.pending
+          const result = await teacherStore
+            .updateTeacher(fieldName)
+            .catch((err) => {
+              console.log('Trying to remove non-existant teacher', err)
+              stat = ''
+            })
           status[fieldName] = StatusEnum.null
-          contact.value[fieldName as keyof ContactInfo] = null
-          toast.error(
-            'Something went wrong. Please exit and reload Registration'
-          )
+          if (result === 'complete') {
+            status[fieldName] = StatusEnum.removed
+          } else {
+            toast.error(
+              'Something went wrong. Please exit and reload Registration'
+            )
+          }
+        } else if (stat === 'removed') {
+          status[fieldName] = StatusEnum.pending
+          const result = await teacherStore
+            .updateTeacher(fieldName)
+            .catch((err) => {
+              console.log('Trying to remove non-existant teacher', err)
+              stat = ''
+            })
+          if (result === 'complete') {
+            status[fieldName] = StatusEnum.removed
+          } else {
+            toast.error(
+              'Could not remove field. Plase exit and reload Registrastion'
+            )
+          }
         }
       }
     }
