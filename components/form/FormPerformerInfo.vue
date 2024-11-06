@@ -3,12 +3,10 @@
   import 'yup-phone-lite'
   import { usePerformers } from '~/stores/usePerformer'
   import { InstrumentsDocument } from '~/graphql/gql/graphql'
-  import { provinces, StatusEnum } from '#imports'
+  import { provinces, StatusEnum, type ContactInfo } from '#imports'
   import BaseSelect from '../base/BaseSelect.vue'
   import type { Performer } from '~/graphql/gql/graphql'
   import { useToast } from 'vue-toastification'
-
-  type Pronouns = {}
 
   const props = defineProps<{
     modelValue: ContactInfo
@@ -71,18 +69,50 @@
 
   async function fieldStatus(stat: string, fieldName: string) {
     await nextTick()
-    status[fieldName] = StatusEnum.pending
-    const result = await performerStore.updatePerformer(
-      props.performerId,
-      fieldName
-    )
-    if (result === 'complete' && stat === 'saved')
-      status[fieldName] = StatusEnum.saved
-    else if (result === 'complete' && stat === 'remove')
-      status[fieldName] = StatusEnum.removed
-    else {
+    if (stat === 'valid') {
+      status[fieldName] = StatusEnum.pending
+      const result = await performerStore.updatePerformer(
+        props.performerId,
+        fieldName
+      )
       status[fieldName] = StatusEnum.null
-      toast.error('Something went wrong. Please try again')
+      if (result === 'complete') {
+        if (contact.value[fieldName as keyof ContactInfo] !== null) {
+          status[fieldName] = StatusEnum.saved
+        }
+      } else {
+        toast.error(
+          'Could not update field.  Please exit and reload Registration'
+        )
+      }
+    } else if (stat === 'invalid') {
+      status[fieldName] = StatusEnum.pending
+      const result = await performerStore.updatePerformer(
+        props.performerId,
+        fieldName
+      )
+      status[fieldName] = StatusEnum.null
+      if (result === 'complete') {
+        status[fieldName] = StatusEnum.removed
+      } else {
+        toast.error(
+          'Could not remove invalid field. Please exit and reload Registration'
+        )
+      }
+    } else if (stat === 'removed') {
+      status[fieldName] = StatusEnum.pending
+      const result = await performerStore.updatePerformer(
+        props.performerId,
+        fieldName
+      )
+      status[fieldName] = StatusEnum.null
+      if (result === 'complete') {
+        status[fieldName] = StatusEnum.removed
+      } else {
+        toast.error(
+          'Could not remove field.  Please exit and reload Registration'
+        )
+      }
     }
   }
 
@@ -92,7 +122,8 @@
         .string()
         .trim()
         .notRequired()
-        .oneOf(['', 'She/Her', 'He/Him', 'They/Them']),
+        .oneOf(['', 'She/Her', 'He/Him', 'They/Them'])
+        .nullable(),
       firstName: yup.string().trim().required('Required'),
       lastName: yup.string().trim().required('Required'),
       age: yup
@@ -140,8 +171,8 @@
     validateOnMount: true,
   })
 
-  onActivated(() => {
-    validate()
+  onActivated(async () => {
+    await validate()
   })
 
   const performerKeys = fieldConfigStore.performerTypeFields('Performer')
@@ -183,7 +214,9 @@
         name="pronouns"
         label="Pronouns"
         :options="pronounOptions"
-        @change-status="(stat: string) => fieldStatus(stat, 'pronouns')" />
+        @change-status="
+          async (stat: string) => await fieldStatus(stat, 'pronouns')
+        " />
     </div>
     <div class="col-span-8 sm:col-span-4">
       <BaseInput
@@ -192,7 +225,9 @@
         name="firstName"
         type="text"
         label="First Name"
-        @change-status="(stat: string) => fieldStatus(stat, 'firstName')" />
+        @change-status="
+          async (stat: string) => await fieldStatus(stat, 'firstName')
+        " />
     </div>
     <div class="col-span-12 sm:col-span-5">
       <BaseInput
@@ -201,7 +236,9 @@
         name="lastName"
         type="text"
         label="Last Name"
-        @change-status="(stat: string) => fieldStatus(stat, 'lastName')" />
+        @change-status="
+          async (stat: string) => await fieldStatus(stat, 'lastName')
+        " />
     </div>
     <div class="col-span-3 sm:col-span-3">
       <BaseInput
@@ -214,7 +251,9 @@
         type="number"
         label="Age"
         :help-message="`Age as of December 31, ${currentYear}`"
-        @change-status="(stat: string) => fieldStatus(stat, 'age')" />
+        @change-status="
+          async (stat: string) => await fieldStatus(stat, 'age')
+        " />
     </div>
     <div class="col-span-9 sm:col-span-9">
       <BaseInput
@@ -223,7 +262,9 @@
         name="address"
         type="text"
         label="Mailing Address"
-        @change-status="(stat: string) => fieldStatus(stat, 'address')" />
+        @change-status="
+          async (stat: string) => await fieldStatus(stat, 'address')
+        " />
     </div>
     <div class="col-span-8 sm:col-span-5">
       <BaseInput
@@ -232,7 +273,9 @@
         name="city"
         type="text"
         label="City/Town"
-        @change-status="(stat: string) => fieldStatus(stat, 'city')" />
+        @change-status="
+          async (stat: string) => await fieldStatus(stat, 'city')
+        " />
     </div>
     <div class="col-span-4 sm:col-span-3 self-start">
       <BaseSelect
@@ -241,7 +284,9 @@
         name="province"
         label="Province"
         :options="provinces"
-        @change-status="(stat: string) => fieldStatus(stat, 'province')" />
+        @change-status="
+          async (stat: string) => await fieldStatus(stat, 'province')
+        " />
     </div>
     <div class="col-span-6 sm:col-span-4">
       <BaseInput
@@ -255,7 +300,9 @@
         name="postalCode"
         type="text"
         label="Postal Code"
-        @change-status="(stat: string) => fieldStatus(stat, 'postalCode')" />
+        @change-status="
+          async (stat: string) => await fieldStatus(stat, 'postalCode')
+        " />
     </div>
     <div class="col-span-6 sm:col-span-5">
       <BaseInput
@@ -268,7 +315,9 @@
         name="phone"
         type="text"
         label="Phone Number"
-        @change-status="(stat: string) => fieldStatus(stat, 'phone')" />
+        @change-status="
+          async (stat: string) => await fieldStatus(stat, 'phone')
+        " />
     </div>
     <div class="col-span-12 sm:col-span-7">
       <BaseInput
@@ -278,7 +327,9 @@
         name="email"
         type="email"
         label="Email"
-        @change-status="(stat: string) => fieldStatus(stat, 'email')" />
+        @change-status="
+          async (stat: string) => await fieldStatus(stat, 'email')
+        " />
     </div>
     <div class="col-span-12 sm:col-span-4">
       <BaseSelect
@@ -288,7 +339,9 @@
         name="instrument"
         :options="instruments"
         label="Instrument/Discipline"
-        @change-status="(stat: string) => fieldStatus(stat, 'instrument')" />
+        @change-status="
+          async (stat: string) => await fieldStatus(stat, 'instrument')
+        " />
     </div>
     <div class="self-end col-span-3 sm:col-span-2 lg:col-start-6">
       <BaseSelect
@@ -302,7 +355,7 @@
         name="photoPermission"
         label=""
         @change-status="
-          (stat: string) => fieldStatus(stat, 'photoPermission')
+          async (stat: string) => await fieldStatus(stat, 'photoPermission')
         " />
     </div>
     <p class="col-span-9 sm:col-span-6 lg:col-span-5 text-sm">
@@ -319,7 +372,9 @@
         name="level"
         type="text"
         label="Level"
-        @change-status="(stat: string) => fieldStatus(stat, 'level')" />
+        @change-status="
+          async (stat: string) => await fieldStatus(stat, 'level')
+        " />
     </div>
     <div
       v-if="groupperformer"
@@ -334,7 +389,9 @@
         :status="status.otherClasses"
         name="otherClasses"
         label="Other festival classes entered"
-        @change-status="(stat: string) => fieldStatus(stat, 'otherClasses')" />
+        @change-status="
+          async (stat: string) => await fieldStatus(stat, 'otherClasses')
+        " />
     </div>
     <div
       v-else
@@ -348,7 +405,9 @@
         :status="status.unavailable"
         name="unavailable"
         label="Scheduling Requests"
-        @change-status="(stat: string) => fieldStatus(stat, 'unavailable')" />
+        @change-status="
+          async (stat: string) => await fieldStatus(stat, 'unavailable')
+        " />
     </div>
   </div>
 </template>

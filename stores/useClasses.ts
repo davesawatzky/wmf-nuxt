@@ -225,10 +225,16 @@ export const useClasses = defineStore(
           Array(Object.entries(classProps).find((item) => item[0] === field)!)
         )
       }
-      await classUpdate({
-        registeredClassId: classId,
-        registeredClass: <RegisteredClassInput>(classField || classProps),
-      })
+      try {
+        await classUpdate({
+          registeredClassId: classId,
+          registeredClass: <RegisteredClassInput>(classField || classProps),
+        })
+        return 'complete'
+      } catch (e) {
+        console.log(e)
+        return 'error'
+      }
     }
     onClassUpdateError((error) => console.log(error))
 
@@ -325,10 +331,16 @@ export const useClasses = defineStore(
           )
         )
       }
-      await selectionUpdate({
-        selectionId,
-        selection: <SelectionInput>(selectionField || selectionProps),
-      })
+      try {
+        await selectionUpdate({
+          selectionId,
+          selection: <SelectionInput>(selectionField || selectionProps),
+        })
+        return 'complete'
+      } catch (e) {
+        console.log(e)
+        return 'error'
+      }
     }
     onSelectionUpdateError((error) => {
       console.log(error)

@@ -51,10 +51,16 @@ export const useUser = defineStore(
           Array(Object.entries(userProps).find((item) => item[0] === field)!)
         )
       }
-      await userUpdate({
-        userId: user.value.id,
-        user: <UserInput>(userField || userProps),
-      })
+      try {
+        await userUpdate({
+          userId: user.value.id,
+          user: <UserInput>(userField || userProps),
+        })
+        return 'complete'
+      } catch (error) {
+        console.log(error)
+        return 'error'
+      }
     }
     onUserUpdateError((error) => {
       console.log(error)

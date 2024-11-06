@@ -4,9 +4,11 @@
   import { useCommunity } from '@/stores/useCommunity'
   import { provinces } from '#imports'
   import type { Community } from '~/graphql/gql/graphql'
+  import { useToast } from 'vue-toastification'
 
   const communityStore = useCommunity()
   const fieldConfigStore = useFieldConfig()
+  const toast = useToast()
 
   const status = reactive<Status>({
     name: communityStore.community.name ? StatusEnum.saved : StatusEnum.null,
@@ -24,13 +26,53 @@
     email: communityStore.community.email ? StatusEnum.saved : StatusEnum.null,
   })
 
+  // async function fieldStatus(stat: string, fieldName: string) {
+  //   await nextTick()
+  //   status[fieldName] = StatusEnum.pending
+  //   await communityStore.updateCommunity(fieldName)
+  //   if (stat === 'saved') status[fieldName] = StatusEnum.saved
+  //   else if (stat === 'remove') status[fieldName] = StatusEnum.removed
+  //   else status[fieldName] = StatusEnum.null
+  // }
+
   async function fieldStatus(stat: string, fieldName: string) {
     await nextTick()
-    status[fieldName] = StatusEnum.pending
-    await communityStore.updateCommunity(fieldName)
-    if (stat === 'saved') status[fieldName] = StatusEnum.saved
-    else if (stat === 'remove') status[fieldName] = StatusEnum.removed
-    else status[fieldName] = StatusEnum.null
+    if (stat === 'valid') {
+      status[fieldName] = StatusEnum.pending
+      const result = await communityStore.updateCommunity(fieldName)
+      status[fieldName] = StatusEnum.null
+      if (result === 'complete') {
+        if (communityStore.community[fieldName as keyof Community] !== null) {
+          status[fieldName] = StatusEnum.saved
+        }
+      } else {
+        toast.error(
+          'Could not update field.  Please exit and reload Registration'
+        )
+      }
+    } else if (stat === 'invalid') {
+      status[fieldName] = StatusEnum.pending
+      const result = await communityStore.updateCommunity(fieldName)
+      status[fieldName] = StatusEnum.null
+      if (result === 'complete') {
+        status[fieldName] = StatusEnum.removed
+      } else {
+        toast.error(
+          'Could not remove invalid field. Please exit and reload Registration'
+        )
+      }
+    } else if (stat === 'removed') {
+      status[fieldName] = StatusEnum.pending
+      const result = await communityStore.updateCommunity(fieldName)
+      status[fieldName] = StatusEnum.null
+      if (result === 'complete') {
+        status[fieldName] = StatusEnum.removed
+      } else {
+        toast.error(
+          'Could not remove field.  Please exit and reload Registration'
+        )
+      }
+    }
   }
 
   const validationSchema = toTypedSchema(
@@ -108,7 +150,9 @@
           name="communityName"
           type="text"
           label="Community Name"
-          @change-status="(stat: string) => fieldStatus(stat, 'name')" />
+          @change-status="
+            async (stat: string) => await fieldStatus(stat, 'name')
+          " />
       </div>
       <div class="col-span-12 sm:col-span-8 md:col-span-6">
         <BaseInput
@@ -118,7 +162,9 @@
           name="address"
           type="text"
           label="Mailing Address"
-          @change-status="(stat: string) => fieldStatus(stat, 'address')" />
+          @change-status="
+            async (stat: string) => await fieldStatus(stat, 'address')
+          " />
       </div>
       <div class="col-span-6 sm:col-span-4 md:col-span-5">
         <BaseInput
@@ -128,7 +174,9 @@
           name="city"
           type="text"
           label="City/Town"
-          @change-status="(stat: string) => fieldStatus(stat, 'city')" />
+          @change-status="
+            async (stat: string) => await fieldStatus(stat, 'city')
+          " />
       </div>
       <div class="col-span-6 sm:col-span-3 md:col-span-3">
         <BaseSelect
@@ -138,7 +186,9 @@
           name="province"
           label="Province"
           :options="provinces"
-          @change-status="(stat: string) => fieldStatus(stat, 'province')" />
+          @change-status="
+            async (stat: string) => await fieldStatus(stat, 'province')
+          " />
       </div>
       <div class="col-span-6 sm:col-span-4">
         <BaseInput
@@ -153,7 +203,9 @@
           name="postalCode"
           type="text"
           label="Postal Code"
-          @change-status="(stat: string) => fieldStatus(stat, 'postalCode')" />
+          @change-status="
+            async (stat: string) => await fieldStatus(stat, 'postalCode')
+          " />
       </div>
       <div class="col-span-6 sm:col-span-5 md:col-span-6">
         <BaseInput
@@ -167,7 +219,9 @@
           name="phone"
           type="text"
           label="Phone Number"
-          @change-status="(stat: string) => fieldStatus(stat, 'phone')" />
+          @change-status="
+            async (stat: string) => await fieldStatus(stat, 'phone')
+          " />
       </div>
       <div class="col-span-12 sm:col-span-12 md:col-span-6">
         <BaseInput
@@ -178,7 +232,9 @@
           name="email"
           type="email"
           label="Email Address"
-          @change-status="(stat: string) => fieldStatus(stat, 'email')" />
+          @change-status="
+            async (stat: string) => await fieldStatus(stat, 'email')
+          " />
       </div>
     </div>
   </div>

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+  import { mapWritableState } from 'pinia'
+
   interface Props {
     type?: string
     label?: string
@@ -26,32 +28,26 @@
 
   const uuid = UniqueID().getID()
 
-  const { value, resetField, errorMessage, meta, handleChange, handleBlur } =
+  const { value, resetField, errorMessage, meta, handleChange, validate } =
     useField(() => props.name, undefined, {
-      validateOnValueUpdate: false,
+      validateOnValueUpdate: true,
       initialValue: props.modelValue,
       syncVModel: true,
     })
 
   const validationListeners = {
-    blur: (evt: Event) => {
-      // handleBlur(evt, true)
-      // if (meta.valid) {
-      //   emit('changeStatus', 'saved')
-      //   resetField({ value: value.value })
-      // } else if (!meta.valid && meta.initialValue) {
-      //   emit('changeStatus', 'remove')
-      //   resetField({ value: props.type === 'number' ? 0 : null })
-      // }
-    },
-    change: (evt: Event) => {
+    change: async (evt: Event) => {
       handleChange(evt, true)
-      if (meta.valid) {
-        emit('changeStatus', 'saved')
-        resetField({ value: value.value })
-      } else if (!meta.valid && meta.initialValue) {
-        emit('changeStatus', 'remove')
+      await validate()
+      if (value.value && !meta.valid) {
         resetField({ value: props.type === 'number' ? 0 : null })
+        emit('changeStatus', 'invalid')
+      } else if (!value.value && meta.initialValue) {
+        resetField({ value: props.type === 'number' ? 0 : null })
+        emit('changeStatus', 'removed')
+      } else if (meta.valid) {
+        resetField({ value: value.value })
+        emit('changeStatus', 'valid')
       }
     },
     input: (evt: Event) => {
@@ -83,7 +79,6 @@
       :type="props.type"
       :name="name"
       :placeholder="placeholder"
-      autocomplete="new-password"
       v-bind="{ ...$attrs }"
       :value="value"
       :aria-describedby="errorMessage ? `${uuid}-error` : ''"
@@ -99,3 +94,5 @@
     ><BaseErrorMessage>Value: {{ value }}</BaseErrorMessage> -->
   </div>
 </template>
+
+<style scoped></style>

@@ -3,8 +3,9 @@
   import 'yup-phone-lite'
   import { useRegistration } from '~/stores/useRegistration'
   import { useUser } from '~/stores/useUser'
-  import { MyUserDocument } from '~/graphql/gql/graphql'
+  import { MyUserDocument, type User } from '~/graphql/gql/graphql'
   import { provinces } from '#imports'
+  import { useToast } from 'vue-toastification'
 
   const props = defineProps<{}>()
 
@@ -18,6 +19,7 @@
   const registrationStore = useRegistration()
   const userStore = useUser()
   const teacherView = computed(() => userStore.user.privateTeacher)
+  const toast = useToast()
 
   /**
    * Load User details
@@ -58,13 +60,53 @@
     phone: userStore.user.phone ? StatusEnum.saved : StatusEnum.null,
   })
 
+  // async function fieldStatus(stat: string, fieldName: string) {
+  //   await nextTick()
+  //   status[fieldName] = StatusEnum.pending
+  //   await userStore.updateUser(fieldName)
+  //   if (stat === 'saved') status[fieldName] = StatusEnum.saved
+  //   else if (stat === 'remove') status[fieldName] = StatusEnum.removed
+  //   else status[fieldName] = StatusEnum.null
+  // }
+
   async function fieldStatus(stat: string, fieldName: string) {
     await nextTick()
-    status[fieldName] = StatusEnum.pending
-    await userStore.updateUser(fieldName)
-    if (stat === 'saved') status[fieldName] = StatusEnum.saved
-    else if (stat === 'remove') status[fieldName] = StatusEnum.removed
-    else status[fieldName] = StatusEnum.null
+    if (stat === 'valid') {
+      status[fieldName] = StatusEnum.pending
+      const result = await userStore.updateUser(fieldName)
+      status[fieldName] = StatusEnum.null
+      if (result === 'complete') {
+        if (userStore.user[fieldName as keyof User] !== null) {
+          status[fieldName] = StatusEnum.saved
+        }
+      } else {
+        toast.error(
+          'Could not update field.  Please exit and reload Registration'
+        )
+      }
+    } else if (stat === 'invalid') {
+      status[fieldName] = StatusEnum.pending
+      const result = await userStore.updateUser(fieldName)
+      status[fieldName] = StatusEnum.null
+      if (result === 'complete') {
+        status[fieldName] = StatusEnum.removed
+      } else {
+        toast.error(
+          'Could not remove invalid field. Please exit and reload Registration'
+        )
+      }
+    } else if (stat === 'removed') {
+      status[fieldName] = StatusEnum.pending
+      const result = await userStore.updateUser(fieldName)
+      status[fieldName] = StatusEnum.null
+      if (result === 'complete') {
+        status[fieldName] = StatusEnum.removed
+      } else {
+        toast.error(
+          'Could not remove field.  Please exit and reload Registration'
+        )
+      }
+    }
   }
 
   const validationSchema = toTypedSchema(
@@ -134,7 +176,7 @@
         label="Private Teacher"
         class="px-4 inline-block"
         @change-status="
-          (stat: string) => fieldStatus(stat, 'privateTeacher')
+          async (stat: string) => await fieldStatus(stat, 'privateTeacher')
         " />
       <BaseCheckbox
         v-model="userStore.user.schoolTeacher"
@@ -142,7 +184,9 @@
         name="schoolTeacher"
         label="School Teacher and/or Community Conductor"
         class="px-4 inline-block"
-        @change-status="(stat: string) => fieldStatus(stat, 'schoolTeacher')" />
+        @change-status="
+          async (stat: string) => await fieldStatus(stat, 'schoolTeacher')
+        " />
     </fieldset>
     <div class="col-span-12 sm:col-span-6">
       <BaseInput
@@ -151,7 +195,9 @@
         name="firstName"
         type="text"
         label="First Name"
-        @change-status="(stat: string) => fieldStatus(stat, 'firstName')" />
+        @change-status="
+          async (stat: string) => await fieldStatus(stat, 'firstName')
+        " />
     </div>
     <div class="col-span-12 sm:col-span-6">
       <BaseInput
@@ -160,7 +206,9 @@
         name="lastName"
         type="text"
         label="Last Name"
-        @change-status="(stat: string) => fieldStatus(stat, 'lastName')" />
+        @change-status="
+          async (stat: string) => await fieldStatus(stat, 'lastName')
+        " />
     </div>
     <div class="col-span-12 sm:col-span-8">
       <BaseInput
@@ -169,7 +217,9 @@
         name="address"
         type="text"
         label="Mailing Address"
-        @change-status="(stat: string) => fieldStatus(stat, 'address')" />
+        @change-status="
+          async (stat: string) => await fieldStatus(stat, 'address')
+        " />
     </div>
     <div class="col-span-12 sm:col-span-4">
       <BaseInput
@@ -178,7 +228,9 @@
         name="city"
         type="text"
         label="City/Town"
-        @change-status="(stat: string) => fieldStatus(stat, 'city')" />
+        @change-status="
+          async (stat: string) => await fieldStatus(stat, 'city')
+        " />
     </div>
     <div class="col-span-6 sm:col-span-2 self-start">
       <BaseSelect
@@ -187,7 +239,9 @@
         name="province"
         label="Province"
         :options="provinces"
-        @change-status="(stat: string) => fieldStatus(stat, 'province')" />
+        @change-status="
+          async (stat: string) => await fieldStatus(stat, 'province')
+        " />
     </div>
     <div class="col-span-6 sm:col-span-4">
       <BaseInput
@@ -201,7 +255,9 @@
         name="postalCode"
         type="text"
         label="Postal Code"
-        @change-status="(stat: string) => fieldStatus(stat, 'postalCode')" />
+        @change-status="
+          async (stat: string) => await fieldStatus(stat, 'postalCode')
+        " />
     </div>
     <div class="col-span-6 sm:col-span-6">
       <BaseInput
@@ -214,7 +270,9 @@
         name="phone"
         type="text"
         label="Phone Number"
-        @change-status="(stat: string) => fieldStatus(stat, 'phone')" />
+        @change-status="
+          async (stat: string) => await fieldStatus(stat, 'phone')
+        " />
     </div>
     <div
       v-if="teacherView"
@@ -225,7 +283,9 @@
         name="instrument"
         type="text"
         label="Instrument(s)"
-        @change-status="(stat: string) => fieldStatus(stat, 'instrument')" />
+        @change-status="
+          async (stat: string) => await fieldStatus(stat, 'instrument')
+        " />
     </div>
   </div>
 </template>

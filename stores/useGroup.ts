@@ -150,10 +150,16 @@ export const useGroup = defineStore(
           Array(Object.entries(groupProps).find((item) => item[0] === field)!)
         )
       }
-      await groupUpdate({
-        groupId: group.value.id,
-        group: <GroupInput>(groupField || groupProps),
-      })
+      try {
+        await groupUpdate({
+          groupId: group.value.id,
+          group: <GroupInput>(groupField || groupProps),
+        })
+        return 'complete'
+      } catch (e) {
+        console.log(e)
+        return 'error'
+      }
     }
     onGroupUpdateError((error) => {
       console.log(error)

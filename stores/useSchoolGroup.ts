@@ -159,10 +159,16 @@ export const useSchoolGroup = defineStore(
           Array(Object.entries(schlgrpProps).find((item) => item[0] === field)!)
         )
       }
-      await schoolGroupUpdate({
-        schoolGroupId,
-        schoolGroup: <SchoolGroupInput>(schoolGroupField || schlgrpProps),
-      })
+      try {
+        await schoolGroupUpdate({
+          schoolGroupId,
+          schoolGroup: <SchoolGroupInput>(schoolGroupField || schlgrpProps),
+        })
+        return 'complete'
+      } catch (e) {
+        console.log(e)
+        return 'error'
+      }
     }
     onSchoolGroupUpdateError((error) => {
       console.log(error)

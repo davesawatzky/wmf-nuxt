@@ -128,12 +128,13 @@
         method: 'POST',
         body: payload,
       })
+      dataSending.value = false
+      emailWaiting.value = false
     } catch (err) {
       dataSending.value = false
+      emailWaiting.value = false
       console.log(err)
     }
-    dataSending.value = false
-    emailWaiting.value = false
   }
 </script>
 

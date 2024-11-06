@@ -5,13 +5,15 @@
   import { useSchoolGroup } from '@/stores/useSchoolGroup'
   import { useCommunityGroup } from '@/stores/useCommunityGroup'
   import { useAppStore } from '@/stores/appStore'
-  import { PerformerType } from '~/graphql/gql/graphql'
+  import { PerformerType, type RegisteredClass } from '~/graphql/gql/graphql'
+  import { useToast } from 'vue-toastification'
 
   const classesStore = useClasses()
   const registrationStore = useRegistration()
   const schoolGroupStore = useSchoolGroup()
   const communityGroupStore = useCommunityGroup()
   const appStore = useAppStore()
+  const toast = useToast()
 
   const status = reactive<Status[]>([])
   onMounted(() => {
@@ -73,6 +75,20 @@
     })
   )
 
+  // async function fieldStatus(
+  //   stat: string,
+  //   fieldName: string,
+  //   classId: number,
+  //   classIndex: number
+  // ) {
+  //   await nextTick()
+  //   status[classIndex][fieldName] = StatusEnum.pending
+  //   await classesStore.updateClass(classId, fieldName)
+  //   if (stat === 'saved') status[classIndex][fieldName] = StatusEnum.saved
+  //   else if (stat === 'remove')
+  //     status[classIndex][fieldName] = StatusEnum.removed
+  //   else status[classIndex][fieldName] = StatusEnum.null
+  // }
   async function fieldStatus(
     stat: string,
     fieldName: string,
@@ -81,11 +97,21 @@
   ) {
     await nextTick()
     status[classIndex][fieldName] = StatusEnum.pending
-    await classesStore.updateClass(classId, fieldName)
-    if (stat === 'saved') status[classIndex][fieldName] = StatusEnum.saved
-    else if (stat === 'remove')
-      status[classIndex][fieldName] = StatusEnum.removed
-    else status[classIndex][fieldName] = StatusEnum.null
+    const result = await classesStore.updateClass(classId, fieldName)
+    if (result === 'complete') {
+      if (
+        classesStore.registeredClasses[classIndex][
+          fieldName as keyof RegisteredClass
+        ]
+      ) {
+        status[classIndex][fieldName] = StatusEnum.saved
+      } else {
+        status[classIndex][fieldName] = StatusEnum.removed
+      }
+    } else {
+      status[classIndex][fieldName] = StatusEnum.null
+      toast.error('Something went wrong. Please exit and reload Registration')
+    }
   }
 
   // Class error counts
@@ -119,8 +145,13 @@
             label="Select a School Group"
             :options="schoolGroupsList"
             @change-status="
-              (stat: string) => {
-                fieldStatus(stat, 'schoolGroupID', selectedClass.id, classIndex)
+              async (stat: string) => {
+                await fieldStatus(
+                  stat,
+                  'schoolGroupID',
+                  selectedClass.id,
+                  classIndex
+                )
               }
             " />
         </div>
@@ -135,8 +166,8 @@
             label="Select a Community Group"
             :options="communityGroupsList"
             @change-status="
-              (stat: string) => {
-                fieldStatus(
+              async (stat: string) => {
+                await fieldStatus(
                   stat,
                   'communityGroupID',
                   selectedClass.id,

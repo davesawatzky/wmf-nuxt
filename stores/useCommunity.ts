@@ -131,10 +131,16 @@ export const useCommunity = defineStore(
           )
         )
       }
-      await communityUpdate({
-        communityId: community.value.id,
-        community: <CommunityInput>(communityField || communityProps),
-      })
+      try {
+        await communityUpdate({
+          communityId: community.value.id,
+          community: <CommunityInput>(communityField || communityProps),
+        })
+        return 'complete'
+      } catch (e) {
+        console.log(e)
+        return 'error'
+      }
     }
     onCommunityUpdateError((error) => {
       console.log(error)

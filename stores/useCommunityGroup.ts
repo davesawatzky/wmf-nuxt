@@ -163,12 +163,18 @@ export const useCommunityGroup = defineStore(
           Array(Object.entries(schlgrpProps).find((item) => item[0] === field)!)
         )
       }
-      await communityGroupUpdate({
-        communityGroupId,
-        communityGroup: <CommunityGroupInput>(
-          (communityGroupField || schlgrpProps)
-        ),
-      })
+      try {
+        await communityGroupUpdate({
+          communityGroupId,
+          communityGroup: <CommunityGroupInput>(
+            (communityGroupField || schlgrpProps)
+          ),
+        })
+        return 'complete'
+      } catch (e) {
+        console.log(e)
+        return 'error'
+      }
     }
     onCommunityGroupUpdateError((error) => {
       console.log(error)

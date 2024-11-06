@@ -126,23 +126,59 @@
 
   async function fieldStatus(stat: string, fieldName: string) {
     if (!teacherStore.emailAlreadyExists) {
-      await nextTick()
-      status[fieldName] = StatusEnum.pending
       if (!!props.teacherId && fieldName !== 'id') {
-        await teacherStore.updateTeacher(fieldName).catch((err) => {
-          console.log('Trying to remove non-existant teacher', err)
-          stat = ''
-        })
-      }
-      if (stat === 'saved') {
-        status[fieldName] = StatusEnum.saved
-      } else if (stat === 'remove') {
-        status[fieldName] = StatusEnum.removed
-      } else {
-        status[fieldName] = StatusEnum.null
+        await nextTick()
+        if (stat === 'valid') {
+          status[fieldName] = StatusEnum.pending
+          const result = await teacherStore
+            .updateTeacher(fieldName)
+            .catch((err) => {
+              console.log('Trying to remove non-existant teacher', err)
+              stat = ''
+            })
+          if (result === 'complete') {
+            if (contact.value[fieldName as keyof ContactInfo] !== null) {
+              status[fieldName] = StatusEnum.saved
+            } else {
+              toast.error(
+                'Could not update field. Please exit ant reload Registration'
+              )
+            }
+          }
+        } else if (stat === 'invalid') {
+          status[fieldName] = StatusEnum.pending
+          const result = await teacherStore
+            .updateTeacher(fieldName)
+            .catch((err) => {
+              console.log('Trying to remove non-existant teacher', err)
+              stat = ''
+            })
+          status[fieldName] = StatusEnum.null
+          if (result === 'complete') {
+            status[fieldName] = StatusEnum.removed
+          } else {
+            toast.error(
+              'Something went wrong. Please exit and reload Registration'
+            )
+          }
+        } else if (stat === 'removed') {
+          status[fieldName] = StatusEnum.pending
+          const result = await teacherStore
+            .updateTeacher(fieldName)
+            .catch((err) => {
+              console.log('Trying to remove non-existant teacher', err)
+              stat = ''
+            })
+          if (result === 'complete') {
+            status[fieldName] = StatusEnum.removed
+          } else {
+            toast.error(
+              'Could not remove field. Plase exit and reload Registrastion'
+            )
+          }
+        }
       }
     }
-    // teacherStore.emailAlreadyExists = false
   }
 
   const { errors, validate, values } = useForm({
@@ -151,17 +187,10 @@
   })
 
   const { handleChange } = useField(() => 'id', undefined)
-
-  function newStatus(event: any, fieldName: string) {
+  async function newStatus(event: any, fieldName: string) {
     handleChange(event, true)
-    fieldStatus('saved', fieldName)
+    await fieldStatus('valid', fieldName)
   }
-
-  /**
-   *
-   * Everything wrong happens below here
-   *
-   */
 
   onActivated(async () => {
     const teacherType =
@@ -198,9 +227,9 @@
 
   watch(
     () => teacherStore.fieldStatusRef,
-    (newStatus, oldStatus) => {
-      if (newStatus?.stat === 'remove' && newStatus?.field === 'id') {
-        fieldStatus(newStatus.stat, newStatus?.field)
+    async (newStatus, oldStatus) => {
+      if (newStatus?.stat === 'removed' && newStatus?.field === 'id') {
+        await fieldStatus(newStatus.stat, newStatus?.field)
       }
     }
   )
@@ -361,7 +390,7 @@
         "
         :suggestions="filteredTeachers"
         @complete="search"
-        @change="(event: any) => newStatus(event, 'id')">
+        @change="async (event: any) => await newStatus(event, 'id')">
         <template #option="slotProps">
           <div>
             {{ slotProps.option.lastName }}, {{ slotProps.option.firstName }}
@@ -384,7 +413,9 @@
             name="firstName"
             type="text"
             label="First Name"
-            @change-status="(stat: string) => fieldStatus(stat, 'firstName')" />
+            @change-status="
+              async (stat: string) => await fieldStatus(stat, 'firstName')
+            " />
         </div>
         <div class="col-span-12 sm:col-span-6">
           <BaseInput
@@ -393,7 +424,9 @@
             name="lastName"
             type="text"
             label="Last Name"
-            @change-status="(stat: string) => fieldStatus(stat, 'lastName')" />
+            @change-status="
+              async (stat: string) => await fieldStatus(stat, 'lastName')
+            " />
         </div>
 
         <div class="col-span-6 sm:col-span-4">
@@ -407,7 +440,9 @@
             name="phone"
             type="tel"
             label="Phone Number"
-            @change-status="(stat: string) => fieldStatus(stat, 'phone')" />
+            @change-status="
+              async (stat: string) => await fieldStatus(stat, 'phone')
+            " />
         </div>
         <div class="col-span-12 sm:col-span-4">
           <BaseInput
@@ -418,9 +453,9 @@
             type="email"
             label="Email"
             @change-status="
-              (stat: string) => {
-                checkForDuplicate()
-                fieldStatus(stat, 'email')
+              async (stat: string) => {
+                await checkForDuplicate()
+                await fieldStatus(stat, 'email')
               }
             " />
         </div>

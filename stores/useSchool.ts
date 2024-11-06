@@ -128,10 +128,16 @@ export const useSchool = defineStore(
           Array(Object.entries(schoolProps).find((item) => item[0] === field)!)
         )
       }
-      await schoolUpdate({
-        schoolId: school.value.id,
-        school: <SchoolInput>(schoolField || schoolProps),
-      })
+      try {
+        await schoolUpdate({
+          schoolId: school.value.id,
+          school: <SchoolInput>(schoolField || schoolProps),
+        })
+        return 'complete'
+      } catch (error) {
+        console.log(error)
+        return 'error'
+      }
     }
     onSchoolUpdateError((error) => {
       console.log(error)

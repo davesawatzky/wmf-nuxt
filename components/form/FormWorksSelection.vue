@@ -6,7 +6,9 @@
     Selection,
     SelectionInput,
   } from '~/graphql/gql/graphql'
-  import { emit } from 'process'
+  import { useToast } from 'vue-toastification'
+
+  const toast = useToast()
 
   const props = defineProps<{
     modelValue: SelectionInput
@@ -39,17 +41,77 @@
     duration: props.modelValue.duration ? StatusEnum.saved : StatusEnum.null,
   })
 
+  // async function fieldStatus(stat: string, fieldName: string) {
+  //   await nextTick()
+  //   status[fieldName] = StatusEnum.pending
+  //   const result = await classesStore.updateSelection(
+  //     props.classId,
+  //     props.selectionId,
+  //     fieldName
+  //   )
+  //   if (result === 'complete') {
+  //     if (work.value[fieldName as keyof SelectionInput]) {
+  //       status[fieldName] = StatusEnum.saved
+  //     } else {
+  //       status[fieldName] = StatusEnum.removed
+  //     }
+  //   } else {
+  //     status[fieldName] = StatusEnum.null
+  //     work.value[fieldName as keyof SelectionInput] = null
+  //     toast.error('Something went wrong. Please exit and reload Registration')
+  //   }
+  // }
+
   async function fieldStatus(stat: string, fieldName: string) {
     await nextTick()
-    status[fieldName] = StatusEnum.pending
-    await classesStore.updateSelection(
-      props.classId,
-      props.selectionId,
-      fieldName
-    )
-    if (stat === 'saved') status[fieldName] = StatusEnum.saved
-    else if (stat === 'remove') status[fieldName] = StatusEnum.removed
-    else status[fieldName] = StatusEnum.null
+    if (stat === 'valid') {
+      status[fieldName] = StatusEnum.pending
+      const result = await classesStore.updateSelection(
+        props.classId,
+        props.selectionId,
+        fieldName
+      )
+      status[fieldName] = StatusEnum.null
+      if (result === 'complete') {
+        if (work.value[fieldName as keyof SelectionInput] !== null) {
+          status[fieldName] = StatusEnum.saved
+        }
+      } else {
+        toast.error(
+          'Could not update field.  Please exit and reload Registration'
+        )
+      }
+    } else if (stat === 'invalid') {
+      status[fieldName] = StatusEnum.pending
+      const result = await classesStore.updateSelection(
+        props.classId,
+        props.selectionId,
+        fieldName
+      )
+      status[fieldName] = StatusEnum.null
+      if (result === 'complete') {
+        status[fieldName] = StatusEnum.removed
+      } else {
+        toast.error(
+          'Could not remove invalid field. Please exit and reload Registration'
+        )
+      }
+    } else if (stat === 'removed') {
+      status[fieldName] = StatusEnum.pending
+      const result = await classesStore.updateSelection(
+        props.classId,
+        props.selectionId,
+        fieldName
+      )
+      status[fieldName] = StatusEnum.null
+      if (result === 'complete') {
+        status[fieldName] = StatusEnum.removed
+      } else {
+        toast.error(
+          'Could not remove field.  Please exit and reload Registration'
+        )
+      }
+    }
   }
 
   const validationSchema = toTypedSchema(
@@ -100,7 +162,9 @@
           name="title"
           label="Title (including Opus number if applicable)"
           type="text"
-          @change-status="(stat: string) => fieldStatus(stat, 'title')" />
+          @change-status="
+            async (stat: string) => await fieldStatus(stat, 'title')
+          " />
       </div>
       <div class="col-span-12 sm:col-span-5">
         <BaseInput
@@ -109,7 +173,9 @@
           name="composer"
           label="Composer"
           type="text"
-          @change-status="(stat: string) => fieldStatus(stat, 'composer')" />
+          @change-status="
+            async (stat: string) => await fieldStatus(stat, 'composer')
+          " />
       </div>
       <div class="col-span-12 sm:col-span-5">
         <BaseInput
@@ -118,7 +184,9 @@
           name="largerWork"
           label="Title of Larger Work (if applicable)"
           type="text"
-          @change-status="(stat: string) => fieldStatus(stat, 'largerWork')" />
+          @change-status="
+            async (stat: string) => await fieldStatus(stat, 'largerWork')
+          " />
       </div>
       <div class="col-span-6 sm:col-span-4">
         <BaseInput
@@ -127,7 +195,9 @@
           name="movement"
           label="Movement (if applicable)"
           type="text"
-          @change-status="(stat: string) => fieldStatus(stat, 'movement')" />
+          @change-status="
+            async (stat: string) => await fieldStatus(stat, 'movement')
+          " />
       </div>
       <div class="col-span-6 sm:col-span-3">
         <BaseInput
@@ -141,7 +211,9 @@
           name="duration"
           label="Duration"
           type="text"
-          @change-status="(stat: string) => fieldStatus(stat, 'duration')" />
+          @change-status="
+            async (stat: string) => await fieldStatus(stat, 'duration')
+          " />
       </div>
     </div>
   </div>

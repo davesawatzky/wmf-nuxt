@@ -22,7 +22,7 @@
   const uuid = UniqueID().getID()
 
   // Aggressive
-  const { value, resetField, errorMessage, meta, handleChange, handleBlur } =
+  const { value, resetField, errorMessage, meta, handleChange, validate } =
     useField(() => props.name, undefined, {
       validateOnValueUpdate: false,
       initialValue: props.modelValue,
@@ -30,13 +30,14 @@
     })
 
   const validationListeners = {
-    change: (evt: any) => {
+    change: async (evt: any) => {
       handleChange(evt, true)
-      emit('changeStatus', 'saved')
-    },
-    input: (evt: any) => {
-      handleChange(evt, true)
-      emit('changeStatus', 'saved')
+      await validate()
+      if (meta.valid) {
+        emit('changeStatus', 'valid')
+      } else {
+        emit('changeStatus', 'invalid')
+      }
     },
   }
 </script>
