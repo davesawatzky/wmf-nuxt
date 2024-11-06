@@ -302,18 +302,6 @@
           Safari</strong
         >
       </p>
-      <p class="text-center">
-        <strong
-          >Do not let your computer auto populate contact information, please
-          TYPE in all answers.</strong
-        >
-      </p>
-      <!-- <p>
-        <strong
-          >Accounts from last year have been removed. Please make a new
-          account.</strong
-        >
-      </p> -->
       <!-- <div
         class="mx-auto text-center border-4 border-red-700 rounded-lg mt-4 p-4">
         <h3>Registration for the 2024 music festival is now closed.</h3>
