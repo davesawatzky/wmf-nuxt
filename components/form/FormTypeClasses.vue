@@ -145,8 +145,13 @@
             label="Select a School Group"
             :options="schoolGroupsList"
             @change-status="
-              (stat: string) => {
-                fieldStatus(stat, 'schoolGroupID', selectedClass.id, classIndex)
+              async (stat: string) => {
+                await fieldStatus(
+                  stat,
+                  'schoolGroupID',
+                  selectedClass.id,
+                  classIndex
+                )
               }
             " />
         </div>
@@ -161,8 +166,8 @@
             label="Select a Community Group"
             :options="communityGroupsList"
             @change-status="
-              (stat: string) => {
-                fieldStatus(
+              async (stat: string) => {
+                await fieldStatus(
                   stat,
                   'communityGroupID',
                   selectedClass.id,

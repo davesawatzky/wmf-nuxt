@@ -30,7 +30,7 @@
       } else {
         cancelGroupChange.value = false
         setIsOpen(false)
-        await fieldStatus('saved', 'groupType')
+        await fieldStatus('valid', 'groupType')
       }
     },
     { flush: 'post' }

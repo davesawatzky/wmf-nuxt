@@ -34,7 +34,6 @@
       handleChange(evt, true)
       await validate()
       if (meta.valid) {
-        console.log('valid', value.value)
         emit('changeStatus', 'valid')
       } else {
         emit('changeStatus', 'invalid')

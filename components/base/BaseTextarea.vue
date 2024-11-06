@@ -15,7 +15,7 @@
 
   const uuid = UniqueID().getID()
 
-  const { value, resetField, errorMessage, meta, handleBlur, handleChange } =
+  const { value, resetField, errorMessage, meta, validate, handleChange } =
     useField(() => props.name, undefined, {
       validateOnValueUpdate: false,
       initialValue: props.modelValue,
@@ -23,14 +23,17 @@
     })
 
   const validationListeners = {
-    blur: (evt: Event) => handleBlur(evt, true),
-    change: (evt: Event) => {
+    change: async (evt: Event) => {
       handleChange(evt, true)
-      if (meta.dirty && meta.valid && !!value.value) {
-        emit('changeStatus', 'saved')
+      await validate()
+      if (meta.valid) {
+        emit('changeStatus', 'valid')
         resetField({ value: value.value })
       } else if (meta.dirty && !value.value && !!meta.initialValue) {
-        emit('changeStatus', 'remove')
+        emit('changeStatus', 'removed')
+        resetField({ value: '' })
+      } else if (!meta.valid && value.value) {
+        emit('changeStatus', 'invalid')
         resetField({ value: '' })
       }
     },

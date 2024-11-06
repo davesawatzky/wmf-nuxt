@@ -11,6 +11,7 @@
     breakpointsTailwind,
     useBreakpoints,
   } from '@vueuse/core'
+  import { useToast } from 'vue-toastification'
 
   interface DynamicComponent {
     [key: string]: Component
@@ -42,6 +43,7 @@
   let tabs = {} as DynamicComponent
   const breakpoints = useBreakpoints(breakpointsTailwind)
   const mobile = breakpoints.smaller('sm')
+  const toast = useToast()
 
   const currentTab = useStorage('stepperTab', '', sessionStorage, {
     mergeDefaults: true,
@@ -97,16 +99,56 @@
     tabIndex.value = index
   }
 
+  // async function fieldStatus(stat: string, fieldName: string) {
+  //   await nextTick()
+  //   status[fieldName] = StatusEnum.pending
+  //   await registrationStore.updateRegistration(fieldName)
+  //   if (stat === 'saved') {
+  //     status[fieldName] = StatusEnum.saved
+  //   } else if (stat === 'remove') {
+  //     status[fieldName] = StatusEnum.removed
+  //   } else {
+  //     status[fieldName] = StatusEnum.null
+  //   }
+  // }
+
   async function fieldStatus(stat: string, fieldName: string) {
     await nextTick()
-    status[fieldName] = StatusEnum.pending
-    await registrationStore.updateRegistration(fieldName)
-    if (stat === 'saved') {
-      status[fieldName] = StatusEnum.saved
-    } else if (stat === 'remove') {
-      status[fieldName] = StatusEnum.removed
-    } else {
+    if (stat === 'valid') {
+      status[fieldName] = StatusEnum.pending
+      const result = await registrationStore.updateRegistration(fieldName)
       status[fieldName] = StatusEnum.null
+      if (result === 'complete') {
+        if (registrationStore.registration.label !== null) {
+          status[fieldName] = StatusEnum.saved
+        }
+      } else {
+        toast.error(
+          'Could not update field.  Please exit and reload Registration'
+        )
+      }
+    } else if (stat === 'invalid') {
+      status[fieldName] = StatusEnum.pending
+      const result = await registrationStore.updateRegistration(fieldName)
+      status[fieldName] = StatusEnum.null
+      if (result === 'complete') {
+        status[fieldName] = StatusEnum.removed
+      } else {
+        toast.error(
+          'Could not remove invalid field. Please exit and reload Registration'
+        )
+      }
+    } else if (stat === 'removed') {
+      status[fieldName] = StatusEnum.pending
+      const result = await registrationStore.updateRegistration(fieldName)
+      status[fieldName] = StatusEnum.null
+      if (result === 'complete') {
+        status[fieldName] = StatusEnum.removed
+      } else {
+        toast.error(
+          'Could not remove field.  Please exit and reload Registration'
+        )
+      }
     }
   }
 
@@ -191,7 +233,9 @@
       placeholder="Enter a unique label"
       :status="status.label"
       type="text"
-      @change-status="(stat: string) => fieldStatus(stat, 'label')" />
+      @change-status="
+        async (stat: string) => await fieldStatus(stat, 'label')
+      " />
 
     <div v-if="!registrationStore.registration.confirmation">
       <div class="text-left">

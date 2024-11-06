@@ -187,10 +187,9 @@
   })
 
   const { handleChange } = useField(() => 'id', undefined)
-
-  function newStatus(event: any, fieldName: string) {
+  async function newStatus(event: any, fieldName: string) {
     handleChange(event, true)
-    fieldStatus('saved', fieldName)
+    await fieldStatus('valid', fieldName)
   }
 
   onActivated(async () => {
@@ -228,9 +227,9 @@
 
   watch(
     () => teacherStore.fieldStatusRef,
-    (newStatus, oldStatus) => {
-      if (newStatus?.stat === 'remove' && newStatus?.field === 'id') {
-        fieldStatus(newStatus.stat, newStatus?.field)
+    async (newStatus, oldStatus) => {
+      if (newStatus?.stat === 'removed' && newStatus?.field === 'id') {
+        await fieldStatus(newStatus.stat, newStatus?.field)
       }
     }
   )
@@ -391,7 +390,7 @@
         "
         :suggestions="filteredTeachers"
         @complete="search"
-        @change="(event: any) => newStatus(event, 'id')">
+        @change="async (event: any) => await newStatus(event, 'id')">
         <template #option="slotProps">
           <div>
             {{ slotProps.option.lastName }}, {{ slotProps.option.firstName }}
