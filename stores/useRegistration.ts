@@ -41,12 +41,17 @@ export const useRegistration = defineStore(
     })
 
     function lateRegistrationFee() {
-      const currentDate = new Date()
+      let registrationDate
+      if (!!registration.value.submittedAt) {
+        registrationDate = new Date(registration.value.submittedAt)
+      } else {
+        registrationDate = new Date()
+      }
       const lateDate = new Date(
         lateDatesAndCosts[appStore.performerType].lateDate
       )
       let lateFee = 0.0
-      if (currentDate > lateDate) {
+      if (registrationDate > lateDate) {
         lateFee = lateDatesAndCosts[appStore.performerType].amount
       }
       return lateFee.toFixed(2)
