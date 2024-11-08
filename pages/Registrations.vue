@@ -275,6 +275,13 @@
       }}</strong
       >. **
     </p>
+    <p>
+      ** Final day for Solo registrations is
+      <strong>{{
+        useDateFormat(lateDatesAndCosts.SOLO.cutOffDate, 'dddd, MMMM D, YYYY')
+      }}</strong
+      >. **
+    </p>
     <div class="border border-sky-500 rounded-lg text-left mt-10 md:mt-15">
       <div class="p-2 sm:p-4">
         <div class="pb-6">
