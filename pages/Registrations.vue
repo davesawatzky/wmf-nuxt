@@ -271,7 +271,7 @@
     <h1 class="mt-3 mb-2">Winnipeg Music Festival</h1>
     <h2>Registration Forms</h2>
     <br />
-    <p class="">
+    <!-- <p class="">
       ** A late fee of
       <strong>${{ Number(lateDatesAndCosts.SOLO.amount).toFixed(2) }}</strong>
       will be added to Solo Registrations after
@@ -286,7 +286,7 @@
         useDateFormat(lateDatesAndCosts.SOLO.cutOffDate, 'dddd, MMMM D, YYYY')
       }}</strong
       >. **
-    </p>
+    </p> -->
     <div class="border border-sky-500 rounded-lg text-left mt-10 md:mt-15">
       <div class="p-2 sm:p-4">
         <div class="pb-6">
