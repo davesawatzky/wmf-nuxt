@@ -12,7 +12,6 @@
   import { useCommunityGroup } from '@/stores/useCommunityGroup'
   import { useFieldConfig } from '@/stores/useFieldConfig'
   import { useUser } from '@/stores/useUser'
-  import { communityOpen, groupOpen, schoolOpen, soloOpen } from '#imports'
   import type { Registration, RegistrationInput } from '@/graphql/gql/graphql'
   import {
     MyUserDocument,
@@ -259,6 +258,12 @@
     await refetchRegistrations()
     appStore.dataLoading = false
   }
+
+  function registrationClosed(performerType: PerformerType): boolean {
+    const currentDate = new Date()
+    const cutoffDate = new Date(lateDatesAndCosts[performerType].cutOffDate)
+    return currentDate > cutoffDate
+  }
 </script>
 
 <template>
@@ -328,23 +333,28 @@
                     class="text-sky-600 text-xl md:ml-4 ml-3"
                     @click="
                       registration.confirmation ||
-                      openEditor(registration.performerType)
+                      !registrationClosed(registration.performerType)
                         ? loadRegistration(
                             registration.id,
                             registration.performerType
                           )
                         : ''
+                    "
+                    :style="
+                      registrationClosed(registration.performerType)
+                        ? 'cursor: default;'
+                        : 'cursor: pointer;'
                     ">
                     <Icon
                       v-if="
                         !registration.confirmation &&
-                        openEditor(registration.performerType)
+                        !registrationClosed(registration.performerType)
                       "
                       name="fa-solid:pen" />
                     <Icon
                       v-else-if="
                         !registration.confirmation &&
-                        !openEditor(registration.performerType)
+                        registrationClosed(registration.performerType)
                       "
                       name="fa-solid:ban" />
                     <Icon
@@ -432,26 +442,84 @@
       <!-- Discipline Cards -->
       <div class="grid grid-cols-2 lg:grid-cols-4">
         <BaseCard
-          :label="soloOpen ? 'Solo' : 'Solo - Closed'"
-          :photo="soloOpen ? soloPhoto : soloPhotoBW"
+          :label="
+            registrationClosed(PerformerType.SOLO) ? 'Solo - Closed' : 'Solo'
+          "
+          :photo="
+            registrationClosed(PerformerType.SOLO) ? soloPhotoBW : soloPhoto
+          "
+          :style="
+            registrationClosed(PerformerType.SOLO)
+              ? 'cursor: default;'
+              : 'cursor: pointer;'
+          "
           alt-text="New Solo Registration"
-          @click="soloOpen ? newRegistration(PerformerType.SOLO) : ''" />
+          @click="
+            registrationClosed(PerformerType.SOLO)
+              ? ''
+              : newRegistration(PerformerType.SOLO)
+          " />
         <BaseCard
-          :label="groupOpen ? 'Group' : 'Group - Closed'"
-          :photo="groupOpen ? groupPhoto : groupPhotoBW"
+          :label="
+            registrationClosed(PerformerType.GROUP) ? 'Group - Closed' : 'Group'
+          "
+          :photo="
+            registrationClosed(PerformerType.GROUP) ? groupPhotoBW : groupPhoto
+          "
+          :style="
+            registrationClosed(PerformerType.GROUP)
+              ? 'cursor: default;'
+              : 'cursor: pointer;'
+          "
           alt-text="New Group Registration"
-          @click="groupOpen ? newRegistration(PerformerType.GROUP) : ''" />
+          @click="
+            registrationClosed(PerformerType.GROUP)
+              ? ''
+              : newRegistration(PerformerType.GROUP)
+          " />
         <BaseCard
-          :label="schoolOpen ? 'School' : 'School - Closed'"
-          :photo="schoolOpen ? schoolPhoto : schoolPhotoBW"
+          :label="
+            registrationClosed(PerformerType.SCHOOL)
+              ? 'School - Closed'
+              : 'School'
+          "
+          :photo="
+            registrationClosed(PerformerType.SCHOOL)
+              ? schoolPhotoBW
+              : schoolPhoto
+          "
+          :style="
+            registrationClosed(PerformerType.SCHOOL)
+              ? 'cursor: default;'
+              : 'cursor: pointer;'
+          "
           alt-text="New School Registration"
-          @click="schoolOpen ? newRegistration(PerformerType.SCHOOL) : ''" />
+          @click="
+            registrationClosed(PerformerType.SCHOOL)
+              ? ''
+              : newRegistration(PerformerType.SCHOOL)
+          " />
         <BaseCard
-          :label="communityOpen ? 'Community' : 'Community - Closed'"
-          :photo="communityOpen ? communityPhoto : communityPhotoBW"
+          :label="
+            registrationClosed(PerformerType.COMMUNITY)
+              ? 'Community - Closed'
+              : 'Community'
+          "
+          :photo="
+            registrationClosed(PerformerType.COMMUNITY)
+              ? communityPhotoBW
+              : communityPhoto
+          "
+          :style="
+            registrationClosed(PerformerType.COMMUNITY)
+              ? 'cursor: default;'
+              : 'cursor: pointer;'
+          "
           alt-text="New Community Registration"
           @click="
-            communityOpen ? newRegistration(PerformerType.COMMUNITY) : ''
+            registrationClosed(PerformerType.COMMUNITY)
+              ? ''
+              : newRegistration(PerformerType.COMMUNITY)
           " />
       </div>
     </div>
