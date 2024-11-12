@@ -33,7 +33,7 @@ export const lateDatesAndCosts = {
   SOLO: {
     lateDate: new Date(2024, 11 - 1, 1, 23, 59, 59),
     amount: 20.0,
-    cutOffDate: new Date(2024, 12 - 1, 10, 23, 59, 59),
+    cutOffDate: new Date(2024, 11 - 1, 10, 23, 59, 59),
   },
   GROUP: {
     lateDate: new Date(2024, 12 - 1, 1, 23, 59, 59),
