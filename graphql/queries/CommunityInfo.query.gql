@@ -3,13 +3,12 @@ query CommunityInfo($registrationId: Int!) {
     community {
       id
       name
-      groupSize
-      chaperones
-      wheelchairs
-      earliestTime
-      latestTime
-      unavailable
-      conflictPerformers
+      address
+      city
+      province
+      postalCode
+      phone
+      email
     }
   }
 }

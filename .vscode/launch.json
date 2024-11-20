@@ -23,28 +23,10 @@
       "webRoot": "${workspaceFolder}"
     },
     {
-      "type": "firefox",
-      "request": "launch",
-      "name": "Launch on Firefox",
-      // "firefoxExecutable": "/mnt/c/'Program Files'/'Firefox Developer Edition'/firefox.exe",
-      "port": 3001,
-      "url": "http://localhost:3001",
-      "webRoot": "${workspaceFolder}"
-    },
-    {
       "type": "chrome",
       "request": "attach",
       "name": "Attach to Chrome",
       "port": 3001,
-      "url": "http://localhost:3001",
-      "webRoot": "${workspaceFolder}"
-    },
-    {
-      "type": "firefox",
-      "request": "attach",
-      "name": "Attach to Firefox",
-      "port": 3001,
-      "firefoxExecutable": "/mnt/c/'Program Files'/'Firefox Developer Edition'/firefox.exe",
       "url": "http://localhost:3001",
       "webRoot": "${workspaceFolder}"
     }
@@ -53,10 +35,6 @@
     {
       "name": "Fullstack on Chrome",
       "configurations": ["server: nuxt", "Launch on Chrome"]
-    },
-    {
-      "name": "Fullstack on Firefox",
-      "configurations": ["server: nuxt", "Launch on Firefox"]
     }
   ]
 }

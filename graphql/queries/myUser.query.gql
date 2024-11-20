@@ -3,9 +3,7 @@ query MyUser {
     id
     firstName
     lastName
-    apartment
-    streetNumber
-    streetName
+    address
     city
     province
     postalCode

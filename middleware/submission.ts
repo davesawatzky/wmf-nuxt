@@ -1,6 +1,6 @@
 // Form Middleware
 
-import { useRegistration } from '~/stores/userRegistration'
+import { useRegistration } from '~/stores/useRegistration'
 
 export default defineNuxtRouteMiddleware(async (to, from) => {
   const registrationStore = useRegistration()

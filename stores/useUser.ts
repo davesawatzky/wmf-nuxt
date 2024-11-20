@@ -12,23 +12,21 @@ export const useUser = defineStore(
 
     function addToStore(userDetails: Partial<User>): void {
       user.value.id = userDetails.id!
-      user.value.firstName = userDetails.firstName || ''
-      user.value.lastName = userDetails.lastName || ''
+      user.value.firstName = userDetails.firstName || null
+      user.value.lastName = userDetails.lastName || null
       user.value.hasSignedIn = userDetails.hasSignedIn || false
-      user.value.email = userDetails.email || ''
+      user.value.email = userDetails.email || null
       user.value.emailConfirmed = userDetails.emailConfirmed || false
       user.value.admin = userDetails.admin || false
       user.value.staff = userDetails.staff || false
       user.value.privateTeacher = userDetails.privateTeacher || false
       user.value.schoolTeacher = userDetails.schoolTeacher || false
-      user.value.apartment = userDetails.apartment || ''
-      user.value.streetNumber = userDetails.streetNumber || ''
-      user.value.streetName = userDetails.streetName || ''
-      user.value.city = userDetails.city || ''
-      user.value.province = userDetails.province || ''
-      user.value.postalCode = userDetails.postalCode || ''
-      user.value.phone = userDetails.phone || ''
-      user.value.instrument = userDetails.instrument || ''
+      user.value.address = userDetails.address || null
+      user.value.city = userDetails.city || null
+      user.value.province = userDetails.province || null
+      user.value.postalCode = userDetails.postalCode || null
+      user.value.phone = userDetails.phone || null
+      user.value.instrument = userDetails.instrument || null
     }
 
     /**
@@ -53,10 +51,16 @@ export const useUser = defineStore(
           Array(Object.entries(userProps).find((item) => item[0] === field)!)
         )
       }
-      await userUpdate({
-        userId: user.value.id,
-        user: <UserInput>(userField || userProps),
-      }).catch((error) => console.log(error))
+      try {
+        await userUpdate({
+          userId: user.value.id,
+          user: <UserInput>(userField || userProps),
+        })
+        return 'complete'
+      } catch (error) {
+        console.log(error)
+        return 'error'
+      }
     }
     onUserUpdateError((error) => {
       console.log(error)

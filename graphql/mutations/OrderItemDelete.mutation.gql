@@ -1,0 +1,12 @@
+mutation OrderItemDelete($itemId: Int!, $orderId: Int!) {
+  orderItemDelete(itemID: $itemId, orderID: $orderId) {
+    orderItem {
+      orderID
+      itemID
+    }
+    userErrors {
+      field
+      message
+    }
+  }
+}

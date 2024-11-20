@@ -1,0 +1,12 @@
+mutation OrderItemCreate($orderId: Int!, $orderItemInput: OrderItemInput!) {
+  orderItemCreate(orderID: $orderId, orderItemInput: $orderItemInput) {
+    orderItem {
+      orderID
+      itemID
+    }
+    userErrors {
+      field
+      message
+    }
+  }
+}

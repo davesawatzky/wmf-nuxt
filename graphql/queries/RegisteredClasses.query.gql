@@ -13,6 +13,7 @@ query RegisteredClasses($registrationId: Int!) {
       price
       subdiscipline
       schoolGroupID
+      communityGroupID
       selections {
         composer
         duration

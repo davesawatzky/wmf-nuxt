@@ -2,7 +2,7 @@
   import * as yup from 'yup'
   import type { Component } from 'vue'
   import { useAppStore } from '@/stores/appStore'
-  import { useRegistration } from '@/stores/userRegistration'
+  import { useRegistration } from '@/stores/useRegistration'
   import type { Status } from '#imports'
   import {
     useStorage,
@@ -11,6 +11,7 @@
     breakpointsTailwind,
     useBreakpoints,
   } from '@vueuse/core'
+  import { useToast } from 'vue-toastification'
 
   interface DynamicComponent {
     [key: string]: Component
@@ -32,6 +33,7 @@
   const FormCommunityTeacher = <Component>(
     resolveComponent('FormCommunityTeacher')
   )
+  const FormCommunityGroups = <Component>resolveComponent('FormCommunityGroups')
   const FormTypeClasses = <Component>resolveComponent('FormTypeClasses')
   const Summary = <Component>resolveComponent('Summary')
 
@@ -41,6 +43,7 @@
   let tabs = {} as DynamicComponent
   const breakpoints = useBreakpoints(breakpointsTailwind)
   const mobile = breakpoints.smaller('sm')
+  const toast = useToast()
 
   const currentTab = useStorage('stepperTab', '', sessionStorage, {
     mergeDefaults: true,
@@ -96,16 +99,56 @@
     tabIndex.value = index
   }
 
+  // async function fieldStatus(stat: string, fieldName: string) {
+  //   await nextTick()
+  //   status[fieldName] = StatusEnum.pending
+  //   await registrationStore.updateRegistration(fieldName)
+  //   if (stat === 'saved') {
+  //     status[fieldName] = StatusEnum.saved
+  //   } else if (stat === 'remove') {
+  //     status[fieldName] = StatusEnum.removed
+  //   } else {
+  //     status[fieldName] = StatusEnum.null
+  //   }
+  // }
+
   async function fieldStatus(stat: string, fieldName: string) {
     await nextTick()
-    status[fieldName] = StatusEnum.pending
-    await registrationStore.updateRegistration(fieldName)
-    if (stat === 'saved') {
-      status[fieldName] = StatusEnum.saved
-    } else if (stat === 'remove') {
-      status[fieldName] = StatusEnum.removed
-    } else {
+    if (stat === 'valid') {
+      status[fieldName] = StatusEnum.pending
+      const result = await registrationStore.updateRegistration(fieldName)
       status[fieldName] = StatusEnum.null
+      if (result === 'complete') {
+        if (registrationStore.registration.label !== null) {
+          status[fieldName] = StatusEnum.saved
+        }
+      } else {
+        toast.error(
+          'Could not update field.  Please exit and reload Registration'
+        )
+      }
+    } else if (stat === 'invalid') {
+      status[fieldName] = StatusEnum.pending
+      const result = await registrationStore.updateRegistration(fieldName)
+      status[fieldName] = StatusEnum.null
+      if (result === 'complete') {
+        status[fieldName] = StatusEnum.removed
+      } else {
+        toast.error(
+          'Could not remove invalid field. Please exit and reload Registration'
+        )
+      }
+    } else if (stat === 'removed') {
+      status[fieldName] = StatusEnum.pending
+      const result = await registrationStore.updateRegistration(fieldName)
+      status[fieldName] = StatusEnum.null
+      if (result === 'complete') {
+        status[fieldName] = StatusEnum.removed
+      } else {
+        toast.error(
+          'Could not remove field.  Please exit and reload Registration'
+        )
+      }
     }
   }
 
@@ -140,6 +183,7 @@
       tabs = {
         Community: FormCommunityInfo,
         Contact: FormCommunityTeacher,
+        Groups: FormCommunityGroups,
         'Community Classes': FormTypeClasses,
         Summary,
       }
@@ -166,6 +210,16 @@
   async function gotoRegistrations() {
     await navigateTo('/registrations')
   }
+
+  const queryLoading = useGlobalQueryLoading()
+  const mutationLoading = useGlobalMutationLoading()
+  const disableButton = computed(() => {
+    if (queryLoading.value || mutationLoading.value || appStore.dataLoading) {
+      return true
+    } else {
+      return false
+    }
+  })
 </script>
 
 <template>
@@ -179,7 +233,9 @@
       placeholder="Enter a unique label"
       :status="status.label"
       type="text"
-      @change-status="(stat: string) => fieldStatus(stat, 'label')" />
+      @change-status="
+        async (stat: string) => await fieldStatus(stat, 'label')
+      " />
 
     <div v-if="!registrationStore.registration.confirmation">
       <div class="text-left">
@@ -205,15 +261,19 @@
         class="sm:flex sm:justify-between"
         :class="tabIndex === 0 ? 'flex-row-reverse' : ''">
         <BaseButton
+          id="desktop-previous-button"
           v-show="tabIndex > 0"
           class="btn btn-blue"
-          @click="previousTab">
+          @click="previousTab"
+          :disabled="disableButton">
           <Icon name="bxs:left-arrow" />Previous
         </BaseButton>
         <BaseButton
+          id="desktop-next-button"
           v-show="tabIndex < Object.keys(tabs).length - 1"
           class="btn btn-blue"
-          @click="nextTab">
+          @click="nextTab"
+          :disabled="disableButton">
           Next<Icon name="bxs:right-arrow" />
         </BaseButton>
       </div>
@@ -221,18 +281,25 @@
         <KeepAlive>
           <BaseBottomBar class="flex justify-around">
             <BaseButton
-              :disabled="!(tabIndex > 0)"
+              id="mobile-previous-button"
+              :disabled="!(tabIndex > 0) || disableButton"
               @click="previousTab"
               class="text-sky-700 text-3xl disabled:text-slate-300">
               <Icon name="bxs:left-arrow" />
             </BaseButton>
-            <BaseButton @click="gotoRegistrations()">
+            <BaseButton
+              id="mobile-registration-button"
+              @click="gotoRegistrations()">
               <Icon
                 name="ic:outline-app-registration"
-                class="text-sky-700 text-4xl" />
+                class="text-sky-700 text-4xl"
+                :disabled="disableButton" />
             </BaseButton>
             <BaseButton
-              :disabled="!(tabIndex < Object.keys(tabs).length - 1)"
+              id="mobile-next-button"
+              :disabled="
+                !(tabIndex < Object.keys(tabs).length - 1) || disableButton
+              "
               @click="nextTab"
               class="text-sky-700 text-3xl disabled:text-slate-300">
               <Icon name="bxs:right-arrow" />

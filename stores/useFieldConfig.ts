@@ -78,7 +78,6 @@ export const useFieldConfig = defineStore(
       $reset,
       loadRequiredFields,
       performerTypeFields,
-      resultFieldConfigs,
     }
   },
   {

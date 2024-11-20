@@ -1,22 +1,29 @@
 <script setup lang="ts">
   import * as yup from 'yup'
-  import { useClasses } from '@/stores/userClasses'
-  import { useRegistration } from '@/stores/userRegistration'
-  import { useSchoolGroup } from '@/stores/userSchoolGroup'
+  import { useClasses } from '@/stores/useClasses'
+  import { useRegistration } from '@/stores/useRegistration'
+  import { useSchoolGroup } from '@/stores/useSchoolGroup'
+  import { useCommunityGroup } from '@/stores/useCommunityGroup'
   import { useAppStore } from '@/stores/appStore'
-  import { PerformerType } from '~/graphql/gql/graphql'
+  import { PerformerType, type RegisteredClass } from '~/graphql/gql/graphql'
+  import { useToast } from 'vue-toastification'
 
   const classesStore = useClasses()
   const registrationStore = useRegistration()
   const schoolGroupStore = useSchoolGroup()
+  const communityGroupStore = useCommunityGroup()
   const appStore = useAppStore()
+  const toast = useToast()
 
   const status = reactive<Status[]>([])
-  onBeforeMount(() => {
+  onMounted(() => {
     for (let i = 0; i < classesStore.registeredClasses.length; i++) {
       status.push({ schoolGroupID: StatusEnum.null })
+      status.push({ communityGroupID: StatusEnum.null })
       if (classesStore.registeredClasses[i].schoolGroupID)
         status[i].schoolGroupID = StatusEnum.saved
+      if (classesStore.registeredClasses[i].communityGroupID)
+        status[i].communityGroupID = StatusEnum.saved
     }
   })
 
@@ -24,15 +31,20 @@
     await classesStore.createClass(registrationStore.registrationId)
     if (appStore.performerType === PerformerType.SCHOOL)
       status.push({ schoolGroupID: StatusEnum.null })
+    if (appStore.performerType === PerformerType.COMMUNITY)
+      status.push({ communityGroupID: StatusEnum.null })
+    validate()
   }
 
   async function removeClass(classId: number, index: number) {
     const classIndex = await classesStore.deleteClass(classId)
     if (appStore.performerType === PerformerType.SCHOOL)
       status.splice(classIndex, 1)
+    if (appStore.performerType === PerformerType.COMMUNITY)
+      status.splice(classIndex, 1)
   }
 
-  // SchoolGroup status validation
+  // SchoolGroup and CommunityGroup status validation
 
   const schoolGroupsList = computed(() => {
     const newArray = []
@@ -41,16 +53,42 @@
     return newArray
   })
 
+  const communityGroupsList = computed(() => {
+    const newArray = []
+    for (const commGroup of communityGroupStore.communityGroup)
+      newArray.push({ id: commGroup.id, name: commGroup.name ?? undefined })
+    return newArray
+  })
+
   const validationSchema = toTypedSchema(
     yup.object({
       schoolGroups: yup.array().of(
         yup.object({
-          id: yup.number().integer().required('Please select a group'),
+          id: yup.number().integer().required('Required'),
+        })
+      ),
+      communityGroups: yup.array().of(
+        yup.object({
+          id: yup.number().integer().required('Required'),
         })
       ),
     })
   )
 
+  // async function fieldStatus(
+  //   stat: string,
+  //   fieldName: string,
+  //   classId: number,
+  //   classIndex: number
+  // ) {
+  //   await nextTick()
+  //   status[classIndex][fieldName] = StatusEnum.pending
+  //   await classesStore.updateClass(classId, fieldName)
+  //   if (stat === 'saved') status[classIndex][fieldName] = StatusEnum.saved
+  //   else if (stat === 'remove')
+  //     status[classIndex][fieldName] = StatusEnum.removed
+  //   else status[classIndex][fieldName] = StatusEnum.null
+  // }
   async function fieldStatus(
     stat: string,
     fieldName: string,
@@ -59,11 +97,21 @@
   ) {
     await nextTick()
     status[classIndex][fieldName] = StatusEnum.pending
-    await classesStore.updateClass(classId, fieldName)
-    if (stat === 'saved') status[classIndex][fieldName] = StatusEnum.saved
-    else if (stat === 'remove')
-      status[classIndex][fieldName] = StatusEnum.removed
-    else status[classIndex][fieldName] = StatusEnum.null
+    const result = await classesStore.updateClass(classId, fieldName)
+    if (result === 'complete') {
+      if (
+        classesStore.registeredClasses[classIndex][
+          fieldName as keyof RegisteredClass
+        ]
+      ) {
+        status[classIndex][fieldName] = StatusEnum.saved
+      } else {
+        status[classIndex][fieldName] = StatusEnum.removed
+      }
+    } else {
+      status[classIndex][fieldName] = StatusEnum.null
+      toast.error('Something went wrong. Please exit and reload Registration')
+    }
   }
 
   // Class error counts
@@ -91,14 +139,40 @@
             v-model.number="
               classesStore.registeredClasses[classIndex].schoolGroupID
             "
-            :status="status[classIndex].schoolGroupID"
+            :status="status[classIndex]?.schoolGroupID"
             :name="`schoolGroups[${classIndex}].id`"
             return-id
-            label="Select a school Group"
+            label="Select a School Group"
             :options="schoolGroupsList"
             @change-status="
-              (stat: string) => {
-                fieldStatus(stat, 'schoolGroupID', selectedClass.id, classIndex)
+              async (stat: string) => {
+                await fieldStatus(
+                  stat,
+                  'schoolGroupID',
+                  selectedClass.id,
+                  classIndex
+                )
+              }
+            " />
+        </div>
+        <div v-else-if="appStore.performerType === PerformerType.COMMUNITY">
+          <BaseSelect
+            v-model.number="
+              classesStore.registeredClasses[classIndex].communityGroupID
+            "
+            :status="status[classIndex]?.communityGroupID"
+            :name="`communityGroups[${classIndex}].id`"
+            return-id
+            label="Select a Community Group"
+            :options="communityGroupsList"
+            @change-status="
+              async (stat: string) => {
+                await fieldStatus(
+                  stat,
+                  'communityGroupID',
+                  selectedClass.id,
+                  classIndex
+                )
               }
             " />
         </div>

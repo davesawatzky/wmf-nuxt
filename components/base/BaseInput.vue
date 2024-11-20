@@ -1,8 +1,11 @@
 <script setup lang="ts">
+  import { mapWritableState } from 'pinia'
+
   interface Props {
     type?: string
     label?: string
     helpMessage?: string
+    autocomplete?: string
     status?: StatusEnum
     name: string
     placeholder?: string
@@ -25,23 +28,26 @@
 
   const uuid = UniqueID().getID()
 
-  const { value, resetField, errorMessage, meta, handleChange, handleBlur } =
+  const { value, resetField, errorMessage, meta, handleChange, validate } =
     useField(() => props.name, undefined, {
-      validateOnValueUpdate: false,
+      validateOnValueUpdate: true,
       initialValue: props.modelValue,
       syncVModel: true,
     })
 
   const validationListeners = {
-    blur: (evt: Event) => handleBlur(evt, true),
-    change: (evt: Event) => {
+    change: async (evt: Event) => {
       handleChange(evt, true)
-      if (meta.valid) {
-        emit('changeStatus', 'saved')
-        resetField({ value: value.value })
-      } else if (!meta.valid && meta.initialValue) {
-        emit('changeStatus', 'remove')
+      await validate()
+      if (value.value && !meta.valid) {
         resetField({ value: props.type === 'number' ? 0 : null })
+        emit('changeStatus', 'invalid')
+      } else if (!value.value && meta.initialValue) {
+        resetField({ value: props.type === 'number' ? 0 : null })
+        emit('changeStatus', 'removed')
+      } else if (meta.valid) {
+        resetField({ value: value.value })
+        emit('changeStatus', 'valid')
       }
     },
     input: (evt: Event) => {
@@ -88,3 +94,5 @@
     ><BaseErrorMessage>Value: {{ value }}</BaseErrorMessage> -->
   </div>
 </template>
+
+<style scoped></style>

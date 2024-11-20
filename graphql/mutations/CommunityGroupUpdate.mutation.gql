@@ -1,0 +1,16 @@
+mutation CommunityGroupUpdate(
+  $communityGroupId: Int!
+  $communityGroup: CommunityGroupInput!
+) {
+  communityGroupUpdate(
+    communityGroupID: $communityGroupId
+    communityGroupInput: $communityGroup
+  ) {
+    communityGroup {
+      id
+    }
+    userErrors {
+      message
+    }
+  }
+}

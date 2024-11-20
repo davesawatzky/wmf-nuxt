@@ -1,6 +1,8 @@
 <script setup lang="ts">
   import * as yup from 'yup'
-  import { useGroup } from '@/stores/userGroup'
+  import { useGroup } from '@/stores/useGroup'
+  import type { Group } from '~/graphql/gql/graphql'
+  import { useToast } from 'vue-toastification'
 
   const groupStore = useGroup()
   const classesStore = useClasses()
@@ -8,21 +10,27 @@
   const isOpen = ref(false)
   const previousGroupType = ref('')
   const cancelGroupChange = ref(false)
-  const changeGroupType = ref(false)
+  const changeGroupType = ref('')
+  const fieldConfigStore = useFieldConfig()
+  const toast = useToast()
 
   watch(
     () => groupStore.group.groupType,
     async (newGroupType, oldGroupType) => {
       if (
-        !!oldGroupType &&
-        cancelGroupChange.value === false &&
-        !!classesStore.registeredClasses[0].discipline
+        !!newGroupType &&
+        !!classesStore.registeredClasses[0].discipline &&
+        !cancelGroupChange.value
       ) {
-        previousGroupType.value = oldGroupType
+        previousGroupType.value = oldGroupType ?? ''
         setIsOpen(true)
-      } else if (cancelGroupChange.value === true) {
+      } else if (cancelGroupChange.value) {
         cancelGroupChange.value = false
         setIsOpen(false)
+      } else {
+        cancelGroupChange.value = false
+        setIsOpen(false)
+        await fieldStatus('valid', 'groupType')
       }
     },
     { flush: 'post' }
@@ -35,7 +43,8 @@
       regClassIdNumbers.push(classesStore.registeredClasses[i].id)
     for (const number of regClassIdNumbers)
       await classesStore.deleteClass(number)
-    classesStore.createClass(registrationStore.registrationId)
+    await classesStore.createClass(registrationStore.registrationId)
+    await fieldStatus(changeGroupType.value, 'groupType')
   }
 
   function cancelGroupTypeChange() {
@@ -54,6 +63,11 @@
       value: 'vocal',
     },
     {
+      label: 'Musical Theatre',
+      description: 'Musical Theatre Duets, Trios, Quartets, and Ensembles',
+      value: 'musicalTheatre',
+    },
+    {
       label: 'Instrumental Group',
       description: 'Duets, Trios, Ensembles, and Chamber Groups',
       value: 'instrumental',
@@ -68,8 +82,8 @@
 
   const validationSchema = toTypedSchema(
     yup.object({
-      name: yup.string().trim().required('Enter a group name'),
-      groupType: yup.string().required('Please select a group type'),
+      name: yup.string().trim().required('Required'),
+      groupType: yup.string().required('Required'),
     })
   )
 
@@ -78,18 +92,70 @@
     groupType: groupStore.group.groupType ? StatusEnum.saved : StatusEnum.null,
   })
 
+  // async function fieldStatus(stat: string, fieldName: string) {
+  //   await nextTick()
+  //   status[fieldName] = StatusEnum.pending
+  //   if (stat === 'saved') {
+  //     status[fieldName] = StatusEnum.saved
+  //     await groupStore.updateGroup(fieldName)
+  //   } else if (stat === 'remove') status[fieldName] = StatusEnum.removed
+  //   else status[fieldName] = StatusEnum.null
+  // }
+
   async function fieldStatus(stat: string, fieldName: string) {
     await nextTick()
-    status[fieldName] = StatusEnum.pending
-    await groupStore.updateGroup(fieldName)
-    if (stat === 'saved') status[fieldName] = StatusEnum.saved
-    else if (stat === 'remove') status[fieldName] = StatusEnum.removed
-    else status[fieldName] = StatusEnum.null
+    if (stat === 'valid') {
+      status[fieldName] = StatusEnum.pending
+      const result = await groupStore.updateGroup(fieldName)
+      status[fieldName] = StatusEnum.null
+      if (result === 'complete') {
+        if (groupStore.group[fieldName as keyof Group] !== null) {
+          status[fieldName] = StatusEnum.saved
+        }
+      } else {
+        toast.error(
+          'Could not update field.  Please exit and reload Registration'
+        )
+      }
+    } else if (stat === 'invalid') {
+      status[fieldName] = StatusEnum.pending
+      const result = await groupStore.updateGroup(fieldName)
+      status[fieldName] = StatusEnum.null
+      if (result === 'complete') {
+        status[fieldName] = StatusEnum.removed
+      } else {
+        toast.error(
+          'Could not remove invalid field. Please exit and reload Registration'
+        )
+      }
+    } else if (stat === 'removed') {
+      status[fieldName] = StatusEnum.pending
+      const result = await groupStore.updateGroup(fieldName)
+      status[fieldName] = StatusEnum.null
+      if (result === 'complete') {
+        status[fieldName] = StatusEnum.removed
+      } else {
+        toast.error(
+          'Could not remove field.  Please exit and reload Registration'
+        )
+      }
+    }
   }
 
   const { errors, validate } = useForm({
     validationSchema,
     validateOnMount: true,
+  })
+
+  const groupKeys = fieldConfigStore.performerTypeFields('Group')
+  watchEffect(() => {
+    let count = 0
+    for (const key of groupKeys) {
+      if (status[key as keyof Group] !== StatusEnum.saved) {
+        count++
+      }
+    }
+    groupStore.groupErrors = count
   })
 
   onActivated(() => {
@@ -110,10 +176,9 @@
           label="Group Name"
           type="text"
           :status="status.name"
-          @change-status="(stat: string) => fieldStatus(stat, 'name')" />
-
-        <p>Number of Performers: {{ groupStore.group.numberOfPerformers }}</p>
-        <p>Average Age: {{ groupStore.group.age }}</p>
+          @change-status="
+            async (stat: string) => await fieldStatus(stat, 'name')
+          " />
       </div>
       <div
         class="col-span-6 md:col-span-3 border border-spacing-1 border-sky-500 shadow-md rounded-lg px-6 pt-6">
@@ -125,7 +190,7 @@
             label="Selections"
             :options="typeOptions"
             :status="status.groupType"
-            @change-status="(stat: string) => fieldStatus(stat, 'groupType')" />
+            @change-status="(stat: string) => (changeGroupType = stat)" />
         </div>
       </div>
     </div>

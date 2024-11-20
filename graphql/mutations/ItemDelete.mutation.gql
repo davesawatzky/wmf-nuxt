@@ -1,0 +1,11 @@
+mutation ItemDelete($itemDeleteId: Int!) {
+  itemDelete(id: $itemDeleteId) {
+    item {
+      id
+    }
+    userErrors {
+      field
+      message
+    }
+  }
+}

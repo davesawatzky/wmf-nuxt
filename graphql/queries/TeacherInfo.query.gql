@@ -3,9 +3,7 @@ query TeacherInfo($teacherID: Int, $teacherEmail: String) {
     id
     firstName
     lastName
-    apartment
-    streetNumber
-    streetName
+    address
     city
     province
     postalCode

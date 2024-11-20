@@ -11,6 +11,7 @@ query SchoolGroupInfo($registrationId: Int!) {
         latestTime
         unavailable
         conflictPerformers
+        photoPermission
       }
     }
   }

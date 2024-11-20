@@ -1,17 +1,17 @@
 <script lang="ts" setup>
   import { DateTime } from 'luxon'
-  import { useRegistration } from '@/stores/userRegistration'
+  import { useRegistration } from '@/stores/useRegistration'
   import { useAppStore } from '@/stores/appStore'
-  import { usePerformers } from '@/stores/userPerformer'
-  import { useTeacher } from '@/stores/userTeacher'
-  import { useClasses } from '@/stores/userClasses'
-  import { useGroup } from '@/stores/userGroup'
-  import { useSchool } from '@/stores/userSchool'
-  import { useSchoolGroup } from '@/stores/userSchoolGroup'
-  import { useCommunity } from '@/stores/userCommunity'
+  import { usePerformers } from '@/stores/usePerformer'
+  import { useTeacher } from '@/stores/useTeacher'
+  import { useClasses } from '@/stores/useClasses'
+  import { useGroup } from '@/stores/useGroup'
+  import { useSchool } from '@/stores/useSchool'
+  import { useSchoolGroup } from '@/stores/useSchoolGroup'
+  import { useCommunity } from '@/stores/useCommunity'
+  import { useCommunityGroup } from '@/stores/useCommunityGroup'
   import { useFieldConfig } from '@/stores/useFieldConfig'
   import { useUser } from '@/stores/useUser'
-  import { communityOpen, groupOpen, schoolOpen, soloOpen } from '#imports'
   import type { Registration, RegistrationInput } from '@/graphql/gql/graphql'
   import {
     MyUserDocument,
@@ -36,6 +36,7 @@
   const schoolStore = useSchool()
   const schoolGroupStore = useSchoolGroup()
   const communityStore = useCommunity()
+  const communityGroupStore = useCommunityGroup()
   const classesStore = useClasses()
   const userStore = useUser()
   const fieldConfigStore = useFieldConfig()
@@ -57,7 +58,7 @@
     middleware: ['auth'],
   })
 
-  onBeforeMount(() => {
+  onMounted(async () => {
     registrationStore.$reset()
     appStore.$reset()
     performerStore.$reset()
@@ -65,10 +66,12 @@
     teacherStore.$resetAllTeachers()
     groupStore.$reset()
     communityStore.$reset()
+    communityGroupStore.$reset()
     schoolStore.$reset()
     schoolGroupStore.$reset()
     classesStore.$reset()
     fieldConfigStore.$reset()
+    await refetchRegistrations()
   })
 
   /**
@@ -91,6 +94,7 @@
    */
   const {
     result,
+    loading,
     refetch: refetchRegistrations,
     onError,
   } = useQuery(RegistrationsDocument, null, () => ({
@@ -115,6 +119,9 @@
     registrationId: number,
     performerType: PerformerType
   ) {
+    await refetchRegistrations()
+    await fieldConfigStore.loadRequiredFields()
+    teacherStore.chosenTeacher = null
     const registration = registrations.value.find((reg) => {
       return reg.id === registrationId
     })
@@ -128,7 +135,7 @@
         appStore.performerType = PerformerType.SOLO
         appStore.dataLoading = true
         await performerStore.loadPerformers(registrationId)
-        await teacherStore.loadAllTeachers(true, false)
+        await teacherStore.loadAllTeachers('privateTeacher')
         appStore.dataLoading = false
         break
       case 'GROUP':
@@ -136,7 +143,7 @@
         appStore.dataLoading = true
         await groupStore.loadGroup(registrationId)
         await performerStore.loadPerformers(registrationId)
-        await teacherStore.loadAllTeachers(true, false)
+        await teacherStore.loadAllTeachers('privateTeacher')
         appStore.dataLoading = false
         break
       case 'SCHOOL':
@@ -144,27 +151,29 @@
         appStore.dataLoading = true
         await schoolStore.loadSchool(registrationId)
         await schoolGroupStore.loadSchoolGroups(registrationId)
-        // await teacherStore.loadAllTeachers(false, true)
+        await teacherStore.loadAllTeachers('schoolTeacher')
         appStore.dataLoading = false
         break
       case 'COMMUNITY':
         appStore.performerType = PerformerType.COMMUNITY
         appStore.dataLoading = true
         await communityStore.loadCommunity(registrationId)
-        await teacherStore.loadAllTeachers(true, true)
+        await communityGroupStore.loadCommunityGroups(registrationId)
+        await teacherStore.loadAllTeachers('schoolTeacher')
         appStore.dataLoading = false
         break
     }
     appStore.dataLoading = true
-    if (registration?.teacher) {
+    if (!!registration?.teacher?.id) {
       registrationStore.registration.teacherID = registration.teacher.id
       await teacherStore.loadTeacher(
         registrationStore.registration.teacherID,
         undefined
       )
+    } else {
+      teacherStore.teacherErrors = 1
     }
     await classesStore.loadClasses(registrationId)
-    await fieldConfigStore.loadRequiredFields()
     appStore.dataLoading = false
     await navigateTo('/form')
   }
@@ -176,6 +185,8 @@
    * @param label A given label for the registration form
    */
   async function newRegistration(performerType: PerformerType, label?: string) {
+    await fieldConfigStore.loadRequiredFields()
+    teacherStore.chosenTeacher = null
     if (!label || label.length === 0) label = 'Registration Form'
 
     await registrationStore.createRegistration(performerType, label)
@@ -191,16 +202,19 @@
         appStore.performerType = PerformerType.SOLO
         appStore.dataLoading = true
         await performerStore.createPerformer(registrationId.value)
-        await teacherStore.loadAllTeachers(true, false)
+        performerStore.findInitialPerformerErrors()
+        await teacherStore.loadAllTeachers('privateTeacher')
         break
       case 'GROUP':
         appStore.performerType = PerformerType.GROUP
         appStore.dataLoading = true
         await groupStore.createGroup(registrationId.value)
+        groupStore.findInitialGroupErrors()
         // require at least 2 performers for groups
         await performerStore.createPerformer(registrationId.value)
         await performerStore.createPerformer(registrationId.value)
-        await teacherStore.loadAllTeachers(true, false)
+        performerStore.findInitialPerformerErrors()
+        await teacherStore.loadAllTeachers('privateTeacher')
         break
       case 'SCHOOL':
         appStore.performerType = PerformerType.SCHOOL
@@ -215,19 +229,26 @@
           teacherStore.teacher.phone = userStore.user.phone
         }
         await schoolStore.createSchool(registrationId.value)
+        schoolStore.findInitialSchoolErrors()
         await schoolGroupStore.createSchoolGroup(schoolStore.school.id!)
-        // await teacherStore.loadAllTeachers(false, true)
+        schoolGroupStore.findInitialSchoolGroupErrors()
+        await teacherStore.loadAllTeachers('schoolTeacher')
         break
       case 'COMMUNITY':
         appStore.performerType = PerformerType.COMMUNITY
         appStore.dataLoading = true
         await communityStore.createCommunity(registrationId.value)
-        await teacherStore.loadAllTeachers(true, true)
+        communityStore.findInitialCommunityErrors()
+        await communityGroupStore.createCommunityGroup(
+          communityStore.community.id!
+        )
+        communityGroupStore.findInitialCommunityGroupErrors()
+        await teacherStore.loadAllTeachers('schoolTeacher')
     }
+    teacherStore.teacherErrors = 1
     await classesStore.createClass(registrationId.value)
-    await fieldConfigStore.loadRequiredFields()
+    classesStore.findInitialClassErrors()
     appStore.dataLoading = false
-
     await navigateTo('/form')
   }
 
@@ -237,12 +258,35 @@
     await refetchRegistrations()
     appStore.dataLoading = false
   }
+
+  function registrationClosed(performerType: PerformerType): boolean {
+    const currentDate = new Date()
+    const cutoffDate = new Date(lateDatesAndCosts[performerType].cutOffDate)
+    return currentDate > cutoffDate
+  }
 </script>
 
 <template>
   <div v-auto-animate>
     <h1 class="mt-3 mb-2">Winnipeg Music Festival</h1>
     <h2>Registration Forms</h2>
+    <br />
+    <!-- <p class="">
+      ** A late fee of
+      <strong>${{ Number(lateDatesAndCosts.SOLO.amount).toFixed(2) }}</strong>
+      will be added to Solo Registrations after
+      <strong>{{
+        useDateFormat(lateDatesAndCosts.SOLO.lateDate, 'dddd, MMMM D, YYYY')
+      }}</strong
+      >. **
+    </p>
+    <p>
+      ** Final day for Solo registrations is
+      <strong>{{
+        useDateFormat(lateDatesAndCosts.SOLO.cutOffDate, 'dddd, MMMM D, YYYY')
+      }}</strong
+      >. **
+    </p> -->
     <div class="border border-sky-500 rounded-lg text-left mt-10 md:mt-15">
       <div class="p-2 sm:p-4">
         <div class="pb-6">
@@ -289,23 +333,28 @@
                     class="text-sky-600 text-xl md:ml-4 ml-3"
                     @click="
                       registration.confirmation ||
-                      openEditor(registration.performerType)
+                      !registrationClosed(registration.performerType)
                         ? loadRegistration(
                             registration.id,
                             registration.performerType
                           )
                         : ''
+                    "
+                    :style="
+                      registrationClosed(registration.performerType)
+                        ? 'cursor: default;'
+                        : 'cursor: pointer;'
                     ">
                     <Icon
                       v-if="
                         !registration.confirmation &&
-                        openEditor(registration.performerType)
+                        !registrationClosed(registration.performerType)
                       "
                       name="fa-solid:pen" />
                     <Icon
                       v-else-if="
                         !registration.confirmation &&
-                        !openEditor(registration.performerType)
+                        registrationClosed(registration.performerType)
                       "
                       name="fa-solid:ban" />
                     <Icon
@@ -334,15 +383,15 @@
                 <td
                   v-if="md"
                   class="text-xs text-white">
-                  <div
-                    v-if="dateFunction(registration.submittedAt)"
-                    class="rounded-xl pl-2 py-1 bg-green-700">
-                    Submitted
+                  <div v-if="dateFunction(registration.submittedAt)">
+                    <p class="inline rounded-xl px-2 py-1 bg-green-700">
+                      Submitted
+                    </p>
                   </div>
-                  <div
-                    v-else
-                    class="rounded-xl pl-2 py-1 bg-red-700">
-                    Incomplete
+                  <div v-else>
+                    <p class="inline rounded-xl px-2 py-1 bg-red-700">
+                      Incomplete
+                    </p>
                   </div>
                 </td>
                 <td class="text-sm">
@@ -354,7 +403,7 @@
                 <td>
                   <BaseButton
                     v-if="!registration.confirmation"
-                    class="text-red-600 text-xl md:ml-4 ml-3 my-3"
+                    class="text-red-600 text-xl md:ml-4 ml-3"
                     @click="deleteRegistration(registration.id)">
                     <Icon name="fa-solid:trash-alt" />
                   </BaseButton>
@@ -373,8 +422,9 @@
               all their choirs; a parent for their family etc.)
             </li>
             <li>
-              Only one teacher/discipline allowed per form. Performers with
-              multiple disciplines and/or teachers require separate forms.
+              Only one teacher/one discipline allowed per form. Performers
+              wanting to register in multiple disciplines and/or with multiple
+              teachers require separate forms.
             </li>
             <li>
               Applications can be saved and completed/edited later before
@@ -385,10 +435,6 @@
               the left of the table.
             </li>
             <li>A copy can be printed for your records.</li>
-            <li>
-              Only school teachers with their own accounts can complete
-              registrations for their own school ensembles.
-            </li>
           </ul>
         </div>
         <h3>Start A New Registration Form</h3>
@@ -396,26 +442,84 @@
       <!-- Discipline Cards -->
       <div class="grid grid-cols-2 lg:grid-cols-4">
         <BaseCard
-          :label="soloOpen ? 'Solo' : 'Solo - Closed'"
-          :photo="soloOpen ? soloPhoto : soloPhotoBW"
+          :label="
+            registrationClosed(PerformerType.SOLO) ? 'Solo - Closed' : 'Solo'
+          "
+          :photo="
+            registrationClosed(PerformerType.SOLO) ? soloPhotoBW : soloPhoto
+          "
+          :style="
+            registrationClosed(PerformerType.SOLO)
+              ? 'cursor: default;'
+              : 'cursor: pointer;'
+          "
           alt-text="New Solo Registration"
-          @click="soloOpen ? newRegistration(PerformerType.SOLO) : ''" />
+          @click="
+            registrationClosed(PerformerType.SOLO)
+              ? ''
+              : newRegistration(PerformerType.SOLO)
+          " />
         <BaseCard
-          :label="groupOpen ? 'Group' : 'Group - Closed'"
-          :photo="groupOpen ? groupPhoto : groupPhotoBW"
+          :label="
+            registrationClosed(PerformerType.GROUP) ? 'Group - Closed' : 'Group'
+          "
+          :photo="
+            registrationClosed(PerformerType.GROUP) ? groupPhotoBW : groupPhoto
+          "
+          :style="
+            registrationClosed(PerformerType.GROUP)
+              ? 'cursor: default;'
+              : 'cursor: pointer;'
+          "
           alt-text="New Group Registration"
-          @click="groupOpen ? newRegistration(PerformerType.GROUP) : ''" />
+          @click="
+            registrationClosed(PerformerType.GROUP)
+              ? ''
+              : newRegistration(PerformerType.GROUP)
+          " />
         <BaseCard
-          :label="schoolOpen ? 'School' : 'School - Closed'"
-          :photo="schoolOpen ? schoolPhoto : schoolPhotoBW"
+          :label="
+            registrationClosed(PerformerType.SCHOOL)
+              ? 'School - Closed'
+              : 'School'
+          "
+          :photo="
+            registrationClosed(PerformerType.SCHOOL)
+              ? schoolPhotoBW
+              : schoolPhoto
+          "
+          :style="
+            registrationClosed(PerformerType.SCHOOL)
+              ? 'cursor: default;'
+              : 'cursor: pointer;'
+          "
           alt-text="New School Registration"
-          @click="schoolOpen ? newRegistration(PerformerType.SCHOOL) : ''" />
+          @click="
+            registrationClosed(PerformerType.SCHOOL)
+              ? ''
+              : newRegistration(PerformerType.SCHOOL)
+          " />
         <BaseCard
-          :label="communityOpen ? 'Community' : 'Community - Closed'"
-          :photo="communityOpen ? communityPhoto : communityPhotoBW"
+          :label="
+            registrationClosed(PerformerType.COMMUNITY)
+              ? 'Community - Closed'
+              : 'Community'
+          "
+          :photo="
+            registrationClosed(PerformerType.COMMUNITY)
+              ? communityPhotoBW
+              : communityPhoto
+          "
+          :style="
+            registrationClosed(PerformerType.COMMUNITY)
+              ? 'cursor: default;'
+              : 'cursor: pointer;'
+          "
           alt-text="New Community Registration"
           @click="
-            communityOpen ? newRegistration(PerformerType.COMMUNITY) : ''
+            registrationClosed(PerformerType.COMMUNITY)
+              ? ''
+              : newRegistration(PerformerType.COMMUNITY)
           " />
       </div>
     </div>

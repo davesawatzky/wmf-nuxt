@@ -1,12 +1,11 @@
 query Performers($registrationId: Int!) {
   performers(registrationID: $registrationId) {
     id
+    pronouns
     firstName
     lastName
     age
-    apartment
-    streetNumber
-    streetName
+    address
     city
     province
     postalCode
@@ -14,5 +13,8 @@ query Performers($registrationId: Int!) {
     email
     instrument
     level
+    otherClasses
+    unavailable
+    photoPermission
   }
 }

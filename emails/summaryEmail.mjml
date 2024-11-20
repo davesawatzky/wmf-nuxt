@@ -12,7 +12,8 @@
         font-size="14px"
         color="#005984"
         line-height="20px"
-        font-family="Raleway, Helvetica, Arial, sans-serif"></mj-text>
+        font-family="Raleway, Helvetica, Arial, sans-serif">
+      </mj-text>
       <mj-section
         padding="0px 25px"
         background-color="#ffffff">
@@ -30,21 +31,18 @@
     <mj-style inline="inline"> .text-link { color: #5e6ebf } </mj-style>
     <mj-style inline="inline"> .footer-link { color: #888888 } </mj-style>
     <mj-style inline="inline">
-      .h1 { padding: 0px; line-height: 35px; font-size:28px; font-weight: 700
-      }</mj-style
-    >
+      .h1 { padding: 0px; line-height: 35px; font-size:28px; font-weight: 700 }
+    </mj-style>
     <mj-style inline="inline">
       .h2 { padding: 0px 0px 20px 0px; line-height: 35px; font-size:21px;
-      font-weight: 700 }</mj-style
-    >
+      font-weight: 700 }
+    </mj-style>
     <mj-style inline="inline">
-      .h3 { padding: 0px; line-height: 25px; font-size:17px; font-weight: 700
-      }</mj-style
-    >
+      .h3 { padding: 0px; line-height: 25px; font-size:17px; font-weight: 700 }
+    </mj-style>
     <mj-style inline="inline">
-      .h4 { padding: 0px; line-height: 25px; font-size:14px; font-weight: 700
-      }</mj-style
-    >
+      .h4 { padding: 0px; line-height: 25px; font-size:14px; font-weight: 700 }
+    </mj-style>
   </mj-head>
   <mj-body
     background-color="#E7E7E7"
@@ -52,7 +50,9 @@
     <mj-section
       full-width="full-width"
       background-color="#E7E7E7">
-      <mj-column width="100%"><mj-spacer height="40px" /> </mj-column>
+      <mj-column width="100%">
+        <mj-spacer height="40px" />
+      </mj-column>
     </mj-section>
     <mj-wrapper
       padding-top="0px"
@@ -79,10 +79,13 @@
         <mj-column>
           <mj-text>
             <div class="h1">Registration Summary</div>
-            <div
-              class="h3"
-              style="padding-bottom: 20px">
+            <div class="h3">
               Confirmation Number: {{ registration.confirmation }}
+            </div>
+            <div
+              class="h4"
+              style="padding-bottom: 20px">
+              Payment Type: {{ paymentType === 'cash' ? 'Cash / Cheque / E-transfer' : 'Credit Card' }}
             </div>
             <div>Submitted by:</div>
             <div>{{ userFirstName }} {{ userLastName }}</div>
@@ -104,7 +107,6 @@
             <div>Group Type: {{ group.groupType }}</div>
             <div>Number of Performers: {{ group.numberOfPerformers }}</div>
             <div>Average age: {{ group.age }}</div>
-            <div>Instruments: {{ group.instruments }}</div>
           </mj-text>
         </mj-column>
       </mj-section>
@@ -144,14 +146,8 @@
         <mj-section>
           <mj-column>
             <mj-text>
-              <div><strong>Address:</strong></div>
-              <div v-if="performer.apartment">
-                {{ performer.apartment }} - {{ performer.streetNumber }} {{
-                performer.streetName }}
-              </div>
-              <div v-else>
-                {{ performer.streetNumber }} {{ performer.streetName }}
-              </div>
+              <div><strong>Mailing Address:</strong></div>
+              <div>{{ performer.address }}</div>
               <div>{{ performer.city }}, {{ performer.province }}</div>
               <div>{{ performer.postalCode }}</div>
               <div>Phone: {{ performer.phone }}</div>
@@ -171,9 +167,7 @@
                 <div>Grade Level: {{ performer.level }}</div>
               </div>
               <div v-if="performer.otherClasses">
-                <div>
-                  Participating in other classes: {{ performer.otherClasses }}
-                </div>
+                <div>Other classes: {{ performer.otherClasses }}</div>
               </div>
             </mj-text>
           </mj-column>
@@ -191,12 +185,15 @@
               <div class="h2">School</div>
               <div class="h3">{{ school.name }}</div>
               <div class="h4">Division: {{ school.division }}</div>
-              <div>{{ school.streetNumber }}, {{ school.streetName }}</div>
-              <div>{{school.city }}, {{ school.province }}</div>
+              <div>{{ school.address }}</div>
+              <div>{{ school.city }}, {{ school.province }}</div>
               <div>{{ school.postalCode }}</div>
               <div>Phone: {{ school.phone }}</div>
+              <br />
+              <mj-divider />
+              <br />
               <div
-                class="h4"
+                class="h2"
                 style="padding-top: 15px">
                 School Groups
               </div>
@@ -204,7 +201,7 @@
           </mj-column>
         </mj-section>
         <mj-wrapper
-          v-for="group in school.schoolGroups"
+          v-for="group in schoolGroups"
           v-bind:key="group.id"
           background-color="#ffffff"
           padding-top="15px">
@@ -227,7 +224,7 @@
               <mj-text>
                 <div>Earliest Time: {{ group.earliestTime }}</div>
                 <div>Latest Time: {{ group.latestTime }}</div>
-                <div>Unavailable Time {{ group.unavailable }}</div>
+                <div>Scheduling Requests: {{ group.unavailable }}</div>
                 <div>
                   Performers in other classes: {{ group.conflictPerformers }}
                 </div>
@@ -245,30 +242,59 @@
           <mj-column>
             <mj-divider />
             <mj-text>
-              <div class="h2">Community</div>
-              <div class="h3">Group Name: {{ community.name }}</div>
-            </mj-text>
-          </mj-column>
-        </mj-section>
-        <mj-section>
-          <mj-column>
-            <mj-text>
-              <div>Chaperones: {{ community.chaperones }}</div>
-              <div>Wheelchairs: {{ community.wheelchairs }}</div>
-              <div>Total Group Size: {{ community.groupSize }}</div>
-            </mj-text>
-          </mj-column>
-          <mj-column>
-            <mj-text>
-              <div>Earliest Time: {{ community.earliestTime }}</div>
-              <div>Latest Time: {{ community.latestTime }}</div>
-              <div>Unavailable Time:{{ community.unavailable }}</div>
-              <div>
-                Performers in other classes: {{ community.conflictPerformers }}
+              <div class="h2">Community Organization</div>
+              <div class="h3">{{ community.name }}</div>
+              <div>{{ community.address }}</div>
+              <div>{{ community.city }}, {{ community.province }}</div>
+              <div>{{ community.postalCode }}</div>
+              <div>Phone: {{ community.phone }}</div>
+              <div>Email: {{ community.email }}</div>
+              <br />
+              <mj-divider />
+              <br />
+              <div
+                class="h2"
+                style="padding-top: 15px">
+                Community Groups
               </div>
             </mj-text>
           </mj-column>
         </mj-section>
+        <mj-wrapper
+          v-for="commgroup in communityGroups"
+          v-bind:key="commgroup.id"
+          background-color="#ffffff"
+          padding-top="15px">
+          <mj-section>
+            <mj-column>
+              <mj-text>
+                <div>
+                  <strong>Group: {{ commgroup.name }}</strong>
+                </div>
+              </mj-text>
+            </mj-column>
+          </mj-section>
+          <mj-section>
+            <mj-column>
+              <mj-text>
+                <div>Chaperones: {{ commgroup.chaperones }}</div>
+                <div>Wheelchairs: {{ commgroup.wheelchairs }}</div>
+                <div>Total Group Size: {{ commgroup.groupSize }}</div>
+              </mj-text>
+            </mj-column>
+            <mj-column>
+              <mj-text>
+                <div>Earliest Time: {{ commgroup.earliestTime }}</div>
+                <div>Latest Time: {{ commgroup.latestTime }}</div>
+                <div>Scheduling Requests: {{ commgroup.unavailable }}</div>
+                <div>
+                  Performers in other classes: {{ commgroup.conflictPerformers
+                  }}
+                </div>
+              </mj-text>
+            </mj-column>
+          </mj-section>
+        </mj-wrapper>
       </mj-wrapper>
 
       <!-- Teacher Info -->
@@ -277,18 +303,18 @@
           <mj-divider />
           <mj-text>
             <div class="h2">Teacher</div>
-            <div class="h3">{{ teacher.firstName }} {{ teacher.lastName }}</div>
-            <div v-if="teacher.apartment">
-              {{ teacher.apartment }} - {{ teacher.streetNumber }} {{
-              teacher.streetName }}
+            <div
+              v-if="teacher.id === 2 || teacher.lastName === 'Unlisted'"
+              class="h3">
+              {{ teacher.lastName }} {{ teacher.firstName }}
             </div>
             <div v-else>
-              {{ teacher.streetNumber }} {{ teacher.streetName }}
+              <div class="h3">
+                {{ teacher.firstName }} {{ teacher.lastName }}
+              </div>
+              <div>Phone: {{ teacher.phone }}</div>
+              <div>Email: {{ teacher.email }}</div>
             </div>
-            <div>{{ teacher.city }}, {{ teacher.province }}</div>
-            <div>{{ teacher.postalCode }}</div>
-            <div>Phone: {{ teacher.phone }}</div>
-            <div>Email: {{ teacher.email }}</div>
           </mj-text>
         </mj-column>
       </mj-section>
@@ -303,6 +329,7 @@
               v-for="registeredClass in festivalClasses"
               v-bind:key="registeredClass.id"
               style="padding-bottom: 10px">
+              <br />
               <div class="h3">
                 Festival Class Number: {{ registeredClass.classNumber }}
               </div>
@@ -314,8 +341,15 @@
               <div
                 v-if="performerType === 'SCHOOL'"
                 class="h4">
-                School Group: {{
-                schoolClassGroup(registeredClass.schoolGroupID).name }}
+                School Group: {{ registeredClass.schoolGroupID ?
+                schoolClassGroup( registeredClass.schoolGroupID )?.name : '' }}
+              </div>
+              <div
+                v-else-if="performerType === 'COMMUNITY'"
+                class="h4">
+                Community Group: {{ registeredClass.communityGroupID ?
+                communityClassGroup(registeredClass.communityGroupID)?.name : ''
+                }}
               </div>
               <div>
                 Subdiscipline: {{ registeredClass.subdiscipline?.toUpperCase()
@@ -351,27 +385,39 @@
         <mj-column>
           <mj-divider />
           <mj-text align="center">
-            <div class="h3">Total Cost: \${{ registration.totalAmt }}</div>
+            <div
+              v-if="Number(lateFee) > 0"
+              class="h4">
+              Late Fee: \${{ lateFee }}
+            </div>
+            <div class="h3">
+              Total Cost: \${{ Number(registration.totalAmt).toFixed(2) }}
+            </div>
           </mj-text>
         </mj-column>
       </mj-section>
 
-      <!-- Immportant Notes -->
+      <!-- Important Notes -->
 
       <mj-section
         background-color="#ffffff"
         padding-bottom="20px">
         <mj-column>
           <mj-divider />
-          <mj-text align="center">
+          <mj-text
+            v-if="paymentType === 'cash'"
+            align="center">
             <strong
               >Payment may be made by cheque or e-transfer to the<br />
               Winnipeg Music Festival (<a href="mailto:wmf@mts.net"
                 ><strong>wmf@mts.net</strong></a
               >).<br />
-              Please include the confirmation number when submitting payment.<br />
-              Entry fees are non-refundable.</strong
+              Please include the confirmation number when submitting
+              payment.</strong
             >
+          </mj-text>
+          <mj-text align="center">
+            <strong>Entry fees are non-refundable.</strong>
           </mj-text>
           <mj-divider />
           <mj-text>
@@ -394,14 +440,15 @@
               submitted. Incomplete entries will not be accepted.
             </p>
             <p>
-              Notification, including date, time and location of each class will
-              be forwarded to the participant's teacher prior to the publication
-              of the program. Teachers are responsible to advise their students
-              of this information and to notify the office of any errors.
-              Participants and teachers are to notify the Festival office of any
-              change of personal information following submission of entry form.
+              Confirmation of registered participant entries including class,
+              selection and composer will be sent to the teachers for
+              verification. Festival programs including dates, times and
+              locations will be available for purchase for $10 with an
+              anticipated availability February 1, 2025. Participants and
+              teachers are to notify the Festival office of any change of
+              personal information following submission of entry form.
               Participants who wish to withdraw must notify the Festival office
-              in writing as early as possible.
+              in writing as early as possible. Entry fees are non-refundable.
             </p>
           </mj-text>
         </mj-column>

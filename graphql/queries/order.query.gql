@@ -1,0 +1,12 @@
+query Order($orderId: Int!) {
+  order(orderID: $orderId) {
+    id
+    totalAmount
+    payedAmount
+    purchaseDate
+    deliveryDate
+    methodDelivered
+    createdAt
+    updatedAt
+  }
+}

@@ -37,5 +37,6 @@
   "editor.detectIndentation": false,
   "editor.tabSize": 2,
   "editor.formatOnPaste": true,
-  "html.format.indentHandlebars": false
+  "html.format.indentHandlebars": false,
+  "editor.minimap.showSlider": "always"
 }

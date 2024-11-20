@@ -26,3 +26,12 @@ export type ContactInfo = PerformerInput &
   GroupInput &
   CommunityInput &
   SchoolInput
+
+export interface ClassErrors {
+  id: number
+  count: number
+  selections: {
+    id: number
+    count: number
+  }[]
+}

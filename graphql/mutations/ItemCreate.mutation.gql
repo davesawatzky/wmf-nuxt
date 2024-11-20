@@ -1,0 +1,11 @@
+mutation ItemCreate($itemInput: ItemInput!) {
+  itemCreate(ItemInput: $itemInput) {
+    item {
+      id
+    }
+    userErrors {
+      field
+      message
+    }
+  }
+}

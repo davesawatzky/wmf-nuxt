@@ -6,10 +6,20 @@
 
   const showMenu = ref(false)
   const route = useRoute()
+  const teacherStore = useTeacher()
+  const appStore = useAppStore()
 
   function toggleNav() {
     showMenu.value = !showMenu.value
   }
+
+  // async function cleanUpTeachers() {
+  //   if (route.name === 'Form') {
+  //     if (teacherStore.unlistedTeacher === true) {
+  //       await teacherStore.removeUnlistedTeacher()
+  //     }
+  //   }
+  // }
 </script>
 
 <template>
@@ -18,8 +28,8 @@
       class="px-3 mx-auto lg:max-w-5xl flex justify-between items-center">
       <!-- Music Festival Logo -->
       <div class="flex">
-        <img
-          class="inline h-16"
+        <NuxtPicture
+          :imgAttrs="{ class: 'inline h-16' }"
           src="/images/wmf-logo-banner.jpg"
           alt="Winnipeg Music Festival Logo" />
         <div class="ml-4 font-semibold">Winnipeg<br />Music<br />Festival</div>
@@ -49,7 +59,7 @@
             <UIMenu>
               <UIMenuButton class="px-3 py-1 mx-1 hover:bg-sky-600 rounded-md">
                 <Icon
-                  class="text-2xl"
+                  class="align-middle text-2xl"
                   name="ic:round-app-registration" />
                 Registrations
               </UIMenuButton>
@@ -61,7 +71,7 @@
                 leave-from-class="transform scale-100 opacity-100"
                 leave-to-class="transform scale-95 opacity-0">
                 <UIMenuItems
-                  class="absolute mt-[45px] ml-[-75px] w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg shadow-slate-400 ring-1 ring-black ring-opacity-10 focus:outline-none">
+                  class="absolute z-10 mt-[45px] ml-[-75px] w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg shadow-slate-400 ring-1 ring-black ring-opacity-10 focus:outline-none">
                   <div class="p-1">
                     <UIMenuItem
                       v-slot="{ active, close }"
@@ -75,9 +85,10 @@
                           },
                         ]"
                         to="/Registrations"
+                        no-prefetch
                         @click="close">
                         <Icon
-                          class="text-2xl w-8 pr-2"
+                          class="text-2xl w-8 align-middle mr-2"
                           :class="[{ 'bg-white text-sky-600': !active }]"
                           name="ic:round-app-registration" />
                         My Registrations
@@ -97,7 +108,7 @@
                         ]"
                         to="/Students">
                         <Icon
-                          class="text-2xl w-8 pr-2"
+                          class="text-2xl w-8 align-middle mr-2"
                           :class="[{ 'bg-white text-sky-600': !active }]"
                           name="mdi:account-music" />
                         My Students
@@ -110,7 +121,7 @@
             <UIMenu>
               <UIMenuButton class="px-3 py-1 mx-1 hover:bg-sky-600 rounded-md">
                 <Icon
-                  class="text-2xl"
+                  class="align-middle text-2xl"
                   name="fluent:inprivate-account-24-filled" />
                 Account
               </UIMenuButton>
@@ -122,7 +133,7 @@
                 leave-from-class="transform scale-100 opacity-100"
                 leave-to-class="transform scale-95 opacity-0">
                 <UIMenuItems
-                  class="absolute mt-[45px] ml-[42px] w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg shadow-slate-400 ring-1 ring-black ring-opacity-10 focus:outline-none">
+                  class="absolute z-10 mt-[45px] ml-[42px] w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg shadow-slate-400 ring-1 ring-black ring-opacity-10 focus:outline-none">
                   <div class="p-1">
                     <UIMenuItem
                       v-slot="{ active, close }"
@@ -138,7 +149,7 @@
                         to="/UserInformation"
                         @click="close">
                         <Icon
-                          class="text-2xl w-8 pr-2"
+                          class="text-2xl w-8 align-middle mr-2"
                           :class="[{ 'bg-white text-sky-600': !active }]"
                           name="fluent:inprivate-account-24-filled" />
                         User Account
@@ -156,7 +167,7 @@
                           },
                         ]">
                         <Icon
-                          class="text-2xl w-8 pr-2"
+                          class="text-2xl w-8 align-middle mr-2"
                           :class="[{ 'bg-white text-sky-600': !active }]"
                           name="heroicons-outline:logout" />
                       </BaseLogout>

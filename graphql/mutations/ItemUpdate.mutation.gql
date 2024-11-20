@@ -1,0 +1,11 @@
+mutation ItemUpdate($itemUpdateId: Int!, $itemInput: ItemInput!) {
+  itemUpdate(id: $itemUpdateId, itemInput: $itemInput) {
+    item {
+      id
+    }
+    userErrors {
+      field
+      message
+    }
+  }
+}

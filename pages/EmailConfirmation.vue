@@ -1,63 +1,58 @@
 <script setup lang="ts">
-const route = useRoute()
-const confirming = ref(true)
-const verificationError = ref()
-const errorMessage = ref('')
-const config = useRuntimeConfig()
+  const route = useRoute()
+  const errorMessage = ref('')
+  const config = useRuntimeConfig()
 
-onMounted(async () => {
-  try {
-    const tokenParam = route.query.token
-    const tokenBody = { token: tokenParam }
-
-    const { data, pending, error } = await useFetch(
-      config.public.emailConfirmation,
-      {
+  const tokenParam = route.query.token
+  const tokenBody = { token: tokenParam }
+  const tokenResponse = ref()
+  const tokenError = ref(false)
+  async function confirmation() {
+    try {
+      tokenResponse.value = await $fetch(config.public.emailConfirmation, {
         method: 'POST',
         body: tokenBody,
         onResponseError({ request, response, options }) {
-          if (response._data.message)
+          if (response._data.message) {
             errorMessage.value = response._data.message
+          }
         },
-      },
-    )
-    confirming.value = pending.value
-    verificationError.value = error.value
+      })
+    } catch (err) {
+      tokenError.value = true
+      console.log(err)
+    }
   }
-  catch (err) {
-    console.log('Error in Email Verification')
-    console.log(err)
+  confirmation()
+
+  const status = computed(() => {
+    return !!tokenResponse ? 'success' : 'pending'
+  })
+
+  async function login() {
     await navigateTo('/login')
   }
-})
-
-async function login() {
-  await navigateTo('/login')
-}
 </script>
 
 <template>
   <div
     v-auto-animate
-    class="text-center"
-  >
-    <div v-if="confirming">
+    class="text-center">
+    <div v-if="status === 'pending'">
       <h3>Account Verification Page</h3>
-      <br>
+      <br />
       <div>
         <Icon
           class="animate-spin text-3xl"
-          name="icomoon-free:spinner9"
-        />
+          name="icomoon-free:spinner9" />
       </div>
     </div>
-    <div v-if="!confirming && !verificationError">
+    <div v-if="status === 'success' && !tokenError">
       <h3>Congratulations, your account is verified.</h3>
-      <br>
+      <br />
       <button
         class="btn btn-blue"
-        @click="login"
-      >
+        @click="login">
         Proceed to Sign In
       </button>
     </div>
@@ -68,11 +63,10 @@ async function login() {
         dialog box. This will send another link to your email address. Accounts
         must be verified before sign in is possible.
       </p>
-      <br>
+      <br />
       <button
         class="btn btn-blue"
-        @click="login"
-      >
+        @click="login">
         Proceed to Sign In
       </button>
     </div>
@@ -81,11 +75,10 @@ async function login() {
       <p class="max-w-[400px] mx-auto">
         This email address has already been verified.
       </p>
-      <br>
+      <br />
       <button
         class="btn btn-blue"
-        @click="login"
-      >
+        @click="login">
         Proceed to Sign In
       </button>
     </div>
@@ -97,25 +90,23 @@ async function login() {
         This will send another link to your email address. Email addresses must
         be verified before sign in is possible.
       </p>
-      <br>
+      <br />
       <button
         class="btn btn-blue"
-        @click="login"
-      >
+        @click="login">
         Proceed to Sign In
       </button>
     </div>
-    <div v-if="verificationError && !errorMessage">
+    <div v-if="tokenError && !errorMessage">
       <h3>Error Verifying Account</h3>
       <p class="max-w-[400px] mx-auto">
         Try using the verification link again, re-register, or contact Winnipeg
         Music Festival if problems persist.
       </p>
-      <br>
+      <br />
       <button
         class="btn btn-blue"
-        @click="login"
-      >
+        @click="login">
         Proceed to Sign In
       </button>
     </div>

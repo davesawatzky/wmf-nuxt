@@ -7,13 +7,14 @@
     FestivalClassesDocument,
     InstrumentsDocument,
     LevelsDocument,
+    RegisteredClassesDocument,
     SubdisciplinesByTypeDocument,
   } from '@/graphql/gql/graphql'
   import { logErrorMessages } from '@vue/apollo-util'
-  import { useClasses } from '@/stores/userClasses'
+  import { useClasses } from '@/stores/useClasses'
   import { useAppStore } from '@/stores/appStore'
-  import { usePerformers } from '@/stores/userPerformer'
-  import { useGroup } from '@/stores/userGroup'
+  import { usePerformers } from '@/stores/usePerformer'
+  import { useGroup } from '@/stores/useGroup'
   import type {
     Category,
     Discipline,
@@ -23,8 +24,10 @@
     Level,
     RegisteredClass,
     RegisteredClassInput,
+    Selection,
     Subdiscipline,
   } from '@/graphql/gql/graphql'
+  import { count } from 'console'
 
   const props = defineProps<{
     modelValue: RegisteredClass
@@ -36,40 +39,19 @@
     'update:modelValue': [value: RegisteredClassInput]
   }>()
 
-  const status = reactive<Status>({
-    discipline: props.modelValue.discipline
-      ? StatusEnum.saved
-      : StatusEnum.null,
-    subdiscipline: props.modelValue.subdiscipline
-      ? StatusEnum.saved
-      : StatusEnum.null,
-    level: props.modelValue.level ? StatusEnum.saved : StatusEnum.null,
-    category: props.modelValue.category ? StatusEnum.saved : StatusEnum.null,
-    schoolGroupID: props.modelValue.schoolGroupID
-      ? StatusEnum.saved
-      : StatusEnum.null,
-  })
-
   const instrumentRequired = ref(false) // used to be for mozart classes.  Might not need this anymore.
   const appStore = useAppStore()
   const performerStore = usePerformers()
   const groupStore = useGroup()
-
-  // TODO: Bug-prone - used for recording Registered Classes - but also for modelValue !!!!!!!
   const classesStore = useClasses()
   const classSelection = ref(<FestivalClass>{}) // Used for Festival Class Searchrd
   const loadInfoFirstRun = ref(true) // Flag to keep track of when to load extra information.
-
-  // This is the Registered Class varialbe - sent to parent as modelValue
-  // and then on to the classesStore.registeredClasses from there.
-  const selectedClasses = computed({
-    get: () => props.modelValue,
-    set: (value) => emits('update:modelValue', value),
-  })
+  const fieldConfigStore = useFieldConfig()
+  const allSelectionErrors = ref<{ selectionId: number; count: number }[]>([])
 
   /**
    * Registration first gets loaded form the 'Registration' page
-   * if these values are present in userClasses.registeredClasses,
+   * if these values are present in useClasses.registeredClasses,
    * then the background data is loaded for the attributes
    * and used on the page.  It allows for filling the comboboxes with
    * pre-saved data from an existing registration.
@@ -89,6 +71,58 @@
       loadInfoFirstRun.value = true
       await loadClassInformation()
     }
+  })
+
+  const status = reactive<Status>({
+    discipline: props.modelValue.discipline
+      ? StatusEnum.saved
+      : StatusEnum.null,
+    subdiscipline: props.modelValue.subdiscipline
+      ? StatusEnum.saved
+      : StatusEnum.null,
+    level: props.modelValue.level ? StatusEnum.saved : StatusEnum.null,
+    category: props.modelValue.category ? StatusEnum.saved : StatusEnum.null,
+    schoolGroupID: props.modelValue.schoolGroupID
+      ? StatusEnum.saved
+      : StatusEnum.null,
+    communityGroupID: props.modelValue.communityGroupID
+      ? StatusEnum.saved
+      : StatusEnum.null,
+  })
+
+  // This is the Registered Class variable - sent to parent as modelValue
+  // and then on to the classesStore.registeredClasses from there.
+  const selectedClasses = computed({
+    get: () => props.modelValue,
+    set: (value) => emits('update:modelValue', value),
+  })
+
+  const classKeys = fieldConfigStore.performerTypeFields('FestivalClasses')
+  watchEffect(() => {
+    let index = classesStore.classErrors.findIndex(
+      (item) => item.id === props.classId
+    )
+    let count = 0
+    for (let key of classKeys) {
+      if (
+        key !== 'selections' &&
+        key !== 'schoolGroupID' &&
+        key !== 'communityGroupID'
+      ) {
+        if (status[key as keyof RegisteredClass] !== StatusEnum.saved) {
+          count++
+        }
+      }
+    }
+    if (
+      (appStore.performerType === 'SCHOOL' &&
+        !classesStore.registeredClasses[props.classIndex].schoolGroupID) ||
+      (appStore.performerType === 'COMMUNITY' &&
+        !classesStore.registeredClasses[props.classIndex].communityGroupID)
+    ) {
+      count++
+    }
+    classesStore.classErrors[index].count = count
   })
 
   // Loading the instruments table.
@@ -113,11 +147,11 @@
     })
     // { fetchPolicy: 'network-only' }
   )
-  const disciplineQuery = computed(
-    () => disciplineResult.value ?? <DisciplinesByTypeQuery>{}
-  )
+  const disciplineQuery = computed(() => {
+    return disciplineResult.value ?? <DisciplinesByTypeQuery>{}
+  })
   onErrorDisciplines((error) => {
-    console.log('Stopping Here: ', error)
+    console.log(error)
   })
 
   /**
@@ -136,54 +170,68 @@
       const Mozart = disciplineQuery.value.disciplines.filter((item) => {
         return item.name.toLowerCase().includes('mozart')
       })
-      if (performerStore.performers[0].instrument.toLowerCase() === 'voice') {
-        return disciplineQuery.value.disciplines.filter((item) => {
-          return (
-            item.name.toLowerCase() === 'vocal' ||
-            item.name.toLowerCase() === 'musical theatre' ||
-            item.name.toLowerCase().includes('mozart')
-          )
-        })
-      } else {
-        // Adds Mozart Classes to all the other instruments
-        let isMozart = false
-        const discipline = disciplineQuery.value?.disciplines.filter((item) => {
-          const disc = item.instruments?.find(
-            (el) => el.name === performerStore.performers[0].instrument
-          )
-          if (!isMozart) {
-            disc?.mozart === true ? (isMozart = true) : (isMozart = false)
-          }
-          return disc
-        })
-        if (isMozart && Mozart) {
-          discipline?.push(Mozart[0])
+      // if (performerStore.performers[0].instrument.toLowerCase() === 'voice') {
+      //   return (
+      //     disciplineQuery.value.disciplines.filter((item) => {
+      //       return (
+      //         item.name.toLowerCase() === 'vocal' ||
+      //         item.name.toLowerCase() === 'musical theatre' ||
+      //         item.name.toLowerCase().includes('mozart')
+      //       )
+      //     }) ?? []
+      //   )
+      // } else {
+      // Adds Mozart Classes to all the other instruments
+      let isMozart = false
+      const discipline = disciplineQuery.value?.disciplines.filter((item) => {
+        const disc = item.instruments?.find(
+          (el) => el.name === performerStore.performers[0].instrument
+        )
+        if (!isMozart) {
+          disc?.mozart === true ? (isMozart = true) : (isMozart = false)
         }
-        return discipline
+        return disc
+      })
+      if (isMozart && Mozart) {
+        discipline?.push(Mozart[0])
       }
-    } else if (appStore.performerType === 'GROUP') {
+      return discipline ?? ''
+      // }
+    } else if (
+      appStore.performerType === 'GROUP' &&
+      disciplineQuery.value.disciplines
+    ) {
       if (groupStore.group.groupType === 'vocal') {
-        return disciplineQuery.value?.disciplines.filter((item) => {
-          return (
-            item.name.toLowerCase().includes('vocal') ||
-            item.name.toLowerCase().includes('musical theatre')
-          )
-        })
+        return (
+          disciplineQuery.value?.disciplines.filter((item) => {
+            return item.name.toLowerCase().includes('vocal')
+          }) ?? []
+        )
+      } else if (groupStore.group.groupType === 'musicalTheatre') {
+        return (
+          disciplineQuery.value?.disciplines.filter((item) => {
+            return item.name.toLowerCase().includes('musical theatre')
+          }) ?? []
+        )
       } else if (groupStore.group.groupType === 'instrumental') {
-        return disciplineQuery.value?.disciplines.filter((item) => {
-          return (
-            item.name.toLowerCase().includes('brass') ||
-            item.name.toLowerCase().includes('classical guitar') ||
-            item.name.toLowerCase().includes('percussion') ||
-            item.name.toLowerCase().includes('piano') ||
-            item.name.toLowerCase().includes('strings') ||
-            item.name.toLowerCase().includes('woodwinds')
-          )
-        })
+        return (
+          disciplineQuery.value?.disciplines.filter((item) => {
+            return (
+              item.name.toLowerCase().includes('brass') ||
+              item.name.toLowerCase().includes('classical guitar') ||
+              item.name.toLowerCase().includes('percussion') ||
+              item.name.toLowerCase().includes('piano') ||
+              item.name.toLowerCase().includes('strings') ||
+              item.name.toLowerCase().includes('woodwinds')
+            )
+          }) ?? []
+        )
       } else if (groupStore.group.groupType === 'mixed') {
-        return disciplineQuery.value?.disciplines.filter((item) => {
-          return item.name.toLowerCase().includes('mixed group')
-        })
+        return (
+          disciplineQuery.value?.disciplines.filter((item) => {
+            return item.name.toLowerCase().includes('mixed group')
+          }) ?? []
+        )
       }
     } else {
       return disciplineQuery.value?.disciplines ?? []
@@ -197,6 +245,17 @@
         return item.name === selectedClasses.value.discipline
       }) ?? <Discipline>{}
     )
+  })
+
+  const isDisciplineDisabled = computed(() => {
+    if (
+      appStore.performerType === 'SOLO' &&
+      !performerStore.performers[0].instrument
+    ) {
+      return true
+    } else {
+      return false
+    }
   })
 
   /**
@@ -326,6 +385,7 @@
    * selectedClasses <-- classSelection
    */
   onClassSearchResult((result) => {
+    appStore.dataLoading = true
     classSelection.value = <FestivalClass>result.data.festivalClassSearch[0]
     selectedClasses.value.minSelections = classSelection.value.minSelections
     selectedClasses.value.maxSelections = classSelection.value.maxSelections
@@ -345,6 +405,7 @@
 
     classesStore.updateClass(props.classId)
     loadInfoFirstRun.value = false
+    appStore.dataLoading = false
   })
   errorClass((error) => {
     logErrorMessages(error)
@@ -379,7 +440,7 @@
           : (status.discipline = StatusEnum.null)
       }
       if (!!chosenDiscipline.value.id) {
-        loadSubdisciplines()
+        await loadSubdisciplines()
       }
     }
   )
@@ -396,7 +457,7 @@
           : (status.subdiscipline = StatusEnum.null)
       }
       if (!!chosenSubdiscipline.value.id) {
-        loadLevels()
+        await loadLevels()
       }
     }
   )
@@ -413,7 +474,7 @@
           : (status.level = StatusEnum.null)
       }
       if (!!chosenSubdiscipline.value.id && !!chosenGradeLevel.value.id) {
-        loadCategories()
+        await loadCategories()
       }
     }
   )
@@ -431,7 +492,7 @@
       if (selectedClasses.value.category === null) {
         selectedClasses.value.classNumber = null
       } else {
-        loadClassInformation()
+        await loadClassInformation()
       }
     }
   )
@@ -461,14 +522,11 @@
       let oldNumber =
         classesStore.registeredClasses[props.classIndex].selections!.length
       if (oldNumber < newNumber!) {
-        console.log('newNumber bigger than oldNumber')
         while (oldNumber < newNumber!) {
-          console.log(props.classId)
           await classesStore.createSelection(props.classId)
           oldNumber += 1
         }
       } else if (oldNumber > newNumber!) {
-        console.log('oldNumber bigger than new number')
         while (oldNumber > newNumber!) {
           const selectionLength =
             classesStore.registeredClasses[props.classIndex].selections!.length
@@ -482,7 +540,6 @@
           oldNumber -= 1
         }
       }
-      console.log('Watcher Fired')
       await classesStore.updateClass(props.classId, 'numberOfSelections')
     }
   )
@@ -491,10 +548,10 @@
 
   const validationSchema = toTypedSchema(
     yup.object({
-      discipline: yup.string().required('Choose a discipline'),
-      subdiscipline: yup.string().required('Choose a subdiscipline'),
-      level: yup.string().required('Choose a grade/level'),
-      category: yup.string().required('Choose a category'),
+      discipline: yup.string().required('Required'),
+      subdiscipline: yup.string().required('Required'),
+      level: yup.string().required('Required'),
+      category: yup.string().required('Required'),
     })
   )
 
@@ -515,7 +572,9 @@
       class="grid grid-cols-12 gap-x-3 gap-y-5 items-end">
       <div class="col-span-6 lg:col-span-2">
         <BaseSelect
-          id=""
+          id="disciplines"
+          :class="isDisciplineDisabled ? 'off' : ''"
+          :disabled="isDisciplineDisabled"
           v-model="selectedClasses.discipline"
           :status="status.discipline"
           label="Discipline"

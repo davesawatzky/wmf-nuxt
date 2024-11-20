@@ -1,44 +1,25 @@
 <script setup lang="ts">
   import { DateTime } from 'luxon'
-  import { usePerformers } from '@/stores/userPerformer'
-  import { useTeacher } from '@/stores/userTeacher'
-  import { useGroup } from '@/stores/userGroup'
-  import { useSchool } from '@/stores/userSchool'
-  import { useSchoolGroup } from '@/stores/userSchoolGroup'
-  import { useCommunity } from '@/stores/userCommunity'
-  import { useClasses } from '@/stores/userClasses'
-  import { useRegistration } from '@/stores/userRegistration'
-  import { useUser } from '@/stores/useUser'
-  import { useAppStore } from '@/stores/appStore'
 
   type Confirmed = {
     importantNotes: boolean
     nonrefundable: boolean
     parentGuardian: boolean
-    photoPermission: boolean
     rulesAndTrophyForms: boolean
   }
 
   const performerStore = usePerformers()
-  const teacherStore = useTeacher()
-  const groupStore = useGroup()
-  const schoolStore = useSchool()
-  const schoolGroupStore = useSchoolGroup()
-  const communityStore = useCommunity()
-  const classesStore = useClasses()
-  const appStore = useAppStore()
-  const userStore = useUser()
   const registrationStore = useRegistration()
 
-  const confirmationNumber = ref('')
   const submissionComplete = ref(false)
   const readConfirmation = ref(<Confirmed>{
     importantNotes: false,
     nonrefundable: false,
     parentGuardian: false,
-    photoPermission: false,
     rulesAndTrophyForms: false,
   })
+
+  const photoPermission = ref(false)
 
   const proceedToPayment = computed(() => {
     for (const key in readConfirmation.value) {
@@ -49,7 +30,7 @@
     return true
   })
 
-  const checkIfParentConsentRequired = computed(() => {
+  function checkIfParentConsentRequired() {
     if (registrationStore.registration.performerType === 'SOLO') {
       if (performerStore.performers[0].age! < 18) {
         return true
@@ -57,9 +38,10 @@
         readConfirmation.value.parentGuardian = true
         return false
       }
-    } else if (registrationStore.registration.performerType === 'GROUP') {
+    } else {
+      readConfirmation.value.parentGuardian = true
     }
-  })
+  }
 
   function printWindow() {
     window.print()
@@ -110,30 +92,31 @@
         be accepted.
       </p>
       <p>
-        Notification, including date, time and location of each class will be
-        forwarded to the participant's teacher prior to the publication of the
-        program. Teachers are responsible to advise their students of this
-        information and to notify the office of any errors. Participants and
-        teachers are to notify the Festival office of any change of personal
-        information following submission of entry form. Participants who wish to
-        withdraw must notify the Festival office in writing as early as
-        possible.
+        Confirmation of registered participant entries including class,
+        selection and composer will be sent to the teachers for verification.
+        Festival programs including dates, times and locations will be available
+        for purchase for $10 with an anticipated availability February 1, 2025.
+        Participants and teachers are to notify the Festival office of any
+        change of personal information following submission of entry form.
+        Participants who wish to withdraw must notify the Festival office in
+        writing as early as possible. Entry fees are non-refundable.
       </p>
       <BaseCheckbox
         v-model="readConfirmation.importantNotes"
+        id="important-notes"
         label="I have read and understand the above text." />
       <BaseCheckbox
         v-model="readConfirmation.nonrefundable"
+        id="nonrefundable"
         label="I understand that ENTRY FEES ARE NON-REFUNDABLE." />
       <BaseCheckbox
-        v-if="checkIfParentConsentRequired"
+        v-if="checkIfParentConsentRequired()"
         v-model="readConfirmation.parentGuardian"
+        id="parent-guardian"
         label="If participant is under 18 then I certify that I am the parent/guardian of this child." />
       <BaseCheckbox
-        v-model="readConfirmation.photoPermission"
-        label="I give permission for the Festival to use photographs of this participant in marketing materials." />
-      <BaseCheckbox
         v-model="readConfirmation.rulesAndTrophyForms"
+        id="rules-and-trophy-forms"
         label="I have read all applicable rules and trophy eligibility forms as found on the music festival website." />
     </section>
 

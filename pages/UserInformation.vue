@@ -1,140 +1,161 @@
 <script lang="ts" setup>
-import * as yup from 'yup'
-import 'yup-phone-lite'
-import { useRegistration } from '~/stores/userRegistration'
-import { useUser } from '~/stores/useUser'
-import {MyUserDocument} from '~/graphql/gql/graphql'
-import { provinces } from '#imports'
+  import * as yup from 'yup'
+  import 'yup-phone-lite'
+  import { useRegistration } from '~/stores/useRegistration'
+  import { useUser } from '~/stores/useUser'
+  import { MyUserDocument, type User } from '~/graphql/gql/graphql'
+  import { provinces } from '#imports'
+  import { useToast } from 'vue-toastification'
 
-const props = defineProps<{}>()
+  const props = defineProps<{}>()
 
-const emits = defineEmits<{}>()
+  const emits = defineEmits<{}>()
 
-// const contact = computed({
-//   get: () => props.modelValue
-//   set: (value) => emits('update:modelValue', value),
-// })
+  // const contact = computed({
+  //   get: () => props.modelValue
+  //   set: (value) => emits('update:modelValue', value),
+  // })
 
-const registrationStore = useRegistration()
-const userStore = useUser()
-const teacherView = computed(() => userStore.user.privateTeacher)
+  const registrationStore = useRegistration()
+  const userStore = useUser()
+  const teacherView = computed(() => userStore.user.privateTeacher)
+  const toast = useToast()
 
-/**
- * Load User details
- */
-onMounted(async () => {
-  if (!userStore.user.email) {
-    const {
-      result,
-      onResult: onUserResult,
-      onError: userError,
-    } = useQuery(MyUserDocument, null, () => ({
-      fetchPolicy: 'no-cache',
-    }))
-    onUserResult(async (result) => {
-      userStore.addToStore(result.data.myUser)
-      if (!userStore.user.hasSignedIn) {
-        userStore.user.hasSignedIn = true
-        await userStore.updateUser('hasSignedIn')
-      }
-    })
-    userError(error => console.log(error))
-  }
+  /**
+   * Load User details
+   */
+
+  const {
+    result,
+    onResult: onUserResult,
+    onError: userError,
+  } = useQuery(MyUserDocument, null, () => ({
+    fetchPolicy: 'no-cache',
+  }))
+  onUserResult(async (result) => {
+    userStore.addToStore(result.data.myUser)
+    if (!userStore.user.hasSignedIn) {
+      userStore.user.hasSignedIn = true
+      await userStore.updateUser('hasSignedIn')
+    }
+  })
+  userError((error) => console.log(error))
+
   userStore.user.hasSignedIn = true
-})
 
-const status = reactive<Status>({
-  privateTeacher: userStore.user.privateTeacher
-    ? StatusEnum.saved
-    : StatusEnum.null,
-  schoolTeacher: userStore.user.schoolTeacher
-    ? StatusEnum.saved
-    : StatusEnum.null,
-  instrument: userStore.user.instrument ? StatusEnum.saved : StatusEnum.null,
-  apartment: userStore.user.apartment ? StatusEnum.saved : StatusEnum.null,
-  streetNumber: userStore.user.streetNumber
-    ? StatusEnum.saved
-    : StatusEnum.null,
-  streetName: userStore.user.streetName ? StatusEnum.saved : StatusEnum.null,
-  city: userStore.user.city ? StatusEnum.saved : StatusEnum.null,
-  province: userStore.user.province ? StatusEnum.saved : StatusEnum.null,
-  postalCode: userStore.user.postalCode ? StatusEnum.saved : StatusEnum.null,
-  phone: userStore.user.phone ? StatusEnum.saved : StatusEnum.null,
-})
+  const status = reactive<Status>({
+    privateTeacher: userStore.user.privateTeacher
+      ? StatusEnum.saved
+      : StatusEnum.null,
+    schoolTeacher: userStore.user.schoolTeacher
+      ? StatusEnum.saved
+      : StatusEnum.null,
+    instrument: userStore.user.instrument ? StatusEnum.saved : StatusEnum.null,
+    firstName: userStore.user.firstName ? StatusEnum.saved : StatusEnum.null,
+    lastName: userStore.user.lastName ? StatusEnum.saved : StatusEnum.null,
+    address: userStore.user.address ? StatusEnum.saved : StatusEnum.null,
+    city: userStore.user.city ? StatusEnum.saved : StatusEnum.null,
+    province: userStore.user.province ? StatusEnum.saved : StatusEnum.null,
+    postalCode: userStore.user.postalCode ? StatusEnum.saved : StatusEnum.null,
+    phone: userStore.user.phone ? StatusEnum.saved : StatusEnum.null,
+  })
 
-async function fieldStatus(stat: string, fieldName: string) {
-  await nextTick()
-  status[fieldName] = StatusEnum.pending
-  await userStore.updateUser(fieldName)
-  if (stat === 'saved')
-    status[fieldName] = StatusEnum.saved
-  else if (stat === 'remove')
-    status[fieldName] = StatusEnum.removed
-  else
-    status[fieldName] = StatusEnum.null
-}
+  // async function fieldStatus(stat: string, fieldName: string) {
+  //   await nextTick()
+  //   status[fieldName] = StatusEnum.pending
+  //   await userStore.updateUser(fieldName)
+  //   if (stat === 'saved') status[fieldName] = StatusEnum.saved
+  //   else if (stat === 'remove') status[fieldName] = StatusEnum.removed
+  //   else status[fieldName] = StatusEnum.null
+  // }
 
-const validationSchema = toTypedSchema(
-  yup.object({
-    privateTeacher: yup.boolean().default(false),
-    schoolTeacher: yup.boolean().default(false),
-    apartment: yup
-      .string()
-      .notRequired()
-      .trim()
-      .nullable()
-      .max(10, '10 characters maximum'),
-    streetNumber: yup
-      .string()
-      .trim()
-      .max(5, '5 characters maximum')
-      .required('Enter a valid street number'),
-    streetName: yup.string().trim().required('Enter a valid street name'),
-    city: yup
-      .string()
-      .trim()
-      .max(20, 'Too many characters')
-      .required('Enter a city name'),
-    province: yup.string().max(3).required(),
-    postalCode: yup
-      .string()
-      .trim()
-      .matches(
-        /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i,
-        'Enter a valid postal code',
-      )
-      .required('Enter a valid postal code'),
-    phone: yup
-      .string()
-      .trim()
-      .phone('CA', 'Please enter a valid phone number')
-      .required('A phone number is required'),
-    instrument: yup.string().trim().required('Please indicate an instrument'),
-  }),
-)
+  async function fieldStatus(stat: string, fieldName: string) {
+    await nextTick()
+    if (stat === 'valid') {
+      status[fieldName] = StatusEnum.pending
+      const result = await userStore.updateUser(fieldName)
+      status[fieldName] = StatusEnum.null
+      if (result === 'complete') {
+        if (userStore.user[fieldName as keyof User] !== null) {
+          status[fieldName] = StatusEnum.saved
+        }
+      } else {
+        toast.error(
+          'Could not update field.  Please exit and reload Registration'
+        )
+      }
+    } else if (stat === 'invalid') {
+      status[fieldName] = StatusEnum.pending
+      const result = await userStore.updateUser(fieldName)
+      status[fieldName] = StatusEnum.null
+      if (result === 'complete') {
+        status[fieldName] = StatusEnum.removed
+      } else {
+        toast.error(
+          'Could not remove invalid field. Please exit and reload Registration'
+        )
+      }
+    } else if (stat === 'removed') {
+      status[fieldName] = StatusEnum.pending
+      const result = await userStore.updateUser(fieldName)
+      status[fieldName] = StatusEnum.null
+      if (result === 'complete') {
+        status[fieldName] = StatusEnum.removed
+      } else {
+        toast.error(
+          'Could not remove field.  Please exit and reload Registration'
+        )
+      }
+    }
+  }
 
-const { errors, validate } = useForm({
-  validationSchema,
-  validateOnMount: true,
-})
+  const validationSchema = toTypedSchema(
+    yup.object({
+      privateTeacher: yup.boolean().default(false),
+      schoolTeacher: yup.boolean().default(false),
+      firstName: yup.string().trim().required('Required'),
+      lastName: yup.string().trim().required('Required'),
+      address: yup.string().trim().nullable(),
+      city: yup.string().trim().max(20, 'Too many characters').nullable(),
+      province: yup.string().max(3).nullable(),
+      postalCode: yup
+        .string()
+        .trim()
+        .matches(
+          /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i,
+          'Enter a valid postal code'
+        )
+        .nullable(),
+      phone: yup
+        .string()
+        .trim()
+        .phone('CA', 'Please enter a valid phone number')
+        .nullable(),
+      instrument: yup.string().trim().nullable(),
+    })
+  )
 
-onActivated(async () => {
-  await validate()
-})
+  const { errors, validate } = useForm({
+    validationSchema,
+    validateOnMount: true,
+  })
 
-const maskaUcaseOption = {
-  preProcess: (val: string) => val.toUpperCase(),
-}
+  onActivated(async () => {
+    await validate()
+  })
 
-const currentYear = new Date().getFullYear()
+  const maskaUcaseOption = {
+    preProcess: (val: string) => val.toUpperCase(),
+  }
+  defineExpose({ maskaUcaseOption })
+
+  const currentYear = new Date().getFullYear()
 </script>
 
 <template>
   <div class="grid grid-cols-12 gap-x-3 gap-y-1 items-end">
     <div class="col-span-12 pt-8">
-      <h2 class="pb-2">
-        User Account Information
-      </h2>
+      <h2 class="pb-2">User Account Information</h2>
       <h3>
         {{ userStore.user.firstName }}
         {{ userStore.user.lastName }}
@@ -152,77 +173,80 @@ const currentYear = new Date().getFullYear()
         v-model="userStore.user.privateTeacher"
         :status="status.privateTeacher"
         name="privateTeacher"
-        label="Private Teacher or Community Ensemble Leader"
+        label="Private Teacher"
         class="px-4 inline-block"
         @change-status="
-          (stat: string) => fieldStatus(stat, 'privateTeacher')
-        "
-      />
+          async (stat: string) => await fieldStatus(stat, 'privateTeacher')
+        " />
       <BaseCheckbox
         v-model="userStore.user.schoolTeacher"
         :status="status.schoolTeacher"
         name="schoolTeacher"
-        label="Grade School Teacher"
+        label="School Teacher and/or Community Conductor"
         class="px-4 inline-block"
         @change-status="
-          (stat: string) => fieldStatus(stat, 'schoolTeacher')
-        "
-      />
+          async (stat: string) => await fieldStatus(stat, 'schoolTeacher')
+        " />
     </fieldset>
-    <div class="col-span-4 sm:col-span-3">
+    <div class="col-span-12 sm:col-span-6">
       <BaseInput
-        v-model.trim="userStore.user.apartment"
-        :status="status.apartment"
-        name="apartment"
+        v-model.trim="userStore.user.firstName"
+        :status="status.firstName"
+        name="firstName"
         type="text"
-        label="Apt."
-        @change-status="(stat: string) => fieldStatus(stat, 'apartment')"
-      />
-    </div>
-    <div class="col-span-5 sm:col-span-3">
-      <BaseInput
-        v-model.trim="userStore.user.streetNumber"
-        :status="status.streetNumber"
-        name="streetNumber"
-        type="text"
-        label="Street #"
-        @change-status="(stat: string) => fieldStatus(stat, 'streetNumber')"
-      />
+        label="First Name"
+        @change-status="
+          async (stat: string) => await fieldStatus(stat, 'firstName')
+        " />
     </div>
     <div class="col-span-12 sm:col-span-6">
       <BaseInput
-        v-model.trim="userStore.user.streetName"
-        :status="status.streetName"
-        name="streetName"
+        v-model.trim="userStore.user.lastName"
+        :status="status.lastName"
+        name="lastName"
         type="text"
-        label="Street Name"
-        @change-status="(stat: string) => fieldStatus(stat, 'streetName')"
-      />
+        label="Last Name"
+        @change-status="
+          async (stat: string) => await fieldStatus(stat, 'lastName')
+        " />
     </div>
-    <div class="col-span-8 sm:col-span-7">
+    <div class="col-span-12 sm:col-span-8">
+      <BaseInput
+        v-model.trim="userStore.user.address"
+        :status="status.address"
+        name="address"
+        type="text"
+        label="Mailing Address"
+        @change-status="
+          async (stat: string) => await fieldStatus(stat, 'address')
+        " />
+    </div>
+    <div class="col-span-12 sm:col-span-4">
       <BaseInput
         v-model.trim="userStore.user.city"
         :status="status.city"
         name="city"
         type="text"
         label="City/Town"
-        @change-status="(stat: string) => fieldStatus(stat, 'city')"
-      />
+        @change-status="
+          async (stat: string) => await fieldStatus(stat, 'city')
+        " />
     </div>
-    <div class="col-span-4 sm:col-span-2 self-start">
+    <div class="col-span-6 sm:col-span-2 self-start">
       <BaseSelect
         v-model.trim="userStore.user.province"
         :status="status.province"
         name="province"
         label="Province"
         :options="provinces"
-        @change-status="(stat: string) => fieldStatus(stat, 'province')"
-      />
+        @change-status="
+          async (stat: string) => await fieldStatus(stat, 'province')
+        " />
     </div>
-    <div class="col-span-6 sm:col-span-3">
+    <div class="col-span-6 sm:col-span-4">
       <BaseInput
         v-model.trim="userStore.user.postalCode"
-        v-maska:[maskaUcaseOption]
+        v-maska:maskaUcaseOption
         :status="status.postalCode"
         placeholder="A0A 0A0"
         data-maska="A#A #A#"
@@ -231,10 +255,11 @@ const currentYear = new Date().getFullYear()
         name="postalCode"
         type="text"
         label="Postal Code"
-        @change-status="(stat: string) => fieldStatus(stat, 'postalCode')"
-      />
+        @change-status="
+          async (stat: string) => await fieldStatus(stat, 'postalCode')
+        " />
     </div>
-    <div class="col-span-6 sm:col-span-5">
+    <div class="col-span-6 sm:col-span-6">
       <BaseInput
         v-model.trim="userStore.user.phone"
         v-maska
@@ -243,23 +268,24 @@ const currentYear = new Date().getFullYear()
         data-maska="(###) ###-####"
         data-maska-eager
         name="phone"
-        type="tel"
+        type="text"
         label="Phone Number"
-        @change-status="(stat: string) => fieldStatus(stat, 'phone')"
-      />
+        @change-status="
+          async (stat: string) => await fieldStatus(stat, 'phone')
+        " />
     </div>
     <div
       v-if="teacherView"
-      class="col-span-12 sm:col-span-7"
-    >
+      class="col-span-12 sm:col-span-6">
       <BaseInput
         v-model.trim="userStore.user.instrument"
         :status="status.instrument"
         name="instrument"
         type="text"
         label="Instrument(s)"
-        @change-status="(stat: string) => fieldStatus(stat, 'instrument')"
-      />
+        @change-status="
+          async (stat: string) => await fieldStatus(stat, 'instrument')
+        " />
     </div>
   </div>
 </template>

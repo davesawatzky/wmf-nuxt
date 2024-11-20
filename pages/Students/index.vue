@@ -1,14 +1,14 @@
 <script lang="ts" setup>
   import { DateTime } from 'luxon'
-  import { useRegistration } from '@/stores/userRegistration'
+  import { useRegistration } from '@/stores/useRegistration'
   import { useAppStore } from '@/stores/appStore'
-  import { usePerformers } from '@/stores/userPerformer'
-  import { useTeacher } from '@/stores/userTeacher'
-  import { useClasses } from '@/stores/userClasses'
-  import { useGroup } from '@/stores/userGroup'
-  import { useSchool } from '@/stores/userSchool'
-  import { useSchoolGroup } from '@/stores/userSchoolGroup'
-  import { useCommunity } from '@/stores/userCommunity'
+  import { usePerformers } from '@/stores/usePerformer'
+  import { useTeacher } from '@/stores/useTeacher'
+  import { useClasses } from '@/stores/useClasses'
+  import { useGroup } from '@/stores/useGroup'
+  import { useSchool } from '@/stores/useSchool'
+  import { useSchoolGroup } from '@/stores/useSchoolGroup'
+  import { useCommunity } from '@/stores/useCommunity'
   import { useFieldConfig } from '@/stores/useFieldConfig'
   import type { Registration, RegistrationInput } from '@/graphql/gql/graphql'
   import {
@@ -24,6 +24,7 @@
   const schoolStore = useSchool()
   const schoolGroupStore = useSchoolGroup()
   const communityStore = useCommunity()
+  const communityGroupStore = useCommunityGroup()
   const classesStore = useClasses()
   const fieldConfigStore = useFieldConfig()
 
@@ -46,6 +47,7 @@
     teacherStore.$resetAllTeachers()
     groupStore.$reset()
     communityStore.$reset()
+    communityGroupStore.$reset()
     schoolStore.$reset()
     schoolGroupStore.$reset()
     classesStore.$reset()
@@ -78,12 +80,12 @@
     registrationId: number,
     performerType: PerformerType
   ) {
+    await refetchRegistrations()
     const registration = registrations.value.find((reg) => {
       return reg.id === registrationId
     })
 
     registrationStore.registrationId = registrationId
-
     registrationStore.addToStore(
       registration as Partial<Registration & RegistrationInput>
     )
@@ -112,6 +114,7 @@
         appStore.performerType = PerformerType.COMMUNITY
         appStore.dataLoading = true
         await communityStore.loadCommunity(registrationId)
+        await communityGroupStore.loadCommunityGroups(registrationId)
         appStore.dataLoading = false
         break
     }
@@ -142,7 +145,7 @@
             </li>
             <li>
               Click on the 'View' icon (<Icon
-                class="text-sky-600 text-xl"
+                class="align-middle text-sky-600 text-xl"
                 name="fa-solid:eye" />) to see more details.
             </li>
           </ul>
@@ -226,15 +229,15 @@
                 <td
                   v-if="md"
                   class="text-xs text-white">
-                  <div
-                    v-if="dateFunction(registration.submittedAt)"
-                    class="rounded-xl pl-2 py-1 bg-green-700">
-                    Submitted
+                  <div v-if="dateFunction(registration.submittedAt)">
+                    <p class="inline rounded-xl px-2 py-1 bg-green-700">
+                      Submitted
+                    </p>
                   </div>
-                  <div
-                    v-else
-                    class="rounded-xl pl-2 py-1 bg-red-700">
-                    Incomplete
+                  <div v-else>
+                    <p class="inline rounded-xl px-2 py-1 bg-red-700">
+                      Incomplete
+                    </p>
                   </div>
                 </td>
                 <td class="text-sm">

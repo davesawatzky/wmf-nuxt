@@ -1,8 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import process from 'node:process'
-import Aura from '@primevue/themes/aura'
+import { WMFPreset } from './utils/wmfpreset'
 
 export default defineNuxtConfig({
   compatibilityDate: '2024-08-28',
@@ -20,6 +19,7 @@ export default defineNuxtConfig({
     '@nuxtjs/device',
     '@primevue/nuxt-module',
     '@nuxt/icon',
+    '@nuxt/image',
   ],
   devServer: {
     port: 3001,
@@ -43,8 +43,8 @@ export default defineNuxtConfig({
     },
     clients: {
       default: {
-        httpEndpoint:
-          process.env.GRAPHQL_SERVER || 'http://localhost:3000/graphql',
+        httpEndpoint: 'https://wmfapi.diatonic.ca/graphql',
+        // httpEndpoint: 'http://localhost:3000/graphql',
         tokenName: 'diatonicToken',
         authHeader: 'Authorization',
         authType: 'Bearer',
@@ -53,17 +53,15 @@ export default defineNuxtConfig({
           credentials: 'include',
         },
       },
-      // cookieAttributes: {
-      //   sameSite: 'none',
-      //   domain: 'localhost:3000',
-      //   path: '/graphql',
-      //   maxAge: 1000 * 60 * 1, // 1 hour
-      // },
     },
   },
   app: {
     head: {
-      script: ['https://www.polyfill.io/v3/polyfill.min.js'],
+      script: [
+        {
+          src: 'https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?version=4.8.0&features=globalThis',
+        },
+      ],
     },
   },
   experimental: {
@@ -72,6 +70,9 @@ export default defineNuxtConfig({
   },
   headlessui: {
     prefix: 'UI',
+  },
+  image: {
+    format: ['webp'],
   },
   pinia: {
     storesDirs: ['./stores'],
@@ -84,8 +85,9 @@ export default defineNuxtConfig({
     options: {
       ripple: true,
       theme: {
-        preset: Aura,
+        preset: WMFPreset,
         options: {
+          darkModeSelector: '.fake-dark-selector',
           prefix: 'p',
           cssLayer: {
             name: 'primevue',
@@ -100,21 +102,22 @@ export default defineNuxtConfig({
     },
   },
   runtimeConfig: {
-    graphqlServer: process.env.GRAPHQL_SERVER,
-    apiBase: process.env.NUXT_API_BASE,
-    sendingEmailServer: process.env.SENDING_EMAIL_SERVER,
-    sendingEmailAddress: process.env.SENDING_EMAIL_ADDRESS,
-    sendingEmailPassword: process.env.SENDING_EMAIL_PASSWORD,
-    sendingSmtpPort: process.env.SENDING_SMTP_PORT,
-    emailServerUserAccount: process.env.EMAIL_SERVER_USER_ACCOUNT,
-    bccEmailAddress: process.env.BCC_EMAIL_ADDRESS,
+    graphqlServer: '',
+    apiBase: '',
+    sendingEmailServer: '',
+    sendingEmailAddress: '',
+    sendingEmailPassword: '',
+    sendingSmtpPort: '',
+    emailServerUserAccount: '',
+    bccEmailAddress: '',
 
     public: {
-      serverAddress: process.env.SERVER_ADDRESS,
-      apiBase: process.env.NUXT_API_BASE,
-      emailConfirmation: process.env.EMAIL_CONFIRMATION,
-      resendConfirmation: process.env.RESEND_CONFIRMATION,
-      stripeKey: process.env.STRIPE_PUB_KEY,
+      serverAddress: '',
+      apiBase: '',
+      emailConfirmation: '',
+      resendConfirmation: '',
+      resendPasswordReset: '',
+      stripePubKey: '',
     },
   },
   sourcemap: {
@@ -142,7 +145,7 @@ export default defineNuxtConfig({
   },
   vite: {
     build: {
-      target: 'es6',
+      target: ['es2015', 'chrome87', 'safari11', 'ios12'],
     },
     vue: {
       script: {

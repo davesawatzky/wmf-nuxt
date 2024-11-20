@@ -1,20 +1,26 @@
-import { usePerformers } from '@/stores/userPerformer'
-import { useClasses } from '@/stores/userClasses'
-import { useCommunity } from '@/stores/userCommunity'
-import { useGroup } from '@/stores/userGroup'
-import { useSchool } from '@/stores/userSchool'
-import { useSchoolGroup } from '@/stores/userSchoolGroup'
-import { useTeacher } from '@/stores/userTeacher'
-import { useAppStore } from '@/stores/appStore'
-
 interface FormErrors {
   [key: string]: number
+}
+
+export function sumErrorsArray(arr: any) {
+  let sum = 0
+  arr.forEach((obj: any) => {
+    for (const key in obj) {
+      if (key === 'selections') {
+        sum += sumErrorsArray(obj[key])
+      } else if (key === 'count') {
+        sum += obj.count
+      }
+    }
+  })
+  return sum
 }
 
 export const formErrors = computed(() => {
   const performerStore = usePerformers()
   const classesStore = useClasses()
   const communityStore = useCommunity()
+  const communityGroupStore = useCommunityGroup()
   const groupStore = useGroup()
   const schoolStore = useSchool()
   const schoolGroupStore = useSchoolGroup()
@@ -25,36 +31,43 @@ export const formErrors = computed(() => {
   switch (appStore.performerType) {
     case 'SOLO':
       tabName.value = {
-        'Performer': performerStore.performerErrors,
-        'Teacher': teacherStore.teacherErrors,
-        'Solo Classes': classesStore.classErrors,
-        'Summary': 0,
+        Performer: performerStore.performerErrors[0].count,
+        Teacher: teacherStore.teacherErrors,
+        'Solo Classes': sumErrorsArray(classesStore.classErrors),
+        Summary: 0,
       }
       break
     case 'GROUP':
       tabName.value = {
-        'Group': groupStore.groupErrors,
-        'Performers': performerStore.performerErrors,
-        'Teacher': teacherStore.teacherErrors,
-        'Group Classes': classesStore.classErrors,
-        'Summary': 0,
+        Group: groupStore.groupErrors,
+        Performers: performerStore.totalPerformerErrors,
+        Teacher: teacherStore.teacherErrors,
+        'Group Classes': sumErrorsArray(classesStore.classErrors),
+        Summary: 0,
       }
       break
     case 'SCHOOL':
       tabName.value = {
-        'School': schoolStore.schoolErrors,
-        'Teacher': teacherStore.teacherErrors,
-        'Groups': schoolGroupStore.schoolGroupErrors,
-        'School Classes': classesStore.classErrors,
-        'Summary': 0,
+        School: schoolStore.schoolErrors,
+        Teacher: teacherStore.teacherErrors,
+        Groups: schoolGroupStore.schoolGroupErrors.reduce(
+          (a, b) => a + b.count,
+          0
+        ),
+        'School Classes': sumErrorsArray(classesStore.classErrors),
+        Summary: 0,
       }
       break
     case 'COMMUNITY':
       tabName.value = {
-        'Community': communityStore.communityErrors,
-        'Contact': teacherStore.teacherErrors,
-        'Community Classes': classesStore.classErrors,
-        'Summary': 0,
+        Community: communityStore.communityErrors,
+        Contact: teacherStore.teacherErrors,
+        Groups: communityGroupStore.communityGroupErrors.reduce(
+          (a, b) => a + b.count,
+          0
+        ),
+        'Community Classes': sumErrorsArray(classesStore.classErrors),
+        Summary: 0,
       }
       break
   }
