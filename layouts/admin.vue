@@ -12,7 +12,7 @@
       <AdminSidebar />
     </nav>
     <main>
-      <slot name="main" />
+      <slot />
     </main>
     <footer>
       <AdminFooter />
@@ -21,36 +21,35 @@
 </template>
 
 <style lang="scss" scoped>
-.page-container {
-  display: grid;
-  width: 100%;
-  height: 100vh;
-  grid-template:
-    "header header" auto
-    "nav menu" auto
-    "nav main" 1fr
-    "nav footer" auto / auto 1fr;
-}
+  .page-container {
+    display: grid;
+    width: 100%;
+    height: 100vh;
+    grid-template:
+      'header header' auto
+      'nav menu' auto
+      'nav main' 1fr
+      'nav footer' auto / auto 1fr;
+  }
 
-header {
-  grid-area: header;
-}
+  header {
+    grid-area: header;
+  }
 
-.menu {
-  grid-area: menu;
-}
+  .menu {
+    grid-area: menu;
+  }
 
-nav {
-  grid-area: nav;
+  nav {
+    grid-area: nav;
+  }
 
-}
+  main {
+    grid-area: main;
+    overflow: auto;
+  }
 
-main {
-  grid-area: main;
-  overflow:auto;
-}
-
-footer {
-  grid-area: footer;
-}
+  footer {
+    grid-area: footer;
+  }
 </style>
