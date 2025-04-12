@@ -1,5 +1,5 @@
 import process from 'node:process'
-import withNuxt from './.nuxt/eslint.config.mjs'
+import withNuxt from '.nuxt/eslint.config.mjs'
 
 process.env.ESLINT_TSCONFIG = 'tsconfig.json'
 

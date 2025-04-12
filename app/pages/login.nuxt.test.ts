@@ -3,7 +3,7 @@ import { DefaultApolloClient } from '@vue/apollo-composable'
 import { expect } from 'vitest'
 import '@testing-library/jest-dom'
 import { createMockClient } from 'mock-apollo-client'
-import Login from './Login.vue'
+import Login from '../../pages/Login.vue'
 import { SignInDocument } from '~/graphql/gql/graphql'
 
 let mockClient: any

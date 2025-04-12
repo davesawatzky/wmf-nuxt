@@ -4,7 +4,7 @@ import {
   testFullPerformer1,
   testFullPerformer2,
   testPartialPerformer,
-} from '../utils/testData'
+} from '../app/utils/testData'
 import { usePerformers } from '@/stores/usePerformer'
 
 let performerStore: any

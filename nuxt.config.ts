@@ -1,7 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { WMFPreset } from './utils/wmfpreset'
+import { WMFPreset } from './app/utils/wmfpreset'
 
 export default defineNuxtConfig( {
   future: {
