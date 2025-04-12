@@ -10,7 +10,7 @@ export default defineNuxtConfig({
     '@nuxtjs/tailwindcss',
     '@nuxtjs/apollo',
     '@pinia/nuxt',
-    '@pinia-plugin-persistedstate/nuxt',
+    'pinia-plugin-persistedstate/nuxt',
     '@nuxt/devtools',
     '@nuxt/test-utils/module',
     '@vee-validate/nuxt',
@@ -43,8 +43,8 @@ export default defineNuxtConfig({
     },
     clients: {
       default: {
-        httpEndpoint: 'https://wmfapi.diatonic.ca/graphql',
-        // httpEndpoint: 'http://localhost:3000/graphql',
+        // httpEndpoint: 'https://wmfapi.diatonic.ca/graphql',
+        httpEndpoint: 'http://localhost:3000/graphql',
         tokenName: 'diatonicToken',
         authHeader: 'Authorization',
         authType: 'Bearer',
@@ -77,7 +77,7 @@ export default defineNuxtConfig({
   pinia: {
     storesDirs: ['./stores'],
   },
-  piniaPersistedstate: {
+  piniaPluginPersistedstate: {
     storage: 'sessionStorage',
   },
   primevue: {

@@ -562,6 +562,6 @@ export async function renderSubmissionEmail( payload: any ) {
     // Let mjml do its magic
     return mjml2html(html).html
   } catch (error) {
-    console.log('Error: ', error)
+    console.error('Error: ', error)
   }
 }
