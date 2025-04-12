@@ -29,7 +29,7 @@
       <div class="w-10 h-4 bg-gray-400 rounded-full shadow-inner" />
       <!-- dot -->
       <div
-        class="dot absolute w-6 h-6 bg-white rounded-full shadow -left-1 -top-1 transition" />
+        class="dot absolute w-6 h-6 bg-white rounded-full shadow-sm -left-1 -top-1 transition" />
     </div>
     <div
       v-if="label"

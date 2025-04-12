@@ -49,7 +49,7 @@
           :class="showMenu ? 'toggle-btn' : ''"
           @click="toggleNav">
           <div
-            class="absolute top-4 -mt-0.5 h-1 w-8 rounded bg-white transition-all duration-500 before:absolute before:h-1 before:w-8 before:-translate-x-4 before:-translate-y-3 before:rounded before:bg-white before:transition-all before:duration-500 before:content-[''] after:absolute after:h-1 after:w-8 after:-translate-x-4 after:translate-y-3 after:rounded after:bg-white after:transition-all after:duration-500 after:content-['']" />
+            class="absolute top-4 -mt-0.5 h-1 w-8 rounded-sm bg-white transition-all duration-500 before:absolute before:h-1 before:w-8 before:-translate-x-4 before:-translate-y-3 before:rounded-sm before:bg-white before:transition-all before:duration-500 before:content-[''] after:absolute after:h-1 after:w-8 after:-translate-x-4 after:translate-y-3 after:rounded-sm after:bg-white after:transition-all after:duration-500 after:content-['']" />
         </button>
 
         <nav
@@ -71,7 +71,7 @@
                 leave-from-class="transform scale-100 opacity-100"
                 leave-to-class="transform scale-95 opacity-0">
                 <UIMenuItems
-                  class="absolute z-10 mt-[45px] ml-[-75px] w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg shadow-slate-400 ring-1 ring-black ring-opacity-10 focus:outline-none">
+                  class="absolute z-10 mt-[45px] ml-[-75px] w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg shadow-slate-400 ring-1 ring-black ring-opacity-10 focus:outline-hidden">
                   <div class="p-1">
                     <UIMenuItem
                       v-slot="{ active, close }"
@@ -133,7 +133,7 @@
                 leave-from-class="transform scale-100 opacity-100"
                 leave-to-class="transform scale-95 opacity-0">
                 <UIMenuItems
-                  class="absolute z-10 mt-[45px] ml-[42px] w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg shadow-slate-400 ring-1 ring-black ring-opacity-10 focus:outline-none">
+                  class="absolute z-10 mt-[45px] ml-[42px] w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg shadow-slate-400 ring-1 ring-black ring-opacity-10 focus:outline-hidden">
                   <div class="p-1">
                     <UIMenuItem
                       v-slot="{ active, close }"

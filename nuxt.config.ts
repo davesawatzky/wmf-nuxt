@@ -3,8 +3,10 @@ import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { WMFPreset } from './utils/wmfpreset'
 
-export default defineNuxtConfig({
-  compatibilityDate: '2024-08-28',
+export default defineNuxtConfig( {
+  future: {
+    compatibilityVersion: 4
+  },
   modules: [
     '@nuxt/eslint',
     '@nuxtjs/tailwindcss',
@@ -98,7 +100,7 @@ export default defineNuxtConfig({
       },
     },
     components: {
-      prefix: 'Prime',
+      prefix: 'PV',
     },
   },
   runtimeConfig: {
