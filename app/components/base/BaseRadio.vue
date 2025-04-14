@@ -23,7 +23,7 @@
       :name="name"
       autocomplete="off"
       v-bind="{ ...$attrs }"
-      @change="$emit('update:modelValue', value)" />
+      @change="$emit('update:modelValue', value)" >
     <label
       v-if="label"
       :for="String(value)"

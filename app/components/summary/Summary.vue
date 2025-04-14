@@ -1,15 +1,15 @@
 <script setup lang="ts">
-  import { usePerformers } from '@/stores/usePerformer'
-  import { useTeacher } from '@/stores/useTeacher'
-  import { useGroup } from '@/stores/useGroup'
-  import { useSchool } from '@/stores/useSchool'
-  import { useSchoolGroup } from '@/stores/useSchoolGroup'
-  import { useCommunity } from '@/stores/useCommunity'
-  import { useCommunityGroup } from '@/stores/useCommunityGroup'
-  import { useClasses } from '@/stores/useClasses'
-  import { useRegistration } from '@/stores/useRegistration'
-  import { useAppStore } from '@/stores/appStore'
-  import { formErrors } from '@/composables/formErrors'
+  import { usePerformers } from '~/stores/usePerformer'
+  import { useTeacher } from '~/stores/useTeacher'
+  import { useGroup } from '~/stores/useGroup'
+  import { useSchool } from '~/stores/useSchool'
+  import { useSchoolGroup } from '~/stores/useSchoolGroup'
+  import { useCommunity } from '~/stores/useCommunity'
+  import { useCommunityGroup } from '~/stores/useCommunityGroup'
+  import { useClasses } from '~/stores/useClasses'
+  import { useRegistration } from '~/stores/useRegistration'
+  import { useAppStore } from '~/stores/appStore'
+  import { formErrors } from '~/composables/formErrors'
 
   interface TeacherSummary {
     teacherSummary?: boolean
@@ -124,7 +124,7 @@
           <SummaryContactInfo
             class="pb-4"
             :contact="performer"
-            :full-name="performerStore.fullName[index]" />
+            :full-name="performerStore.fullName[index] ?? ''" />
         </div>
       </div>
 

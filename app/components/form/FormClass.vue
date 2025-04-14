@@ -9,12 +9,12 @@
     LevelsDocument,
     RegisteredClassesDocument,
     SubdisciplinesByTypeDocument,
-  } from '@/graphql/gql/graphql'
+  } from '~/graphql/gql/graphql'
   import { logErrorMessages } from '@vue/apollo-util'
-  import { useClasses } from '@/stores/useClasses'
-  import { useAppStore } from '@/stores/appStore'
-  import { usePerformers } from '@/stores/usePerformer'
-  import { useGroup } from '@/stores/useGroup'
+  import { useClasses } from '~/stores/useClasses'
+  import { useAppStore } from '~/stores/appStore'
+  import { usePerformers } from '~/stores/usePerformer'
+  import { useGroup } from '~/stores/useGroup'
   import type {
     Category,
     Discipline,
@@ -26,7 +26,7 @@
     RegisteredClassInput,
     Selection,
     Subdiscipline,
-  } from '@/graphql/gql/graphql'
+  } from '~/graphql/gql/graphql'
   import { count } from 'console'
 
   const props = defineProps<{
@@ -116,13 +116,13 @@
     }
     if (
       (appStore.performerType === 'SCHOOL' &&
-        !classesStore.registeredClasses[props.classIndex].schoolGroupID) ||
+        !classesStore.registeredClasses[props.classIndex]?.schoolGroupID) ||
       (appStore.performerType === 'COMMUNITY' &&
-        !classesStore.registeredClasses[props.classIndex].communityGroupID)
+        !classesStore.registeredClasses[props.classIndex]?.communityGroupID)
     ) {
       count++
     }
-    classesStore.classErrors[index].count = count
+    classesStore.classErrors[index]!.count = count
   })
 
   // Loading the instruments table.
@@ -164,7 +164,7 @@
     // and the Mozart class if instrument>mozart is true.
     if (
       appStore.performerType === 'SOLO' &&
-      !!performerStore.performers[0].instrument &&
+      !!performerStore.performers[0]?.instrument &&
       disciplineQuery.value.disciplines
     ) {
       const Mozart = disciplineQuery.value.disciplines.filter((item) => {
@@ -185,7 +185,7 @@
       let isMozart = false
       const discipline = disciplineQuery.value?.disciplines.filter((item) => {
         const disc = item.instruments?.find(
-          (el) => el.name === performerStore.performers[0].instrument
+          (el) => el.name === performerStore.performers[0]?.instrument
         )
         if (!isMozart) {
           disc?.mozart === true ? (isMozart = true) : (isMozart = false)
@@ -193,7 +193,7 @@
         return disc
       })
       if (isMozart && Mozart) {
-        discipline?.push(Mozart[0])
+        discipline?.push(Mozart[0]!)
       }
       return discipline ?? ''
       // }
@@ -250,7 +250,7 @@
   const isDisciplineDisabled = computed(() => {
     if (
       appStore.performerType === 'SOLO' &&
-      !performerStore.performers[0].instrument
+      !performerStore.performers[0]?.instrument
     ) {
       return true
     } else {
@@ -520,7 +520,7 @@
     () => selectedClasses.value.numberOfSelections,
     async (newNumber) => {
       let oldNumber =
-        classesStore.registeredClasses[props.classIndex].selections!.length
+        classesStore.registeredClasses[props.classIndex]!.selections!.length
       if (oldNumber < newNumber!) {
         while (oldNumber < newNumber!) {
           await classesStore.createSelection(props.classId)
@@ -529,11 +529,11 @@
       } else if (oldNumber > newNumber!) {
         while (oldNumber > newNumber!) {
           const selectionLength =
-            classesStore.registeredClasses[props.classIndex].selections!.length
+            classesStore.registeredClasses[props.classIndex]!.selections!.length
           const selectionId =
-            classesStore.registeredClasses[props.classIndex].selections![
+            classesStore.registeredClasses[props.classIndex]!.selections![
               selectionLength - 1
-            ].id
+            ]!.id
           await classesStore
             .deleteSelection(props.classId, selectionId)
             .catch((error) => console.log(error))
@@ -687,7 +687,7 @@
       <FormWorksSelection
         v-for="(selection, selectionIndex) in selectedClasses.selections"
         :key="selection.id"
-        v-model="selectedClasses.selections![selectionIndex]"
+        v-model="selectedClasses.selections![selectionIndex]!"
         :selection-index="selectionIndex"
         :selection-id="selection.id"
         :class-id="classId"

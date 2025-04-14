@@ -1,10 +1,10 @@
 <script setup lang="ts">
   import * as yup from 'yup'
-  import { useClasses } from '@/stores/useClasses'
-  import { useRegistration } from '@/stores/useRegistration'
-  import { useSchoolGroup } from '@/stores/useSchoolGroup'
-  import { useCommunityGroup } from '@/stores/useCommunityGroup'
-  import { useAppStore } from '@/stores/appStore'
+  import { useClasses } from '~/stores/useClasses'
+  import { useRegistration } from '~/stores/useRegistration'
+  import { useSchoolGroup } from '~/stores/useSchoolGroup'
+  import { useCommunityGroup } from '~/stores/useCommunityGroup'
+  import { useAppStore } from '~/stores/appStore'
   import { PerformerType, type RegisteredClass } from '~/graphql/gql/graphql'
   import { useToast } from 'vue-toastification'
 
@@ -20,10 +20,10 @@
     for (let i = 0; i < classesStore.registeredClasses.length; i++) {
       status.push({ schoolGroupID: StatusEnum.null })
       status.push({ communityGroupID: StatusEnum.null })
-      if (classesStore.registeredClasses[i].schoolGroupID)
-        status[i].schoolGroupID = StatusEnum.saved
-      if (classesStore.registeredClasses[i].communityGroupID)
-        status[i].communityGroupID = StatusEnum.saved
+      if (classesStore.registeredClasses[i]?.schoolGroupID)
+        status[i]!.schoolGroupID = StatusEnum.saved
+      if (classesStore.registeredClasses[i]?.communityGroupID)
+        status[i]!.communityGroupID = StatusEnum.saved
     }
   })
 
@@ -96,20 +96,20 @@
     classIndex: number
   ) {
     await nextTick()
-    status[classIndex][fieldName] = StatusEnum.pending
+    status[classIndex]![fieldName] = StatusEnum.pending
     const result = await classesStore.updateClass(classId, fieldName)
     if (result === 'complete') {
       if (
-        classesStore.registeredClasses[classIndex][
+        classesStore.registeredClasses[classIndex]![
           fieldName as keyof RegisteredClass
         ]
       ) {
-        status[classIndex][fieldName] = StatusEnum.saved
+        status[classIndex]![fieldName] = StatusEnum.saved
       } else {
-        status[classIndex][fieldName] = StatusEnum.removed
+        status[classIndex]![fieldName] = StatusEnum.removed
       }
     } else {
-      status[classIndex][fieldName] = StatusEnum.null
+      status[classIndex]![fieldName] = StatusEnum.null
       toast.error('Something went wrong. Please exit and reload Registration')
     }
   }
@@ -137,7 +137,7 @@
         <div v-if="appStore.performerType === PerformerType.SCHOOL">
           <BaseSelect
             v-model.number="
-              classesStore.registeredClasses[classIndex].schoolGroupID
+              classesStore.registeredClasses[classIndex]!.schoolGroupID
             "
             :status="status[classIndex]?.schoolGroupID"
             :name="`schoolGroups[${classIndex}].id`"
@@ -158,7 +158,7 @@
         <div v-else-if="appStore.performerType === PerformerType.COMMUNITY">
           <BaseSelect
             v-model.number="
-              classesStore.registeredClasses[classIndex].communityGroupID
+              classesStore.registeredClasses[classIndex]!.communityGroupID
             "
             :status="status[classIndex]?.communityGroupID"
             :name="`communityGroups[${classIndex}].id`"
@@ -177,7 +177,7 @@
             " />
         </div>
         <FormClass
-          v-model="classesStore.registeredClasses[classIndex]"
+          v-model="classesStore.registeredClasses[classIndex]!"
           :class-index="classIndex"
           :class-id="selectedClass.id" />
       </div>

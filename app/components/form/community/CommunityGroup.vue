@@ -1,10 +1,10 @@
 <script setup lang="ts">
   import * as yup from 'yup'
-  import { useCommunityGroup } from '@/stores/useCommunityGroup'
+  import { useCommunityGroup } from '~/stores/useCommunityGroup'
   import type {
     CommunityGroup,
     CommunityGroupInput,
-  } from '@/graphql/gql/graphql'
+  } from '~/graphql/gql/graphql'
   import { useToast } from 'vue-toastification'
 
   const props = defineProps<{
@@ -187,10 +187,10 @@
         count++
       }
     }
-    let index = communityGroupStore.communityGroupErrors.findIndex(
+    const index = communityGroupStore.communityGroupErrors.findIndex(
       (item) => item.id === props.communityGroupId
     )
-    communityGroupStore.communityGroupErrors[index].count = count
+    communityGroupStore.communityGroupErrors[index]!.count = count
   })
 
   onActivated(() => {

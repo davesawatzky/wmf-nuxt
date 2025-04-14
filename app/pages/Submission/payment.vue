@@ -9,9 +9,9 @@
     StripePaymentElementOptions,
   } from '@stripe/stripe-js'
   import { useToast } from 'vue-toastification'
-  import { useRegistration } from '@/stores/useRegistration'
-  import { useUser } from '@/stores/useUser'
-  import { useAppStore } from '@/stores/appStore'
+  import { useRegistration } from '~/stores/useRegistration'
+  import { useUser } from '~/stores/useUser'
+  import { useAppStore } from '~/stores/appStore'
 
   const appStore = useAppStore()
   const userStore = useUser()
@@ -20,7 +20,7 @@
   const spinnerHidden = ref(true)
   const registrationStore = useRegistration()
   const submitDisabled = ref(true)
-  let clientSec: string = ''
+  const clientSec: string = ''
   // const total = ref(0)
 
   const config = useRuntimeConfig()
@@ -222,8 +222,8 @@
 
       <fieldset>
         <div
-          v-auto-animate
           v-show="appStore.stripePayment === 'cash'"
+          v-auto-animate
           class="p-4 sm:p-6 border border-sky-700 rounded-lg bg-white">
           <ul class="list-disc">
             <li>
@@ -242,10 +242,10 @@
         </div>
 
         <div
-          v-auto-animate
           v-show="appStore.stripePayment === 'ccard'"
+          v-auto-animate
           class="p-4 sm:p-6 border border-sky-700 rounded-lg bg-white">
-          <div class="pb-8"></div>
+          <div class="pb-8"/>
           <div id="payment-element">
             <!-- Stripe.js injects the Payment Element -->
           </div>
@@ -257,9 +257,9 @@
 
       <div class="text-center">
         <BaseButton
+          id="submit"
           :disabled="submitDisabled"
           type="submit"
-          id="submit"
           class="mt-8 btn btn-blue w-[200px] h-[75px]">
           <div
             id="spinner"

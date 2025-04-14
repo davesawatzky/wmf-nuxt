@@ -45,7 +45,7 @@
 
 <template>
   <div class="py-1">
-    <div :class="class">
+    <div>
       <input
         :id="uuid"
         class="baseCheckbox"
@@ -55,7 +55,7 @@
         :checked="checked"
         :value="value"
         :name="name"
-        v-on="validationListeners" />
+        v-on="validationListeners" >
       <label
         v-if="label"
         :for="uuid"

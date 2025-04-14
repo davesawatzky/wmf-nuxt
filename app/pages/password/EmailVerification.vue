@@ -52,8 +52,8 @@
         v-auto-animate
         class="sm:w-3/4 max-w-sm border rounded-lg border-sky-500 p-4 mx-auto mt-8">
         <BaseInput
-          v-auto-animate
           v-model="email"
+          v-auto-animate
           name="email"
           type="email"
           placeholder="Email Address"

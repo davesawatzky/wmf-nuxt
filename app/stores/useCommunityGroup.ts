@@ -1,4 +1,4 @@
-import { useFieldConfig } from '@/stores/useFieldConfig'
+import { useFieldConfig } from '~/stores/useFieldConfig'
 import { number } from 'yup'
 import {
   CommunityGroupCreateDocument,
@@ -67,10 +67,10 @@ export const useCommunityGroup = defineStore(
             count++
           }
         }
-        let index = communityGroupErrors.value.findIndex(
+        const index = communityGroupErrors.value.findIndex(
           (item) => item.id === group.id
         )
-        communityGroupErrors.value[index].count = count
+        communityGroupErrors.value[index]!.count = count
       }
     }
 
@@ -127,7 +127,7 @@ export const useCommunityGroup = defineStore(
           newResult.registration.community?.communityGroups
         )
         for (let i = 0; i < communityGroups.length; i++) {
-          addToStore(communityGroups[i])
+          addToStore(communityGroups[i]!)
         }
         findInitialCommunityGroupErrors()
       }
@@ -185,7 +185,7 @@ export const useCommunityGroup = defineStore(
      */
     async function updateAllCommunityGroups(): Promise<void> {
       for (let i = 0; i < communityGroup.value.length; i++)
-        await updateCommunityGroup(communityGroup.value[i].id)
+        await updateCommunityGroup(communityGroup.value[i]!.id)
     }
 
     /**

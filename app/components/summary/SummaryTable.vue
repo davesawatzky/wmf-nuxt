@@ -1,6 +1,6 @@
 <script setup lang="ts">
-  import { useClasses } from '@/stores/useClasses'
-  import { useRegistration } from '@/stores/useRegistration'
+  import { useClasses } from '~/stores/useClasses'
+  import { useRegistration } from '~/stores/useRegistration'
   import { now } from 'lodash'
 
   const classesStore = useClasses()

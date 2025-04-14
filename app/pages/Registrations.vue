@@ -1,23 +1,23 @@
 <script lang="ts" setup>
   import { DateTime } from 'luxon'
-  import { useRegistration } from '@/stores/useRegistration'
-  import { useAppStore } from '@/stores/appStore'
-  import { usePerformers } from '@/stores/usePerformer'
-  import { useTeacher } from '@/stores/useTeacher'
-  import { useClasses } from '@/stores/useClasses'
-  import { useGroup } from '@/stores/useGroup'
-  import { useSchool } from '@/stores/useSchool'
-  import { useSchoolGroup } from '@/stores/useSchoolGroup'
-  import { useCommunity } from '@/stores/useCommunity'
-  import { useCommunityGroup } from '@/stores/useCommunityGroup'
-  import { useFieldConfig } from '@/stores/useFieldConfig'
-  import { useUser } from '@/stores/useUser'
-  import type { Registration, RegistrationInput } from '@/graphql/gql/graphql'
+  import { useRegistration } from '~/stores/useRegistration'
+  import { useAppStore } from '~/stores/appStore'
+  import { usePerformers } from '~/stores/usePerformer'
+  import { useTeacher } from '~/stores/useTeacher'
+  import { useClasses } from '~/stores/useClasses'
+  import { useGroup } from '~/stores/useGroup'
+  import { useSchool } from '~/stores/useSchool'
+  import { useSchoolGroup } from '~/stores/useSchoolGroup'
+  import { useCommunity } from '~/stores/useCommunity'
+  import { useCommunityGroup } from '~/stores/useCommunityGroup'
+  import { useFieldConfig } from '~/stores/useFieldConfig'
+  import { useUser } from '~/stores/useUser'
+  import type { Registration, RegistrationInput } from '~/graphql/gql/graphql'
   import {
     MyUserDocument,
     PerformerType,
     RegistrationsDocument,
-  } from '@/graphql/gql/graphql'
+  } from '~/graphql/gql/graphql'
 
   const soloPhoto = '/images/opera-singer-on-stage.png'
   const soloPhotoBW = '/images/opera-singer-on-stage-BW.png'
@@ -105,7 +105,6 @@
   const registrations = computed(() => result.value?.registrations ?? [])
 
   function openEditor(performerType: PerformerType): boolean {
-    // eslint-disable-next-line no-eval
     return !!eval(`${performerType.toLowerCase()}Open`)
   }
 
@@ -164,7 +163,7 @@
         break
     }
     appStore.dataLoading = true
-    if (!!registration?.teacher?.id) {
+    if (registration?.teacher?.id) {
       registrationStore.registration.teacherID = registration.teacher.id
       await teacherStore.loadTeacher(
         registrationStore.registration.teacherID,
@@ -331,6 +330,11 @@
                 <td class="">
                   <BaseButton
                     class="text-sky-600 text-xl md:ml-4 ml-3"
+                    :style="
+                      registrationClosed(registration.performerType)
+                        ? 'cursor: default;'
+                        : 'cursor: pointer;'
+                    "
                     @click="
                       registration.confirmation ||
                       !registrationClosed(registration.performerType)
@@ -339,11 +343,6 @@
                             registration.performerType
                           )
                         : ''
-                    "
-                    :style="
-                      registrationClosed(registration.performerType)
-                        ? 'cursor: default;'
-                        : 'cursor: pointer;'
                     ">
                     <Icon
                       v-if="
@@ -527,6 +526,7 @@
 </template>
 
 <style scoped>
+  @reference "~/assets/css/tailwind.css";
   th {
     @apply py-1 px-4;
   }

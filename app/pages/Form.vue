@@ -1,8 +1,8 @@
 <script setup lang="ts">
   import * as yup from 'yup'
   import type { Component } from 'vue'
-  import { useAppStore } from '@/stores/appStore'
-  import { useRegistration } from '@/stores/useRegistration'
+  import { useAppStore } from '~/stores/appStore'
+  import { useRegistration } from '~/stores/useRegistration'
   import type { Status } from '#imports'
   import {
     useStorage,
@@ -193,10 +193,10 @@
   const tabNames = ref(Object.keys(tabs))
 
   function previousTab() {
-    setTab(Object.keys(tabs)[tabIndex.value - 1], tabIndex.value - 1)
+    setTab(Object.keys(tabs)[tabIndex.value - 1]!, tabIndex.value - 1)
   }
   function nextTab() {
-    setTab(Object.keys(tabs)[tabIndex.value + 1], tabIndex.value + 1)
+    setTab(Object.keys(tabs)[tabIndex.value + 1]!, tabIndex.value + 1)
   }
 
   const validationSchema = yup.object({

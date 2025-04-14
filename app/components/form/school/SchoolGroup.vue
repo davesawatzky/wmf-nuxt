@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import * as yup from 'yup'
-  import { useSchoolGroup } from '@/stores/useSchoolGroup'
-  import type { SchoolGroup, SchoolGroupInput } from '@/graphql/gql/graphql'
+  import { useSchoolGroup } from '~/stores/useSchoolGroup'
+  import type { SchoolGroup, SchoolGroupInput } from '~/graphql/gql/graphql'
   import { useToast } from 'vue-toastification'
 
   const props = defineProps<{
@@ -177,10 +177,10 @@
         count++
       }
     }
-    let index = schoolGroupStore.schoolGroupErrors.findIndex(
+    const index = schoolGroupStore.schoolGroupErrors.findIndex(
       (item) => item.id === props.schoolGroupId
     )
-    schoolGroupStore.schoolGroupErrors[index].count = count
+    schoolGroupStore.schoolGroupErrors[index]!.count = count
   })
 
   onActivated(async () => {

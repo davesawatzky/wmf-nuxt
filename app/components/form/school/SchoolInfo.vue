@@ -1,7 +1,7 @@
 <script lang="ts" setup>
   import * as yup from 'yup'
   import 'yup-phone-lite'
-  import { useSchool } from '@/stores/useSchool'
+  import { useSchool } from '~/stores/useSchool'
   import { provinces, StatusEnum } from '#imports'
   import type { School } from '~/graphql/gql/graphql'
   import { useToast } from 'vue-toastification'

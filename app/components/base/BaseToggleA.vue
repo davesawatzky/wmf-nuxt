@@ -24,7 +24,7 @@
         :checked="modelValue"
         autocomplete="off"
         class="sr-only"
-        @change="$emit('update:modelValue', $event.target)" />
+        @change="$emit('update:modelValue', $event.target)" >
       <!-- line -->
       <div class="w-10 h-4 bg-gray-400 rounded-full shadow-inner" />
       <!-- dot -->

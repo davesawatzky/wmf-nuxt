@@ -1,6 +1,6 @@
 <script setup lang="ts">
-  import { useCommunityGroup } from '@/stores/useCommunityGroup'
-  import { useCommunity } from '@/stores/useCommunity'
+  import { useCommunityGroup } from '~/stores/useCommunityGroup'
+  import { useCommunity } from '~/stores/useCommunity'
 
   const communityGroupStore = useCommunityGroup()
   const communityStore = useCommunity()
@@ -27,7 +27,7 @@
         <div class="pt-8">
           <h4 class="pb-4">Community Group #{{ communityGroupIndex + 1 }}</h4>
           <FormCommunityGroup
-            v-model="communityGroupStore.communityGroup[communityGroupIndex]"
+            v-model="communityGroupStore.communityGroup[communityGroupIndex]!"
             :community-group-index="communityGroupIndex"
             :community-group-id="communityGrp.id" />
         </div>

@@ -1,6 +1,6 @@
 // server/api/send-email.post.ts
 import nodemailer from 'nodemailer'
-import { renderSubmissionEmail } from '../utils/submissionEmail'
+import {renderSubmissionEmail} from '../utils/submissionEmail'
 
 const config = useRuntimeConfig()
 

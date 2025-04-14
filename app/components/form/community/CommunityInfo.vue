@@ -1,7 +1,7 @@
 <script lang="ts" setup>
   import * as yup from 'yup'
   import 'yup-phone-lite'
-  import { useCommunity } from '@/stores/useCommunity'
+  import { useCommunity } from '~/stores/useCommunity'
   import { provinces } from '#imports'
   import type { Community } from '~/graphql/gql/graphql'
   import { useToast } from 'vue-toastification'

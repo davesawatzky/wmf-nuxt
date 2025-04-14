@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { FieldConfigsDocument } from '~/graphql/gql/graphql'
-import { useAppStore } from '@/stores/appStore'
+import { useAppStore } from '~/stores/appStore'
 
 interface FieldConfig {
   tableName: string

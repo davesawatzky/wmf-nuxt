@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import * as yup from 'yup'
-  import { useGroup } from '@/stores/useGroup'
+  import { useGroup } from '~/stores/useGroup'
   import type { Group } from '~/graphql/gql/graphql'
   import { useToast } from 'vue-toastification'
 
@@ -19,7 +19,7 @@
     async (newGroupType, oldGroupType) => {
       if (
         !!newGroupType &&
-        !!classesStore.registeredClasses[0].discipline &&
+        !!classesStore.registeredClasses[0]?.discipline &&
         !cancelGroupChange.value
       ) {
         previousGroupType.value = oldGroupType ?? ''
@@ -40,9 +40,9 @@
     setIsOpen(false)
     const regClassIdNumbers = []
     for (let i = 0; i < classesStore.registeredClasses.length; i++)
-      regClassIdNumbers.push(classesStore.registeredClasses[i].id)
+      regClassIdNumbers.push(classesStore.registeredClasses[i]?.id)
     for (const number of regClassIdNumbers)
-      await classesStore.deleteClass(number)
+      await classesStore.deleteClass(number!)
     await classesStore.createClass(registrationStore.registrationId)
     await fieldStatus(changeGroupType.value, 'groupType')
   }

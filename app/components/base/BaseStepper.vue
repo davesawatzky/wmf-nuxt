@@ -1,7 +1,7 @@
 <script setup lang="ts">
-  import { formErrors } from '@/composables/formErrors'
+  import { formErrors } from '~/composables/formErrors'
 
-  const props = defineProps<{
+  defineProps<{
     currentTab: string
     tabs: string[]
   }>()
@@ -43,11 +43,11 @@
             ? 'bg-sky-400 ring-sky-300 ring-4'
             : 'btn-blue hover:ring-2',
         ]"
-        @click="changeTab(tab, index)"
-        :disabled="disableButton">
+        :disabled="disableButton"
+        @click="changeTab(tab, index)">
         {{ index + 1 }}
         <BaseBadge
-          v-if="formErrors.value[tab] > 0"
+          v-if="formErrors.value[tab]! > 0"
           has-errors
           class="-right-2 top-0">
           {{ formErrors.value[tab] }}

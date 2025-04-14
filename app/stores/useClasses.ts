@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { useFieldConfig } from '@/stores/useFieldConfig'
+import { useFieldConfig } from '~/stores/useFieldConfig'
 import {
   ClassCreateDocument,
   ClassDeleteDocument,
@@ -59,8 +59,8 @@ export const useClasses = defineStore(
         classErrors.value.push({ id: regClass.id, count: 0, selections: [] })
         if (regClass.selections?.length! > 0) {
           for (let i = 0; i < regClass.selections?.length!; i++) {
-            classErrors.value[classErrors.value.length - 1].selections.push({
-              id: regClass.selections![i].id,
+            classErrors.value[classErrors.value.length - 1]?.selections.push({
+              id: regClass.selections![i]?.id!,
               count: 0,
             })
           }
@@ -73,33 +73,33 @@ export const useClasses = defineStore(
     function findInitialClassErrors() {
       const classKeys = fieldConfigStore.performerTypeFields('FestivalClasses')
       const selectionKeys = fieldConfigStore.performerTypeFields('Selection')
-      for (let festclass of registeredClasses.value) {
-        let classIndex = classErrors.value.findIndex(
+      for (const festclass of registeredClasses.value) {
+        const classIndex = classErrors.value.findIndex(
           (item) => item.id === festclass.id
         )
         let classErrorCount = 0
-        for (let key of classKeys) {
+        for (const key of classKeys) {
           if (key !== 'selections') {
             if (festclass[key as keyof RegisteredClass] === null) {
               classErrorCount++
             }
           } else {
-            for (let selection of festclass.selections!) {
-              let selectionIndex = classErrors.value[
+            for (const selection of festclass.selections!) {
+              const selectionIndex = classErrors.value[
                 classIndex
-              ].selections.findIndex((item) => item.id === selection.id)
+              ]?.selections.findIndex((item) => item.id === selection.id)
               let selectionErrorCount = 0
-              for (let key2 of selectionKeys) {
+              for (const key2 of selectionKeys) {
                 if (selection[key2 as keyof Selection] === null) {
                   selectionErrorCount++
                 }
               }
-              classErrors.value[classIndex].selections[selectionIndex].count =
+              classErrors.value[classIndex]!.selections[selectionIndex!]!.count =
                 selectionErrorCount
             }
           }
         }
-        classErrors.value[classIndex].count = classErrorCount
+        classErrors.value[classIndex]!.count = classErrorCount
       }
     }
 
@@ -119,7 +119,7 @@ export const useClasses = defineStore(
         const classIndex = registeredClasses.value.findIndex(
           (item) => item.id === classId
         )
-        registeredClasses.value[classIndex].selections!.push({
+        registeredClasses.value[classIndex]?.selections!.push({
           id: selection.id,
           title: selection.title || null,
           largerWork: selection.largerWork || null,
@@ -128,7 +128,7 @@ export const useClasses = defineStore(
           duration: selection.duration || null,
           __typename: selection.__typename || 'Selection',
         })
-        classErrors.value[classIndex].selections.push({
+        classErrors.value[classIndex]?.selections.push({
           id: selection.id,
           count: 0,
         })
@@ -190,7 +190,7 @@ export const useClasses = defineStore(
           newResult.registration.registeredClasses
         const length = returnedClasses.length
         for (let i = 0; i < length; i++) {
-          addClassToStore(returnedClasses[i])
+          addClassToStore(returnedClasses[i]!)
         }
         findInitialClassErrors()
       }
@@ -243,8 +243,8 @@ export const useClasses = defineStore(
      */
     async function updateAllClasses() {
       for (let i = 0; i < registeredClasses.value.length; i++) {
-        await updateClass(registeredClasses.value[i].id)
-        await updateAllSelections(registeredClasses.value[i].id)
+        await updateClass(registeredClasses.value[i]!.id)
+        await updateAllSelections(registeredClasses.value[i]!.id)
       }
     }
 
@@ -354,15 +354,15 @@ export const useClasses = defineStore(
       const classIndex = registeredClasses.value.findIndex(
         (item) => item.id === classId
       )
-      if (registeredClasses.value[classIndex].selections!.length > 0) {
+      if (registeredClasses.value[classIndex]!.selections!.length > 0) {
         for (
           let i = 0;
-          i < registeredClasses.value[classIndex].selections!.length;
+          i < registeredClasses.value[classIndex]!.selections!.length;
           i++
         ) {
           const selectionId =
-            registeredClasses.value[classIndex].selections![i].id
-          await updateSelection(classId, selectionId)
+            registeredClasses.value[classIndex]?.selections![i]?.id
+          await updateSelection(classId, selectionId!)
         }
       }
     }
@@ -386,8 +386,8 @@ export const useClasses = defineStore(
       )
       const selectionIndex = registeredClasses.value[
         classIndex
-      ].selections!.findIndex((item) => item.id === selectionId)
-      registeredClasses.value[classIndex].selections?.splice(selectionIndex, 1)
+      ]?.selections!.findIndex((item) => item.id === selectionId)
+      registeredClasses.value[classIndex]?.selections?.splice(selectionIndex!, 1)
     }
     onSelectionDeleteError((error) => {
       console.log(error)

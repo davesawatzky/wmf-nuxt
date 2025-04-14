@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { useFieldConfig } from '@/stores/useFieldConfig'
+import { useFieldConfig } from '~/stores/useFieldConfig'
 import {
   AllTeachersSearchDocument,
   TeacherCreateDocument,
@@ -303,7 +303,7 @@ export const useTeacher = defineStore(
           }
           chosenTeacher.value = null
           emailAlreadyExists.value = false
-        } else if (!!unlistedTeacher.value) {
+        } else if (unlistedTeacher.value) {
           chosenTeacher.value = {
             id: teacher.value.id,
             firstName: teacher.value.firstName!,
@@ -321,7 +321,7 @@ export const useTeacher = defineStore(
 
     async function removeUnlistedTeacherOnDeactivate() {
       try {
-        if (!!runRemovalHook.value) {
+        if (runRemovalHook.value) {
           await removeUnlistedTeacher()
         }
       } catch (error) {

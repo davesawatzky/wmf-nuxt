@@ -77,19 +77,19 @@
       <h2 class="text-center">Winnipeg Music Festival Registration 2025</h2>
       <h3 class="text-center mt-8">Password Reset Form</h3>
       <form
-        v-auto-animate
         v-if="!passwordChanged && !changeError"
+        v-auto-animate
         class="sm:w-3/4 max-w-sm border rounded-lg border-sky-500 p-4 mx-auto mt-8">
         <BaseInput
-          v-auto-animate
           v-model="password1"
+          v-auto-animate
           name="password1"
           type="password"
           placeholder="New Password"
           label="Please enter a new password for your account" />
         <BaseInput
-          v-auto-animate
           v-model="password2"
+          v-auto-animate
           name="password2"
           type="password"
           placeholder="Re-enter password"

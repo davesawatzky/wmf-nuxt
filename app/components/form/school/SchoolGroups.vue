@@ -1,6 +1,6 @@
 <script setup lang="ts">
-  import { useSchoolGroup } from '@/stores/useSchoolGroup'
-  import { useSchool } from '@/stores/useSchool'
+  import { useSchoolGroup } from '~/stores/useSchoolGroup'
+  import { useSchool } from '~/stores/useSchool'
 
   const schoolGroupStore = useSchoolGroup()
   const schoolStore = useSchool()
@@ -25,7 +25,7 @@
         <div class="pt-8">
           <h4 class="pb-4">School Group #{{ schoolGroupIndex + 1 }}</h4>
           <FormSchoolGroup
-            v-model="schoolGroupStore.schoolGroup[schoolGroupIndex]"
+            v-model="schoolGroupStore.schoolGroup[schoolGroupIndex]!"
             :school-group-index="schoolGroupIndex"
             :school-group-id="schoolGrp.id" />
         </div>

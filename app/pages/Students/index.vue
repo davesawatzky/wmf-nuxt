@@ -1,20 +1,20 @@
 <script lang="ts" setup>
   import { DateTime } from 'luxon'
-  import { useRegistration } from '@/stores/useRegistration'
-  import { useAppStore } from '@/stores/appStore'
-  import { usePerformers } from '@/stores/usePerformer'
-  import { useTeacher } from '@/stores/useTeacher'
-  import { useClasses } from '@/stores/useClasses'
-  import { useGroup } from '@/stores/useGroup'
-  import { useSchool } from '@/stores/useSchool'
-  import { useSchoolGroup } from '@/stores/useSchoolGroup'
-  import { useCommunity } from '@/stores/useCommunity'
-  import { useFieldConfig } from '@/stores/useFieldConfig'
-  import type { Registration, RegistrationInput } from '@/graphql/gql/graphql'
+  import { useRegistration } from '~/stores/useRegistration'
+  import { useAppStore } from '~/stores/appStore'
+  import { usePerformers } from '~/stores/usePerformer'
+  import { useTeacher } from '~/stores/useTeacher'
+  import { useClasses } from '~/stores/useClasses'
+  import { useGroup } from '~/stores/useGroup'
+  import { useSchool } from '~/stores/useSchool'
+  import { useSchoolGroup } from '~/stores/useSchoolGroup'
+  import { useCommunity } from '~/stores/useCommunity'
+  import { useFieldConfig } from '~/stores/useFieldConfig'
+  import type { Registration, RegistrationInput } from '~/graphql/gql/graphql'
   import {
     PerformerType,
     StudentRegistrationsDocument,
-  } from '@/graphql/gql/graphql'
+  } from '~/graphql/gql/graphql'
 
   const registrationStore = useRegistration()
   const appStore = useAppStore()
@@ -200,8 +200,8 @@
                 <td
                   v-if="registration.performerType === 'SOLO'"
                   class="text-sm">
-                  {{ registration.performers?.[0].firstName }}
-                  {{ registration.performers?.[0].lastName }}
+                  {{ registration.performers?.[0]?.firstName }}
+                  {{ registration.performers?.[0]?.lastName }}
                 </td>
                 <td
                   v-else-if="registration.performerType === 'GROUP'"
@@ -253,6 +253,7 @@
 </template>
 
 <style scoped>
+  @reference '~/assets/css/tailwind.css';
   th {
     @apply py-1 px-4;
   }

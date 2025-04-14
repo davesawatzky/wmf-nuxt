@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { useFieldConfig } from '@/stores/useFieldConfig'
+import { useFieldConfig } from '~/stores/useFieldConfig'
 import {
   PerformerCreateDocument,
   PerformerDeleteDocument,
@@ -34,7 +34,7 @@ export const usePerformers = defineStore(
     const averageAge = computed(() => {
       let totalAge = 0
       for (let i = 0; i < performers.value.length; i++)
-        totalAge += performers.value[i].age ?? 0
+        totalAge += performers.value[i]?.age ?? 0
 
       return Math.round(totalAge / performers.value.length)
     })
@@ -46,7 +46,7 @@ export const usePerformers = defineStore(
       const name = []
       for (let i = 0; i < performers.value.length; i++) {
         name.push(
-          `${performers.value[i].firstName} ${performers.value[i].lastName}`
+          `${performers.value[i]?.firstName} ${performers.value[i]?.lastName}`
         )
       }
       return name
@@ -89,10 +89,10 @@ export const usePerformers = defineStore(
             count++
           }
         }
-        let index = performerErrors.value.findIndex(
+        const index = performerErrors.value.findIndex(
           (item) => item.id === performer.id
         )
-        performerErrors.value[index].count = count
+        performerErrors.value[index]!.count = count
       }
     }
 
@@ -154,7 +154,7 @@ export const usePerformers = defineStore(
       if (newResult?.performers) {
         const performers: Performer[] = newResult.performers
         for (let i = 0; i < performers.length; i++) {
-          addToStore(performers[i])
+          addToStore(performers[i]!)
         }
         findInitialPerformerErrors()
       }
@@ -207,7 +207,7 @@ export const usePerformers = defineStore(
      */
     async function updateAllPerformers() {
       for (let i = 0; i < performers.value.length; i++) {
-        await updatePerformer(performers.value[i].id)
+        await updatePerformer(performers.value[i]!.id)
       }
     }
 

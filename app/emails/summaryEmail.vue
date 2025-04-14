@@ -63,23 +63,21 @@
         name="Raleway"
         href="https://fonts.googleapis.com/css?family=Raleway" />
       <mj-attributes>
-        <mj-all font-family="Raleway, Helvetica, Arial, sans-serif"></mj-all>
+        <mj-all font-family="Raleway, Helvetica, Arial, sans-serif"/>
         <mj-text
           padding="0px"
           font-weight="400"
           font-size="14px"
           color="#005984"
           line-height="20px"
-          font-family="Raleway, Helvetica, Arial, sans-serif">
-        </mj-text>
+          font-family="Raleway, Helvetica, Arial, sans-serif"/>
         <mj-section
           padding="0px 25px"
-          background-color="#ffffff">
-        </mj-section>
+          background-color="#ffffff"/>
         <mj-divider
           padding="25px 25px"
           border-color="#DFE3E8"
-          border-width="2px"></mj-divider>
+          border-width="2px"/>
       </mj-attributes>
       <mj-style inline="inline">
         .body-section { -webkit-box-shadow: 1px 4px 11px 0px rgba(0, 0, 0,
@@ -187,7 +185,7 @@
         </mj-section>
         <mj-wrapper
           v-for="(performer, perfidx) in performers"
-          v-bind:key="performer.id"
+          :key="performer.id"
           background-color="#ffffff"
           padding="0px 0px 20px 0px">
           <mj-section>
@@ -252,9 +250,9 @@
                 <div>{{ school.city }}, {{ school.province }}</div>
                 <div>{{ school.postalCode }}</div>
                 <div>Phone: {{ school.phone }}</div>
-                <br />
+                <br >
                 <mj-divider />
-                <br />
+                <br >
                 <div
                   class="h2"
                   style="padding-top: 15px">
@@ -265,7 +263,7 @@
           </mj-section>
           <mj-wrapper
             v-for="group in schoolGroups"
-            v-bind:key="group.id"
+            :key="group.id"
             background-color="#ffffff"
             padding-top="15px">
             <mj-section>
@@ -314,9 +312,9 @@
                 <div>{{ community.postalCode }}</div>
                 <div>Phone: {{ community.phone }}</div>
                 <div>Email: {{ community.email }}</div>
-                <br />
+                <br >
                 <mj-divider />
-                <br />
+                <br >
                 <div
                   class="h2"
                   style="padding-top: 15px">
@@ -327,7 +325,7 @@
           </mj-section>
           <mj-wrapper
             v-for="commgroup in communityGroups"
-            v-bind:key="commgroup.id"
+            :key="commgroup.id"
             background-color="#ffffff"
             padding-top="15px">
             <mj-section>
@@ -392,9 +390,9 @@
               <div class="h2">Registered Classes</div>
               <div
                 v-for="registeredClass in festivalClasses"
-                v-bind:key="registeredClass.id"
+                :key="registeredClass.id"
                 style="padding-bottom: 10px">
-                <br />
+                <br >
                 <div class="h3">
                   Festival Class Number: {{ registeredClass.classNumber }}
                 </div>
@@ -436,7 +434,7 @@
                   v-for="(
                     selection, selectionIndex
                   ) in registeredClass.selections"
-                  v-bind:key="selection.id"
+                  :key="selection.id"
                   style="padding-bottom: 10px">
                   <div class="h4">Selection {{ selectionIndex + 1 }}</div>
                   <div>Title: {{ selection.title }}</div>
@@ -483,10 +481,10 @@
               v-if="paymentType === 'cash'"
               align="center">
               <strong
-                >Payment may be made by cheque or e-transfer to the<br />
+                >Payment may be made by cheque or e-transfer to the<br >
                 Winnipeg Music Festival (<a href="mailto:wmf@mts.net"
                   ><strong>wmf@mts.net</strong></a
-                >).<br />
+                >).<br >
                 Please include the confirmation number when submitting
                 payment.</strong
               >
@@ -545,13 +543,13 @@
               line-height="18px"
               padding="15px">
               Winnipeg Music Festival
-              <br />
+              <br >
               2-88 St. Anne's Rd.
-              <br />
+              <br >
               Winnipeg, MB R2M 2Y7
-              <br />
+              <br >
               Phone: (204) 947-0184
-              <br />
+              <br >
               Email:
               <a
                 mailto="wmf@mts.net"

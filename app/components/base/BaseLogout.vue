@@ -1,11 +1,11 @@
 <script setup lang="ts">
-  import { useAppStore } from '@/stores/appStore'
-  import { useRegistration } from '@/stores/useRegistration'
-  import { usePerformers } from '@/stores/usePerformer'
-  import { useTeacher } from '@/stores/useTeacher'
-  import { useClasses } from '@/stores/useClasses'
-  import { useGroup } from '@/stores/useGroup'
-  import { useSchool } from '@/stores/useSchool'
+  import { useAppStore } from '~/stores/appStore'
+  import { useRegistration } from '~/stores/useRegistration'
+  import { usePerformers } from '~/stores/usePerformer'
+  import { useTeacher } from '~/stores/useTeacher'
+  import { useClasses } from '~/stores/useClasses'
+  import { useGroup } from '~/stores/useGroup'
+  import { useSchool } from '~/stores/useSchool'
 
   const appStore = useAppStore()
   const registratinStore = useRegistration()

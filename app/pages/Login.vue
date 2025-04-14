@@ -6,8 +6,8 @@
     InstrumentsDocument,
     SignInDocument,
     SignUpDocument,
-  } from '@/graphql/gql/graphql'
-  import { useUser } from '@/stores/useUser'
+  } from '~/graphql/gql/graphql'
+  import { useUser } from '~/stores/useUser'
 
   YupPassword(yup)
 
@@ -151,9 +151,9 @@
     // teacher type is checked
     if (!!privateTeacher.value || !!schoolTeacher.value) {
       await doesTeacherExistLoad()
-      if (!!teacherExistCheck.value) {
+      if (teacherExistCheck.value) {
         await userStore.loadHasPassword(teacherExistCheck.value.id)
-        if (!!userStore.checkPassword) {
+        if (userStore.checkPassword) {
           alert('User already exists')
           return null
         } else if (!userStore.checkPassword) {

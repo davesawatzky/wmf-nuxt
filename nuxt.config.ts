@@ -2,14 +2,15 @@
 import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { WMFPreset } from './app/utils/wmfpreset'
+import tailwindcss from '@tailwindcss/vite'
 
-export default defineNuxtConfig( {
+export default defineNuxtConfig({
   future: {
-    compatibilityVersion: 4
+    compatibilityVersion: 4,
   },
+
   modules: [
     '@nuxt/eslint',
-    '@nuxtjs/tailwindcss',
     '@nuxtjs/apollo',
     '@pinia/nuxt',
     'pinia-plugin-persistedstate/nuxt',
@@ -22,18 +23,24 @@ export default defineNuxtConfig( {
     '@primevue/nuxt-module',
     '@nuxt/icon',
     '@nuxt/image',
+    'nuxt-security',
   ],
+
   devServer: {
     port: 3001,
   },
+
   devtools: {
     enabled: true,
   },
+
   debug: false,
+
   alias: {
     '@': resolve(__dirname, './'),
     images: fileURLToPath(new URL('./public/images', import.meta.url)),
   },
+
   apollo: {
     autoImports: true,
     proxyCookies: true,
@@ -57,6 +64,7 @@ export default defineNuxtConfig( {
       },
     },
   },
+
   app: {
     head: {
       script: [
@@ -66,22 +74,28 @@ export default defineNuxtConfig( {
       ],
     },
   },
+
   experimental: {
     typedPages: true,
     componentIslands: true,
   },
+
   headlessui: {
     prefix: 'UI',
   },
+
   image: {
     format: ['webp'],
   },
+
   pinia: {
-    storesDirs: ['./stores'],
+    storesDirs: ['./app/stores/**'],
   },
+
   piniaPluginPersistedstate: {
     storage: 'sessionStorage',
   },
+
   primevue: {
     autoImport: true,
     options: {
@@ -93,7 +107,7 @@ export default defineNuxtConfig( {
           prefix: 'p',
           cssLayer: {
             name: 'primevue',
-            order: 'tailwind-base, primevue, tailwind-utilities',
+            order: 'theme, primevue, base',
           },
           // cssLayer: false
         },
@@ -101,8 +115,10 @@ export default defineNuxtConfig( {
     },
     components: {
       prefix: 'PV',
+      exclude: ['Editor', 'Form', 'FormField'],
     },
   },
+
   runtimeConfig: {
     graphqlServer: '',
     apiBase: '',
@@ -122,16 +138,20 @@ export default defineNuxtConfig( {
       stripePubKey: '',
     },
   },
+
   sourcemap: {
     server: true,
     client: true,
   },
+
   spaLoadingTemplate: true,
   ssr: false,
-  tailwindcss: {
-    cssPath: ['@/assets/css/tailwind.css', { injectPosition: 'first' }],
-    configPath: 'tailwind.config',
-  },
+  css: ['~/assets/css/tailwind.css'],
+
+  // tailwindcss: {
+  //   cssPath: ['./app/assets/css/tailwind.css', { injectPosition: 'first' }],
+  //   configPath: 'tailwind.config',
+  // },
   typescript: {
     strict: true,
     typeCheck: true,
@@ -142,10 +162,13 @@ export default defineNuxtConfig( {
       },
     },
   },
+
   veeValidate: {
     autoImports: true,
   },
+
   vite: {
+    plugins: [tailwindcss()],
     build: {
       target: ['es2015', 'chrome87', 'safari11', 'ios12'],
     },
@@ -155,4 +178,6 @@ export default defineNuxtConfig( {
       },
     },
   },
+
+  compatibilityDate: '2025-04-12',
 })

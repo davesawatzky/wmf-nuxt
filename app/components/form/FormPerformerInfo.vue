@@ -183,10 +183,10 @@
         count++
       }
     }
-    let index = performerStore.performerErrors.findIndex(
+    const index = performerStore.performerErrors.findIndex(
       (item) => item.id === props.performerId
     )
-    performerStore.performerErrors[index].count = count
+    performerStore.performerErrors[index]!.count = count
   })
 
   const maskaUcaseOption = {

@@ -1,14 +1,14 @@
 <script lang="ts" setup>
   import * as yup from 'yup'
   import 'yup-phone-lite'
-  import { useTeacher } from '@/stores/useTeacher'
+  import { useTeacher } from '~/stores/useTeacher'
   import { useRegistration } from '~/stores/useRegistration'
   import { useAppStore } from '~/stores/appStore'
   import { useUser } from '~/stores/useUser'
   import type { Teacher } from '~/graphql/gql/graphql'
   import { useToast } from 'vue-toastification'
   import { StatusEnum } from '#imports'
-  import type { FilteredTeacher } from '@/stores/useTeacher'
+  import type { FilteredTeacher } from '~/stores/useTeacher'
 
   const props = defineProps<{
     modelValue: ContactInfo
@@ -379,7 +379,7 @@
           :status="status.id" />
       </div>
 
-      <PrimeAutoComplete
+      <PVAutoComplete
         class="w-full"
         v-model="teacherStore.chosenTeacher"
         dropdown
@@ -396,7 +396,7 @@
             {{ slotProps.option.lastName }}, {{ slotProps.option.firstName }}
           </div>
         </template>
-      </PrimeAutoComplete>
+      </PVAutoComplete>
     </div>
     <div
       v-if="teacherStore.unlistedTeacher"

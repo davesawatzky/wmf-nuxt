@@ -29,10 +29,10 @@
       <!-- Music Festival Logo -->
       <div class="flex">
         <NuxtPicture
-          :imgAttrs="{ class: 'inline h-16' }"
+          :img-attrs="{ class: 'inline h-16' }"
           src="/images/wmf-logo-banner.jpg"
           alt="Winnipeg Music Festival Logo" />
-        <div class="ml-4 font-semibold">Winnipeg<br />Music<br />Festival</div>
+        <div class="ml-4 font-semibold">Winnipeg<br >Music<br >Festival</div>
       </div>
 
       <!-- Centered Title -->

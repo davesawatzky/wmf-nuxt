@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { useTeacher } from '@/stores/useTeacher'
+  import { useTeacher } from '~/stores/useTeacher'
 
   const teacherStore = useTeacher()
 </script>
@@ -10,7 +10,7 @@
     <FormTeacherInfo
       v-model="teacherStore.teacher"
       :teacher-id="teacherStore.teacher.id"
-      schoolTeacher />
+      school-teacher />
   </div>
 </template>
 

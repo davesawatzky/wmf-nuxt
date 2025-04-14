@@ -1,4 +1,4 @@
-import { useFieldConfig } from '@/stores/useFieldConfig'
+import { useFieldConfig } from '~/stores/useFieldConfig'
 import {
   SchoolGroupCreateDocument,
   SchoolGroupDeleteDocument,
@@ -67,10 +67,10 @@ export const useSchoolGroup = defineStore(
             count++
           }
         }
-        let index = schoolGroupErrors.value.findIndex(
+        const index = schoolGroupErrors.value.findIndex(
           (item) => item.id === group.id
         )
-        schoolGroupErrors.value[index].count = count
+        schoolGroupErrors.value[index]!.count = count
       }
     }
 
@@ -127,7 +127,7 @@ export const useSchoolGroup = defineStore(
           newResult.registration.school?.schoolGroups
         )
         const length = schoolGroups.length
-        for (let i = 0; i < length; i++) addToStore(schoolGroups[i])
+        for (let i = 0; i < length; i++) addToStore(schoolGroups[i]!)
         findInitialSchoolGroupErrors()
       }
     })
@@ -179,7 +179,7 @@ export const useSchoolGroup = defineStore(
      */
     async function updateAllSchoolGroups() {
       for (let i = 0; i < schoolGroup.value.length; i++)
-        await updateSchoolGroup(schoolGroup.value[i].id)
+        await updateSchoolGroup(schoolGroup.value[i]!.id)
     }
 
     /**

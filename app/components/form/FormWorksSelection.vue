@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import * as yup from 'yup'
-  import { useClasses } from '@/stores/useClasses'
+  import { useClasses } from '~/stores/useClasses'
   import type {
     RegisteredClass,
     Selection,
@@ -131,14 +131,14 @@
   const selectionKeys = fieldConfigStore.performerTypeFields('Selection')
   watchEffect(() => {
     let count = 0
-    for (let key of selectionKeys) {
+    for (const key of selectionKeys) {
       if (status[key as keyof Selection] !== StatusEnum.saved) {
         count++
       }
     }
-    classesStore.classErrors[props.classIndex].selections[
+    classesStore.classErrors[props.classIndex]!.selections[
       props.selectionIndex
-    ].count = count
+    ]!.count = count
   })
 
   const { errors, validate } = useForm({

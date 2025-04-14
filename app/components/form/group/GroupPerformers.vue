@@ -1,6 +1,6 @@
 <script setup lang="ts">
-  import { usePerformers } from '@/stores/usePerformer'
-  import { useRegistration } from '@/stores/useRegistration'
+  import { usePerformers } from '~/stores/usePerformer'
+  import { useRegistration } from '~/stores/useRegistration'
 
   const registrationStore = useRegistration()
   const performerStore = usePerformers()
@@ -25,7 +25,7 @@
       <div class="pt-8">
         <h4 class="pb-4">Performer #{{ performerIndex + 1 }}</h4>
         <FormPerformerInfo
-          v-model="performerStore.performers[performerIndex]"
+          v-model="performerStore.performers[performerIndex]!"
           groupperformer
           :performer-index="performerIndex"
           :performer-id="performer.id" />

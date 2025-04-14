@@ -1,6 +1,6 @@
 <script setup lang="ts">
-  import { useAppStore } from '@/stores/appStore'
-  import { useUser } from '@/stores/useUser'
+  import { useAppStore } from '~/stores/appStore'
+  import { useUser } from '~/stores/useUser'
 
   const appStore = useAppStore()
   const userStore = useUser()
@@ -13,11 +13,10 @@
     <BaseHeader
       :private-teacher="userStore.user.privateTeacher ?? false"
       :school-teacher="userStore.user.schoolTeacher ?? false" />
-    <PrimeProgressBar
+    <PVProgressBar
       v-if="queryLoading || mutationLoading || appStore.dataLoading"
       mode="indeterminate"
-      class="fixed top-[0px] z-50 w-full h-[5px]">
-    </PrimeProgressBar>
+      class="fixed top-[0px] z-50 w-full h-[5px]" />
     <div class="bg-sky-600 pt-5 pb-8 section-min-height">
       <div
         class="container bg-sky-100 py-8 px-2 sm:px-10 lg:max-w-5xl sm:mx-auto rounded-lg shadow-xl">

@@ -32,7 +32,7 @@
 
   function checkIfParentConsentRequired() {
     if (registrationStore.registration.performerType === 'SOLO') {
-      if (performerStore.performers[0].age! < 18) {
+      if (performerStore.performers[0]?.age! < 18) {
         return true
       } else {
         readConfirmation.value.parentGuardian = true

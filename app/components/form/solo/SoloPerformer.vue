@@ -5,15 +5,14 @@
   const isOpen = ref(false)
   const previousInstrument = ref('')
   const cancelInstChange = ref(false)
-  const changeInstrument = ref(false)
 
   watch(
-    () => performerStore.performers[0].instrument,
+    () => performerStore.performers[0]?.instrument,
     (newInstrument, oldInstrument) => {
       if (
         !!oldInstrument &&
         cancelInstChange.value === false &&
-        !!classesStore.registeredClasses[0].discipline
+        !!classesStore.registeredClasses[0]?.discipline
       ) {
         previousInstrument.value = oldInstrument
         setIsOpen(true)
@@ -30,12 +29,14 @@
   async function resetClasses() {
     try {
       setIsOpen(false)
-      const regClassIdNumbers = <number[]>[]
-      for (let i = 0; i < classesStore.registeredClasses.length; i++) {
-        regClassIdNumbers.push(classesStore.registeredClasses[i].id)
-      }
-      for (let i = 0; i < regClassIdNumbers.length; i++) {
-        await classesStore.deleteClass(regClassIdNumbers[i])
+      const regClassIdNumbers = []
+      if (classesStore.registeredClasses.length > 0) {
+        for (let i = 0; i < classesStore.registeredClasses.length; i++) {
+          regClassIdNumbers.push(classesStore.registeredClasses[i]!.id)
+        }
+        for (let i = 0; i < regClassIdNumbers.length; i++) {
+          await classesStore.deleteClass(regClassIdNumbers[i]!)
+        }
       }
       await classesStore.createClass(registrationStore.registrationId)
     } catch (err) {
@@ -45,7 +46,7 @@
 
   function cancelInstrumentChange() {
     cancelInstChange.value = true
-    performerStore.performers[0].instrument = previousInstrument.value
+    performerStore.performers[0]!.instrument = previousInstrument.value
   }
 
   function setIsOpen(value: boolean) {

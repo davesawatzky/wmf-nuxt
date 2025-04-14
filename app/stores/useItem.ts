@@ -40,7 +40,7 @@ export const useItemStore = defineStore('itemStore', () => {
   watch(resultItems, (newResult) => {
     if (newResult?.items) {
       const items: Item[] = newResult.items
-      for (let i = 0; i < items.length; i++) addToStore(items[i])
+      for (let i = 0; i < items.length; i++) addToStore(items[i]!)
     }
   })
   onItemsError((error) => {

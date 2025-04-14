@@ -1,6 +1,4 @@
 <script setup lang="ts">
-  import { mapWritableState } from 'pinia'
-
   interface Props {
     type?: string
     label?: string

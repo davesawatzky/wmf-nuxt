@@ -30,7 +30,7 @@
         autocomplete="off"
         :checked="!modelValue"
         class="sr-only"
-        @change="$emit('update:modelValue', !modelValue)" />
+        @change="$emit('update:modelValue', !modelValue)" >
       <!-- line -->
       <div
         class="block w-10 h-6 rounded-full"

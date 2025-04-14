@@ -1,4 +1,4 @@
-import { useFieldConfig } from '@/stores/useFieldConfig'
+import { useFieldConfig } from '~/stores/useFieldConfig'
 import {
   SchoolCreateDocument,
   SchoolDeleteDocument,

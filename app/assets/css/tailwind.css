@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
-
-@layer tailwind-base, primevue, tailwind-utilities;
+@import 'tailwindcss';
+@plugin '@headlessui/tailwindcss';
+@plugin 'tailwindcss-primeui';
 
 /*
   The default border color has changed to `currentcolor` in Tailwind CSS v4,
@@ -18,21 +19,7 @@
   ::file-selector-button {
     border-color: var(--color-gray-200, currentcolor);
   }
-}
 
-@layer tailwind-base {
-  @import 'tailwindcss';
-}
-
-@layer tailwind-utilities {
-  @config '../../../tailwind.config.ts';
-}
-
-/* @tailwind base;
-@tailwind components;
-@tailwind utilities; */
-
-@layer base {
   html {
     @apply text-black;
   }
@@ -61,21 +48,6 @@
     --surface-800: 31 41 55;
     --surface-900: 17 24 39;
     --surface-950: 8 8 8;
-  }
-
-  .btn {
-    @apply text-white rounded-lg py-2 w-40 m-2 text-center align-middle hover:ring-2 disabled:bg-gray-400 disabled:hover:ring-0 disabled:hover:bg-gray-400 disabled:text-gray-300;
-  }
-
-  .btn-blue {
-    @apply bg-sky-700 hover:bg-sky-600 hover:ring-sky-500 active:bg-sky-500 print:hidden;
-  }
-  .btn-green {
-    @apply bg-green-700 hover:bg-green-500 hover:ring-green-400 active:bg-green-400 print:hidden;
-  }
-
-  .btn-red {
-    @apply bg-rose-800 hover:bg-red-700 hover:ring-rose-400 active:bg-red-600 print:hidden;
   }
 
   h6 {
@@ -110,19 +82,30 @@
     @apply print:text-sm;
   }
 
+  .btn {
+    @apply text-white rounded-lg py-2 w-40 m-2 text-center align-middle hover:ring-2 disabled:bg-gray-400 disabled:hover:ring-0 disabled:hover:bg-gray-400 disabled:text-gray-300;
+  }
+
+  .btn-blue {
+    @apply bg-sky-700 hover:bg-sky-600 hover:ring-sky-500 active:bg-sky-500 print:hidden;
+  }
+  .btn-green {
+    @apply bg-green-700 hover:bg-green-500 hover:ring-green-400 active:bg-green-400 print:hidden;
+  }
+
+  .btn-red {
+    @apply bg-rose-800 hover:bg-red-700 hover:ring-rose-400 active:bg-red-600 print:hidden;
+  }
+
   .baseInput,
   .baseSelect,
   .baseTextArea {
-    @apply rounded-lg w-full border-gray-400 shadow-md focus:border-sky-500 focus:ring-sky-500 print:text-sm;
-  }
-
-  input[type='number']::-webkit-inner-spin-button {
-    color: black;
+    @apply p-2 bg-white rounded-lg w-full border-1 border-slate-400 shadow-md focus:border-sky-500 focus:ring-sky-500 print:text-sm;
   }
 
   .baseCheckbox,
   .baseRadio {
-    @apply border-gray-400 text-sky-600 focus:ring-sky-500 shadow-md;
+    @apply p-2 border-slate-400 text-sky-600 focus:ring-sky-500 shadow-md rounded-sm;
   }
 
   .baseCheckbox {
@@ -149,4 +132,8 @@
   .toggle-btn {
     @apply [&>div::before]:translate-y-0 [&>div::before]:rotate-45 [&>div::after]:translate-y-0 [&>div::after]:-rotate-45 [&>div]:bg-transparent [&>div]:rotate-[720deg];
   }
+}
+
+input[type='number']::-webkit-inner-spin-button {
+  color: black;
 }

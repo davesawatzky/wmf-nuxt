@@ -1,10 +1,10 @@
-import process from 'node:process'
-import withNuxt from '.nuxt/eslint.config.mjs'
+// import process from 'node:process'
+import withNuxt from './.nuxt/eslint.config.mjs'
 
-process.env.ESLINT_TSCONFIG = 'tsconfig.json'
+// process.env.ESLINT_TSCONFIG = 'tsconfig.json'
 
 export default withNuxt(
-  { typescript: { tsconfigPath: 'tsconfig.json' }, vue: true },
+  // { typescript: { tsconfigPath: 'tsconfig.json' }, vue: true },
   {
     rules: {
       'no-console': process.env.NODE_ENV === 'development' ? 'off' : 'warn',
@@ -20,7 +20,7 @@ export default withNuxt(
       '@graphql-eslint/known-type-names': 'error',
     },
     parserOptions: {
-      schema: './graphql/schema.gql',
+      schema: '~/graphql/schema.gql',
     },
-  },
+  }
 )

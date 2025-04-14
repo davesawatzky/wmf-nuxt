@@ -11,7 +11,7 @@
     <NuxtPicture
       :src="photo"
       :alt="altText"
-      :imgAttrs="{ class: 'mx-auto p-2' }" />
+      :img-attrs="{ class: 'mx-auto p-2' }" />
     <div
       class="bg-sky-600 text-white p-3 text-lg font-bold sm:text-xl sm:p-4 rounded-b-lg">
       {{ label }}

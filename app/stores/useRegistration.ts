@@ -36,13 +36,13 @@ export const useRegistration = defineStore(
       let cost = 0.0
       for (const regClass of classesStore.registeredClasses)
         cost += Number(regClass.price)
-      let total = cost + Number(lateRegistrationFee())
+      const total = cost + Number(lateRegistrationFee())
       return Number(total).toFixed(2)
     })
 
     function lateRegistrationFee() {
       let registrationDate
-      if (!!registration.value.submittedAt) {
+      if (registration.value.submittedAt) {
         registrationDate = new Date(registration.value.submittedAt)
       } else {
         registrationDate = new Date()
