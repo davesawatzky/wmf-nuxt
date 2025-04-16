@@ -18,7 +18,6 @@ export default defineNuxtConfig({
     '@nuxt/test-utils/module',
     '@vee-validate/nuxt',
     '@vueuse/nuxt',
-    'nuxt-headlessui',
     '@nuxtjs/device',
     '@primevue/nuxt-module',
     '@nuxt/icon',
@@ -28,6 +27,7 @@ export default defineNuxtConfig({
 
   devServer: {
     port: 3001,
+    host: '0.0.0.0',
   },
 
   devtools: {
@@ -79,11 +79,6 @@ export default defineNuxtConfig({
     typedPages: true,
     componentIslands: true,
   },
-
-  headlessui: {
-    prefix: 'UI',
-  },
-
   image: {
     format: ['webp'],
   },
@@ -107,7 +102,7 @@ export default defineNuxtConfig({
           prefix: 'p',
           cssLayer: {
             name: 'primevue',
-            order: 'theme, primevue, base',
+            order: 'theme, base, primevue',
           },
           // cssLayer: false
         },
@@ -138,7 +133,6 @@ export default defineNuxtConfig({
       stripePubKey: '',
     },
   },
-
   sourcemap: {
     server: true,
     client: true,
@@ -147,11 +141,6 @@ export default defineNuxtConfig({
   spaLoadingTemplate: true,
   ssr: false,
   css: ['~/assets/css/tailwind.css'],
-
-  // tailwindcss: {
-  //   cssPath: ['./app/assets/css/tailwind.css', { injectPosition: 'first' }],
-  //   configPath: 'tailwind.config',
-  // },
   typescript: {
     strict: true,
     typeCheck: true,

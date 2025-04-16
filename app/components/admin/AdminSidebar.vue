@@ -6,31 +6,7 @@
         {
           label: 'Dashboard',
           icon: 'ic:round-dashboard',
-        },
-      ],
-    },
-    {
-      label: 'Class Definitions',
-      items: [
-        {
-          label: 'Performer Type',
-          icon: 'emojione-monotone:performing-arts',
-        },
-        {
-          label: 'Disciplines',
-          icon: 'emojione-monotone:saxophone',
-        },
-        {
-          label: 'Categories',
-          icon: 'ic:outline-category',
-        },
-        {
-          label: 'Levels',
-          icon: 'carbon:skill-level-intermediate',
-        },
-        {
-          label: 'Awards',
-          icon: 'carbon:trophy-filled',
+          command: () => navigateTo('/admin'),
         },
       ],
     },
@@ -38,16 +14,24 @@
       label: 'Registrations',
       items: [
         {
+          label: 'Performer Types',
+          icon: 'emojione-monotone:performing-arts',
+          command: () => navigateTo('/admin/registrations/PerformerTypes'),
+        },
+        {
           label: 'Classes',
           icon: 'ic:round-class',
+          command: () => navigateTo('/admin/registrations/Classes'),
         },
         {
           label: 'Participants',
           icon: 'material-symbols:artist-outline-rounded',
+          command: () => navigateTo('/admin/registrations/Participants'),
         },
         {
           label: 'Teachers',
           icon: 'ph:chalkboard-teacher',
+          command: () => navigateTo('/admin/registrations/Teachers'),
         },
       ],
     },
@@ -57,10 +41,12 @@
         {
           label: 'Venues',
           icon: 'ri:building-2-fill',
+          command: () => navigateTo('/admin/program/venues'),
         },
         {
           label: 'Schedule',
           icon: 'uil:schedule',
+          command: () => navigateTo('/admin/program/schedule'),
         },
       ],
     },
@@ -87,11 +73,32 @@
     },
 
     {
-      label: 'Admin',
+      label: 'Administration',
       items: [
+        {
+          label: 'Classes',
+          icon: 'ic:round-class',
+        },
+        {
+          label: 'Disciplines',
+          icon: 'emojione-monotone:saxophone',
+        },
+        {
+          label: 'Categories',
+          icon: 'ic:outline-category',
+        },
+        {
+          label: 'Levels',
+          icon: 'carbon:skill-level-intermediate',
+        },
+        {
+          label: 'Awards',
+          icon: 'carbon:trophy-filled',
+        },
         {
           label: 'User Admin',
           icon: 'mdi:user',
+          command: () => navigateTo('/admin/users'),
         },
       ],
     },
@@ -99,48 +106,48 @@
 </script>
 
 <template>
-  <PVMenu
-    :model="items"
-    class="w-[250px] h-full rounded-none overflow-auto">
-    <template #submenuheader="{ item }">
-      <span
-        class="my-0 text-primary-500 dark:text-primary-400 font-bold leading-none"
-        >{{ item.label }}</span
-      >
-    </template>
-    <template #item="{ item, props }">
-      <a
-        v-ripple
-        class="flex items-center"
-        v-bind="props.action">
-        <span><Icon :name="item.icon!" /></span>
-        <span class="ml-2">{{ item.label }}</span>
-        <PVBadge
-          v-if="item.badge"
-          class="ml-auto"
-          :value="item.badge" />
-        <span
-          v-if="item.shortcut"
-          class="ml-auto border border-surface-200 dark:border-surface-700 rounded-md bg-surface-100 dark:bg-surface-700 text-xs p-1"
-          >{{ item.shortcut }}</span
-        >
-      </a>
-    </template>
-    <template #end>
-      <button
-        v-ripple
-        class="relative overflow-hidden w-full p-link flex items-center p-2 pl-3 text-surface-700 dark:text-surface-0/80 hover:bg-surface-200 dark:hover:bg-surface-600 rounded-none">
-        <PVAvatar
-          image="https://PVfaces.org/cdn/primevue/images/avatar/amyelsner.png"
-          class="mr-2"
-          shape="circle" />
-        <span class="inline-flex flex-col justify-start">
-          <span class="font-bold">David Sawatzky</span>
-          <span class="text-sm">Admin</span>
-        </span>
-      </button>
-    </template>
-  </PVMenu>
+  <div>
+    <PVMenu
+      :model="items"
+      :pt="{
+        submenuLabel: 'mt-6 pb-1 text-primary-100',
+        itemContent:
+          'px-2 bg-primary-900 text-primary-200 hover:bg-primary-700 hover:rounded-md hover:text-primary-100',
+      }"
+      class="w-[250px] h-full rounded-none border-none overflow-auto bg-transparent">
+      <template #submenuitem="{ item }">
+        {{ item.label }}
+      </template>
+      <template #item="{ item, props }">
+        <a
+          v-ripple
+          class="p-0 px-2"
+          v-bind="props.action">
+          <span>
+            <Icon
+              class="align-middle"
+              :name="item.icon" />
+          </span>
+          <span class="ml-2">{{ item.label }}</span>
+          <PVBadge
+            v-if="item.badge"
+            class="ml-auto"
+            :value="item.badge" />
+          <span
+            v-if="item.shortcut"
+            class="text-xs"
+            >{{ item.shortcut }}</span
+          >
+        </a>
+      </template>
+      <template #end>
+        <div class="ml-6 mt-10 text-primary-200">
+          <div class="font-bold">David Sawatzky</div>
+          <div class="text-sm">Admin</div>
+        </div>
+      </template>
+    </PVMenu>
+  </div>
 </template>
 
 <style lang="css" scoped></style>

@@ -8,8 +8,23 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    PVAutoComplete: typeof import('primevue/autocomplete')['default']
+    PVAvatar: typeof import('primevue/avatar')['default']
+    PVBadge: typeof import('primevue/badge')['default']
+    PVCard: typeof import('primevue/card')['default']
+    PVColumn: typeof import('primevue/column')['default']
+    PVDataTable: typeof import('primevue/datatable')['default']
+    PVDialog: typeof import('primevue/dialog')['default']
+    PVDrawer: typeof import('primevue/drawer')['default']
+    PVInputNumber: typeof import('primevue/inputnumber')['default']
+    PVInputText: typeof import('primevue/inputtext')['default']
+    PVMenu: typeof import('primevue/menu')['default']
+    PVMenubar: typeof import('primevue/menubar')['default']
     PVProgressBar: typeof import('primevue/progressbar')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+  }
+  export interface ComponentCustomProperties {
+    Ripple: typeof import('primevue/ripple')['default']
   }
 }

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import Accordion from 'primevue/accordion'
   import * as yup from 'yup'
   import { useGroup } from '~/stores/useGroup'
   import type { Group } from '~/graphql/gql/graphql'
@@ -194,63 +195,33 @@
         </div>
       </div>
     </div>
-    <UITransitionRoot
-      :show="isOpen"
-      enter="duration-1000 ease-out"
-      enter-from="opacity-0"
-      enter-to="opacity-100"
-      leave="duration-1000 ease-in"
-      leave-from="opacity-100"
-      leave-to="opacity-0">
-      <UIDialog
-        class="relative z-50"
-        @close="cancelGroupTypeChange()">
-        <UITransitionChild
-          enter="duration-300 ease-out"
-          enter-from="opacity-0"
-          enter-to="opacity-100"
-          leave="duration-200 ease-in"
-          leave-from="opacity-100"
-          leave-to="opacity-0">
-          <div
-            class="fixed inset-0 bg-black/30"
-            aria-hidden="true" />
-        </UITransitionChild>
-        <div
-          class="fixed inset-0 flex w-screen items-center justify-center p-4">
-          <UITransitionChild
-            enter="duration-300 ease-out"
-            enter-from="opacity-0 scale-95"
-            enter-to="opacity-100 scale-100"
-            leave="duration-200 ease-in"
-            leave-from="opacity-100 scale-100"
-            leave-to="opacity-0 scale-95">
-            <UIDialogPanel
-              class="p-4 w-full max-w-sm rounded-lg bg-white shadow-lg">
-              <UIDialogTitle class="text-center text-xl font-bold">
-                Change Musical Group Type
-              </UIDialogTitle>
-              <UIDialogDescription class="text-center">
-                Are you sure? This will remove any classes already selected for
-                this registration form.
-              </UIDialogDescription>
-              <div>
-                <BaseButton
-                  class="btn btn-blue"
-                  @click="resetClasses()">
-                  Change Instrument
-                </BaseButton>
-                <BaseButton
-                  class="btn btn-blue"
-                  @click="cancelGroupTypeChange()">
-                  Cancel
-                </BaseButton>
-              </div>
-            </UIDialogPanel>
-          </UITransitionChild>
-        </div>
-      </UIDialog>
-    </UITransitionRoot>
+
+    <PVDialog
+      v-model:visible="isOpen"
+      class="p-4 w-full max-w-sm rounded-lg bg-white shadow-lg"
+      modal
+      :closable="false"
+      @hide="cancelGroupTypeChange()">
+      <template #header>
+        <h3>Change Musical Group Type</h3>
+      </template>
+      <div>
+        Are you sure? This will remove any classes already selected for this
+        registration form.
+      </div>
+      <div>
+        <BaseButton
+          class="btn btn-blue"
+          @click="resetClasses()">
+          Change Instrument
+        </BaseButton>
+        <BaseButton
+          class="btn btn-blue"
+          @click="cancelGroupTypeChange()">
+          Cancel
+        </BaseButton>
+      </div>
+    </PVDialog>
   </div>
 </template>
 

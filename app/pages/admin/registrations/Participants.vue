@@ -5,9 +5,7 @@
 </script>
 
 <template>
-  <div class="">
-    <h1>Dashboard</h1>
-  </div>
+  <div><h1>Participants</h1></div>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="css" scoped></style>

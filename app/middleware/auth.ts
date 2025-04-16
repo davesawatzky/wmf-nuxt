@@ -1,6 +1,4 @@
-/* eslint-disable */
-export default defineNuxtRouteMiddleware(async (to, from) => {
-  let allowed = false
+export default defineNuxtRouteMiddleware(async (to) => {
   const { onResult, onError } = useQuery(gql`
     query TokenCheck {
       tokenCheck
@@ -13,6 +11,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
       }
     })
     onError(async (error) => {
+      console.error('Error checking token:', error)
       await navigateTo('/login')
     })
   } else if (to.path === '/') {

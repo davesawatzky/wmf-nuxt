@@ -8,6 +8,7 @@
     SignUpDocument,
   } from '~/graphql/gql/graphql'
   import { useUser } from '~/stores/useUser'
+  import { logErrorMessages } from '@vue/apollo-util'
 
   YupPassword(yup)
 
@@ -44,7 +45,7 @@
     console.log(error)
   })
 
-  const { handleSubmit, values } = useForm({
+  const { handleSubmit } = useForm({
     validationSchema: toTypedSchema(
       yup.object({
         isRegister: yup.boolean(),
@@ -110,31 +111,34 @@
     })
   })
   doneSignin(async (result) => {
-    if (result.data?.signin.diatonicToken) {
-      if (
-        result.data.signin.user?.privateTeacher &&
-        !result.data?.signin.user.hasSignedIn
-      ) {
-        await navigateTo('/userinformation')
-      } else {
-        await navigateTo('/registrations')
+    if (result.data?.signin) {
+      if (result.data?.signin.diatonicToken) {
+        if (
+          result.data.signin.user?.privateTeacher &&
+          !result.data.signin.user.hasSignedIn
+        ) {
+          await navigateTo('/userinformation')
+        } else {
+          await navigateTo('/registrations')
+        }
       }
-    }
-    if (result.data?.signin?.userErrors[0]) {
-      if (
-        result.data?.signin.userErrors[0].message.includes(
-          'Account not confirmed.'
-        )
-      ) {
-        user.value.firstName = result.data?.signin.user?.firstName!
-        user.value.lastName = result.data?.signin.user?.lastName!
-        user.value.email = result.data?.signin.user?.email!
-        accountNotConfirmed.value = true
-        isOpen.value = true
-      }
-      if (result.data?.signin.userErrors[0].message.includes('Password')) {
-        passwordChangePending.value = true
-        isOpen.value = true
+      if (result.data?.signin.userErrors[0]) {
+        if (
+          result.data?.signin.userErrors[0].message.includes(
+            'Account not confirmed.'
+          ) &&
+          result.data.signin.user
+        ) {
+          user.value.firstName = result.data.signin.user.firstName ?? ''
+          user.value.lastName = result.data.signin.user.lastName ?? ''
+          user.value.email = result.data.signin.user.email ?? ''
+          accountNotConfirmed.value = true
+          isOpen.value = true
+        }
+        if (result.data?.signin.userErrors[0].message.includes('Password')) {
+          passwordChangePending.value = true
+          isOpen.value = true
+        }
       }
     }
   })
@@ -171,7 +175,6 @@
     result: resultDoesTeacherExist,
     load: loadDoesTeacherExist,
     refetch: doesTeacherExistRefetch,
-    onResult: onDoesTeacherExistResult,
     onError: onDoesTeacherExistError,
   } = useLazyQuery(
     gql`
@@ -185,14 +188,17 @@
     { fetchPolicy: 'network-only' }
   )
   async function doesTeacherExistLoad() {
-    ;(await loadDoesTeacherExist()) || (await doesTeacherExistRefetch())
+    const result =
+      (await loadDoesTeacherExist()) || (await doesTeacherExistRefetch())
+    return result
   }
+  onDoesTeacherExistError((error) => {
+    logErrorMessages(error)
+  })
+
   const teacherExistCheck = computed(
     () => resultDoesTeacherExist.value?.checkUser ?? null
   )
-  onDoesTeacherExistError((error) => {
-    console.log(error)
-  })
 
   /**
    * Register new account.  Sends confirmation email.
@@ -215,7 +221,7 @@
       },
     })
   })
-  doneSignup(async (result) => {
+  doneSignup(async () => {
     toast.success('Check EMAIL for account verification link')
     isRegister.value = false
     resetFields()
@@ -288,21 +294,22 @@
 </script>
 
 <template>
-  <div v-auto-animate>
-    <div class="w-full sm:w-2/3 lg:w-1/2 mx-auto">
-      <h2 class="text-center">Winnipeg Music Festival Registration 2025</h2>
-      <p class="text-left">
-        Begin registration by creating an account (account can be for an
-        individual; a teacher for all their individual students, or for all
-        their choirs; a parent for their family etc.)
-      </p>
-      <p class="text-center">
-        <strong
-          >Site best used with Google Chrome or Mozilla Firefox, not
-          Safari</strong
-        >
-      </p>
-      <!-- <div
+  <div>
+    <div v-auto-animate>
+      <div class="w-full sm:w-2/3 lg:w-1/2 mx-auto">
+        <h2 class="text-center">Winnipeg Music Festival Registration 2025</h2>
+        <p class="text-left">
+          Begin registration by creating an account (account can be for an
+          individual; a teacher for all their individual students, or for all
+          their choirs; a parent for their family etc.)
+        </p>
+        <p class="text-center">
+          <strong
+            >Site best used with Google Chrome or Mozilla Firefox, not
+            Safari</strong
+          >
+        </p>
+        <!-- <div
         class="mx-auto text-center border-4 border-red-700 rounded-lg mt-4 p-4">
         <h3>Registration for the 2024 music festival is now closed.</h3>
         <p>Please see the Winnipeg Music Festival homepage for information.</p>
@@ -312,212 +319,190 @@
           ></BaseButton
         >
       </div> -->
-    </div>
-    <form
-      v-auto-animate
-      class="w-full sm:w-3/4 max-w-sm border rounded-lg border-sky-500 p-4 mx-auto mt-8">
-      <div v-if="isRegister">
-        <h3 class="loginheading">Sign up</h3>
-        <fieldset
-          v-auto-animate
-          class="my-4 p-1 border-sky-500 border rounded-lg">
-          <legend class="ml-2">
-            <label>Select teacher type if applicable</label>
-          </legend>
-          <BaseCheckbox
-            v-model="privateTeacher"
-            name="privateTeacher"
-            label="Private Teacher"
-            class="py-2 px-4" />
-          <BaseCheckbox
-            v-model="schoolTeacher"
-            name="schoolTeacher"
-            label="School Teacher and/or Community Conductor"
-            class="py-2 px-4" />
-        </fieldset>
-        <BaseInput
-          v-model="firstName"
-          v-auto-animate
-          name="firstName"
-          type="text"
-          label="First Name" />
-        <BaseInput
-          v-model="lastName"
-          v-auto-animate
-          name="lastName"
-          type="text"
-          label="Last Name" />
-        <BaseSelect
-          v-if="privateTeacher"
-          v-model="instrument"
-          v-auto-animate
-          name="instrument"
-          :options="instruments"
-          label="Instrument(s)" />
       </div>
-      <h3
-        v-else
-        class="loginheading">
-        Sign in
-      </h3>
-      <BaseInput
-        v-model="email"
+      <form
         v-auto-animate
-        :autocomplete="isRegister ? 'off' : 'on'"
-        autofocus
-        name="email"
-        type="email"
-        label="Email"
-        @keyup.enter="!isRegister ? signin() : signup()" />
-      <BaseInput
-        v-model="password"
-        v-auto-animate
-        :autocomplete="isRegister ? 'off' : 'on'"
-        name="password"
-        type="password"
-        label="Password"
-        @keyup.enter="!isRegister ? signin() : signup()" />
-      <BaseInput
-        v-if="isRegister"
-        v-model="password2"
-        v-auto-animate
-        autocomplete="off"
-        name="password2"
-        type="password"
-        label="Re-enter Password"
-        @keyup.enter="signup()" />
-
-      <div v-if="!isRegister">
-        <BaseButton
+        class="w-full sm:w-3/4 max-w-sm border rounded-lg border-sky-500 p-4 mx-auto mt-8">
+        <div v-if="isRegister">
+          <h3 class="loginheading">Sign up</h3>
+          <fieldset
+            v-auto-animate
+            class="my-4 p-1 border-sky-500 border rounded-lg">
+            <legend class="ml-2">
+              <label>Select teacher type if applicable</label>
+            </legend>
+            <BaseCheckbox
+              v-model="privateTeacher"
+              name="privateTeacher"
+              label="Private Teacher"
+              class="py-2 px-4" />
+            <BaseCheckbox
+              v-model="schoolTeacher"
+              name="schoolTeacher"
+              label="School Teacher and/or Community Conductor"
+              class="py-2 px-4" />
+          </fieldset>
+          <BaseInput
+            v-model="firstName"
+            v-auto-animate
+            name="firstName"
+            type="text"
+            label="First Name" />
+          <BaseInput
+            v-model="lastName"
+            v-auto-animate
+            name="lastName"
+            type="text"
+            label="Last Name" />
+          <BaseSelect
+            v-if="privateTeacher"
+            v-model="instrument"
+            v-auto-animate
+            name="instrument"
+            :options="instruments"
+            label="Instrument(s)" />
+        </div>
+        <h3
+          v-else
+          class="loginheading">
+          Sign in
+        </h3>
+        <BaseInput
+          v-model="email"
           v-auto-animate
-          class="w-full m-0 btn btn-blue"
-          @click="signin()">
-          Sign In
-        </BaseButton>
-        <div class="">
-          <div class="pt-4 text-center">
-            <NuxtLink
-              v-auto-animate
-              class="text-sky-700 text-center"
-              to="/password/EmailVerification"
-              name="resetPassword">
-              Forgot your password?
-            </NuxtLink>
-          </div>
+          :autocomplete="isRegister ? 'off' : 'on'"
+          autofocus
+          name="email"
+          type="email"
+          label="Email"
+          @keyup.enter="!isRegister ? signin() : signup()" />
+        <BaseInput
+          v-model="password"
+          v-auto-animate
+          :autocomplete="isRegister ? 'off' : 'on'"
+          name="password"
+          type="password"
+          label="Password"
+          @keyup.enter="!isRegister ? signin() : signup()" />
+        <BaseInput
+          v-if="isRegister"
+          v-model="password2"
+          v-auto-animate
+          autocomplete="off"
+          name="password2"
+          type="password"
+          label="Re-enter Password"
+          @keyup.enter="signup()" />
 
-          <div class="pt-8 text-center">
-            Don't have an account?
+        <div v-if="!isRegister">
+          <BaseButton
+            v-auto-animate
+            class="w-full m-0 btn btn-blue"
+            @click="signin()">
+            Sign In
+          </BaseButton>
+          <div class="">
+            <div class="pt-4 text-center">
+              <NuxtLink
+                v-auto-animate
+                class="text-sky-700 text-center"
+                to="/password/EmailVerification"
+                name="resetPassword">
+                Forgot your password?
+              </NuxtLink>
+            </div>
+
+            <div class="pt-8 text-center">
+              Don't have an account?
+              <BaseButton
+                v-auto-animate
+                class="text-sky-700"
+                name="isLogin"
+                @click="isRegister = true">
+                Sign up here.
+              </BaseButton>
+            </div>
+          </div>
+        </div>
+        <div v-else>
+          <BaseButton
+            v-auto-animate
+            class="w-full m-0 btn btn-blue"
+            @click="signup()">
+            Register New Account
+          </BaseButton>
+          <div class="text-center">
             <BaseButton
               v-auto-animate
-              class="text-sky-700"
-              name="isLogin"
-              @click="isRegister = true">
-              Sign up here.
+              class="mt-8 text-sky-700"
+              @click="isRegister = false">
+              Back to Sign In
             </BaseButton>
           </div>
         </div>
-      </div>
-      <div v-else>
-        <BaseButton
-          v-auto-animate
-          class="w-full m-0 btn btn-blue"
-          @click="signup()">
-          Register New Account
-        </BaseButton>
-        <div class="text-center">
+      </form>
+    </div>
+
+    <PVDialog
+      v-model:visible="isOpen"
+      class="p-4 w-full max-w-sm rounded-lg bg-white shadow-lg"
+      modal
+      :closable="false">
+      <template #header>
+        <h3
+          v-if="accountNotConfirmed"
+          class="text-center text-xl font-bold">
+          Account not verified
+        </h3>
+        <h3
+          v-else-if="passwordChangePending"
+          class="text-center text-xl font-bold">
+          Password Change Pending
+        </h3>
+      </template>
+      <div
+        v-if="accountNotConfirmed"
+        class="text-center">
+        <div>
+          This account needs to be verified before signing in. Check your email
+          inbox and spam folders for a verification link. You may also request
+          another email. Check you spam folder as well.
+        </div>
+        <div>
           <BaseButton
-            v-auto-animate
-            class="mt-8 text-sky-700"
-            @click="isRegister = false">
-            Back to Sign In
+            class="btn btn-blue"
+            @click="setIsOpen(false)">
+            Close
+          </BaseButton>
+          <BaseButton
+            class="btn btn-blue"
+            @click="resendVerificationEmail()">
+            Re-Send Verificaton
           </BaseButton>
         </div>
       </div>
-    </form>
-  </div>
-  <UITransitionRoot
-    :show="isOpen || false"
-    as="template"
-    enter="duration-1000 ease-out"
-    enter-from="opacity-0"
-    enter-to="opacity-100"
-    leave="duration-1000 ease-in"
-    leave-from="opacity-100"
-    leave-to="opacity-0">
-    <UIDialog
-      class="relative z-50"
-      @close="setIsOpen">
-      <UITransitionChild
-        enter="duration-300 ease-out"
-        enter-from="opacity-0"
-        enter-to="opacity-100"
-        leave="duration-200 ease-in"
-        leave-from="opacity-100"
-        leave-to="opacity-0">
-        <div
-          class="fixed inset-0 bg-black/30"
-          aria-hidden="true" />
-      </UITransitionChild>
-      <div class="fixed inset-0 flex w-screen items-center justify-center p-4">
-        <UITransitionChild
-          enter="duration-300 ease-out"
-          enter-from="opacity-0 scale-95"
-          enter-to="opacity-100 scale-100"
-          leave="duration-200 ease-in"
-          leave-from="opacity-100 scale-100"
-          leave-to="opacity-0 scale-95">
-          <UIDialogPanel
-            v-if="accountNotConfirmed"
-            class="p-4 w-full max-w-sm rounded-lg bg-white shadow-lg">
-            <UIDialogTitle class="text-center text-xl font-bold">
-              Account not verified
-            </UIDialogTitle>
-            <UIDialogDescription class="text-center">
-              This account needs to be verified before signing in. Check your
-              email inbox and spam folders for a verification link. You may also
-              request another email. Check you spam folder as well.
-            </UIDialogDescription>
-            <div>
-              <BaseButton
-                class="btn btn-blue"
-                @click="setIsOpen(false)">
-                Close
-              </BaseButton>
-              <BaseButton
-                class="btn btn-blue"
-                @click="resendVerificationEmail()">
-                Re-Send Verificaton
-              </BaseButton>
-            </div>
-          </UIDialogPanel>
-          <UIDialogPanel
-            v-if="passwordChangePending"
-            class="p-4 w-full max-w-sm rounded-lg bg-white shadow-lg">
-            <UIDialogTitle class="text-center text-xl font-bold">
-              Password Change Pending
-            </UIDialogTitle>
-            <UIDialogDescription class="text-center">
-              A password change has been requested on this account. Check your
-              email inbox and spam folders for instructions on changing your
-              email.
-            </UIDialogDescription>
-            <div>
-              <BaseButton
-                class="btn btn-blue"
-                @click="setIsOpen(false)">
-                Close
-              </BaseButton>
-              <BaseButton
-                class="btn btn-blue"
-                @click="resendPasswordEmail()">
-                Re-Send Password Change Email
-              </BaseButton>
-            </div>
-          </UIDialogPanel>
-        </UITransitionChild>
+      <div
+        v-if="passwordChangePending"
+        class="text-center">
+        <div>
+          A password change has been requested on this account. Check your email
+          inbox and spam folders for instructions on changing your email.
+        </div>
+        <div>
+          <BaseButton
+            class="btn btn-blue"
+            @click="setIsOpen(false)">
+            Close
+          </BaseButton>
+          <BaseButton
+            class="btn btn-blue"
+            @click="resendPasswordEmail()">
+            Re-Send Password Change Email
+          </BaseButton>
+        </div>
       </div>
-    </UIDialog>
-  </UITransitionRoot>
+    </PVDialog>
+  </div>
 </template>
 
 <style scoped>

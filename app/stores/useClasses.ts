@@ -57,7 +57,7 @@ export const useClasses = defineStore(
           __typename: regClass.__typename || 'RegisteredClass',
         })
         classErrors.value.push({ id: regClass.id, count: 0, selections: [] })
-        if (regClass.selections?.length! > 0) {
+        if (regClass.selections!.length > 0) {
           for (let i = 0; i < regClass.selections?.length!; i++) {
             classErrors.value[classErrors.value.length - 1]?.selections.push({
               id: regClass.selections![i]?.id!,
@@ -94,8 +94,9 @@ export const useClasses = defineStore(
                   selectionErrorCount++
                 }
               }
-              classErrors.value[classIndex]!.selections[selectionIndex!]!.count =
-                selectionErrorCount
+              classErrors.value[classIndex]!.selections[
+                selectionIndex!
+              ]!.count = selectionErrorCount
             }
           }
         }
@@ -387,7 +388,10 @@ export const useClasses = defineStore(
       const selectionIndex = registeredClasses.value[
         classIndex
       ]?.selections!.findIndex((item) => item.id === selectionId)
-      registeredClasses.value[classIndex]?.selections?.splice(selectionIndex!, 1)
+      registeredClasses.value[classIndex]?.selections?.splice(
+        selectionIndex!,
+        1
+      )
     }
     onSelectionDeleteError((error) => {
       console.log(error)

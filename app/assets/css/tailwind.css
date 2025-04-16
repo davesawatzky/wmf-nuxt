@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
 @import 'tailwindcss';
-@plugin '@headlessui/tailwindcss';
 @plugin 'tailwindcss-primeui';
 
 /*
@@ -105,7 +104,7 @@
 
   .baseCheckbox,
   .baseRadio {
-    @apply p-2 border-slate-400 text-sky-600 focus:ring-sky-500 shadow-md rounded-sm;
+    @apply ml-2 border-slate-400 text-sky-600 focus:ring-sky-500 shadow-md rounded-sm;
   }
 
   .baseCheckbox {
