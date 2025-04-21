@@ -3,9 +3,14 @@ module.exports = {
     service: {
       name: 'wmf-nest',
       // URL to the GraphQL API
-      url: 'http://localhost:3001/graphql',
+      url: 'http://localhost:3000/graphql',
     },
     // Files processed by the extension
-    includes: ['**/*.vue', 'graphql/**/*.gql', 'graphql/**/*.graphql'],
+    includes: [
+      'app/**/*.vue',
+      'app/graphql/**/*.gql',
+      'app/graphql/**/*.graphql',
+    ],
+    excludes: ['node_modules/**/*'],
   },
 }

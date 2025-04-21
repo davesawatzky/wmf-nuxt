@@ -37,7 +37,7 @@ export const useClasses = defineStore(
      *
      * @param regClass A Registred Class Object must include an id property value
      */
-    function addClassToStore(regClass: RegisteredClass) {
+    function addClassToStore(regClass: Omit<RegisteredClass, 'performers'>) {
       try {
         registeredClasses.value.push(<RegisteredClass>{
           id: regClass.id,
@@ -187,7 +187,7 @@ export const useClasses = defineStore(
     }
     watch(resultClasses, (newResult) => {
       if (newResult?.registration.registeredClasses) {
-        const returnedClasses: RegisteredClass[] =
+        const returnedClasses: Omit<RegisteredClass, 'performers'>[] =
           newResult.registration.registeredClasses
         const length = returnedClasses.length
         for (let i = 0; i < length; i++) {

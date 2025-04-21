@@ -22,7 +22,9 @@ export default defineNuxtConfig({
     '@primevue/nuxt-module',
     '@nuxt/icon',
     '@nuxt/image',
+    '@formkit/auto-animate/nuxt',
     'nuxt-security',
+    'nuxt-tiptap-editor',
   ],
 
   devServer: {
@@ -141,6 +143,9 @@ export default defineNuxtConfig({
   spaLoadingTemplate: true,
   ssr: false,
   css: ['~/assets/css/tailwind.css'],
+  tiptap: {
+    prefix: 'Tiptap', //prefix for Tiptap imports, composables not included
+  },
   typescript: {
     strict: true,
     typeCheck: true,

@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { FilterMatchMode, FilterOperator } from '@primevue/core/api'
-  import type { RegisteredClass } from '~/graphql/gql/graphql'
+  import type { Registration } from '~/graphql/gql/graphql'
 
   definePageMeta({
     layout: 'admin',
@@ -26,27 +26,38 @@
 
   const { result, loading, onResult, refetch } = useQuery(
     gql`
-      query AdminRegisteredClasses {
-        registeredClasses {
-          classNumber
-          discipline
-          subdiscipline
-          category
-          level
-          performers {
-            registration {
-              id
-              confirmation
-              teacher {
-                id
-              }
-            }
+      query AdminRegistrations($performerType: PerformerType) {
+        registrations(performerType: $performerType) {
+          id
+          confirmation
+          label
+          payedAmt
+          performerType
+          submittedAt
+          teacher {
             id
+          }
+          totalAmt
+          transactionInfo
+          registeredClasses {
+            id
+            classNumber
+            discipline
+            subdiscipline
+            level
+            category
+            selections {
+              id
+              title
+              composer
+              movement
+              duration
+              largerWork
+            }
+          }
+          user {
             firstName
             lastName
-            age
-            instrument
-            level
             email
             phone
           }
@@ -56,12 +67,24 @@
     () => variables.value
   )
   onResult(() => {
-    console.log('Registered Classes', result.value)
+    console.log('Registrations', result.value)
   })
 
   function clearFilter() {
     initFilters()
   }
+
+  const processedRegistrations = computed(() => {
+    if (!result.value?.registrations) return []
+    return result.value.registrations.map((registration: Registration) => {
+      return {
+        ...registration,
+        submittedAt: registration.submittedAt
+          ? new Date(registration.submittedAt)
+          : null,
+      }
+    })
+  })
 
   const filters = ref()
   function initFilters() {
@@ -79,7 +102,25 @@
       //     },
       //   ],
       // },
-      classNumber: {
+      id: {
+        operator: FilterOperator.AND,
+        constraints: [
+          {
+            value: null,
+            matchMode: FilterMatchMode.EQUALS,
+          },
+        ],
+      },
+      confirmation: {
+        operator: FilterOperator.AND,
+        constraints: [
+          {
+            value: null,
+            matchMode: FilterMatchMode.CONTAINS,
+          },
+        ],
+      },
+      performerType: {
         operator: FilterOperator.AND,
         constraints: [
           {
@@ -88,7 +129,34 @@
           },
         ],
       },
-      discipline: {
+      submittedAt: {
+        operator: FilterOperator.AND,
+        constraints: [
+          {
+            value: null,
+            matchMode: FilterMatchMode.DATE_IS,
+          },
+        ],
+      },
+      totalAmt: {
+        operator: FilterOperator.AND,
+        constraints: [
+          {
+            value: null,
+            matchMode: FilterMatchMode.EQUALS,
+          },
+        ],
+      },
+      payedAmt: {
+        operator: FilterOperator.AND,
+        constraints: [
+          {
+            value: null,
+            matchMode: FilterMatchMode.EQUALS,
+          },
+        ],
+      },
+      transactionInfo: {
         operator: FilterOperator.AND,
         constraints: [
           {
@@ -97,7 +165,7 @@
           },
         ],
       },
-      subdiscipline: {
+      'user.firstName': {
         operator: FilterOperator.AND,
         constraints: [
           {
@@ -106,7 +174,7 @@
           },
         ],
       },
-      category: {
+      'user.lastName': {
         operator: FilterOperator.AND,
         constraints: [
           {
@@ -115,12 +183,21 @@
           },
         ],
       },
-      level: {
+      'user.email': {
         operator: FilterOperator.AND,
         constraints: [
           {
             value: null,
             matchMode: FilterMatchMode.CONTAINS,
+          },
+        ],
+      },
+      'user.phone': {
+        operator: FilterOperator.AND,
+        constraints: [
+          {
+            value: null,
+            matchMode: FilterMatchMode.STARTS_WITH,
           },
         ],
       },
@@ -148,7 +225,7 @@
   <div>
     <PVCard>
       <template #title>
-        <h3>All Registered Classes</h3>
+        <h3>All Registrations</h3>
       </template>
       <template #content>
         <div v-if="loading">Loading...</div>
@@ -157,8 +234,8 @@
             v-model:expanded-rows="expandedRows"
             v-model:filters="filters"
             v-model:selection="selectedClass"
-            data-key="classNumber"
-            :value="result.registeredClasses"
+            data-key="id"
+            :value="processedRegistrations"
             :pt="{
               pcpaginator: {
                 root: {
@@ -181,18 +258,21 @@
             column-resize-mode="fit"
             :meta-key-selection="false"
             :rows="pagination.rowsPerPage"
-            :total-records="result.registeredClasses.length"
+            :total-records="result.registrations.length"
             paginator
             paginator-template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink JumpToPageInput RowsPerPageDropdown CurrentPageReport"
             current-page-report-template="Showing {first} to {last} of {totalRecords} results.  {totalPages} total pages."
             :rows-per-page-options="[10, 20, 30, 40, 50]"
             datatable-style="min-width: 50rem;"
             :global-filter-fields="[
-              'classNumber',
-              'discipline',
-              'subdiscipline',
-              'level',
-              'category',
+              'confirmation',
+              'performerType',
+              'payedAmt',
+              'totalAmt',
+              'user.firstName',
+              'user.lastName',
+              'user.email',
+              'user.phone',
             ]">
             <template #header>
               <div class="flex justify-between">
@@ -226,83 +306,188 @@
               expander
               style="width: 5rem" />
             <PVColumn
-              field="classNumber"
-              header="Class Number"
+              field="id"
+              header="ID"
+              data-type="numeric"
+              show-clear-button
+              sortable>
+              <template #filter="{ filterModel, filterCallback }">
+                <PVInputNumber
+                  v-model="filterModel.value"
+                  placeholder="Search by ID"
+                  @input="filterCallback()">
+                </PVInputNumber>
+              </template>
+            </PVColumn>
+            <PVColumn
+              field="confirmation"
+              header="Confirm #"
               data-type="text"
               show-clear-button
               sortable>
               <template #filter="{ filterModel, filterCallback }">
                 <PVInputText
                   v-model="filterModel.value"
-                  placeholder="Search by Class Number"
+                  placeholder="Search by Confirmation #"
                   @input="filterCallback()">
                 </PVInputText>
               </template>
             </PVColumn>
             <PVColumn
-              field="discipline"
-              header="Discipline"
+              field="performerType"
+              header="Performer Type"
               data-type="text"
               show-clear-button
               sortable>
               <template #filter="{ filterModel, filterCallback }">
                 <PVInputText
                   v-model="filterModel.value"
-                  placeholder="Search by Discipline"
+                  placeholder="Search Type"
                   @input="filterCallback()">
                 </PVInputText>
               </template>
             </PVColumn>
             <PVColumn
-              field="subdiscipline"
-              header="Subdiscipline"
+              field="submittedAt"
+              header="Submitted"
+              data-type="date"
+              show-clear-button
+              sortable>
+              <template #filter="{ filterModel, filterCallback }">
+                <PVDatePicker
+                  v-model="filterModel.value"
+                  placeholder="Search by Submitted Date"
+                  @input="filterCallback()">
+                </PVDatePicker>
+              </template>
+              <template #body="{ data }">
+                <div>
+                  {{ formattedDate(data.submittedAt) }}
+                </div>
+                <div>
+                  {{ formattedTime(data.submittedAt) }}
+                </div>
+              </template>
+            </PVColumn>
+            <PVColumn
+              field="totalAmt"
+              header="Total"
+              data-type="numeric"
+              show-clear-button
+              sortable>
+              <template #filter="{ filterModel, filterCallback }">
+                <PVInputNumber
+                  v-model="filterModel.value"
+                  mode="currency"
+                  currency="CAD"
+                  locale="en-CA"
+                  placeholder="Search by Total"
+                  @input="filterCallback()">
+                </PVInputNumber>
+              </template>
+              <template #body="{ data }">
+                <div>
+                  {{ formattedCurrency(data.totalAmt) }}
+                </div>
+              </template>
+            </PVColumn>
+            <PVColumn
+              field="payedAmt"
+              header="Paid"
+              data-type="numeric"
+              show-clear-button
+              sortable>
+              <template #filter="{ filterModel, filterCallback }">
+                <PVInputNumber
+                  v-model="filterModel.value"
+                  mode="currency"
+                  currency="CAD"
+                  locale="en-CA"
+                  placeholder="Search by Paid Amount"
+                  @input="filterCallback()">
+                </PVInputNumber>
+              </template>
+              <template #body="{ data }">
+                <div>
+                  {{ formattedCurrency(data.payedAmt) }}
+                </div>
+              </template>
+            </PVColumn>
+            <PVColumn
+              field="transactionInfo"
+              header="Transaction Info"
               data-type="text"
               show-clear-button
               sortable>
               <template #filter="{ filterModel, filterCallback }">
                 <PVInputText
                   v-model="filterModel.value"
-                  placeholder="Search by Subdiscipline"
+                  placeholder="Search by Transaction"
                   @input="filterCallback()">
                 </PVInputText>
               </template>
             </PVColumn>
             <PVColumn
-              field="level"
-              header="Level"
+              field="user.firstName"
+              header="User First Name"
               data-type="text"
               show-clear-button
               sortable>
               <template #filter="{ filterModel, filterCallback }">
                 <PVInputText
                   v-model="filterModel.value"
-                  placeholder="Search by Level"
+                  placeholder="Search by First Name"
                   @input="filterCallback()">
                 </PVInputText>
               </template>
             </PVColumn>
             <PVColumn
-              field="category"
-              header="Category"
+              field="user.lastName"
+              header="User Last Name"
               data-type="text"
               show-clear-button
               sortable>
               <template #filter="{ filterModel, filterCallback }">
                 <PVInputText
                   v-model="filterModel.value"
-                  placeholder="Search by Category"
+                  placeholder="Search by Last Name"
                   @input="filterCallback()">
                 </PVInputText>
               </template>
             </PVColumn>
-            <template #expansion="slotProps: { data: RegisteredClass }">
-              <h5>
-                Performers for Class {{ slotProps.data.classNumber }},
-                {{ slotProps.data.subdiscipline }}, {{ slotProps.data.level }},
-                {{ slotProps.data.category }}
-              </h5>
+            <PVColumn
+              field="user.email"
+              header="Email"
+              data-type="text"
+              show-clear-button
+              sortable>
+              <template #filter="{ filterModel, filterCallback }">
+                <PVInputText
+                  v-model="filterModel.value"
+                  placeholder="Search by Email"
+                  @input="filterCallback()">
+                </PVInputText>
+              </template>
+            </PVColumn>
+            <PVColumn
+              field="user.phone"
+              header="Phone"
+              data-type="text"
+              show-clear-button
+              sortable>
+              <template #filter="{ filterModel, filterCallback }">
+                <PVInputMask
+                  v-model="filterModel.value"
+                  placeholder="(###) ###-####"
+                  mask="(999) 999-9999"
+                  @input="filterCallback()">
+                </PVInputMask>
+              </template>
+            </PVColumn>
+            <template #expansion="slotProps: { data: Registration }">
+              <h5>Registered Classes</h5>
               <PVDataTable
-                :value="slotProps.data.performers"
+                :value="slotProps.data.registeredClasses"
                 data-key="id"
                 :meta-key-selection="false"
                 scrollable
@@ -318,28 +503,18 @@
                   data-type="text"
                   sortable />
                 <PVColumn
-                  field="registration.confirmation"
-                  header="Confirmation"
+                  field="classNumber"
+                  header="Class Number"
                   data-type="text"
                   sortable />
                 <PVColumn
-                  field="firstName"
-                  header="First Name"
+                  field="discipline"
+                  header="Discipline"
                   data-type="text"
                   sortable />
                 <PVColumn
-                  field="lastName"
-                  header="Last Name"
-                  data-type="text"
-                  sortable />
-                <PVColumn
-                  field="age"
-                  header="Age"
-                  data-type="text"
-                  sortable />
-                <PVColumn
-                  field="instrument"
-                  header="Instrument"
+                  field="subdiscipline"
+                  header="Subdiscipline"
                   data-type="text"
                   sortable />
                 <PVColumn
@@ -348,13 +523,8 @@
                   data-type="text"
                   sortable />
                 <PVColumn
-                  field="email"
-                  header="Email"
-                  data-type="text"
-                  sortable />
-                <PVColumn
-                  field="phone"
-                  header="Phone"
+                  field="category"
+                  header="Category"
                   data-type="text"
                   sortable />
               </PVDataTable>

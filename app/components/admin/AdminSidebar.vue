@@ -14,13 +14,13 @@
       label: 'Registrations',
       items: [
         {
-          label: 'Performer Types',
-          icon: 'emojione-monotone:performing-arts',
-          command: () => navigateTo('/admin/registrations/PerformerTypes'),
+          label: 'Registrations',
+          icon: 'ic:round-class',
+          command: () => navigateTo('/admin/registrations'),
         },
         {
           label: 'Classes',
-          icon: 'ic:round-class',
+          icon: 'emojione-monotone:performing-arts',
           command: () => navigateTo('/admin/registrations/Classes'),
         },
         {
@@ -56,18 +56,22 @@
         {
           label: 'Schedule',
           icon: 'mdi:file-report',
+          command: () => navigateTo('/admin/reports/schedule'),
         },
         {
-          label: 'Participant',
+          label: 'Participants',
           icon: 'mdi:file-report',
+          command: () => navigateTo('/admin/reports/participants'),
         },
         {
-          label: 'Teacher',
+          label: 'Teachers',
           icon: 'mdi:file-report',
+          command: () => navigateTo('/admin/reports/teachers'),
         },
         {
-          label: 'Repertoire',
+          label: 'Classes',
           icon: 'mdi:file-report',
+          command: () => navigateTo('/admin/reports/classes'),
         },
       ],
     },
