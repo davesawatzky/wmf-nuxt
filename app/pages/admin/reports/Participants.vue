@@ -16,7 +16,7 @@
           </div>
           <div class="h-[600px] overflow-hidden">
             <ClientOnly>
-              <pdftestRichTextEditor
+              <adminReportsRichTextEditor
                 v-model="template"
                 class="h-full" />
             </ClientOnly>
@@ -29,7 +29,7 @@
             <h2 class="section-title">Data (JSON)</h2>
           </div>
           <div class="editor-container h-[400px] overflow-hidden">
-            <pdftestDataEditor
+            <adminReportsDataEditor
               v-model="jsonData"
               class="h-full" />
           </div>
@@ -45,7 +45,7 @@
           </div>
         </div>
         <div class="h-[1024px] overflow-hidden">
-          <pdftestDocumentPreview
+          <adminReportsDocumentPreview
             :data="jsonData"
             class="h-full" />
         </div>

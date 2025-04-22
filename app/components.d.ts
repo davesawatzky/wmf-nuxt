@@ -28,6 +28,8 @@ declare module 'vue' {
     PVMenu: typeof import('primevue/menu')['default']
     PVMenubar: typeof import('primevue/menubar')['default']
     PVProgressBar: typeof import('primevue/progressbar')['default']
+    PVSplitButton: typeof import('primevue/splitbutton')['default']
+    PVToolbar: typeof import('primevue/toolbar')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }

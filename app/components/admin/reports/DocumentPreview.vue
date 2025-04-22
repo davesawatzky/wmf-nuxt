@@ -2,23 +2,23 @@
   <div class="flex flex-col h-full">
     <div class="toolbar">
       <div class="tab-group">
-        <pdftestButton
+        <adminReportsButton
           :variant="activeTab === 'pdf' ? 'primary' : 'secondary'"
           icon="lucide:file"
           size="sm"
           @click="switchToPdf">
           PDF Preview
-        </pdftestButton>
-        <pdftestButton
+        </adminReportsButton>
+        <adminReportsButton
           :variant="activeTab === 'richText' ? 'primary' : 'secondary'"
           icon="lucide:edit"
           size="sm"
           @click="activeTab = 'richText'">
           Rich Text
-        </pdftestButton>
+        </adminReportsButton>
       </div>
       <div class="toolbar-actions">
-        <pdftestButton
+        <adminReportsButton
           v-if="activeTab === 'pdf'"
           variant="secondary"
           icon="lucide:download"
@@ -26,7 +26,7 @@
           @click="downloadPdf"
           title="Download PDF">
           Download PDF
-        </pdftestButton>
+        </adminReportsButton>
       </div>
     </div>
 
@@ -38,7 +38,8 @@
         class="pdf-content h-full">
         <ClientOnly>
           <div v-if="hasContent">
-            <pdftestSimplePdfPreview :content="documentStore.mergedContent" />
+            <adminReportsSimplePdfPreview
+              :content="documentStore.mergedContent" />
           </div>
           <div
             v-else
@@ -53,7 +54,7 @@
       v-else-if="activeTab === 'richText'"
       class="editor-container flex-1">
       <ClientOnly>
-        <pdftestRichTextEditor
+        <adminReportsRichTextEditor
           v-model="documentStore.template"
           :preview-content="documentStore.mergedContent"
           @change="handleRichTextUpdate" />
@@ -128,92 +129,79 @@
         return
       }
 
-      // Create the HTML document structure
+      // Create the CSS styles for the PDF document
+      const styles = `
+        @page { size: Letter; margin: 0.5in; }
+        body { font-family: Arial, sans-serif; line-height: 1.5; color: black; background: white; margin: 0; padding: 0; }
+        .page { width: 100%; max-width: 8.3in; margin: 0 auto; box-sizing: border-box; }
+        p { margin-bottom: 1em; color: black !important; }
+        h1 { font-size: 24pt; font-weight: bold; margin: 1em 0 0.5em; color: black !important; }
+        h2 { font-size: 20pt; font-weight: bold; margin: 1em 0 0.5em; color: black !important; }
+        h3 { font-size: 16pt; font-weight: bold; margin: 1em 0 0.5em; color: black !important; }
+        h4, h5, h6 { font-weight: bold; margin: 1em 0 0.5em; color: black !important; }
+        ul, ol { padding-left: 2em; margin-bottom: 1em; }
+        li { margin-bottom: 0.5em; }
+        table { width: 100%; border-collapse: collapse; margin: 1em 0; table-layout: fixed; }
+        td, th { border: 1px solid #ddd; padding: 8px; text-align: left; word-break: break-word; }
+        th { background-color: #f2f2f2; font-weight: bold; text-align: center; }
+        strong { font-weight: bold; color: black !important; }
+        em { font-style: italic; color: black !important; }
+        u { text-decoration: underline; color: black !important; }
+        [style*="text-align: center"], [data-align="center"], [data-text-align="center"] { text-align: center !important; }
+        [style*="text-align: right"], [data-align="right"], [data-text-align="right"] { text-align: right !important; }
+        [style*="text-align: justify"], [data-align="justify"], [data-text-align="justify"] { text-align: justify !important; }
+        [style*="text-align: left"], [data-align="left"], [data-text-align="left"] { text-align: left !important; }
+        @media print { body { padding: 0; margin: 0; } .page { max-width: none; width: 100%; padding: 0 0.2in; } }
+      `
+
+      // Get reference to the new window's document
       const doc = printWindow.document
 
-      // Write the document structure
-      doc.open()
-      doc.write('<!DOCTYPE html>')
-      doc.write('<html>')
-      doc.write('<head>')
-      doc.write('<title>Document</title>')
+      // Create HTML elements using DOM manipulation instead of document.write
+      doc.documentElement.innerHTML = '' // Clear any default content
 
-      // Add CSS styles
-      doc.write('<style>')
-      doc.write('@page { size: A4; margin: 0.5in; }')
-      doc.write(
-        'body { font-family: Arial, sans-serif; line-height: 1.5; color: black; background: white; margin: 0; padding: 0; }'
-      )
-      doc.write(
-        '.page { width: 100%; max-width: 8.3in; margin: 0 auto; box-sizing: border-box; }'
-      )
-      doc.write('p { margin-bottom: 1em; color: black !important; }')
-      doc.write(
-        'h1 { font-size: 24pt; font-weight: bold; margin: 1em 0 0.5em; color: black !important; }'
-      )
-      doc.write(
-        'h2 { font-size: 20pt; font-weight: bold; margin: 1em 0 0.5em; color: black !important; }'
-      )
-      doc.write(
-        'h3 { font-size: 16pt; font-weight: bold; margin: 1em 0 0.5em; color: black !important; }'
-      )
-      doc.write(
-        'h4, h5, h6 { font-weight: bold; margin: 1em 0 0.5em; color: black !important; }'
-      )
-      doc.write('ul, ol { padding-left: 2em; margin-bottom: 1em; }')
-      doc.write('li { margin-bottom: 0.5em; }')
-      doc.write(
-        'table { width: 100%; border-collapse: collapse; margin: 1em 0; table-layout: fixed; }'
-      )
-      doc.write(
-        'td, th { border: 1px solid #ddd; padding: 8px; text-align: left; word-break: break-word; }'
-      )
-      doc.write(
-        'th { background-color: #f2f2f2; font-weight: bold; text-align: center; }'
-      )
-      doc.write('strong { font-weight: bold; color: black !important; }')
-      doc.write('em { font-style: italic; color: black !important; }')
-      doc.write('u { text-decoration: underline; color: black !important; }')
-      doc.write(
-        '[style*="text-align: center"], [data-align="center"], [data-text-align="center"] { text-align: center !important; }'
-      )
-      doc.write(
-        '[style*="text-align: right"], [data-align="right"], [data-text-align="right"] { text-align: right !important; }'
-      )
-      doc.write(
-        '[style*="text-align: justify"], [data-align="justify"], [data-text-align="justify"] { text-align: justify !important; }'
-      )
-      doc.write(
-        '[style*="text-align: left"], [data-align="left"], [data-text-align="left"] { text-align: left !important; }'
-      )
-      doc.write(
-        '@media print { body { padding: 0; margin: 0; } .page { max-width: none; width: 100%; padding: 0 0.2in; } }'
-      )
-      doc.write('</style>')
-      doc.write('</head>')
-      doc.write('<body>')
-      doc.write('<div class="page">')
+      // Create and append HTML elements
+      const htmlElement = doc.documentElement
 
-      // Add the content
-      doc.write(documentStore.mergedContent)
+      // Create head element
+      const head = doc.createElement('head')
 
-      doc.write('</div>')
+      // Add title
+      const title = doc.createElement('title')
+      title.textContent = 'Document'
+      head.appendChild(title)
 
-      // Add script for auto-printing
-      doc.write('<script>')
-      doc.write('window.onload = function() {')
-      doc.write('  setTimeout(function() {')
-      doc.write('    window.print();')
-      doc.write('    setTimeout(function() {')
-      doc.write('      window.close();')
-      doc.write('    }, 100);')
-      doc.write('  }, 250);')
-      doc.write('};')
-      doc.write('<\/script>')
+      // Add styles
+      const styleElement = doc.createElement('style')
+      styleElement.textContent = styles
+      head.appendChild(styleElement)
 
-      doc.write('</body>')
-      doc.write('</html>')
-      doc.close()
+      // Create body element
+      const body = doc.createElement('body')
+
+      // Create content container
+      const pageDiv = doc.createElement('div')
+      pageDiv.className = 'page'
+      pageDiv.innerHTML = documentStore.mergedContent
+      body.appendChild(pageDiv)
+
+      // Add print script
+      const script = doc.createElement('script')
+      script.textContent = `
+        window.onload = function() {
+          setTimeout(function() {
+            window.print();
+            setTimeout(function() {
+              window.close();
+            }, 100);
+          }, 250);
+        };
+      `
+      body.appendChild(script)
+
+      // Append head and body to html
+      htmlElement.appendChild(head)
+      htmlElement.appendChild(body)
 
       // Focus the window
       printWindow.focus()

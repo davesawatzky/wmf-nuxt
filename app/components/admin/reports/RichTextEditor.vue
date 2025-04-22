@@ -1,17 +1,17 @@
 <template>
   <div>
     <div class="richtext-editor">
-      <TiptapEditor v-model="modelValue" />
+      <adminReportsTiptapEditor v-model="modelValue" />
     </div>
-    <div
+    <!-- <div
       v-if="previewContent"
       class="preview-overlay prose"
-      v-html="previewContent"></div>
+      v-html="previewContent"></div> -->
   </div>
 </template>
 
 <script setup lang="ts">
-  const modelValue = defineModel()
+  const modelValue = defineModel({ type: String, default: '' })
 
   defineProps<{
     previewContent?: string
