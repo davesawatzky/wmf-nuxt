@@ -5,36 +5,55 @@
   "version": "0.2.0",
   "configurations": [
     {
+      // Change to use npm run dev so we don't execute shell stub directly
       "type": "node",
-      "name": "server: nuxt",
-      "program": "${workspaceFolder}/node_modules/nuxi/bin/nuxi.mjs",
       "request": "launch",
-      "skipFiles": ["<node_internals>/**"],
+      "name": "Debug Nuxt",
       "outputCapture": "std",
-      "args": ["dev"],
-      "outFiles": ["${workspaceFolder}/out/**/*.js"]
+      "program": "${workspaceFolder}/node_modules/nuxt/bin/nuxt.mjs",
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["run", "debug"],
+      "console": "integratedTerminal"
+      // "envFile": "${workspaceFolder}/.env.development",
+      // "outFiles": [
+      //   "${workspaceFolder}/.nuxt/dist/**/*.(m|c|)js",
+      //   "!**/node_modules/**"
+      // ]
     },
     {
       "type": "chrome",
       "request": "launch",
-      "name": "Launch on Chrome",
-      "port": 3001,
+      "name": "Debug Nuxt (client)",
       "url": "http://localhost:3001",
       "webRoot": "${workspaceFolder}"
+
+      // "sourceMapPathOverrides": {
+      //   "webpack:///./*": "${workspaceFolder}/*",
+      //   "webpack://_virtual_/*": "${workspaceFolder}/.nuxt/*",
+      //   "vite:///*": "${workspaceFolder}/*",
+      //   "vite:///src/*": "${workspaceFolder}/app/*"
+      // }
     },
     {
+      // Attach to browser if already open
       "type": "chrome",
       "request": "attach",
       "name": "Attach to Chrome",
-      "port": 3001,
       "url": "http://localhost:3001",
       "webRoot": "${workspaceFolder}"
+      // "sourceMapPathOverrides": {
+      //   "webpack:///./*": "${workspaceFolder}/*",
+      //   "webpack://_virtual_/*": "${workspaceFolder}/.nuxt/*",
+      //   "vite:///*": "${workspaceFolder}/*",
+      //   "vite:///src/*": "${workspaceFolder}/app/*"
+      // }
     }
   ],
   "compounds": [
     {
-      "name": "Fullstack on Chrome",
-      "configurations": ["server: nuxt", "Launch on Chrome"]
+      "name": "Fullstack Debug",
+      "configurations": ["Debug Nuxt", "Debug Nuxt (client)"]
     }
   ]
 }

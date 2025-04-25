@@ -4,5 +4,6 @@
     "types": ["vitest/globals"],
     "sourceMap": true,
     "allowSyntheticDefaultImports": true
-  }
+  },
+  "sourceMap": true
 }

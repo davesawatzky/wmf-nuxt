@@ -135,10 +135,8 @@ export default defineNuxtConfig({
       stripePubKey: '',
     },
   },
-  sourcemap: {
-    server: true,
-    client: true,
-  },
+
+  sourcemap: true,
 
   spaLoadingTemplate: true,
   ssr: false,

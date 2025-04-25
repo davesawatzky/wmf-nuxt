@@ -445,7 +445,7 @@
   })
 </script>
 
-<style scoped>
+<style scoped lang="scss">
   .button {
     margin: 0px;
     padding: 2px 6px;
@@ -495,14 +495,14 @@
     overflow-x: auto;
   }
 
-  &.resize-cursor {
+  .resize-cursor {
     cursor: ew-resize;
     cursor: col-resize;
   }
 
   /* Typography */
   .page p {
-    margin-bottom: 1em;
+    // margin-bottom: 1em;
     color: black !important;
   }
 
@@ -583,23 +583,28 @@
   .page table {
     width: 100%;
     border-collapse: collapse;
-    margin: 1em 0;
-    table-layout: fixed;
+    margin-bottom: 20px;
   }
 
-  .page table td,
-  .page table th {
-    border: 1px solid #ddd;
-    padding: 8px;
+  .page table td {
+    border: 1px solid #ccc;
+    padding: 4px 8px;
     text-align: left;
     word-break: break-word;
     color: black !important;
   }
 
+  .page table td p {
+    margin: 0;
+    padding: 0;
+  }
+
   .page table th {
-    background-color: #f2f2f2;
+    border: 1px solid #ccc;
+    background-color: #f3f4f6;
     font-weight: bold;
     text-align: center;
+    padding: 8px;
   }
 
   /* Text alignment */

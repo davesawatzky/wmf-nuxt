@@ -23,7 +23,7 @@ export const testPartialTeacher: Partial<Teacher> = {
   email: 'david@diatonic.io',
 }
 
-export const testFullPerformer1: Performer = {
+export const testFullPerformer1: Omit<Performer, 'selections'> = {
   id: 30,
   firstName: 'Mikayla',
   lastName: 'Sawatzky',
@@ -40,7 +40,7 @@ export const testFullPerformer1: Performer = {
   __typename: 'Performer',
 }
 
-export const testFullPerformer2: Performer = {
+export const testFullPerformer2: Omit<Performer, 'selections'> = {
   id: 30,
   firstName: 'Madelaine',
   lastName: 'Thiessen',

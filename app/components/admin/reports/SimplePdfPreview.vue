@@ -33,10 +33,7 @@
     if (!pageRef.value) return
 
     const content = props.content || ''
-    console.log('Updating PDF preview content, length:', content.length)
-
     if (!content) {
-      console.warn('SimplePdfPreview: No content provided')
       pageRef.value.innerHTML =
         '<div class="empty-message">No content to preview</div>'
       return
@@ -73,7 +70,7 @@
 
   /* Typography */
   .page p {
-    margin-bottom: 1em;
+    /* margin-bottom: 1em; */
     color: black !important;
   }
 

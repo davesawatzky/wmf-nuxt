@@ -3,11 +3,13 @@
   <ClientOnly>
     <div
       class="h-[300px] border border-white/20 rounded-lg overflow-hidden bg-white/5">
-      <textarea
+      <PVTextarea
         v-model="jsonString"
+        id="json-editor"
+        name="json-editor"
         class="w-full h-full p-4 font-mono text-sm bg-transparent text-black dark:text-white/90 focus:outline-none"
         @input="handleInput"
-        spellcheck="false"></textarea>
+        spellcheck="false"></PVTextarea>
     </div>
     <div
       v-if="error"

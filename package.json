@@ -6,6 +6,7 @@
     "build": "nuxi build --dotenv .env.production",
     "cypress": "cypress open",
     "dev": "nuxi dev --dotenv .env.development --host",
+    "debug": "nuxi dev --dotenv .env.development --host --inspect",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",

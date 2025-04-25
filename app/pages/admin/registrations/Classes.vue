@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { FilterMatchMode, FilterOperator } from '@primevue/core/api'
-  import type { RegisteredClass } from '~/graphql/gql/graphql'
+  import type { Performer, RegisteredClass } from '~/graphql/gql/graphql'
 
   definePageMeta({
     layout: 'admin',
@@ -8,6 +8,7 @@
 
   const selectedClass = ref()
   const expandedRows = ref({})
+  const expandedRowSelections = ref({})
   const pagination = ref({
     currentPage: 1,
     rowsPerPage: 20,
@@ -34,14 +35,8 @@
           category
           level
           performers {
-            registration {
-              id
-              confirmation
-              teacher {
-                id
-              }
-            }
             id
+            pronouns
             firstName
             lastName
             age
@@ -49,6 +44,14 @@
             level
             email
             phone
+            selections {
+              id
+              title
+              composer
+              movement
+              largerWork
+              duration
+            }
           }
         }
       }
@@ -302,6 +305,7 @@
                 {{ slotProps.data.category }}
               </h5>
               <PVDataTable
+                v-model:expanded-rows="expandedRowSelections"
                 :value="slotProps.data.performers"
                 data-key="id"
                 :meta-key-selection="false"
@@ -313,13 +317,11 @@
                 :rows-per-page-options="[10, 20, 30, 40, 50]"
                 datatable-style="min-width: 50rem;">
                 <PVColumn
+                  expander
+                  style="width: 5rem" />
+                <PVColumn
                   field="id"
                   header="ID"
-                  data-type="text"
-                  sortable />
-                <PVColumn
-                  field="registration.confirmation"
-                  header="Confirmation"
                   data-type="text"
                   sortable />
                 <PVColumn
@@ -357,6 +359,53 @@
                   header="Phone"
                   data-type="text"
                   sortable />
+                <template #expansion="slotProps: { data: Performer }">
+                  <h5>
+                    Selections for {{ slotProps.data.firstName }}
+                    {{ slotProps.data.lastName }}
+                  </h5>
+                  <PVDataTable
+                    :value="slotProps.data.selections"
+                    data-key="id"
+                    scrollable
+                    striped-rows
+                    removable-sort
+                    size="small"
+                    column-resize-mode="fit"
+                    :rows-per-page-options="[10, 20, 30, 40, 50]"
+                    datatable-style="min-width: 50rem;">
+                    <PVColumn
+                      field="id"
+                      header="ID"
+                      data-type="text"
+                      sortable />
+                    <PVColumn
+                      field="title"
+                      header="Title"
+                      data-type="text"
+                      sortable />
+                    <PVColumn
+                      field="composer"
+                      header="Composer"
+                      data-type="text"
+                      sortable />
+                    <PVColumn
+                      field="movement"
+                      header="Movement"
+                      data-type="text"
+                      sortable />
+                    <PVColumn
+                      field="largerWork"
+                      header="Larger Work"
+                      data-type="text"
+                      sortable />
+                    <PVColumn
+                      field="duration"
+                      header="Duration (minutes)"
+                      data-type="text"
+                      sortable />
+                  </PVDataTable>
+                </template>
               </PVDataTable>
             </template>
           </PVDataTable>

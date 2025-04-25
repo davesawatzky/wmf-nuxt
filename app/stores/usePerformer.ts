@@ -152,7 +152,7 @@ export const usePerformers = defineStore(
     }
     watch(resultPerformers, (newResult) => {
       if (newResult?.performers) {
-        const performers: Performer[] = newResult.performers
+        const performers: Omit<Performer, 'selections'>[] = newResult.performers
         for (let i = 0; i < performers.length; i++) {
           addToStore(performers[i]!)
         }

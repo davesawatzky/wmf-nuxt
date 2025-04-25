@@ -2,31 +2,30 @@
   <div class="flex flex-col h-full">
     <div class="toolbar">
       <div class="tab-group">
-        <adminReportsButton
+        <PVButton
           :variant="activeTab === 'pdf' ? 'primary' : 'secondary'"
           icon="lucide:file"
-          size="sm"
+          class="px-2 py-1 w-30"
           @click="switchToPdf">
           PDF Preview
-        </adminReportsButton>
-        <adminReportsButton
+        </PVButton>
+        <PVButton
           :variant="activeTab === 'richText' ? 'primary' : 'secondary'"
-          icon="lucide:edit"
-          size="sm"
+          icon="material-symbols:edit"
+          class="px-2 py-1 w-30"
           @click="activeTab = 'richText'">
           Rich Text
-        </adminReportsButton>
+        </PVButton>
       </div>
       <div class="toolbar-actions">
-        <adminReportsButton
+        <PVButton
           v-if="activeTab === 'pdf'"
-          variant="secondary"
           icon="lucide:download"
-          size="sm"
+          class="px-2 py-1 w-35"
           @click="downloadPdf"
           title="Download PDF">
           Download PDF
-        </adminReportsButton>
+        </PVButton>
       </div>
     </div>
 
@@ -75,7 +74,6 @@
   // Debug computed property to check content
   const hasContent = computed(() => {
     const content = documentStore.mergedContent || ''
-    console.log('Content length in DocumentPreview:', content.length)
     return content.length > 0
   })
 
@@ -86,18 +84,6 @@
       documentStore.updateJsonData(newData)
     },
     { immediate: true, deep: true }
-  )
-
-  // Watch for content changes
-  watch(
-    () => documentStore.mergedContent,
-    (newContent) => {
-      console.log(
-        'Content changed in DocumentPreview, length:',
-        (newContent || '').length
-      )
-    },
-    { immediate: true }
   )
 
   const handleRichTextUpdate = (content: HTMLElement) => {
@@ -132,13 +118,13 @@
       // Create the CSS styles for the PDF document
       const styles = `
         @page { size: Letter; margin: 0.5in; }
-        body { font-family: Arial, sans-serif; line-height: 1.5; color: black; background: white; margin: 0; padding: 0; }
+        body { font-family: Arial, sans-serif; font-size: 12px; line-height: 1.5; color: black; background: white; margin: 0; padding: 0; }
         .page { width: 100%; max-width: 8.3in; margin: 0 auto; box-sizing: border-box; }
-        p { margin-bottom: 1em; color: black !important; }
+        p { color: black; }
         h1 { font-size: 24pt; font-weight: bold; margin: 1em 0 0.5em; color: black !important; }
         h2 { font-size: 20pt; font-weight: bold; margin: 1em 0 0.5em; color: black !important; }
         h3 { font-size: 16pt; font-weight: bold; margin: 1em 0 0.5em; color: black !important; }
-        h4, h5, h6 { font-weight: bold; margin: 1em 0 0.5em; color: black !important; }
+        h4, h5, h6 { font-size: 14pt; font-weight: bold; margin: 1em 0 0.5em; color: black !important; }
         ul, ol { padding-left: 2em; margin-bottom: 1em; }
         li { margin-bottom: 0.5em; }
         table { width: 100%; border-collapse: collapse; margin: 1em 0; table-layout: fixed; }

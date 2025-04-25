@@ -3,10 +3,10 @@
     <div class="richtext-editor">
       <adminReportsTiptapEditor v-model="modelValue" />
     </div>
-    <!-- <div
+    <div
       v-if="previewContent"
       class="preview-overlay prose"
-      v-html="previewContent"></div> -->
+      v-html="previewContent"></div>
   </div>
 </template>
 

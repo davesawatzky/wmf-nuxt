@@ -1,59 +1,3 @@
-<template>
-  <div class="mx-auto px-12">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div class="flex flex-col gap-6">
-        <div class="card">
-          <div class="toolbar">
-            <h2 class="section-title">Template</h2>
-            <div class="toolbar-actions">
-              <!-- <Button variant="primary" size="lg" icon="lucide:save" title="Save">
-                Save
-              </Button>
-              <Button variant="secondary" size="lg" icon="lucide:upload" title="Load">
-                Load
-              </Button> -->
-            </div>
-          </div>
-          <div class="h-[600px] overflow-hidden">
-            <ClientOnly>
-              <adminReportsRichTextEditor
-                v-model="template"
-                class="h-full" />
-            </ClientOnly>
-          </div>
-        </div>
-
-        <div class="card">
-          <!-- Removed flex-1 from card -->
-          <div class="toolbar">
-            <h2 class="section-title">Data (JSON)</h2>
-          </div>
-          <div class="editor-container h-[400px] overflow-hidden">
-            <adminReportsDataEditor
-              v-model="jsonData"
-              class="h-full" />
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <!-- Removed flex-1 from card -->
-        <div class="toolbar">
-          <h2 class="section-title">Generated Document</h2>
-          <div class="toolbar-actions">
-            <!-- <Button variant="secondary" icon="refresh">Auto-refresh</Button> -->
-          </div>
-        </div>
-        <div class="h-[1024px] overflow-hidden">
-          <adminReportsDocumentPreview
-            :data="jsonData"
-            class="h-full" />
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
   definePageMeta({
     layout: 'admin',
@@ -61,48 +5,128 @@
 
   const documentStore = useDocumentStore()
   const { template, jsonData } = storeToRefs(documentStore)
+  const templateString = `<div>{{#each teachers}}</div>
+    <h5>{{firstName}} {{lastName}} - {{instrument}}</h5>
+    <div>{{#each registrations}}</div>
+    <div>{{confirmation}}   {{#each performers}} {{firstName}} {{lastName}} {{/each}}</div>
+    <div>{{/each}}</div>    
+    <div>{{/each}}</div>    
+    <br>`
 
-  watchEffect(() => {
-    console.log('Template:', template.value)
+  onMounted(() => {
+    documentStore.updateTemplate(templateString)
+  })
+
+  onBeforeUnmount(() => {
+    template.value = ''
+    jsonData.value = {}
+    documentStore.isDirty = false
+  })
+
+  const { result, loading, onResult, refetch } = useQuery(
+    gql`
+      query AdminPrivateTeachers($teacherType: String!) {
+        teachers(teacherType: $teacherType) {
+          id
+          firstName
+          lastName
+          address
+          city
+          province
+          postalCode
+          email
+          phone
+          instrument
+          registrations {
+            id
+            confirmation
+            user {
+              id
+              firstName
+              lastName
+              email
+              phone
+            }
+            performers {
+              id
+              firstName
+              lastName
+              email
+              phone
+            }
+          }
+        }
+      }
+    `,
+    {
+      teacherType: 'privateTeacher',
+    }
+  )
+
+  onResult(async () => {
+    if (await result.value) {
+      documentStore.updateJsonData(result.value)
+    } else {
+      console.error('Expected data structure not found in query result')
+    }
   })
 </script>
 
-<style scoped>
-  .card {
-    display: flex;
-    flex-direction: column;
-    /* Removed min-height here, let content dictate height */
-    border: 1px solid #ccc;
-    /* Added border for visual separation */
-    border-radius: 0.5rem;
-    /* Optional: Add rounded corners */
-    overflow: hidden;
-    /* Important: Prevents content overflow */
-  }
+<template>
+  <div class="mx-auto p-6">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="flex flex-col gap-6">
+        <PVCard>
+          <template #title>
+            <div class="p-1 flex justify-between items-center">
+              <h2>Template</h2>
+              <div class="flex gap-2"></div>
+            </div>
+          </template>
+          <template #content>
+            <div class="h-[400px] overflow-auto">
+              <ClientOnly>
+                <adminReportsRichTextEditor
+                  v-model="template"
+                  class="h-full" />
+              </ClientOnly>
+            </div>
+          </template>
+        </PVCard>
 
-  .toolbar {
-    padding: 0.3rem;
-    border-bottom: 1px solid #ccc;
-    /* Separator between toolbar and content */
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
+        <PVCard>
+          <template #title>
+            <div class="p-1 flex justify-between items-center">
+              <h2>Data (JSON)</h2>
+            </div>
+          </template>
+          <template #content>
+            <div class="p-2 flex flex-col min-h-0 h-[400px] overflow-auto">
+              <adminReportsDataEditor
+                v-model="jsonData"
+                class="h-full" />
+            </div>
+          </template>
+        </PVCard>
+      </div>
 
-  .toolbar-actions {
-    display: flex;
-    gap: 0.5rem;
-  }
+      <PVCard>
+        <template #title>
+          <div class="p-1 flex justify-between items-center">
+            <h2>Generated Document</h2>
+            <div class="flex gap-2"></div>
+          </div>
+        </template>
+        <template #content>
+          <div class="h-[1024px] overflow-hidden">
+            <adminReportsDocumentPreview
+              :data="jsonData"
+              class="h-full" />
+          </div>
+        </template>
+      </PVCard>
+    </div>
+  </div>
+</template>
 
-  .editor-container {
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-    /*  Essential for flexbox to work correctly */
-    padding: 0.5rem;
-  }
-
-  .section-title {
-    font-weight: bold;
-  }
-</style>
+<style scoped></style>
