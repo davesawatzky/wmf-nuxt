@@ -44,14 +44,14 @@
             level
             email
             phone
-            selections {
-              id
-              title
-              composer
-              movement
-              largerWork
-              duration
-            }
+            # selections {
+            #   id
+            #   title
+            #   composer
+            #   movement
+            #   largerWork
+            #   duration
+            # }
           }
         }
       }
@@ -325,9 +325,9 @@
                 column-resize-mode="fit"
                 :rows-per-page-options="[10, 20, 30, 40, 50]"
                 datatable-style="min-width: 50rem;">
-                <PVColumn
+                <!-- <PVColumn
                   expander
-                  style="width: 5rem" />
+                  style="width: 5rem" /> -->
                 <PVColumn
                   field="id"
                   header="ID"
@@ -368,7 +368,7 @@
                   header="Phone"
                   data-type="text"
                   sortable />
-                <template #expansion="slotProps: { data: Performer }">
+                <!-- <template #expansion="slotProps: { data: Performer }">
                   <h5>
                     Selections for {{ slotProps.data.firstName }}
                     {{ slotProps.data.lastName }}
@@ -414,7 +414,7 @@
                       data-type="text"
                       sortable />
                   </PVDataTable>
-                </template>
+                </template> -->
               </PVDataTable>
             </template>
           </PVDataTable>

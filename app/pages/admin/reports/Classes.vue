@@ -48,14 +48,14 @@
           level
           email
           phone
-          selections {
-            id
-            title
-            composer
-            movement
-            largerWork
-            duration
-          }
+          # selections {
+          #   id
+          #   title
+          #   composer
+          #   movement
+          #   largerWork
+          #   duration
+          # }
         }
       }
     }
