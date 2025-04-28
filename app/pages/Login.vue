@@ -113,13 +113,17 @@
   doneSignin(async (result) => {
     if (result.data?.signin) {
       if (result.data?.signin.diatonicToken) {
-        if (
-          result.data.signin.user?.privateTeacher &&
-          !result.data.signin.user.hasSignedIn
-        ) {
-          await navigateTo('/userinformation')
+        if (!result.data.signin.user?.admin) {
+          if (
+            result.data.signin.user?.privateTeacher &&
+            !result.data.signin.user.hasSignedIn
+          ) {
+            await navigateTo('/userinformation')
+          } else {
+            await navigateTo('/registrations')
+          }
         } else {
-          await navigateTo('/registrations')
+          await navigateTo('/admin')
         }
       }
       if (result.data?.signin.userErrors[0]) {

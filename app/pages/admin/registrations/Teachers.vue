@@ -290,6 +290,16 @@
                 </PVInputText>
               </template>
             </PVColumn>
+            <PVColumn header="Edit">
+              <template #body="slotProps">
+                <PVButton
+                  icon="material-symbols:edit"
+                  class="px-2 py-1 w-20"
+                  @click="() => (selectedTeacher = slotProps.data)">
+                  Edit</PVButton
+                >
+              </template>
+            </PVColumn>
             <PVColumn
               field="firstName"
               header="First Name"

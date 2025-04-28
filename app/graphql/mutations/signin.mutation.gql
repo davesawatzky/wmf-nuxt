@@ -5,6 +5,7 @@ mutation SignIn($credentials: CredentialsSignin!) {
     }
     diatonicToken
     user {
+      admin
       email
       firstName
       lastName

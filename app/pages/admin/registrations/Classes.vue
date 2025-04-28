@@ -224,10 +224,19 @@
               </div>
             </template>
             <template #empty> No items found. </template>
-
             <PVColumn
               expander
               style="width: 5rem" />
+            <PVColumn header="Edit">
+              <template #body="slotProps">
+                <PVButton
+                  icon="material-symbols:edit"
+                  class="px-2 py-1 w-20"
+                  @click="() => (selectedClass = slotProps.data)">
+                  Edit</PVButton
+                >
+              </template>
+            </PVColumn>
             <PVColumn
               field="classNumber"
               header="Class Number"

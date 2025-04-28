@@ -6,7 +6,7 @@
     layout: 'admin',
   })
 
-  const selectedClass = ref()
+  const selectedRegistration = ref()
   const expandedRows = ref({})
   const pagination = ref({
     currentPage: 1,
@@ -233,7 +233,7 @@
           <PVDataTable
             v-model:expanded-rows="expandedRows"
             v-model:filters="filters"
-            v-model:selection="selectedClass"
+            v-model:selection="selectedRegistration"
             data-key="id"
             :value="processedRegistrations"
             :pt="{
@@ -305,6 +305,16 @@
             <PVColumn
               expander
               style="width: 5rem" />
+            <PVColumn header="Edit">
+              <template #body="slotProps">
+                <PVButton
+                  icon="material-symbols:edit"
+                  class="px-2 py-1 w-20"
+                  @click="() => (selectedRegistration = slotProps.data)">
+                  Edit</PVButton
+                >
+              </template>
+            </PVColumn>
             <PVColumn
               field="id"
               header="ID"
