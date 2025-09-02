@@ -47,7 +47,7 @@
           @click="removePerformer(performer.id)">
           Remove This Performer
         </BaseButton>
-        <br /><br />
+        <br ><br >
         <svg viewBox="0 0 800 2">
           <line
             x1="0"

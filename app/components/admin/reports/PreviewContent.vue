@@ -2,8 +2,8 @@
   <div class="preview-content">
     <div class="ql-container">
       <div
-        class="prose ql-editor pdf-content-area"
-        ref="editorRef"></div>
+        ref="editorRef"
+        class="prose ql-editor pdf-content-area"/>
     </div>
   </div>
 </template>

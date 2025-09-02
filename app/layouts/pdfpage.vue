@@ -7,8 +7,8 @@
           <button
             variant="secondary"
             :icon="isDark ? 'sun' : 'moon'"
-            @click="toggleTheme"
-            :title="isDark ? 'Switch to light mode' : 'Switch to dark mode'" />
+            :title="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
+            @click="toggleTheme" />
         </div>
       </div>
     </nav>

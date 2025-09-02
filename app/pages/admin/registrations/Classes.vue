@@ -172,7 +172,7 @@
             filter-display="menu"
             selection-mode="single"
             resizable-columns
-            reorderableColumns
+            reorderable-columns
             scroll-height="flex"
             sortable
             sort-mode="multiple"
@@ -218,8 +218,7 @@
                   </PVInputIcon>
                   <PVInputText
                     v-model="filters['global'].value"
-                    placeholder="Keyword Search">
-                  </PVInputText>
+                    placeholder="Keyword Search"/>
                 </PVIconField>
               </div>
             </template>
@@ -247,8 +246,7 @@
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by Class Number"
-                  @input="filterCallback()">
-                </PVInputText>
+                  @input="filterCallback()"/>
               </template>
             </PVColumn>
             <PVColumn
@@ -261,8 +259,7 @@
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by Discipline"
-                  @input="filterCallback()">
-                </PVInputText>
+                  @input="filterCallback()"/>
               </template>
             </PVColumn>
             <PVColumn
@@ -275,8 +272,7 @@
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by Subdiscipline"
-                  @input="filterCallback()">
-                </PVInputText>
+                  @input="filterCallback()"/>
               </template>
             </PVColumn>
             <PVColumn
@@ -289,8 +285,7 @@
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by Level"
-                  @input="filterCallback()">
-                </PVInputText>
+                  @input="filterCallback()"/>
               </template>
             </PVColumn>
             <PVColumn
@@ -303,8 +298,7 @@
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by Category"
-                  @input="filterCallback()">
-                </PVInputText>
+                  @input="filterCallback()"/>
               </template>
             </PVColumn>
             <template #expansion="slotProps: { data: RegisteredClass }">

@@ -246,7 +246,7 @@
             filter-display="menu"
             selection-mode="single"
             resizable-columns
-            reorderableColumns
+            reorderable-columns
             scroll-height="flex"
             sortable
             sort-mode="multiple"
@@ -295,8 +295,7 @@
                   </PVInputIcon>
                   <PVInputText
                     v-model="filters['global'].value"
-                    placeholder="Keyword Search">
-                  </PVInputText>
+                    placeholder="Keyword Search"/>
                 </PVIconField>
               </div>
             </template>
@@ -325,8 +324,7 @@
                 <PVInputNumber
                   v-model="filterModel.value"
                   placeholder="Search by ID"
-                  @input="filterCallback()">
-                </PVInputNumber>
+                  @input="filterCallback()"/>
               </template>
             </PVColumn>
             <PVColumn
@@ -339,8 +337,7 @@
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by Confirmation #"
-                  @input="filterCallback()">
-                </PVInputText>
+                  @input="filterCallback()"/>
               </template>
             </PVColumn>
             <PVColumn
@@ -353,8 +350,7 @@
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search Type"
-                  @input="filterCallback()">
-                </PVInputText>
+                  @input="filterCallback()"/>
               </template>
             </PVColumn>
             <PVColumn
@@ -367,8 +363,7 @@
                 <PVDatePicker
                   v-model="filterModel.value"
                   placeholder="Search by Submitted Date"
-                  @input="filterCallback()">
-                </PVDatePicker>
+                  @input="filterCallback()"/>
               </template>
               <template #body="{ data }">
                 <div>
@@ -392,8 +387,7 @@
                   currency="CAD"
                   locale="en-CA"
                   placeholder="Search by Total"
-                  @input="filterCallback()">
-                </PVInputNumber>
+                  @input="filterCallback()"/>
               </template>
               <template #body="{ data }">
                 <div>
@@ -414,8 +408,7 @@
                   currency="CAD"
                   locale="en-CA"
                   placeholder="Search by Paid Amount"
-                  @input="filterCallback()">
-                </PVInputNumber>
+                  @input="filterCallback()"/>
               </template>
               <template #body="{ data }">
                 <div>
@@ -433,8 +426,7 @@
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by Transaction"
-                  @input="filterCallback()">
-                </PVInputText>
+                  @input="filterCallback()"/>
               </template>
             </PVColumn>
             <PVColumn
@@ -447,8 +439,7 @@
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by First Name"
-                  @input="filterCallback()">
-                </PVInputText>
+                  @input="filterCallback()"/>
               </template>
             </PVColumn>
             <PVColumn
@@ -461,8 +452,7 @@
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by Last Name"
-                  @input="filterCallback()">
-                </PVInputText>
+                  @input="filterCallback()"/>
               </template>
             </PVColumn>
             <PVColumn
@@ -475,8 +465,7 @@
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by Email"
-                  @input="filterCallback()">
-                </PVInputText>
+                  @input="filterCallback()"/>
               </template>
             </PVColumn>
             <PVColumn
@@ -490,8 +479,7 @@
                   v-model="filterModel.value"
                   placeholder="(###) ###-####"
                   mask="(999) 999-9999"
-                  @input="filterCallback()">
-                </PVInputMask>
+                  @input="filterCallback()"/>
               </template>
             </PVColumn>
             <template #expansion="slotProps: { data: Registration }">

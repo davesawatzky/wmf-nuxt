@@ -1,8 +1,8 @@
 <template>
   <div class="pdf-preview">
     <div
-      class="page"
-      ref="pageRef"></div>
+      ref="pageRef"
+      class="page"/>
   </div>
 </template>
 

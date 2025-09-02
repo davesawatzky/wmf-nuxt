@@ -109,7 +109,7 @@
             src="/images/wmf-logo-banner.jpg"
             alt="Winnipeg Music Festival Logo" />
           <div class="ml-4 font-semibold">
-            Winnipeg<br />Music<br />Festival
+            Winnipeg<br >Music<br >Festival
           </div>
         </template>
         <template #item="{ item, props, root }">
@@ -141,7 +141,7 @@
           src="/images/wmf-logo-banner.jpg"
           alt="Winnipeg Music Festival Logo" />
         <div class="ml-2 font-semibold text-sm">
-          Winnipeg<br />Music<br />Festival
+          Winnipeg<br >Music<br >Festival
         </div>
       </div>
 
@@ -161,7 +161,7 @@
       v-model:visible="visible"
       position="right"
       :modal="true"
-      :closeOnEscape="true"
+      :close-on-escape="true"
       class="p-4 bg-sky-700 text-white w-4/5">
       <div class="flex flex-col space-y-4">
         <h2 class="text-xl font-bold mb-4 border-b pb-2">Menu</h2>

@@ -64,7 +64,7 @@
       <h3 class="text-center py-2 sm:py-4 bg-red-600 text-white rounded-lg">
         Incomplete registration form
       </h3>
-      <br />
+      <br >
       <h4 class="text-center">
         All information is saved and can be returned to later.
       </h4>

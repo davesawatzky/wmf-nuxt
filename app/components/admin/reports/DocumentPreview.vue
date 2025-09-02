@@ -22,8 +22,8 @@
           v-if="activeTab === 'pdf'"
           icon="lucide:download"
           class="px-2 py-1 w-35"
-          @click="downloadPdf"
-          title="Download PDF">
+          title="Download PDF"
+          @click="downloadPdf">
           Download PDF
         </PVButton>
       </div>

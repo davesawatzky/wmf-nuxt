@@ -119,7 +119,7 @@
           'px-2 bg-primary-900 text-primary-200 hover:bg-primary-700 hover:rounded-md hover:text-primary-100',
       }"
       class="w-[250px] h-full rounded-none border-none overflow-auto bg-transparent">
-      <template #submenuitem="{ item }">
+      <template #submenuheader="{ item }">
         {{ item.label }}
       </template>
       <template #item="{ item, props }">
@@ -129,6 +129,7 @@
           v-bind="props.action">
           <span>
             <Icon
+              v-if="item.icon"
               class="align-middle"
               :name="item.icon" />
           </span>

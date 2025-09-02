@@ -4,12 +4,12 @@
     <div
       class="h-[300px] border border-white/20 rounded-lg overflow-hidden bg-white/5">
       <PVTextarea
-        v-model="jsonString"
         id="json-editor"
+        v-model="jsonString"
         name="json-editor"
         class="w-full h-full p-4 font-mono text-sm bg-transparent text-black dark:text-white/90 focus:outline-none"
-        @input="handleInput"
-        spellcheck="false"></PVTextarea>
+        spellcheck="false"
+        @input="handleInput"/>
     </div>
     <div
       v-if="error"

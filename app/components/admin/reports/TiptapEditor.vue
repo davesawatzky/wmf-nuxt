@@ -5,68 +5,68 @@
         <template #start>
           <PVButton
             class="button"
-            @click="editor.chain().focus().toggleBold().run()"
             :disabled="!editor.can().chain().focus().toggleBold().run()"
-            :class="{ 'is-active': editor.isActive('bold') }">
+            :class="{ 'is-active': editor.isActive('bold') }"
+            @click="editor.chain().focus().toggleBold().run()">
             <Icon
               name="material-symbols:format-bold"
               size="1.2rem" />
           </PVButton>
           <PVButton
             class="button"
-            @click="editor.chain().focus().toggleItalic().run()"
             :disabled="!editor.can().chain().focus().toggleItalic().run()"
-            :class="{ 'is-active': editor.isActive('italic') }">
+            :class="{ 'is-active': editor.isActive('italic') }"
+            @click="editor.chain().focus().toggleItalic().run()">
             <Icon
               name="material-symbols:format-italic"
               size="1.2rem" />
           </PVButton>
           <PVButton
             class="button"
-            @click="editor.chain().focus().toggleUnderline().run()"
             :disabled="!editor.can().chain().focus().toggleUnderline().run()"
-            :class="{ 'is-active': editor.isActive('underline') }">
+            :class="{ 'is-active': editor.isActive('underline') }"
+            @click="editor.chain().focus().toggleUnderline().run()">
             <Icon
               name="material-symbols:format-underlined"
               size="1.2rem" />
           </PVButton>
           <PVButton
             class="button"
-            @click="editor.chain().focus().toggleStrike().run()"
             :disabled="!editor.can().chain().focus().toggleStrike().run()"
-            :class="{ 'is-active': editor.isActive('strike') }">
+            :class="{ 'is-active': editor.isActive('strike') }"
+            @click="editor.chain().focus().toggleStrike().run()">
             <Icon
               name="material-symbols:format-strikethrough"
               size="1.2rem" />
           </PVButton>
           <PVButton
             class="button"
-            @click="editor.chain().focus().setTextAlign('left').run()"
-            :class="{ 'is-active': editor.isActive({ textAlign: 'left' }) }">
+            :class="{ 'is-active': editor.isActive({ textAlign: 'left' }) }"
+            @click="editor.chain().focus().setTextAlign('left').run()">
             <Icon
               name="material-symbols:format-align-left"
               size="1.2rem" />
           </PVButton>
           <PVButton
             class="button"
-            @click="editor.chain().focus().setTextAlign('center').run()"
-            :class="{ 'is-active': editor.isActive({ textAlign: 'center' }) }">
+            :class="{ 'is-active': editor.isActive({ textAlign: 'center' }) }"
+            @click="editor.chain().focus().setTextAlign('center').run()">
             <Icon
               name="material-symbols:format-align-center"
               size="1.2rem" />
           </PVButton>
           <PVButton
             class="button"
-            @click="editor.chain().focus().setTextAlign('right').run()"
-            :class="{ 'is-active': editor.isActive({ textAlign: 'right' }) }">
+            :class="{ 'is-active': editor.isActive({ textAlign: 'right' }) }"
+            @click="editor.chain().focus().setTextAlign('right').run()">
             <Icon
               name="material-symbols:format-align-right"
               size="1.2rem" />
           </PVButton>
           <PVButton
             class="button"
-            @click="editor.chain().focus().setTextAlign('justify').run()"
-            :class="{ 'is-active': editor.isActive({ textAlign: 'justify' }) }">
+            :class="{ 'is-active': editor.isActive({ textAlign: 'justify' }) }"
+            @click="editor.chain().focus().setTextAlign('justify').run()">
             <Icon
               name="material-symbols:format-align-justify"
               size="1.2rem" />
@@ -78,9 +78,9 @@
           </PVButton>
           <PVButton
             class="button"
-            @click="editor.chain().focus().toggleCode().run()"
             :disabled="!editor.can().chain().focus().toggleCode().run()"
-            :class="{ 'is-active': editor.isActive('code') }">
+            :class="{ 'is-active': editor.isActive('code') }"
+            @click="editor.chain().focus().toggleCode().run()">
             <Icon
               name="material-symbols:code"
               size="1.2rem" />
@@ -101,8 +101,8 @@
           </PVButton>
           <PVButton
             class="button"
-            @click="editor.chain().focus().setParagraph().run()"
-            :class="{ 'is-active': editor.isActive('paragraph') }">
+            :class="{ 'is-active': editor.isActive('paragraph') }"
+            @click="editor.chain().focus().setParagraph().run()">
             <Icon
               name="material-symbols:format-paragraph"
               size="1.2rem" />
@@ -126,32 +126,32 @@
           </PVSplitButton>
           <PVButton
             class="button"
-            @click="editor.chain().focus().toggleBulletList().run()"
-            :class="{ 'is-active': editor.isActive('bulletList') }">
+            :class="{ 'is-active': editor.isActive('bulletList') }"
+            @click="editor.chain().focus().toggleBulletList().run()">
             <Icon
               name="material-symbols:format-list-bulleted"
               size="1.2rem" />
           </PVButton>
           <PVButton
             class="button"
-            @click="editor.chain().focus().toggleOrderedList().run()"
-            :class="{ 'is-active': editor.isActive('orderedList') }">
+            :class="{ 'is-active': editor.isActive('orderedList') }"
+            @click="editor.chain().focus().toggleOrderedList().run()">
             <Icon
               name="material-symbols:format-list-numbered"
               size="1.2rem" />
           </PVButton>
           <PVButton
             class="button"
-            @click="editor.chain().focus().toggleCodeBlock().run()"
-            :class="{ 'is-active': editor.isActive('codeBlock') }">
+            :class="{ 'is-active': editor.isActive('codeBlock') }"
+            @click="editor.chain().focus().toggleCodeBlock().run()">
             <Icon
               name="material-symbols:code-blocks-outline"
               size="1.2rem" />
           </PVButton>
           <PVButton
             class="button"
-            @click="editor.chain().focus().toggleBlockquote().run()"
-            :class="{ 'is-active': editor.isActive('blockquote') }">
+            :class="{ 'is-active': editor.isActive('blockquote') }"
+            @click="editor.chain().focus().toggleBlockquote().run()">
             <Icon
               name="material-symbols:format-quote"
               size="1.2rem" />
@@ -172,16 +172,16 @@
           </PVButton>
           <PVButton
             class="button"
-            @click="editor.chain().focus().undo().run()"
-            :disabled="!editor.can().chain().focus().undo().run()">
+            :disabled="!editor.can().chain().focus().undo().run()"
+            @click="editor.chain().focus().undo().run()">
             <Icon
               name="material-symbols:undo"
               size="1.2rem" />
           </PVButton>
           <PVButton
             class="button"
-            @click="editor.chain().focus().redo().run()"
-            :disabled="!editor.can().chain().focus().redo().run()">
+            :disabled="!editor.can().chain().focus().redo().run()"
+            @click="editor.chain().focus().redo().run()">
             <Icon
               name="material-symbols:redo"
               size="1.2rem" />
@@ -214,14 +214,16 @@
         </template>
       </PVToolbar>
     </div>
-    <TiptapEditorContent
+    <EditorContent
       class="page overflow-auto"
       :editor="editor" />
   </div>
 </template>
 
 <script setup lang="ts">
-  import TiptapTable from '@tiptap/extension-table'
+  import { useEditor, EditorContent } from '@tiptap/vue-3'
+  import StarterKit from '@tiptap/starter-kit'
+  import { Table as TiptapTable } from '@tiptap/extension-table'
   import TiptapTableRow from '@tiptap/extension-table-row'
   import TiptapTableHeader from '@tiptap/extension-table-header'
   import TiptapCell from '@tiptap/extension-table-cell'
@@ -406,21 +408,29 @@
   const editor = useEditor({
     content: props.modelValue,
     extensions: [
-      TiptapStarterKit,
-      TiptapDocument,
-      TiptapParagraph,
-      TiptapText,
-      TiptapGapcursor,
+      StarterKit.configure({
+        // Configure StarterKit with heading support
+        heading: {
+          levels: [1, 2, 3, 4, 5, 6],
+        },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      }) as any,
       TiptapTable.configure({
         resizable: true,
-      }),
-      TiptapTableRow,
-      TiptapTableHeader,
-      TiptapCell,
-      TiptapUnderline,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      }) as any,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      TiptapTableRow as any,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      TiptapTableHeader as any,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      TiptapCell as any,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      TiptapUnderline as any,
       TiptapTextAlign.configure({
         types: ['heading', 'paragraph'],
-      }),
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      }) as any,
     ],
   })
 

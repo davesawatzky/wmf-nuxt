@@ -24,7 +24,6 @@ export default defineNuxtConfig({
     '@nuxt/image',
     '@formkit/auto-animate/nuxt',
     'nuxt-security',
-    'nuxt-tiptap-editor',
   ],
 
   devServer: {
@@ -54,8 +53,8 @@ export default defineNuxtConfig({
     },
     clients: {
       default: {
-        httpEndpoint: 'https://wmfapi.diatonic.ca/graphql',
-        // httpEndpoint: 'http://localhost:3000/graphql',
+        // httpEndpoint: 'https://wmfapi.diatonic.ca/graphql',
+        httpEndpoint: 'http://localhost:3000/graphql',
         tokenName: 'diatonicToken',
         authHeader: 'Authorization',
         authType: 'Bearer',
@@ -136,14 +135,20 @@ export default defineNuxtConfig({
     },
   },
 
+  security: {
+    corsHandler: {
+      origin: '*',
+    },
+  },
+
   sourcemap: true,
 
   spaLoadingTemplate: true,
   ssr: false,
   css: ['~/assets/css/tailwind.css'],
-  tiptap: {
-    prefix: 'Tiptap', //prefix for Tiptap imports, composables not included
-  },
+  // tiptap: {
+  //   prefix: 'Tiptap', //prefix for Tiptap imports, composables not included
+  // },
   typescript: {
     strict: true,
     typeCheck: true,

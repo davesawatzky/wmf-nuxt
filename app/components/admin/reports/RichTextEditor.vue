@@ -6,7 +6,7 @@
     <div
       v-if="previewContent"
       class="preview-overlay prose"
-      v-html="previewContent"></div>
+      v-html="previewContent"/>
   </div>
 </template>
 

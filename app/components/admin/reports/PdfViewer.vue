@@ -5,7 +5,7 @@
       <div
         v-if="loading"
         class="loading-indicator">
-        <div class="spinner"></div>
+        <div class="spinner"/>
         <div>Generating PDF preview...</div>
       </div>
       <div
@@ -16,7 +16,7 @@
       <div
         ref="canvasContainer"
         class="canvas-container min-h-[400px] border-1 border-gray-500 mt-5"
-        :class="{ hidden: loading || error }"></div>
+        :class="{ hidden: loading || error }"/>
     </ClientOnly>
   </div>
 </template>

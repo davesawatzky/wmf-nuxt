@@ -215,7 +215,7 @@
             filter-display="menu"
             selection-mode="single"
             resizable-columns
-            reorderableColumns
+            reorderable-columns
             scroll-height="flex"
             sortable
             sort-mode="multiple"
@@ -266,8 +266,7 @@
                   </PVInputIcon>
                   <PVInputText
                     v-model="filters['global'].value"
-                    placeholder="Keyword Search">
-                  </PVInputText>
+                    placeholder="Keyword Search"/>
                 </PVIconField>
               </div>
             </template>
@@ -286,8 +285,7 @@
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by First Name"
-                  @input="filterCallback()">
-                </PVInputText>
+                  @input="filterCallback()"/>
               </template>
             </PVColumn>
             <PVColumn header="Edit">
@@ -310,8 +308,7 @@
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by First Name"
-                  @input="filterCallback()">
-                </PVInputText>
+                  @input="filterCallback()"/>
               </template>
             </PVColumn>
             <PVColumn
@@ -324,8 +321,7 @@
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by Last Name"
-                  @input="filterCallback()">
-                </PVInputText>
+                  @input="filterCallback()"/>
               </template>
             </PVColumn>
             <PVColumn
@@ -338,8 +334,7 @@
                 <PVInputNumber
                   v-model="filterModel.value"
                   placeholder="Search by Address"
-                  @input="filterCallback()">
-                </PVInputNumber>
+                  @input="filterCallback()"/>
               </template>
             </PVColumn>
             <PVColumn
@@ -352,8 +347,7 @@
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by City"
-                  @input="filterCallback()">
-                </PVInputText>
+                  @input="filterCallback()"/>
               </template>
             </PVColumn>
             <PVColumn
@@ -366,8 +360,7 @@
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by Prov"
-                  @input="filterCallback()">
-                </PVInputText>
+                  @input="filterCallback()"/>
               </template>
             </PVColumn>
             <PVColumn
@@ -380,8 +373,7 @@
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by Postal Code"
-                  @input="filterCallback()">
-                </PVInputText>
+                  @input="filterCallback()"/>
               </template>
             </PVColumn>
             <PVColumn
@@ -394,8 +386,7 @@
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by Email"
-                  @input="filterCallback()">
-                </PVInputText>
+                  @input="filterCallback()"/>
               </template>
             </PVColumn>
             <PVColumn
@@ -409,8 +400,7 @@
                   v-model="filterModel.value"
                   placeholder="(999) 999-9999"
                   mask="(999) 999-9999"
-                  @input="filterCallback()">
-                </PVInputMask>
+                  @input="filterCallback()"/>
               </template>
             </PVColumn>
             <template #expansion="slotProps: { data: Teacher }">

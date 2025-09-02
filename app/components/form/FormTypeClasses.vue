@@ -198,7 +198,7 @@
           @click="removeClass(selectedClass.id, classIndex)">
           Remove This Class
         </BaseButton>
-        <br /><br />
+        <br ><br >
         <svg viewBox="0 0 800 2">
           <line
             x1="0"

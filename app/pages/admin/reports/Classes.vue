@@ -77,7 +77,7 @@
           <template #title>
             <div class="p-1 flex justify-between items-center">
               <h2>Template</h2>
-              <div class="flex gap-2"></div>
+              <div class="flex gap-2"/>
             </div>
           </template>
           <template #content>
@@ -111,7 +111,7 @@
         <template #title>
           <div class="p-1 flex justify-between items-center">
             <h2>Generated Document</h2>
-            <div class="flex gap-2"></div>
+            <div class="flex gap-2"/>
           </div>
         </template>
         <template #content>
