@@ -118,14 +118,14 @@
         itemContent:
           'px-2 bg-primary-900 text-primary-200 hover:bg-primary-700 hover:rounded-md hover:text-primary-100',
       }"
-      class="w-[250px] h-full rounded-none border-none overflow-auto bg-transparent">
+      class="w-[250px] h-full rounded-none border-none bg-transparent">
       <template #submenuheader="{ item }">
         {{ item.label }}
       </template>
       <template #item="{ item, props }">
         <a
           v-ripple
-          class="p-0 px-2"
+          class="p-0 px-2 pb-1"
           v-bind="props.action">
           <span>
             <Icon

@@ -31,6 +31,7 @@
 
   nav {
     grid-area: nav;
+    overflow: auto;
   }
 
   main {
