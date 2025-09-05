@@ -169,6 +169,21 @@ export default defineNuxtConfig({
     build: {
       target: ['es2015', 'chrome87', 'safari11', 'ios12'],
     },
+    optimizeDeps: {
+      include: [
+        // Include all PrimeVue packages with patterns
+        'primevue/**',
+        '@primevue/**',
+        '@primeuix/**',
+        'luxon',
+
+        // Other dependencies
+        '@vueuse/core',
+        'pinia',
+        '@pinia/colada',
+      ],
+      exclude: ['@nuxt/test-utils'],
+    },
     vue: {
       script: {
         propsDestructure: true,

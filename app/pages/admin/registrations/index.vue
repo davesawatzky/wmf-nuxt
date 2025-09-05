@@ -4,6 +4,7 @@
 
   definePageMeta({
     layout: 'admin',
+    middleware: 'auth',
   })
 
   const selectedRegistration = ref()
@@ -295,7 +296,7 @@
                   </PVInputIcon>
                   <PVInputText
                     v-model="filters['global'].value"
-                    placeholder="Keyword Search"/>
+                    placeholder="Keyword Search" />
                 </PVIconField>
               </div>
             </template>
@@ -324,7 +325,7 @@
                 <PVInputNumber
                   v-model="filterModel.value"
                   placeholder="Search by ID"
-                  @input="filterCallback()"/>
+                  @input="filterCallback()" />
               </template>
             </PVColumn>
             <PVColumn
@@ -337,7 +338,7 @@
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by Confirmation #"
-                  @input="filterCallback()"/>
+                  @input="filterCallback()" />
               </template>
             </PVColumn>
             <PVColumn
@@ -350,7 +351,7 @@
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search Type"
-                  @input="filterCallback()"/>
+                  @input="filterCallback()" />
               </template>
             </PVColumn>
             <PVColumn
@@ -363,7 +364,7 @@
                 <PVDatePicker
                   v-model="filterModel.value"
                   placeholder="Search by Submitted Date"
-                  @input="filterCallback()"/>
+                  @input="filterCallback()" />
               </template>
               <template #body="{ data }">
                 <div>
@@ -387,7 +388,7 @@
                   currency="CAD"
                   locale="en-CA"
                   placeholder="Search by Total"
-                  @input="filterCallback()"/>
+                  @input="filterCallback()" />
               </template>
               <template #body="{ data }">
                 <div>
@@ -408,7 +409,7 @@
                   currency="CAD"
                   locale="en-CA"
                   placeholder="Search by Paid Amount"
-                  @input="filterCallback()"/>
+                  @input="filterCallback()" />
               </template>
               <template #body="{ data }">
                 <div>
@@ -426,7 +427,7 @@
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by Transaction"
-                  @input="filterCallback()"/>
+                  @input="filterCallback()" />
               </template>
             </PVColumn>
             <PVColumn
@@ -439,7 +440,7 @@
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by First Name"
-                  @input="filterCallback()"/>
+                  @input="filterCallback()" />
               </template>
             </PVColumn>
             <PVColumn
@@ -452,7 +453,7 @@
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by Last Name"
-                  @input="filterCallback()"/>
+                  @input="filterCallback()" />
               </template>
             </PVColumn>
             <PVColumn
@@ -465,7 +466,7 @@
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by Email"
-                  @input="filterCallback()"/>
+                  @input="filterCallback()" />
               </template>
             </PVColumn>
             <PVColumn
@@ -479,7 +480,7 @@
                   v-model="filterModel.value"
                   placeholder="(###) ###-####"
                   mask="(999) 999-9999"
-                  @input="filterCallback()"/>
+                  @input="filterCallback()" />
               </template>
             </PVColumn>
             <template #expansion="slotProps: { data: Registration }">
