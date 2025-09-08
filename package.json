@@ -20,6 +20,7 @@
     "test:watch": "vitest --environment happy-dom"
   },
   "dependencies": {
+    "@casl/ability": "^6.7.3",
     "@formkit/auto-animate": "0.8.4",
     "@pinia/nuxt": "^0.11.2",
     "@primeuix/themes": "^1.2.3",
