@@ -6,17 +6,16 @@ import {
   AbilityBuilder,
 } from '@casl/ability'
 
-interface User {
+export interface AuthUser {
   readonly id: string
   readonly email: string
   readonly roles: readonly string[]
   readonly permissions: readonly string[]
-  readonly admin?: boolean
   readonly isActive: boolean
 }
 
 const usePrivateState = defineStore('privateState', () => {
-  const _user = ref<User | undefined>()
+  const _user = ref<AuthUser | undefined>()
   const _ability = ref<MongoAbility | undefined>()
 
   return { _user, _ability }
@@ -45,7 +44,7 @@ export const useAuthStore = defineStore('auth', () => {
    * Set user data (only called from auth middleware)
    * Creates immutable user object
    */
-  function setUser(userData: any) {
+  function setUser(userData: AuthUser) {
     if (!userData) {
       privateState._user = undefined
       privateState._ability = undefined
@@ -56,12 +55,7 @@ export const useAuthStore = defineStore('auth', () => {
     const safeUserData = {
       id: userData.id || '',
       email: userData.email || '',
-      // roles: Array.isArray(userData.roles) ? userData.roles : [],
-      roles: userData.admin
-        ? ['admin']
-        : Array.isArray(userData.roles)
-          ? userData.roles
-          : ['user'],
+      roles: Array.isArray(userData.roles) ? userData.roles : [],
       permissions: Array.isArray(userData.permissions)
         ? userData.permissions
         : [],

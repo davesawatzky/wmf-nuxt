@@ -34,14 +34,14 @@
   }))
   onUserResult(async (result) => {
     userStore.addToStore(result.data.myUser)
-    if (!userStore.user.hasSignedIn) {
-      userStore.user.hasSignedIn = true
-      await userStore.updateUser('hasSignedIn')
+    if (!userStore.user.isActive) {
+      userStore.user.isActive = true
+      await userStore.updateUser('isActive')
     }
   })
   userError((error) => console.log(error))
 
-  userStore.user.hasSignedIn = true
+  userStore.user.isActive = true
 
   const status = reactive<Status>({
     privateTeacher: userStore.user.privateTeacher

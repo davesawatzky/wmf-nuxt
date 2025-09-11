@@ -13,6 +13,6 @@ query MyUser {
     instrument
     privateTeacher
     schoolTeacher
-    hasSignedIn
+    isActive
   }
 }

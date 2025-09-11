@@ -57,10 +57,10 @@ export const useClasses = defineStore(
           __typename: regClass.__typename || 'RegisteredClass',
         })
         classErrors.value.push({ id: regClass.id, count: 0, selections: [] })
-        if (regClass.selections!.length > 0) {
-          for (let i = 0; i < regClass.selections?.length!; i++) {
+        if (regClass.selections) {
+          for (let i = 0; i < regClass.selections.length; i++) {
             classErrors.value[classErrors.value.length - 1]?.selections.push({
-              id: regClass.selections![i]?.id!,
+              id: regClass.selections[i]!.id,
               count: 0,
             })
           }
@@ -157,6 +157,7 @@ export const useClasses = defineStore(
     onCreateClassDone((result) => {
       if (result.data?.registeredClassCreate.registeredClass) {
         const regClass = result.data.registeredClassCreate.registeredClass
+        console.log('New class created:', regClass)
         addClassToStore(regClass)
         // await createSelection(regClass.id)
       } else if (result.data?.registeredClassCreate.userErrors) {

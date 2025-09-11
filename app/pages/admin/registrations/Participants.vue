@@ -76,6 +76,10 @@
     initFilters()
   }
 
+  const performers = computed(() => {
+    return result.value?.performers || []
+  })
+
   const filters = ref()
   function initFilters() {
     filters.value = {
@@ -261,7 +265,7 @@
             v-model:filters="filters"
             v-model:selection="selectedPerformer"
             data-key="id"
-            :value="result.performers"
+            :value="performers"
             :pt="{
               pcpaginator: {
                 root: {
@@ -330,7 +334,7 @@
                   </PVInputIcon>
                   <PVInputText
                     v-model="filters['global'].value"
-                    placeholder="Keyword Search"/>
+                    placeholder="Keyword Search" />
                 </PVIconField>
               </div>
             </template>
@@ -349,7 +353,7 @@
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by First Name"
-                  @input="filterCallback()"/>
+                  @input="filterCallback()" />
               </template>
             </PVColumn>
             <PVColumn header="Edit">
@@ -372,7 +376,7 @@
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by First Name"
-                  @input="filterCallback()"/>
+                  @input="filterCallback()" />
               </template>
             </PVColumn>
             <PVColumn
@@ -385,7 +389,7 @@
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by Last Name"
-                  @input="filterCallback()"/>
+                  @input="filterCallback()" />
               </template>
             </PVColumn>
             <PVColumn
@@ -398,7 +402,7 @@
                 <PVInputNumber
                   v-model="filterModel.value"
                   placeholder="Search by Age"
-                  @input="filterCallback()"/>
+                  @input="filterCallback()" />
               </template>
             </PVColumn>
             <PVColumn
@@ -411,7 +415,7 @@
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by Address"
-                  @input="filterCallback()"/>
+                  @input="filterCallback()" />
               </template>
             </PVColumn>
             <PVColumn
@@ -424,7 +428,7 @@
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by City"
-                  @input="filterCallback()"/>
+                  @input="filterCallback()" />
               </template>
             </PVColumn>
             <PVColumn
@@ -437,7 +441,7 @@
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by Province"
-                  @input="filterCallback()"/>
+                  @input="filterCallback()" />
               </template>
             </PVColumn>
             <PVColumn
@@ -450,7 +454,7 @@
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by Postal Code"
-                  @input="filterCallback()"/>
+                  @input="filterCallback()" />
               </template>
             </PVColumn>
             <PVColumn
@@ -463,7 +467,7 @@
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by Email"
-                  @input="filterCallback()"/>
+                  @input="filterCallback()" />
               </template>
             </PVColumn>
             <PVColumn
@@ -476,7 +480,7 @@
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by Phone"
-                  @input="filterCallback()"/>
+                  @input="filterCallback()" />
               </template>
             </PVColumn>
             <PVColumn
@@ -489,7 +493,7 @@
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by Instrument"
-                  @input="filterCallback()"/>
+                  @input="filterCallback()" />
               </template>
             </PVColumn>
             <PVColumn
@@ -502,7 +506,7 @@
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by Level"
-                  @input="filterCallback()"/>
+                  @input="filterCallback()" />
               </template>
             </PVColumn>
             <PVColumn
@@ -510,7 +514,7 @@
               header="Photo Permission"
               data-type="boolean"
               show-clear-button
-              sortable/>
+              sortable />
             <template #expansion="slotProps: { data: Performer }">
               <h5>
                 Registered Classes for {{ slotProps.data.firstName }}

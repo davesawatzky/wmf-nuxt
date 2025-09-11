@@ -1,3 +1,13 @@
+import type { RouteLocationNormalized } from 'vue-router'
+
+type User = {
+  id: string
+  email: string
+  isActive: boolean
+  roles: string[]
+  permissions: string[]
+}
+
 export default defineNuxtRouteMiddleware(async (to, from) => {
   const { load, refetch } = useLazyQuery(gql`
     query TokenCheck {
@@ -5,13 +15,18 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
         user {
           id
           email
-          admin
+          isActive
+          roles
+          permissions
+        }
+        userErrors {
+          message
         }
       }
     }
   `)
 
-  async function checkAuth() {
+  async function checkAuth(): Promise<User | undefined> {
     try {
       const result = await load()
       return result.tokenCheck.user
@@ -40,7 +55,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     authStore.setUser(userData)
 
     // Check route permissions
-    const hasAccess = await checkRoutePermissions(to, authStore.user?.roles)
+    const hasAccess = await checkRoutePermissions(to, userData)
     if (!hasAccess) {
       console.log('No access to route, redirecting to previous or login')
       await navigateTo(from.path || '/login')
@@ -55,10 +70,14 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
 
   // Helper function for route permission checking
   async function checkRoutePermissions(
-    to: any,
-    userData: any
+    to: RouteLocationNormalized,
+    userData?: User
   ): Promise<boolean> {
     const authStore = useAuthStore()
-    return authStore.canAccessRoute(to.path, userData)
+    if (userData?.roles) {
+      return authStore.canAccessRoute(to.path, userData.roles)
+    } else {
+      return false
+    }
   }
 })

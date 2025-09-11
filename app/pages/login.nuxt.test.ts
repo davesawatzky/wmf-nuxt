@@ -24,10 +24,11 @@ beforeEach(() => {
           lastName: 'Sawatzky',
           privateTeacher: true,
           schoolTeacher: false,
-          hasSignedIn: true,
+          isActive: true,
         },
       },
-    }))
+    })
+  )
   options = {
     global: {
       provide: {
@@ -59,7 +60,7 @@ describe('test Login and Registration component functions', () => {
       expect(
         queries.getByRole('checkbox', {
           name: 'Register for a New Account',
-        }),
+        })
       ).toBeInTheDocument()
     })
   })
