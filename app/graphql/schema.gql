@@ -118,9 +118,12 @@ input CredentialsSignup {
   email: String!
   firstName: String!
   instrument: String
+  isActive: Boolean!
   lastName: String!
   password: String!
+  permissions: [String!]
   privateTeacher: Boolean!
+  roles: [String!]!
   schoolTeacher: Boolean!
 }
 
@@ -206,6 +209,23 @@ type FieldConfig {
   soloRequired: Boolean!
   submissionRequired: Boolean!
   tableName: String!
+}
+
+input FieldConfigInput {
+  communityRequired: Boolean!
+  customField: Boolean!
+  customFieldType: String
+  fieldName: String!
+  groupRequired: Boolean!
+  schoolRequired: Boolean!
+  soloRequired: Boolean!
+  submissionRequired: Boolean!
+  tableName: String!
+}
+
+type FieldConfigPayload {
+  fieldConfig: FieldConfig
+  userErrors: [UserError!]!
 }
 
 type Group {
@@ -351,6 +371,12 @@ type Mutation {
     festivalClassID: Int!
     festivalClassInput: FestivalClassInput!
   ): FestivalClassPayload!
+  fieldConfigCreate(fieldConfigInput: FieldConfigInput!): FieldConfigPayload!
+  fieldConfigDelete(fieldConfigID: Int!): FieldConfigPayload!
+  fieldConfigUpdate(
+    fieldConfigID: Int!
+    fieldConfigInput: FieldConfigInput!
+  ): FieldConfigPayload!
   groupCreate(registrationID: Int!): GroupPayload!
   groupDelete(groupID: Int!): GroupPayload!
   groupUpdate(groupID: Int!, groupInput: GroupInput!): GroupPayload!
@@ -667,7 +693,7 @@ input RegisteredClassInput {
   maxSelections: Int
   minSelections: Int
   numberOfSelections: Int
-  price: Float
+  price: Decimal
   schoolGroupID: Int
   subdiscipline: String
 }

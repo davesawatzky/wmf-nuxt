@@ -148,9 +148,12 @@ export type CredentialsSignup = {
   email: Scalars['String']['input'];
   firstName: Scalars['String']['input'];
   instrument?: InputMaybe<Scalars['String']['input']>;
+  isActive: Scalars['Boolean']['input'];
   lastName: Scalars['String']['input'];
   password: Scalars['String']['input'];
+  permissions?: InputMaybe<Array<Scalars['String']['input']>>;
   privateTeacher: Scalars['Boolean']['input'];
+  roles: Array<Scalars['String']['input']>;
   schoolTeacher: Scalars['Boolean']['input'];
 };
 
@@ -237,6 +240,24 @@ export type FieldConfig = {
   soloRequired: Scalars['Boolean']['output'];
   submissionRequired: Scalars['Boolean']['output'];
   tableName: Scalars['String']['output'];
+};
+
+export type FieldConfigInput = {
+  communityRequired: Scalars['Boolean']['input'];
+  customField: Scalars['Boolean']['input'];
+  customFieldType?: InputMaybe<Scalars['String']['input']>;
+  fieldName: Scalars['String']['input'];
+  groupRequired: Scalars['Boolean']['input'];
+  schoolRequired: Scalars['Boolean']['input'];
+  soloRequired: Scalars['Boolean']['input'];
+  submissionRequired: Scalars['Boolean']['input'];
+  tableName: Scalars['String']['input'];
+};
+
+export type FieldConfigPayload = {
+  __typename: 'FieldConfigPayload';
+  fieldConfig?: Maybe<FieldConfig>;
+  userErrors: Array<UserError>;
 };
 
 export type Group = {
@@ -368,6 +389,9 @@ export type Mutation = {
   festivalClassCreate: FestivalClassPayload;
   festivalClassDelete: FestivalClassPayload;
   festivalClassUpdate: FestivalClassPayload;
+  fieldConfigCreate: FieldConfigPayload;
+  fieldConfigDelete: FieldConfigPayload;
+  fieldConfigUpdate: FieldConfigPayload;
   groupCreate: GroupPayload;
   groupDelete: GroupPayload;
   groupUpdate: GroupPayload;
@@ -516,6 +540,22 @@ export type MutationfestivalClassDeleteArgs = {
 export type MutationfestivalClassUpdateArgs = {
   festivalClassID: Scalars['Int']['input'];
   festivalClassInput: FestivalClassInput;
+};
+
+
+export type MutationfieldConfigCreateArgs = {
+  fieldConfigInput: FieldConfigInput;
+};
+
+
+export type MutationfieldConfigDeleteArgs = {
+  fieldConfigID: Scalars['Int']['input'];
+};
+
+
+export type MutationfieldConfigUpdateArgs = {
+  fieldConfigID: Scalars['Int']['input'];
+  fieldConfigInput: FieldConfigInput;
 };
 
 

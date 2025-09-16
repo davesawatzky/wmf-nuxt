@@ -222,6 +222,8 @@
         password: values.password,
         privateTeacher: values.privateTeacher,
         schoolTeacher: values.schoolTeacher,
+        isActive: false,
+        roles: ['user'],
       },
     })
   })
