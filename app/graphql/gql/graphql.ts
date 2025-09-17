@@ -1278,7 +1278,7 @@ export type RegisteredClassInput = {
   maxSelections?: InputMaybe<Scalars['Int']['input']>;
   minSelections?: InputMaybe<Scalars['Int']['input']>;
   numberOfSelections?: InputMaybe<Scalars['Int']['input']>;
-  price?: InputMaybe<Scalars['Float']['input']>;
+  price?: InputMaybe<Scalars['Decimal']['input']>;
   schoolGroupID?: InputMaybe<Scalars['Int']['input']>;
   subdiscipline?: InputMaybe<Scalars['String']['input']>;
 };
