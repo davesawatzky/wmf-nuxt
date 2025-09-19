@@ -16,8 +16,15 @@
     "story:build": "histoire build",
     "story:preview": "histoire preview",
     "codegen": "graphql-codegen --config codegen.ts",
-    "test": "vitest --run --environment happy-dom",
-    "test:watch": "vitest --environment happy-dom"
+    "test": "vitest run",
+    "test:watch": "vitest --watch --ui",
+    "test:unit": "vitest --watch --ui --project=unit",
+    "test:nuxt": "vitest --watch --ui --project=nuxt",
+    "test:coverage": "vitest --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "test:all": "pnpm test:unit && pnpm test:nuxt && pnpm test:e2e"
   },
   "dependencies": {
     "@casl/ability": "^6.7.3",
@@ -69,6 +76,7 @@
     "vue-tsc": "3.0.6",
     "vue3-easy-data-table": "^1.5.47",
     "vue3-json-editor": "^1.1.5",
+    "winston": "^3.17.0",
     "yup": "^1.7.0",
     "yup-password": "^0.4.0",
     "yup-phone-lite": "^2.0.1"
@@ -121,5 +129,5 @@
     "vite": "npm:rolldown-vite@latest",
     "sharp": "0.33.4"
   },
-  "packageManager": "pnpm@10.15.1"
+  "packageManager": "pnpm@10.17.0"
 }

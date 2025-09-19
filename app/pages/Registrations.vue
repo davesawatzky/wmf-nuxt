@@ -1,17 +1,5 @@
 <script lang="ts" setup>
   import { DateTime } from 'luxon'
-  import { useRegistration } from '~/stores/useRegistration'
-  import { useAppStore } from '~/stores/appStore'
-  import { usePerformers } from '~/stores/usePerformer'
-  import { useTeacher } from '~/stores/useTeacher'
-  import { useClasses } from '~/stores/useClasses'
-  import { useGroup } from '~/stores/useGroup'
-  import { useSchool } from '~/stores/useSchool'
-  import { useSchoolGroup } from '~/stores/useSchoolGroup'
-  import { useCommunity } from '~/stores/useCommunity'
-  import { useCommunityGroup } from '~/stores/useCommunityGroup'
-  import { useFieldConfig } from '~/stores/useFieldConfig'
-  import { useUser } from '~/stores/useUser'
   import type { Registration, RegistrationInput } from '~/graphql/gql/graphql'
   import {
     MyUserDocument,
@@ -55,7 +43,7 @@
   }
 
   definePageMeta({
-    middleware: ['auth'],
+    middleware: ['auth', 'user'],
   })
 
   onMounted(async () => {
@@ -104,9 +92,9 @@
 
   const registrations = computed(() => result.value?.registrations ?? [])
 
-  function openEditor(performerType: PerformerType): boolean {
-    return !!eval(`${performerType.toLowerCase()}Open`)
-  }
+  // function openEditor(performerType: PerformerType): boolean {
+  //   return !!eval(`${performerType.toLowerCase()}Open`)
+  // }
 
   /**
    * Load and Edit Existing Registration
@@ -269,7 +257,7 @@
   <div v-auto-animate>
     <h1 class="mt-3 mb-2">Winnipeg Music Festival</h1>
     <h2>Registration Forms</h2>
-    <br >
+    <br />
     <!-- <p class="">
       ** A late fee of
       <strong>${{ Number(lateDatesAndCosts.SOLO.amount).toFixed(2) }}</strong>
@@ -411,7 +399,7 @@
             </tbody>
           </table>
         </div>
-        <br >
+        <br />
         <div class="pb-6">
           <h3 class="pb-3">Registering for the Winnipeg Music Festival</h3>
           <ul class="list-disc pl-5">

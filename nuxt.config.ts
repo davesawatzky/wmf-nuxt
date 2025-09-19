@@ -1,6 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { defineNuxtConfig } from 'nuxt/config'
 import { WMFPreset } from './app/utils/wmfpreset'
 import tailwindcss from '@tailwindcss/vite'
 

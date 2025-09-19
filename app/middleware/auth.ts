@@ -1,7 +1,7 @@
 import type { RouteLocationNormalized } from 'vue-router'
 
 type User = {
-  id: string
+  id: number
   email: string
   isActive: boolean
   roles: string[]

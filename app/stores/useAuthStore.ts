@@ -7,7 +7,7 @@ import {
 } from '@casl/ability'
 
 export interface AuthUser {
-  readonly id: string
+  readonly id: number
   readonly email: string
   readonly roles: readonly string[]
   readonly permissions: readonly string[]
@@ -37,6 +37,7 @@ export const useAuthStore = defineStore('auth', () => {
     '/admin/users': ['admin'],
     '/admin/settings': ['admin'],
     '/registrations': ['admin', 'manager', 'user'],
+    '/form': ['admin', 'manager', 'user'],
     '/profile': ['admin', 'manager', 'user'],
   } as const
 
@@ -53,7 +54,7 @@ export const useAuthStore = defineStore('auth', () => {
 
     // Ensure required fields exist with defaults
     const safeUserData = {
-      id: userData.id || '',
+      id: userData.id,
       email: userData.email || '',
       roles: Array.isArray(userData.roles) ? userData.roles : [],
       permissions: Array.isArray(userData.permissions)
@@ -87,7 +88,7 @@ export const useAuthStore = defineStore('auth', () => {
   function buildAbility(
     roles: readonly string[],
     permissions: readonly string[],
-    userId: string
+    userId: number
   ) {
     const { can, build } = new AbilityBuilder(createMongoAbility)
 
@@ -99,10 +100,14 @@ export const useAuthStore = defineStore('auth', () => {
       can('update', 'User')
       can('read', 'Registration')
       can('update', 'Registration')
+      can('read', 'Form')
+      can('update', 'Form')
+      can('read', 'Profile')
+      can('update', 'Profile')
       can('read', 'Report')
     } else if (roles.includes('user')) {
-      can('read', 'Registration', { userId: userId })
-      can('update', 'Registration', { userId: userId })
+      can('manage', 'Registration', { userId: userId })
+      can('manage', 'Form', { userId: userId })
       can('read', 'Profile', { id: userId })
       can('update', 'Profile', { id: userId })
     }
