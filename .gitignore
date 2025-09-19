@@ -21,3 +21,12 @@ apollo.config.cjs
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+# Test coverage reports
+coverage
+.nyc_output/
+*.lcov
+coverage.json
+
+# Vitest coverage outputs  
+tests/coverage/
