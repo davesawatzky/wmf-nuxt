@@ -27,7 +27,6 @@
     Selection,
     Subdiscipline,
   } from '~/graphql/gql/graphql'
-  import { count } from 'console'
 
   const props = defineProps<{
     modelValue: RegisteredClass

@@ -422,7 +422,7 @@
               Don't have an account?
               <BaseButton
                 v-auto-animate
-                class="text-sky-700"
+                class="text-sky-700 cursor-pointer"
                 name="isLogin"
                 @click="isRegister = true">
                 Sign up here.
@@ -440,7 +440,7 @@
           <div class="text-center">
             <BaseButton
               v-auto-animate
-              class="mt-8 text-sky-700"
+              class="mt-8 text-sky-700 cursor-pointer"
               @click="isRegister = false">
               Back to Sign In
             </BaseButton>

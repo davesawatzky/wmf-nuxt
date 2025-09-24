@@ -1,6 +1,4 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-import { resolve } from 'node:path'
-import { fileURLToPath } from 'node:url'
 import { defineNuxtConfig } from 'nuxt/config'
 import { WMFPreset } from './app/utils/wmfpreset'
 import tailwindcss from '@tailwindcss/vite'
@@ -39,8 +37,8 @@ export default defineNuxtConfig({
   debug: false,
 
   alias: {
-    '@': resolve(__dirname, './'),
-    images: fileURLToPath(new URL('./public/images', import.meta.url)),
+    '@': './',
+    images: './public/images',
   },
 
   apollo: {
@@ -167,9 +165,6 @@ export default defineNuxtConfig({
 
   vite: {
     plugins: [tailwindcss()],
-    build: {
-      target: ['es2015', 'chrome87', 'safari11', 'ios12'],
-    },
     optimizeDeps: {
       include: [
         // Include all PrimeVue packages with patterns

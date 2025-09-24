@@ -9,17 +9,14 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     PVAutoComplete: typeof import('primevue/autocomplete')['default']
-    PVAvatar: typeof import('primevue/avatar')['default']
     PVBadge: typeof import('primevue/badge')['default']
     PVButton: typeof import('primevue/button')['default']
-    PVCalendar: typeof import('primevue/calendar')['default']
     PVCard: typeof import('primevue/card')['default']
     PVColumn: typeof import('primevue/column')['default']
     PVDataTable: typeof import('primevue/datatable')['default']
     PVDatePicker: typeof import('primevue/datepicker')['default']
     PVDialog: typeof import('primevue/dialog')['default']
     PVDrawer: typeof import('primevue/drawer')['default']
-    PVEditor: typeof import('primevue/editor')['default']
     PVIconField: typeof import('primevue/iconfield')['default']
     PVInputIcon: typeof import('primevue/inputicon')['default']
     PVInputMask: typeof import('primevue/inputmask')['default']

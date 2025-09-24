@@ -1,17 +1,18 @@
 import { defineConfig, devices } from '@playwright/test'
+// import { fileURLToPath } from 'node:url'
+import type { ConfigOptions } from '@nuxt/test-utils/playwright'
 
 /**
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
  */
-// import dotenv from 'dotenv';
-// import path from 'path';
-// dotenv.config({ path: path.resolve(__dirname, '.env') });
+import dotenv from 'dotenv'
+dotenv.config({ path: '.env.test' })
 
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
-export default defineConfig({
+export default defineConfig<ConfigOptions>({
   testDir: './tests/e2e',
   /* Run tests in files in parallel */
   fullyParallel: true,
@@ -24,9 +25,13 @@ export default defineConfig({
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: 'html',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
+
+  // Increase timeout for Nuxt setup
+  timeout: 60000, // 60 seconds instead of default 30
+
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: 'http://localhost:3001',
+    baseURL: process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:3001',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
@@ -35,6 +40,10 @@ export default defineConfig({
 
   /* Configure projects for major browsers */
   projects: [
+    // {
+    //   name: 'Setup',
+    //   testMatch: /global\.setup\.ts/,
+    // },
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
@@ -73,9 +82,13 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'pnpm dev',
-    url: 'http://localhost:3001',
+    command: 'pnpm run dev',
+    url: process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:3001',
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,
+    env: {
+      NODE_ENV: 'test',
+      NUXT_TELEMETRY_DISABLED: '1',
+    },
   },
 })

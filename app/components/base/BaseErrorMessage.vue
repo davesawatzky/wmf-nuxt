@@ -3,8 +3,7 @@
 <template>
   <div
     aria-live="assertive"
-    class="errorMessage"
-  >
+    class="errorMessage">
     <slot />
   </div>
 </template>

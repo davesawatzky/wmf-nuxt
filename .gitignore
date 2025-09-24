@@ -17,10 +17,11 @@ dist
 apollo.config.cjs
 
 # Playwright
-/test-results/
-/playwright-report/
-/blob-report/
-/playwright/.cache/
+test-results
+playwright
+playwright-report
+blob-report
+
 
 # Test coverage reports
 coverage
