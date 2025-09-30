@@ -88,6 +88,9 @@ pnpm codegen               # Generates types from schema.gql
 # Testing
 pnpm test                  # Vitest with happy-dom
 pnpm test:watch           # Watch mode
+pnpm test:e2e             # Playwright end-to-end tests
+pnpm test:e2e:headed      # Playwright with browser UI
+pnpm test:e2e:debug       # Playwright debug mode
 
 # Linting (strict TypeScript + Vue rules)
 pnpm lint                 # ESLint with custom rules
@@ -159,6 +162,119 @@ app/
 - **Happy-dom** environment for component testing
 - **Store tests** for business logic validation
 - Mock GraphQL operations for isolated testing
+
+## End-to-End Testing with Playwright
+
+### Testing Architecture
+
+The project uses **Playwright** for comprehensive E2E testing with a structured approach:
+
+- **Multi-browser testing** (Chromium, Firefox, WebKit, Mobile Chrome)
+- **Worker-scoped authentication** for parallel test execution
+- **Page Object Model** pattern for maintainable test code
+- **Authentication fixtures** for isolated user sessions
+
+### Test Structure
+
+```
+tests/
+├── e2e/                    # Playwright E2E tests
+│   └── testPages.spec.ts   # Main test suite for user flows
+├── pageObjects/            # Page Object Model implementation
+│   ├── authPage.ts         # Authentication page actions
+│   ├── helperBase.ts       # Base class with common utilities
+│   └── pageManager.ts      # Centralized page object management
+├── nuxt/                   # Nuxt-integrated tests (Vitest)
+│   ├── components/         # Component testing with mount()
+│   └── stores/             # Store testing with Pinia
+├── unit/                   # Pure unit tests
+│   └── utils/              # Utility function tests
+├── setup.ts               # Comprehensive Nuxt test setup
+├── setup-unit.ts          # Pure unit test setup
+└── setup-simple.ts       # Minimal test setup
+```
+
+### Playwright Configuration
+
+```
+playwright/
+├── .auth/                  # Pre-created authentication files
+│   ├── user_1.json         # Test user credentials
+│   ├── user_2.json         # Additional test accounts
+│   └── user_3.json         # For parallel worker isolation
+├── fixtures.ts            # Authentication fixtures and setup
+└── report/                # Test execution reports
+```
+
+### Testing Patterns
+
+#### Authentication Testing
+
+- **Worker-scoped fixtures** ensure each parallel test has isolated auth state
+- **Pre-created user accounts** in `.auth/*.json` files prevent test interference
+- **httpOnly cookie authentication** matches production auth flow
+
+#### Form Validation Testing
+
+- **VeeValidate integration** requires proper field interaction patterns
+- **Blur events** trigger field-level validation
+- **Form submission** triggers comprehensive validation
+- **Async validation timing** handled with appropriate timeouts
+
+#### Page Object Model
+
+```typescript
+// Example usage pattern
+const authPage = new AuthPage(page)
+await authPage.shouldCheckForShortPassword('test@example.com', 'init', 'short')
+```
+
+### Key Testing Considerations
+
+#### Backend Dependency
+
+- Tests require **wmf-nest backend** running on `localhost:3000`
+- GraphQL endpoints must be available for authentication flows
+- **Network error simulation** via route blocking for resilience testing
+
+#### VeeValidate Integration
+
+- Field validation triggered by **blur events** or **form submission**
+- **Reactive validation timing** requires proper await strategies
+- **Email context** needed for password validation in multi-field forms
+
+#### Authentication Flows
+
+- **Route protection** tested via middleware redirection
+- **Role-based access** validated through auth store integration
+- **Session persistence** using httpOnly cookies
+
+### Test Execution
+
+```bash
+# Run all E2E tests
+pnpm test:e2e
+
+# Run with browser UI for debugging
+pnpm test:e2e:headed
+
+# Debug specific test with breakpoints
+pnpm test:e2e:debug
+
+# Run specific test file
+npx playwright test tests/e2e/testPages.spec.ts
+
+# Run tests in specific browser
+npx playwright test --project=chromium
+```
+
+### Common Testing Scenarios
+
+1. **Authentication flows** - login, validation, redirection
+2. **Form validation** - VeeValidate error display and timing
+3. **Route protection** - middleware-based access control
+4. **User registration** - multi-step form completion
+5. **Error handling** - network failures and user feedback
 
 ## Security Notes
 
