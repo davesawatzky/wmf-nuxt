@@ -86,6 +86,7 @@
   },
   "devDependencies": {
     "@apollo/client-devtools-vscode": "^4.21.5",
+    "@faker-js/faker": "^10.0.0",
     "@graphql-codegen/cli": "5.0.7",
     "@graphql-codegen/client-preset": "4.8.3",
     "@graphql-eslint/eslint-plugin": "^4.4.0",

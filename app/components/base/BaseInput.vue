@@ -56,8 +56,8 @@
 
 <template>
   <div>
-    <div class="flex items-center ml-2">
-      <div class="flex-none">
+    <div class="flex flex-wrap items-center ml-2">
+      <div class="">
         <label
           v-if="label"
           class="baseLabel"

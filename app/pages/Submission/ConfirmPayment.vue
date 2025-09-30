@@ -70,7 +70,9 @@
 
   async function confirmPayment() {
     submitDisabled.value = true
-    registrationStore.registration.confirmation = WMFNumber(registrationStore.registrationId)
+    registrationStore.registration.confirmation = WMFNumber(
+      registrationStore.registrationId
+    )
     const PaymentIntent: any = await $fetch(
       `${config.public.serverAddress}/payment/create-payment-intent`,
       {
@@ -104,140 +106,143 @@
     }
   }
 
-async function cancelPayment() {
+  async function cancelPayment() {
     toast.info('Payment cancelled')
     await navigateTo('/registrations')
   }
 </script>
 
 <template>
-  <div class="my-6 sm:mt-0">
-    <div
-      class="p-4 mx-auto max-w-[400px] border border-sky-700 rounded-lg bg-white">
-      <h4 class="mb-6">Final Amount</h4>
-      <table class="table-fixed w-full">
-        <tbody>
-          <tr>
-            <td class="">Subtotal</td>
-            <td class="text-right">
-              ${{ Number(paymentDetails.amount).toFixed(2) }}
-            </td>
-          </tr>
-          <tr>
-            <td class="">Processing Fee</td>
-            <td class="text-right">
-              ${{ Number(paymentDetails.stripeFee).toFixed(2) }}
-            </td>
-          </tr>
-          <tr class="font-bold border-t border-sky-700">
-            <td class="">Total</td>
-            <td class="text-right">
-              ${{ Number(paymentDetails.totalAmount).toFixed(2) }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
+  <div>
+    <div class="my-6 sm:mt-0">
+      <div
+        class="p-4 mx-auto max-w-[400px] border border-sky-700 rounded-lg bg-white">
+        <h4 class="mb-6">Final Amount</h4>
+        <table class="table-fixed w-full">
+          <tbody>
+            <tr>
+              <td class="">Subtotal</td>
+              <td class="text-right">
+                ${{ Number(paymentDetails.amount).toFixed(2) }}
+              </td>
+            </tr>
+            <tr>
+              <td class="">Processing Fee</td>
+              <td class="text-right">
+                ${{ Number(paymentDetails.stripeFee).toFixed(2) }}
+              </td>
+            </tr>
+            <tr class="font-bold border-t border-sky-700">
+              <td class="">Total</td>
+              <td class="text-right">
+                ${{ Number(paymentDetails.totalAmount).toFixed(2) }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
-  </div>
-  <div class="my-6 sm:mt-0">
-    <div
-      class="p-4 mx-auto max-w-[400px] border border-sky-700 rounded-lg bg-white">
-      <h4 class="mb-6">Billing Details</h4>
-      <table class="table-fixed w-full">
-        <tbody>
-          <tr
-            v-if="
-              paymentDetails.confirmationToken.payment_method_preview
-                .billing_details.name
-            ">
-            <td>Name</td>
-            <td class="text-right">
-              {{
+    <div class="my-6 sm:mt-0">
+      <div
+        class="p-4 mx-auto max-w-[400px] border border-sky-700 rounded-lg bg-white">
+        <h4 class="mb-6">Billing Details</h4>
+        <table class="table-fixed w-full">
+          <tbody>
+            <tr
+              v-if="
                 paymentDetails.confirmationToken.payment_method_preview
                   .billing_details.name
-              }}
-            </td>
-          </tr>
-          <tr
-            v-if="
-              paymentDetails.confirmationToken.payment_method_preview.card
-                .display_brand
-            ">
-            <td>Card Type</td>
-            <td class="text-right">
-              {{
-                paymentDetails.confirmationToken.payment_method_preview.card.display_brand.toUpperCase()
-              }}
-            </td>
-          </tr>
-          <tr
-            v-if="
-              paymentDetails.confirmationToken.payment_method_preview.card
-                .country
-            ">
-            <td>Issuing Country</td>
-            <td class="text-right">
-              {{
+              ">
+              <td>Name</td>
+              <td class="text-right">
+                {{
+                  paymentDetails.confirmationToken.payment_method_preview
+                    .billing_details.name
+                }}
+              </td>
+            </tr>
+            <tr
+              v-if="
+                paymentDetails.confirmationToken.payment_method_preview.card
+                  .display_brand
+              ">
+              <td>Card Type</td>
+              <td class="text-right">
+                {{
+                  paymentDetails.confirmationToken.payment_method_preview.card.display_brand.toUpperCase()
+                }}
+              </td>
+            </tr>
+            <tr
+              v-if="
                 paymentDetails.confirmationToken.payment_method_preview.card
                   .country
-              }}
-            </td>
-          </tr>
-          <tr
-            v-if="
-              paymentDetails.confirmationToken.payment_method_preview.card
-                .exp_month
-            ">
-            <td>Exp. Month</td>
-            <td class="text-right">
-              {{
+              ">
+              <td>Issuing Country</td>
+              <td class="text-right">
+                {{
+                  paymentDetails.confirmationToken.payment_method_preview.card
+                    .country
+                }}
+              </td>
+            </tr>
+            <tr
+              v-if="
                 paymentDetails.confirmationToken.payment_method_preview.card
                   .exp_month
-              }}
-            </td>
-          </tr>
-          <tr
-            v-if="
-              paymentDetails.confirmationToken.payment_method_preview.card
-                .exp_year
-            ">
-            <td>Exp. Year</td>
-            <td class="text-right">
-              {{
+              ">
+              <td>Exp. Month</td>
+              <td class="text-right">
+                {{
+                  paymentDetails.confirmationToken.payment_method_preview.card
+                    .exp_month
+                }}
+              </td>
+            </tr>
+            <tr
+              v-if="
                 paymentDetails.confirmationToken.payment_method_preview.card
                   .exp_year
-              }}
-            </td>
-          </tr>
-          <tr
-            v-if="
-              paymentDetails.confirmationToken.payment_method_preview.card.last4
-            ">
-            <td>Last 4 Digits</td>
-            <td class="text-right">
-              {{
+              ">
+              <td>Exp. Year</td>
+              <td class="text-right">
+                {{
+                  paymentDetails.confirmationToken.payment_method_preview.card
+                    .exp_year
+                }}
+              </td>
+            </tr>
+            <tr
+              v-if="
                 paymentDetails.confirmationToken.payment_method_preview.card
                   .last4
-              }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
+              ">
+              <td>Last 4 Digits</td>
+              <td class="text-right">
+                {{
+                  paymentDetails.confirmationToken.payment_method_preview.card
+                    .last4
+                }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
-  </div>
-  <div class="text-center">
-    <BaseButton
-      class="btn btn-red"
-      :disabled="submitDisabled"
-      @click="cancelPayment()">
-      Cancel
-    </BaseButton>
-    <BaseButton
-      class="btn btn-blue"
-      :disabled="submitDisabled"
-      @click="confirmPayment()">
-      Confirm
-    </BaseButton>
+    <div class="text-center">
+      <BaseButton
+        class="btn btn-red"
+        :disabled="submitDisabled"
+        @click="cancelPayment()">
+        Cancel
+      </BaseButton>
+      <BaseButton
+        class="btn btn-blue"
+        :disabled="submitDisabled"
+        @click="confirmPayment()">
+        Confirm
+      </BaseButton>
+    </div>
   </div>
 </template>
 

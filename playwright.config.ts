@@ -1,6 +1,6 @@
 import { defineConfig, devices } from '@playwright/test'
 // import { fileURLToPath } from 'node:url'
-import type { ConfigOptions } from '@nuxt/test-utils/playwright'
+// import type { ConfigOptions } from '@nuxt/test-utils/playwright'
 
 /**
  * Read environment variables from file.
@@ -12,7 +12,7 @@ dotenv.config({ path: '.env.test' })
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
-export default defineConfig<ConfigOptions>({
+export default defineConfig({
   testDir: './tests/e2e',
   /* Run tests in files in parallel */
   fullyParallel: true,

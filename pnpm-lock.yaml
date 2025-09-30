@@ -180,6 +180,9 @@ importers:
       '@apollo/client-devtools-vscode':
         specifier: ^4.21.5
         version: 4.21.5(@apollo/client@3.14.0(graphql-ws@6.0.6(crossws@0.3.5)(graphql@16.11.0)(ws@8.18.3))(graphql@16.11.0)(subscriptions-transport-ws@0.9.19(graphql@16.11.0)))(graphql@16.11.0)(rxjs@7.8.2)
+      '@faker-js/faker':
+        specifier: ^10.0.0
+        version: 10.0.0
       '@graphql-codegen/cli':
         specifier: 5.0.7
         version: 5.0.7(@parcel/watcher@2.5.1)(@types/node@24.5.2)(crossws@0.3.5)(enquirer@2.4.1)(graphql-sock@1.0.1(graphql@16.11.0))(graphql@16.11.0)(typescript@5.9.2)
@@ -862,6 +865,10 @@ packages:
   '@eslint/plugin-kit@0.3.5':
     resolution: {integrity: sha512-Z5kJ+wU3oA7MMIqVR9tyZRtjYPr4OC004Q4Rw7pgOKUOKkJfZ3O24nz3WYfGRpMDNmcOi3TwQOmgm7B7Tpii0w==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@faker-js/faker@10.0.0':
+    resolution: {integrity: sha512-UollFEUkVXutsaP+Vndjxar40Gs5JL2HeLcl8xO1QAjJgOdhc3OmBFWyEylS+RddWaaBiAzH+5/17PLQJwDiLw==}
+    engines: {node: ^20.19.0 || ^22.13.0 || ^23.5.0 || >=24.0.0, npm: '>=10'}
 
   '@fastify/accept-negotiator@2.0.1':
     resolution: {integrity: sha512-/c/TW2bO/v9JeEgoD/g1G5GxGeCF1Hafdf79WPmUlgYiBXummY0oX3VVq4yFkKKVBKDNlaDUYoab7g38RpPqCQ==}
@@ -8411,6 +8418,8 @@ snapshots:
     dependencies:
       '@eslint/core': 0.15.2
       levn: 0.4.1
+
+  '@faker-js/faker@10.0.0': {}
 
   '@fastify/accept-negotiator@2.0.1':
     optional: true

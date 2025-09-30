@@ -86,8 +86,10 @@ export const useUser = defineStore(
       { fetchPolicy: 'network-only' }
     )
     async function loadHasPassword(id: number) {
-      ;(await hasPasswordLoad(null, { checkIfPasswordExistsId: id })) ||
+      const result =
+        (await hasPasswordLoad(null, { checkIfPasswordExistsId: id })) ||
         refetchHasPassword({ checkIfPasswordExistsId: id })
+      return result
     }
     const checkPassword = computed(() => resultHasPassword.value.pass ?? null)
     onHasPasswordError((error) => {

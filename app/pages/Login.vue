@@ -76,8 +76,30 @@
             then: (schema) => schema.required('Please select an instrument'),
             otherwise: (schema) => schema.default('').notRequired(),
           }),
-        email: yup.string().trim().email().required().label('Email'),
-        password: yup.string().trim().password().required().label('Password'),
+        email: yup
+          .string()
+          .trim()
+          .email()
+          .required()
+          .label('Email')
+          .when('isRegister', {
+            is: true,
+            then: (schema) =>
+              schema.required('Please enter your email address'),
+          }),
+        password: yup
+          .string()
+          .trim()
+          .password()
+          .required()
+          .label('Password')
+          .when('isRegister', {
+            is: true,
+            then: (schema) =>
+              schema.required(
+                'Please enter a password (min. 8 characters with at least one number, uppercase, and special character)'
+              ),
+          }),
         password2: yup
           .string()
           .trim()
@@ -87,7 +109,7 @@
           .when('isRegister', {
             is: true,
             then: (schema) =>
-              schema.required('Please enter your password again'),
+              schema.required('Please re-enter your password again'),
             otherwise: (schema) => schema.notRequired(),
           }),
         privateTeacher: yup.boolean().default(false),
@@ -388,7 +410,11 @@
           :autocomplete="isRegister ? 'off' : 'on'"
           name="password"
           type="password"
-          label="Password"
+          :label="
+            isRegister
+              ? 'Password (min. 8 characters with at least one number, uppercase, and special character)'
+              : 'Password'
+          "
           @keyup.enter="!isRegister ? signin() : signup()" />
         <BaseInput
           v-if="isRegister"
