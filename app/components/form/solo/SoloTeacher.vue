@@ -11,7 +11,7 @@
     <h2 class="pb-4">Teacher Information</h2>
     <FormTeacherInfo
       v-model="teacherStore.teacher"
-      :teacher-id="teacherStore.teacher.id"
+      :teacher-id="teacherStore.teacherId"
       teacher />
   </div>
 </template>

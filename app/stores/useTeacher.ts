@@ -103,6 +103,8 @@ export const useTeacher = defineStore(
       teacherErrors.value = count
     }
 
+    const teacherId = computed(() => teacher.value.id)
+
     /**
      * Creates a new Teacher record on the db and in the store. One
      * of the following params must be true.
@@ -348,6 +350,7 @@ export const useTeacher = defineStore(
 
     return {
       teacher,
+      teacherId,
       allTeachers,
       $resetTeacher,
       $resetAllTeachers,

@@ -124,6 +124,8 @@
 
   const currentYear = new Date().getFullYear()
 
+  // Does not run when simply changing a teacher from the dropdown
+  // only when changing fields in the unlisted teacher form
   async function fieldStatus(stat: string, fieldName: string) {
     if (!teacherStore.emailAlreadyExists) {
       if (!!props.teacherId && fieldName !== 'id') {
@@ -219,8 +221,11 @@
           count++
         }
       }
+      console.log('Status ID: ', status.id)
     } else if (status.id !== StatusEnum.saved) {
       count++
+    } else if (status.id === StatusEnum.saved) {
+      count = 0
     }
     teacherStore.teacherErrors = count
   })
@@ -282,13 +287,53 @@
 
         // Now we load the existing teacher record from the db.
         // and update the registration
+        //TODO: Props.teacherId can be undefined here?
         registrationStore.registration.teacherID = newTeacher?.id
         await teacherStore.loadTeacher(newTeacher?.id, undefined)
         await registrationStore.updateRegistration('teacherID')
-        //TODO: status.id = StatusEnum.saved
         teacherStore.emailAlreadyExists = false
+
+        // Update statuses for pre-defined teacher
+        // This ensures teacherErrors is reset to 0
+        await nextTick()
+        status.id = StatusEnum.saved
+        status.firstName = teacherStore.teacher.firstName
+          ? StatusEnum.saved
+          : StatusEnum.null
+        status.lastName = teacherStore.teacher.lastName
+          ? StatusEnum.saved
+          : StatusEnum.null
+        status.email = teacherStore.teacher.email
+          ? StatusEnum.saved
+          : StatusEnum.null
+        status.phone = teacherStore.teacher.phone
+          ? StatusEnum.saved
+          : StatusEnum.null
+        if (teacherStore.teacher.instrument) {
+          status.instrument = StatusEnum.saved
+        }
+
+        // Trigger validation to ensure form state is updated
+        validate()
       }
     }
+  )
+
+  watch(
+    () => teacherStore.teacher.id,
+    (newTeacherId, oldTeacherId) => {
+      if (newTeacherId !== oldTeacherId && newTeacherId !== props.teacherId) {
+        console.log('Teacher ID changed in store:', newTeacherId)
+
+        // Update status to reflect the new teacher
+        if (newTeacherId) {
+          status.id = StatusEnum.saved
+        } else {
+          status.id = StatusEnum.null
+        }
+      }
+    },
+    { immediate: true }
   )
 
   async function checkForDuplicate() {
@@ -324,17 +369,15 @@
             .catch((error) => {
               console.error(error)
             })
-          teacherStore.chosenTeacher = <FilteredTeacher>(
-            teacherStore.allTeachers.find(
-              (teacher) => teacher.id === teacherStore.duplicateCheck?.id
-            )
-          )
+          teacherStore.chosenTeacher = teacherStore.allTeachers.find(
+            (teacher) => teacher.id === teacherStore.duplicateCheck?.id
+          ) as FilteredTeacher
         } else {
           toast.error('Teacher must be listed as a private or school teacher.')
           teacherStore.$resetTeacher()
-          teacherStore.chosenTeacher = <FilteredTeacher>(
-            teacherStore.allTeachers.find((teacher) => teacher.id === 2)
-          )
+          teacherStore.chosenTeacher = teacherStore.allTeachers.find(
+            (teacher) => teacher.id === 2
+          ) as FilteredTeacher
         }
       }
     }
