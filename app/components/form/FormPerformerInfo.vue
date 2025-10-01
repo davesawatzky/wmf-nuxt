@@ -36,7 +36,7 @@
     useQuery(InstrumentsDocument)
   const instruments = computed(() => instrumentQuery.value?.instruments ?? [])
   instrumentsError((error) => {
-    console.log(error)
+    console.error(error)
   })
 
   const status = reactive<Status>({

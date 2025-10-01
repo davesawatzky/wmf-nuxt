@@ -129,7 +129,7 @@
     useQuery(InstrumentsDocument)
   const instruments = computed(() => instrumentQuery.value?.instruments ?? [])
   instrumentsError((error) => {
-    console.log(error)
+    console.error(error)
   })
 
   /**
@@ -150,7 +150,7 @@
     return disciplineResult.value ?? <DisciplinesByTypeQuery>{}
   })
   onErrorDisciplines((error) => {
-    console.log(error)
+    console.error(error)
   })
 
   /**
@@ -273,7 +273,7 @@
     // { fetchPolicy: 'network-only' }
   )
   errorSubdisciplines((error) => {
-    console.log(error)
+    console.error(error)
   })
   const subdisciplines = computed(() => {
     return subdisc.value?.subdisciplines ?? []
@@ -302,7 +302,7 @@
     })
     // { fetchPolicy: 'network-only' }
   )
-  errorLevel((error) => console.log(error))
+  errorLevel((error) => console.error(error))
   const levels = computed(() => gradeLevels.value?.levels ?? [])
   // chosenGradeLevel is the grade/level chosen from the template
   // through the vmodel on selectedClasses.level
@@ -329,7 +329,7 @@
     })
     // { fetchPolicy: 'network-only' }
   )
-  errorCategories((error) => console.log(error))
+  errorCategories((error) => console.error(error))
   const categories = computed(() => cat.value?.categories ?? [])
   // chosenCategory is the category chosen from the template
   // through the vmodel on selectedClasses.category
@@ -535,7 +535,7 @@
             ]!.id
           await classesStore
             .deleteSelection(props.classId, selectionId)
-            .catch((error) => console.log(error))
+            .catch((error) => console.error(error))
           oldNumber -= 1
         }
       }

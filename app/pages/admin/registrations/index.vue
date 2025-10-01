@@ -4,7 +4,7 @@
 
   definePageMeta({
     layout: 'admin',
-    middleware: 'auth',
+    middleware: 'admin',
   })
 
   const selectedRegistration = ref()

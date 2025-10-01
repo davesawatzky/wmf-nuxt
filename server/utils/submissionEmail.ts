@@ -490,7 +490,7 @@ export async function renderSubmissionEmail( payload: any ) {
               selection and composer will be sent to the teachers for
               verification. Festival programs including dates, times and
               locations will be available for purchase for $10 with an
-              anticipated availability February 1, 2025. Participants and
+              anticipated availability February 1, 2026. Participants and
               teachers are to notify the Festival office of any change of
               personal information following submission of entry form.
               Participants who wish to withdraw must notify the Festival

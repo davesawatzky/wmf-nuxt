@@ -30,7 +30,7 @@
     await navigateTo('/login')
   })
   onError(async (error) => {
-    console.log(error)
+    console.error(error)
     await navigateTo('/login')
   })
 

@@ -31,7 +31,6 @@ export class AuthPage extends HelperBase {
    */
   async shouldRedirectToLoginWhenNotAuthenticated() {
     await this.page.goto('/form')
-    await this.page.getByText('Clear Errors').click()
     await expect(this.page).toHaveURL(/.*login/)
   }
 

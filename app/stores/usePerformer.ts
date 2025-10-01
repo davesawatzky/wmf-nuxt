@@ -132,7 +132,7 @@ export const usePerformers = defineStore(
       }
     })
     onPerformerCreateError((error) => {
-      console.log(error)
+      console.error(error)
     })
 
     /**
@@ -199,7 +199,7 @@ export const usePerformers = defineStore(
       }
     }
     onPerformerUpdateError((error) => {
-      console.log(error)
+      console.error(error)
     })
 
     /**
@@ -232,7 +232,7 @@ export const usePerformers = defineStore(
       performerErrors.value.splice(performerIndex, 1)
     }
     onPerformerDeleteError((error) => {
-      console.log(error)
+      console.error(error)
     })
 
     return {

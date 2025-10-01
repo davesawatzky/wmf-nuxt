@@ -56,12 +56,12 @@ export const useUser = defineStore(
         })
         return 'complete'
       } catch (error) {
-        console.log(error)
+        console.error(error)
         return 'error'
       }
     }
     onUserUpdateError((error) => {
-      console.log(error)
+      console.error(error)
     })
 
     /**
@@ -93,7 +93,7 @@ export const useUser = defineStore(
     }
     const checkPassword = computed(() => resultHasPassword.value.pass ?? null)
     onHasPasswordError((error) => {
-      console.log(error)
+      console.error(error)
     })
 
     return {

@@ -9,6 +9,7 @@
 
   definePageMeta({
     layout: 'admin',
+    middleware: 'admin',
   })
 
   const selectedTeacher = ref()
@@ -266,7 +267,7 @@
                   </PVInputIcon>
                   <PVInputText
                     v-model="filters['global'].value"
-                    placeholder="Keyword Search"/>
+                    placeholder="Keyword Search" />
                 </PVIconField>
               </div>
             </template>
@@ -285,7 +286,7 @@
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by First Name"
-                  @input="filterCallback()"/>
+                  @input="filterCallback()" />
               </template>
             </PVColumn>
             <PVColumn header="Edit">
@@ -308,7 +309,7 @@
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by First Name"
-                  @input="filterCallback()"/>
+                  @input="filterCallback()" />
               </template>
             </PVColumn>
             <PVColumn
@@ -321,7 +322,7 @@
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by Last Name"
-                  @input="filterCallback()"/>
+                  @input="filterCallback()" />
               </template>
             </PVColumn>
             <PVColumn
@@ -334,7 +335,7 @@
                 <PVInputNumber
                   v-model="filterModel.value"
                   placeholder="Search by Address"
-                  @input="filterCallback()"/>
+                  @input="filterCallback()" />
               </template>
             </PVColumn>
             <PVColumn
@@ -347,7 +348,7 @@
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by City"
-                  @input="filterCallback()"/>
+                  @input="filterCallback()" />
               </template>
             </PVColumn>
             <PVColumn
@@ -360,7 +361,7 @@
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by Prov"
-                  @input="filterCallback()"/>
+                  @input="filterCallback()" />
               </template>
             </PVColumn>
             <PVColumn
@@ -373,7 +374,7 @@
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by Postal Code"
-                  @input="filterCallback()"/>
+                  @input="filterCallback()" />
               </template>
             </PVColumn>
             <PVColumn
@@ -386,7 +387,7 @@
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by Email"
-                  @input="filterCallback()"/>
+                  @input="filterCallback()" />
               </template>
             </PVColumn>
             <PVColumn
@@ -400,7 +401,7 @@
                   v-model="filterModel.value"
                   placeholder="(999) 999-9999"
                   mask="(999) 999-9999"
-                  @input="filterCallback()"/>
+                  @input="filterCallback()" />
               </template>
             </PVColumn>
             <template #expansion="slotProps: { data: Teacher }">

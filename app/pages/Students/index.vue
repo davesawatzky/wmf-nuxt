@@ -54,6 +54,10 @@
     fieldConfigStore.$reset()
   })
 
+  definePageMeta({
+    middleware: ['user'], // Apply only to user pages
+  })
+
   /**
    * Load list of all student registrations for a teacher
    */
@@ -64,7 +68,7 @@
   } = useQuery(StudentRegistrationsDocument, null, () => ({
     fetchPolicy: 'no-cache',
   }))
-  onError((error) => console.log(error))
+  onError((error) => console.error(error))
 
   const registrations = computed(
     () => result.value?.myStudents.registrations ?? []

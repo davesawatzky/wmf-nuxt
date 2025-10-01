@@ -79,7 +79,7 @@ export const useSchool = defineStore(
       }
     })
     onSchoolCreateError((error) => {
-      console.log(error)
+      console.error(error)
     })
 
     /**
@@ -105,7 +105,7 @@ export const useSchool = defineStore(
       }
     })
     onLoadSchoolError((error) => {
-      console.log(error)
+      console.error(error)
     })
 
     /**
@@ -135,12 +135,12 @@ export const useSchool = defineStore(
         })
         return 'complete'
       } catch (error) {
-        console.log(error)
+        console.error(error)
         return 'error'
       }
     }
     onSchoolUpdateError((error) => {
-      console.log(error)
+      console.error(error)
     })
 
     /**
@@ -160,7 +160,7 @@ export const useSchool = defineStore(
       $reset()
     })
     onSchoolDeleteError((error) => {
-      console.log(error)
+      console.error(error)
     })
 
     return {

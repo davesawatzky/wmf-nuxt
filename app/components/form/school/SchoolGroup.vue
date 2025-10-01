@@ -303,7 +303,7 @@
         List any date/time when you are unavailable for performance, including
         school in-service days, using
         <strong>calendar dates</strong>, not school cycle days, between February
-        23 and March 20, 2025.
+        23 and March 20, 2026.
       </p>
 
       <BaseTextarea

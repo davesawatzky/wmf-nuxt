@@ -70,7 +70,7 @@ export const useFieldConfig = defineStore(
       }
     })
     onLoadRequiredFieldsError((error) => {
-      console.log(error)
+      console.error(error)
     })
 
     return {

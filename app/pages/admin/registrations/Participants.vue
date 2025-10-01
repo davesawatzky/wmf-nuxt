@@ -4,6 +4,7 @@
 
   definePageMeta({
     layout: 'admin',
+    middleware: 'admin',
   })
 
   const selectedPerformer = ref()

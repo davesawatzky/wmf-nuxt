@@ -18,7 +18,7 @@
   }
 
   definePageMeta({
-    middleware: ['auth', 'user', 'form'],
+    middleware: ['user', 'form'],
   })
 
   const FormSoloPerformer = <Component>resolveComponent('FormSoloPerformer')

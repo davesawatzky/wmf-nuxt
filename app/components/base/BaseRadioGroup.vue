@@ -34,7 +34,6 @@
     change: async (evt: Event) => {
       handleChange(evt, true)
       await validate()
-      console.log(meta.valid)
       if (meta.valid) {
         emit('changeStatus', 'valid')
         resetField({ value: value.value })

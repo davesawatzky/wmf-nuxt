@@ -65,8 +65,8 @@ export const useClasses = defineStore(
             })
           }
         }
-      } catch (err) {
-        console.log(err)
+      } catch (error) {
+        console.log(error)
       }
     }
 
@@ -133,8 +133,8 @@ export const useClasses = defineStore(
           id: selection.id,
           count: 0,
         })
-      } catch (err) {
-        console.log(err)
+      } catch (error) {
+        console.log(error)
       }
     }
 
@@ -165,7 +165,7 @@ export const useClasses = defineStore(
       }
     })
     onCreateClassError((error) => {
-      console.log(error)
+      console.error(error)
     })
 
     /**
@@ -238,7 +238,7 @@ export const useClasses = defineStore(
         return 'error'
       }
     }
-    onClassUpdateError((error) => console.log(error))
+    onClassUpdateError((error) => console.error(error))
 
     /**
      * Writes all Registered Class information into the db
@@ -272,7 +272,7 @@ export const useClasses = defineStore(
       return classIndex
     }
     onClassDeleteError((error) => {
-      console.log(error)
+      console.error(error)
     })
 
     /**
@@ -299,7 +299,7 @@ export const useClasses = defineStore(
       }
     })
     onCreateSelectionError((error) => {
-      console.log(error)
+      console.error(error)
     })
 
     /**
@@ -345,7 +345,7 @@ export const useClasses = defineStore(
       }
     }
     onSelectionUpdateError((error) => {
-      console.log(error)
+      console.error(error)
     })
 
     /**
@@ -395,7 +395,7 @@ export const useClasses = defineStore(
       )
     }
     onSelectionDeleteError((error) => {
-      console.log(error)
+      console.error(error)
     })
 
     return {

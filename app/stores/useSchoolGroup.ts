@@ -52,8 +52,8 @@ export const useSchoolGroup = defineStore(
           __typename: schoolGrp.__typename || 'SchoolGroup',
         })
         schoolGroupErrors.value.push({ id: schoolGrp.id, count: 0 })
-      } catch (err) {
-        console.log(err)
+      } catch (error) {
+        console.error(error)
       }
     }
 
@@ -100,7 +100,7 @@ export const useSchoolGroup = defineStore(
       }
     })
     onSchoolGroupCreateError((error) => {
-      console.log(error)
+      console.error(error)
     })
 
     /**
@@ -132,7 +132,7 @@ export const useSchoolGroup = defineStore(
       }
     })
     onSchoolGroupsError((error) => {
-      console.log(error)
+      console.error(error)
     })
 
     /**
@@ -171,7 +171,7 @@ export const useSchoolGroup = defineStore(
       }
     }
     onSchoolGroupUpdateError((error) => {
-      console.log(error)
+      console.error(error)
     })
 
     /**
@@ -200,7 +200,7 @@ export const useSchoolGroup = defineStore(
       schoolGroupErrors.value.splice(index, 1)
     }
     onSchoolGroupDeleteError((error) => {
-      console.log(error)
+      console.error(error)
     })
 
     return {

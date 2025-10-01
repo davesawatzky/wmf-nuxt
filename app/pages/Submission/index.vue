@@ -12,7 +12,7 @@
   const registrationStore = useRegistration()
 
   const submissionComplete = ref(false)
-  const readConfirmation = ref(<Confirmed>{
+  const readConfirmation = ref<Confirmed>({
     importantNotes: false,
     nonrefundable: false,
     parentGuardian: false,
@@ -51,7 +51,7 @@
   const formattedDate = DateTime.now().toLocaleString(DateTime.DATETIME_MED)
 
   definePageMeta({
-    middleware: ['submission'],
+    middleware: ['user', 'submission'],
   })
 
   onBeforeMount(async () => {
@@ -95,32 +95,32 @@
         Confirmation of registered participant entries including class,
         selection and composer will be sent to the teachers for verification.
         Festival programs including dates, times and locations will be available
-        for purchase for $10 with an anticipated availability February 1, 2025.
+        for purchase for $10 with an anticipated availability February 1, 2026.
         Participants and teachers are to notify the Festival office of any
         change of personal information following submission of entry form.
         Participants who wish to withdraw must notify the Festival office in
         writing as early as possible. Entry fees are non-refundable.
       </p>
       <BaseCheckbox
-        v-model="readConfirmation.importantNotes"
         id="important-notes"
+        v-model="readConfirmation.importantNotes"
         label="I have read and understand the above text." />
       <BaseCheckbox
-        v-model="readConfirmation.nonrefundable"
         id="nonrefundable"
+        v-model="readConfirmation.nonrefundable"
         label="I understand that ENTRY FEES ARE NON-REFUNDABLE." />
       <BaseCheckbox
         v-if="checkIfParentConsentRequired()"
-        v-model="readConfirmation.parentGuardian"
         id="parent-guardian"
+        v-model="readConfirmation.parentGuardian"
         label="If participant is under 18 then I certify that I am the parent/guardian of this child." />
       <BaseCheckbox
-        v-model="readConfirmation.rulesAndTrophyForms"
         id="rules-and-trophy-forms"
+        v-model="readConfirmation.rulesAndTrophyForms"
         label="I have read all applicable rules and trophy eligibility forms as found on the music festival website." />
     </section>
 
-    <br />
+    <br >
 
     <div class="text-center">
       <BaseRouteButton

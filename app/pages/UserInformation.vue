@@ -7,6 +7,10 @@
   import { provinces } from '#imports'
   import { useToast } from 'vue-toastification'
 
+  definePageMeta({
+    middleware: ['user'], // Apply only to user pages
+  })
+
   const props = defineProps<{}>()
 
   const emits = defineEmits<{}>()
@@ -39,7 +43,7 @@
       await userStore.updateUser('isActive')
     }
   })
-  userError((error) => console.log(error))
+  userError((error) => console.error(error))
 
   userStore.user.isActive = true
 

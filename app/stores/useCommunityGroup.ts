@@ -100,7 +100,7 @@ export const useCommunityGroup = defineStore(
       }
     })
     onCommunityGroupCreateError((error) => {
-      console.log(error)
+      console.error(error)
     })
 
     /**
@@ -133,7 +133,7 @@ export const useCommunityGroup = defineStore(
       }
     })
     onCommunityGroupsError((error) => {
-      console.log(error)
+      console.error(error)
     })
 
     /**
@@ -177,7 +177,7 @@ export const useCommunityGroup = defineStore(
       }
     }
     onCommunityGroupUpdateError((error) => {
-      console.log(error)
+      console.error(error)
     })
 
     /**
@@ -207,7 +207,7 @@ export const useCommunityGroup = defineStore(
       communityGroupErrors.value.splice(index, 1)
     }
     onCommunityGroupDeleteError((error) => {
-      console.log(error)
+      console.error(error)
     })
 
     return {

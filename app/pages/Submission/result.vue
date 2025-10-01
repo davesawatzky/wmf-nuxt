@@ -63,6 +63,10 @@
     }
   })
 
+  definePageMeta({
+    middleware: ['user'], // Apply only to user pages
+  })
+
   async function checkPaymentIntent() {
     paymentIntentStatus.value = route.query.redirect_status
     switch (paymentIntentStatus.value) {
@@ -130,10 +134,10 @@
       })
       dataSending.value = false
       emailWaiting.value = false
-    } catch (err) {
+    } catch (error) {
       dataSending.value = false
       emailWaiting.value = false
-      console.log(err)
+      console.log(error)
     }
   }
 </script>

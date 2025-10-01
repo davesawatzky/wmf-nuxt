@@ -1,6 +1,6 @@
 // server/api/send-email.post.ts
 import nodemailer from 'nodemailer'
-import {renderSubmissionEmail} from '../utils/submissionEmail'
+import { renderSubmissionEmail } from '../utils/submissionEmail'
 
 const config = useRuntimeConfig()
 
@@ -30,7 +30,7 @@ export default defineEventHandler(async (payload) => {
 
   const info = await transporter
     .sendMail(options)
-    .catch(error => console.log(error))
+    .catch((error) => console.error(error))
 
   return { message: 'Email sent from send-email.post.ts' }
 })

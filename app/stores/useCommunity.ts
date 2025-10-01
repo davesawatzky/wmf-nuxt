@@ -79,7 +79,7 @@ export const useCommunity = defineStore(
       }
     })
     onCommunityCreateError((error) => {
-      console.log(error)
+      console.error(error)
     })
 
     /**
@@ -106,7 +106,7 @@ export const useCommunity = defineStore(
       }
     })
     onLoadCommunityError((error) => {
-      console.log(error)
+      console.error(error)
     })
 
     /**
@@ -143,7 +143,7 @@ export const useCommunity = defineStore(
       }
     }
     onCommunityUpdateError((error) => {
-      console.log(error)
+      console.error(error)
     })
 
     /**
@@ -163,7 +163,7 @@ export const useCommunity = defineStore(
       $reset()
     })
     onCommunityDeleteError((error) => {
-      console.log(error)
+      console.error(error)
     })
 
     return {

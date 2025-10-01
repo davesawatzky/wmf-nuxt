@@ -42,7 +42,7 @@
     useQuery(InstrumentsDocument)
   const instruments = computed(() => instrumentQuery.value?.instruments ?? [])
   instrumentsError((error) => {
-    console.log(error)
+    console.error(error)
   })
 
   const { handleSubmit } = useForm({
@@ -170,7 +170,7 @@
   })
   signinError((error) => {
     toast.error('Incorrect email or password.')
-    console.log(error)
+    console.error(error)
     setTimeout(() => resetFields(), 4000)
   })
 
@@ -254,9 +254,9 @@
     isRegister.value = false
     resetFields()
   })
-  registerError((err) => {
+  registerError((error) => {
     toast.error('Error signing up for account')
-    console.log(err)
+    console.log(error)
     setTimeout(() => resetFields(), 4000)
   })
 
@@ -278,8 +278,8 @@
       isOpen.value = false
       accountNotConfirmed.value = false
       resetFields()
-    } catch (err) {
-      console.log(err)
+    } catch (error) {
+      console.error(error)
     }
   }
 
@@ -297,8 +297,8 @@
       isOpen.value = false
       passwordChangePending.value = false
       resetFields()
-    } catch (err) {
-      console.log(err)
+    } catch (error) {
+      console.error(error)
     }
   }
 
@@ -325,18 +325,18 @@
   <div>
     <div v-auto-animate>
       <div class="w-full sm:w-2/3 lg:w-1/2 mx-auto">
-        <h2 class="text-center">Winnipeg Music Festival Registration 2025</h2>
+        <h2 class="text-center">Winnipeg Music Festival Registration 2026</h2>
         <p class="text-left">
           Begin registration by creating an account (account can be for an
           individual; a teacher for all their individual students, or for all
           their choirs; a parent for their family etc.)
         </p>
-        <p class="text-center">
+        <!-- <p class="text-center">
           <strong
             >Site best used with Google Chrome or Mozilla Firefox, not
             Safari</strong
           >
-        </p>
+        </p> -->
         <!-- <div
         class="mx-auto text-center border-4 border-red-700 rounded-lg mt-4 p-4">
         <h3>Registration for the 2024 music festival is now closed.</h3>

@@ -38,7 +38,7 @@
   }
 
   definePageMeta({
-    middleware: 'submission',
+    middleware: ['user', 'submission'],
   })
 
   const stripe: Stripe | null = await loadStripe(config.public.stripePubKey)

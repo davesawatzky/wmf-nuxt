@@ -139,7 +139,7 @@ export const useTeacher = defineStore(
       }
     })
     onTeacherCreateError((error) => {
-      console.log(error)
+      console.error(error)
     })
 
     /**
@@ -166,7 +166,7 @@ export const useTeacher = defineStore(
       }
     })
     onLoadTeacherError((error) => {
-      console.log(error)
+      console.error(error)
     })
 
     /**
@@ -191,7 +191,7 @@ export const useTeacher = defineStore(
       allTeachers.value = <AllTeachers[]>result.data.teachers.map((el) => el)
     })
     onTeachersLoadError((error) => {
-      console.log(error)
+      console.error(error)
     })
 
     /**
@@ -221,12 +221,12 @@ export const useTeacher = defineStore(
         })
         return 'complete'
       } catch (error) {
-        console.log(error)
+        console.error(error)
         return 'error'
       }
     }
     onTeacherUpdateError((error) => {
-      console.log(error)
+      console.error(error)
     })
 
     /**
@@ -247,7 +247,7 @@ export const useTeacher = defineStore(
       $resetTeacher()
     })
     onTeacherDeleteError((error) => {
-      console.log(error)
+      console.error(error)
     })
 
     /**
@@ -284,7 +284,7 @@ export const useTeacher = defineStore(
       console.log("If not null then there's a duplicate entry.", result.data)
     })
     onTeacherDuplicateError((error) => {
-      console.log(error)
+      console.error(error)
     })
 
     async function removeUnlistedTeacher() {
@@ -315,7 +315,7 @@ export const useTeacher = defineStore(
         unlistedTeacher.value = false
         teacherCreated.value = false
       } catch (error) {
-        console.log(error)
+        console.error(error)
       }
     }
 
@@ -325,7 +325,7 @@ export const useTeacher = defineStore(
           await removeUnlistedTeacher()
         }
       } catch (error) {
-        console.log(error)
+        console.error(error)
       }
     }
 
@@ -334,7 +334,7 @@ export const useTeacher = defineStore(
       try {
         await removeUnlistedTeacher()
       } catch (error) {
-        console.log(error)
+        console.error(error)
       }
     }
 
@@ -345,7 +345,7 @@ export const useTeacher = defineStore(
           await deleteTeacher(teacher.value.id)
         }
       } catch (error) {
-        console.log(error)
+        console.error(error)
       }
     }
 

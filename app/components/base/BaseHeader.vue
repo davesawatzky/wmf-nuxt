@@ -63,23 +63,31 @@
     await navigateTo('/login')
   })
   onError(async (error) => {
-    console.log(error)
+    console.error(error)
     await navigateTo('/login')
   })
 
   async function signout() {
-    appStore.$reset()
-    registratinStore.$reset()
-    performerStore.$reset()
-    teacherStore.$resetTeacher()
-    teacherStore.$resetAllTeachers()
-    classStore.$reset()
-    groupStore.$reset()
-    schoolStore.$reset()
-    userStore.$reset()
-    fieldConfig.$reset()
-    await loadLogout()
-    await navigateTo('/login')
+    try {
+      const { clearUserSession } = useNavigationHistory()
+      appStore.$reset()
+      registratinStore.$reset()
+      performerStore.$reset()
+      teacherStore.$resetTeacher()
+      teacherStore.$resetAllTeachers()
+      classStore.$reset()
+      groupStore.$reset()
+      schoolStore.$reset()
+      userStore.$reset()
+      fieldConfig.$reset()
+
+      await loadLogout()
+
+      await clearUserSession()
+    } catch (error) {
+      console.error('Error during signout:', error)
+      await navigateTo('/login', { replace: true })
+    }
   }
 
   const visible = ref(false)
@@ -109,7 +117,7 @@
             src="/images/wmf-logo-banner.jpg"
             alt="Winnipeg Music Festival Logo" />
           <div class="ml-4 font-semibold">
-            Winnipeg<br >Music<br >Festival
+            Winnipeg<br />Music<br />Festival
           </div>
         </template>
         <template #item="{ item, props, root }">
@@ -141,7 +149,7 @@
           src="/images/wmf-logo-banner.jpg"
           alt="Winnipeg Music Festival Logo" />
         <div class="ml-2 font-semibold text-sm">
-          Winnipeg<br >Music<br >Festival
+          Winnipeg<br />Music<br />Festival
         </div>
       </div>
 

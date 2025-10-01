@@ -103,7 +103,7 @@ export const useGroup = defineStore(
       }
     })
     onCreateGroupError((error) => {
-      console.log(error)
+      console.error(error)
     })
 
     /**
@@ -128,7 +128,7 @@ export const useGroup = defineStore(
       }
     })
     onGroupLoadError((error) => {
-      console.log(error)
+      console.error(error)
     })
 
     /**
@@ -162,7 +162,7 @@ export const useGroup = defineStore(
       }
     }
     onGroupUpdateError((error) => {
-      console.log(error)
+      console.error(error)
     })
 
     /**
@@ -183,7 +183,7 @@ export const useGroup = defineStore(
       $reset()
     })
     onGroupDeleteError((error) => {
-      console.log(error)
+      console.error(error)
     })
 
     return {

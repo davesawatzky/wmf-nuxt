@@ -4,6 +4,7 @@
 
   definePageMeta({
     layout: 'admin',
+    middleware: 'admin',
   })
 
   const selectedClass = ref()
@@ -218,7 +219,7 @@
                   </PVInputIcon>
                   <PVInputText
                     v-model="filters['global'].value"
-                    placeholder="Keyword Search"/>
+                    placeholder="Keyword Search" />
                 </PVIconField>
               </div>
             </template>
@@ -246,7 +247,7 @@
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by Class Number"
-                  @input="filterCallback()"/>
+                  @input="filterCallback()" />
               </template>
             </PVColumn>
             <PVColumn
@@ -259,7 +260,7 @@
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by Discipline"
-                  @input="filterCallback()"/>
+                  @input="filterCallback()" />
               </template>
             </PVColumn>
             <PVColumn
@@ -272,7 +273,7 @@
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by Subdiscipline"
-                  @input="filterCallback()"/>
+                  @input="filterCallback()" />
               </template>
             </PVColumn>
             <PVColumn
@@ -285,7 +286,7 @@
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by Level"
-                  @input="filterCallback()"/>
+                  @input="filterCallback()" />
               </template>
             </PVColumn>
             <PVColumn
@@ -298,7 +299,7 @@
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by Category"
-                  @input="filterCallback()"/>
+                  @input="filterCallback()" />
               </template>
             </PVColumn>
             <template #expansion="slotProps: { data: RegisteredClass }">

@@ -81,7 +81,7 @@
       :value="value"
       :aria-describedby="errorMessage ? `${uuid}-error` : ''"
       :aria-invalid="errorMessage ? true : false"
-      v-on="validationListeners" />
+      v-on="validationListeners" >
     <BaseErrorMessage :data-testid="errorMessage ? 'input-error' : ''">
       {{ errorMessage }}
     </BaseErrorMessage>

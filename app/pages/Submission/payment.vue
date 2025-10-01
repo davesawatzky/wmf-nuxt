@@ -28,7 +28,7 @@
   let elements: StripeElements
 
   definePageMeta({
-    middleware: ['submission'],
+    middleware: ['user', 'submission'],
   })
 
   onBeforeMount(async () => {
@@ -187,14 +187,14 @@
         class="btn w-[200px] h-[150px] text-xl font-semibold"
         :class="appStore.stripePayment === 'cash' ? 'btn-green' : 'btn-blue'"
         label="Cash, Cheque, E-Transfer"
-        @click="(appStore.stripePayment = 'cash'), (submitDisabled = false)">
+        @click="((appStore.stripePayment = 'cash'), (submitDisabled = false))">
         Cash, Cheque, E-Transfer
       </BaseButton>
       <BaseButton
         class="btn w-[200px] h-[150px] text-xl font-semibold"
         :class="appStore.stripePayment === 'ccard' ? 'btn-green' : 'btn-blue'"
         label="Pay by Credit Card"
-        @click="(appStore.stripePayment = 'ccard'), (submitDisabled = false)">
+        @click="((appStore.stripePayment = 'ccard'), (submitDisabled = false))">
         Credit Card
       </BaseButton>
     </div>
@@ -245,7 +245,7 @@
           v-show="appStore.stripePayment === 'ccard'"
           v-auto-animate
           class="p-4 sm:p-6 border border-sky-700 rounded-lg bg-white">
-          <div class="pb-8"/>
+          <div class="pb-8" />
           <div id="payment-element">
             <!-- Stripe.js injects the Payment Element -->
           </div>

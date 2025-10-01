@@ -18,9 +18,9 @@
           }
         },
       })
-    } catch (err) {
+    } catch (error) {
       tokenError.value = true
-      console.log(err)
+      console.error(error)
     }
   }
   confirmation()
@@ -40,7 +40,7 @@
     class="text-center">
     <div v-if="status === 'pending'">
       <h3>Account Verification Page</h3>
-      <br >
+      <br />
       <div>
         <Icon
           class="animate-spin text-3xl"
@@ -49,7 +49,7 @@
     </div>
     <div v-if="status === 'success' && !tokenError">
       <h3>Congratulations, your account is verified.</h3>
-      <br >
+      <br />
       <button
         class="btn btn-blue"
         @click="login">
@@ -63,7 +63,7 @@
         dialog box. This will send another link to your email address. Accounts
         must be verified before sign in is possible.
       </p>
-      <br >
+      <br />
       <button
         class="btn btn-blue"
         @click="login">
@@ -75,7 +75,7 @@
       <p class="max-w-[400px] mx-auto">
         This email address has already been verified.
       </p>
-      <br >
+      <br />
       <button
         class="btn btn-blue"
         @click="login">
@@ -90,7 +90,7 @@
         This will send another link to your email address. Email addresses must
         be verified before sign in is possible.
       </p>
-      <br >
+      <br />
       <button
         class="btn btn-blue"
         @click="login">
@@ -103,7 +103,7 @@
         Try using the verification link again, re-register, or contact Winnipeg
         Music Festival if problems persist.
       </p>
-      <br >
+      <br />
       <button
         class="btn btn-blue"
         @click="login">

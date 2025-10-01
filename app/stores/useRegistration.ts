@@ -112,7 +112,7 @@ export const useRegistration = defineStore(
       }
     })
     onRegistrationCreateError((error) => {
-      console.log(error)
+      console.error(error)
     })
 
     /**
@@ -142,12 +142,12 @@ export const useRegistration = defineStore(
         })
         return 'complete'
       } catch (error) {
-        console.log(error)
+        console.error(error)
         return 'error'
       }
     }
     onRegistrationUpdateError((error) => {
-      console.log(error)
+      console.error(error)
     })
 
     /**
@@ -168,7 +168,7 @@ export const useRegistration = defineStore(
       $reset()
     })
     onRegistrationDeleteError((error) => {
-      console.log(error)
+      console.error(error)
     })
 
     return {

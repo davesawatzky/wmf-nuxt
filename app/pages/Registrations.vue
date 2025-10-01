@@ -43,7 +43,7 @@
   }
 
   definePageMeta({
-    middleware: ['auth', 'user'],
+    middleware: ['user'],
   })
 
   onMounted(async () => {
@@ -75,7 +75,7 @@
   onUserResult((result) => {
     userStore.addToStore(result.data.myUser)
   })
-  userError((error) => console.log(error))
+  userError((error) => console.error(error))
 
   /**
    * Load all registrations for user
@@ -88,7 +88,7 @@
   } = useQuery(RegistrationsDocument, null, () => ({
     fetchPolicy: 'no-cache',
   }))
-  onError((error) => console.log(error))
+  onError((error) => console.error(error))
 
   const registrations = computed(() => result.value?.registrations ?? [])
 
@@ -257,7 +257,7 @@
   <div v-auto-animate>
     <h1 class="mt-3 mb-2">Winnipeg Music Festival</h1>
     <h2>Registration Forms</h2>
-    <br />
+    <br >
     <!-- <p class="">
       ** A late fee of
       <strong>${{ Number(lateDatesAndCosts.SOLO.amount).toFixed(2) }}</strong>
@@ -399,7 +399,7 @@
             </tbody>
           </table>
         </div>
-        <br />
+        <br >
         <div class="pb-6">
           <h3 class="pb-3">Registering for the Winnipeg Music Festival</h3>
           <ul class="list-disc pl-5">

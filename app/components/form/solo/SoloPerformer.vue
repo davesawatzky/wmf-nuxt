@@ -39,8 +39,8 @@
         }
       }
       await classesStore.createClass(registrationStore.registrationId)
-    } catch (err) {
-      console.log(err)
+    } catch (error) {
+      console.log(error)
     }
   }
 

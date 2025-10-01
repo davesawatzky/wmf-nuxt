@@ -74,7 +74,7 @@
 <template>
   <div v-auto-animate>
     <div class="w-full sm:2w-2/3 lg:2-1/2 mx-auto">
-      <h2 class="text-center">Winnipeg Music Festival Registration 2025</h2>
+      <h2 class="text-center">Winnipeg Music Festival Registration 2026</h2>
       <h3 class="text-center mt-8">Password Reset Form</h3>
       <form
         v-if="!passwordChanged && !changeError"

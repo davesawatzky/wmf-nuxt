@@ -132,8 +132,8 @@
           status[fieldName] = StatusEnum.pending
           const result = await teacherStore
             .updateTeacher(fieldName)
-            .catch((err) => {
-              console.log('Trying to remove non-existant teacher', err)
+            .catch((error) => {
+              console.error('Trying to remove non-existant teacher', error)
               stat = ''
             })
           if (result === 'complete') {
@@ -149,8 +149,8 @@
           status[fieldName] = StatusEnum.pending
           const result = await teacherStore
             .updateTeacher(fieldName)
-            .catch((err) => {
-              console.log('Trying to remove non-existant teacher', err)
+            .catch((error) => {
+              console.error('Trying to remove non-existant teacher', error)
               stat = ''
             })
           status[fieldName] = StatusEnum.null
@@ -165,8 +165,8 @@
           status[fieldName] = StatusEnum.pending
           const result = await teacherStore
             .updateTeacher(fieldName)
-            .catch((err) => {
-              console.log('Trying to remove non-existant teacher', err)
+            .catch((error) => {
+              console.error('Trying to remove non-existant teacher', error)
               stat = ''
             })
           if (result === 'complete') {
@@ -321,7 +321,7 @@
           await registrationStore
             .updateRegistration('teacherID')
             .catch((error) => {
-              console.log(error)
+              console.error(error)
             })
           teacherStore.chosenTeacher = <FilteredTeacher>(
             teacherStore.allTeachers.find(
