@@ -44,7 +44,7 @@ export const useItemStore = defineStore('itemStore', () => {
     }
   })
   onItemsError((error) => {
-    console.log('Items loading error. ', error)
+    console.error('Items loading error. ', error)
   })
 
   return { items, createItem, loadItems, $reset }

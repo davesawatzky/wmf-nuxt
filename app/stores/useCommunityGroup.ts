@@ -171,8 +171,8 @@ export const useCommunityGroup = defineStore(
           ),
         })
         return 'complete'
-      } catch (e) {
-        console.log(e)
+      } catch (error) {
+        console.error(error)
         return 'error'
       }
     }

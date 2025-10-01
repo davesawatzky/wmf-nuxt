@@ -40,7 +40,7 @@
       }
       await classesStore.createClass(registrationStore.registrationId)
     } catch (error) {
-      console.log(error)
+      console.error(error)
     }
   }
 

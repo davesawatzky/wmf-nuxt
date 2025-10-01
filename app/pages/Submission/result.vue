@@ -3,7 +3,6 @@
   import { DateTime } from 'luxon'
 
   // import type { LocationQueryValue } from '#vue-router'
-
   const performerStore = usePerformers()
   const teacherStore = useTeacher()
   const groupStore = useGroup()
@@ -137,7 +136,7 @@
     } catch (error) {
       dataSending.value = false
       emailWaiting.value = false
-      console.log(error)
+      console.error(error)
     }
   }
 </script>

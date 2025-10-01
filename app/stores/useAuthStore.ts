@@ -63,8 +63,6 @@ export const useAuthStore = defineStore('auth', () => {
       isActive: userData.isActive ?? false,
     }
 
-    console.log('Setting user data:', safeUserData)
-
     // Create deeply frozen user object first
     privateState._user = Object.freeze({
       id: safeUserData.id,
@@ -173,7 +171,6 @@ export const useAuthStore = defineStore('auth', () => {
    * Check if user has specific role
    */
   function hasRole(role: string): boolean {
-    console.log('Checking for role:', role, 'in', userRoles.value)
     return userRoles.value?.includes(role) ?? false
   }
 

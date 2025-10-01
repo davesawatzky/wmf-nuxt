@@ -165,8 +165,8 @@ export const useSchoolGroup = defineStore(
           schoolGroup: <SchoolGroupInput>(schoolGroupField || schlgrpProps),
         })
         return 'complete'
-      } catch (e) {
-        console.log(e)
+      } catch (error) {
+        console.error(error)
         return 'error'
       }
     }

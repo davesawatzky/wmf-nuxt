@@ -25,7 +25,7 @@
     initFilters()
   })
 
-  const { result, loading, onResult, refetch } = useQuery(
+  const { result, loading, refetch } = useQuery(
     gql`
       query AdminRegistrations($performerType: PerformerType) {
         registrations(performerType: $performerType) {
@@ -67,9 +67,9 @@
     `,
     () => variables.value
   )
-  onResult(() => {
-    console.log('Registrations', result.value)
-  })
+  // onResult(() => {
+  //   console.log('Registrations', result.value)
+  // })
 
   function clearFilter() {
     initFilters()

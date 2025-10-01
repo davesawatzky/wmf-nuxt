@@ -66,7 +66,7 @@ export const useClasses = defineStore(
           }
         }
       } catch (error) {
-        console.log(error)
+        console.error(error)
       }
     }
 
@@ -134,7 +134,7 @@ export const useClasses = defineStore(
           count: 0,
         })
       } catch (error) {
-        console.log(error)
+        console.error(error)
       }
     }
 
@@ -157,7 +157,6 @@ export const useClasses = defineStore(
     onCreateClassDone((result) => {
       if (result.data?.registeredClassCreate.registeredClass) {
         const regClass = result.data.registeredClassCreate.registeredClass
-        console.log('New class created:', regClass)
         addClassToStore(regClass)
         // await createSelection(regClass.id)
       } else if (result.data?.registeredClassCreate.userErrors) {
@@ -198,7 +197,7 @@ export const useClasses = defineStore(
       }
     })
     onLoadClassesError((error) => {
-      console.log('Classes load error.', error)
+      console.error('Classes load error.', error)
     })
 
     /**
@@ -233,8 +232,8 @@ export const useClasses = defineStore(
           registeredClass: <RegisteredClassInput>(classField || classProps),
         })
         return 'complete'
-      } catch (e) {
-        console.log(e)
+      } catch (error) {
+        console.error(error)
         return 'error'
       }
     }
@@ -339,8 +338,8 @@ export const useClasses = defineStore(
           selection: <SelectionInput>(selectionField || selectionProps),
         })
         return 'complete'
-      } catch (e) {
-        console.log(e)
+      } catch (error) {
+        console.error(error)
         return 'error'
       }
     }

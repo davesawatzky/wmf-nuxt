@@ -137,8 +137,8 @@ export const useCommunity = defineStore(
           community: <CommunityInput>(communityField || communityProps),
         })
         return 'complete'
-      } catch (e) {
-        console.log(e)
+      } catch (error) {
+        console.error(error)
         return 'error'
       }
     }

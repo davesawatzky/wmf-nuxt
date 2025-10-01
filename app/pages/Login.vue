@@ -256,7 +256,7 @@
   })
   registerError((error) => {
     toast.error('Error signing up for account')
-    console.log(error)
+    console.error(error)
     setTimeout(() => resetFields(), 4000)
   })
 

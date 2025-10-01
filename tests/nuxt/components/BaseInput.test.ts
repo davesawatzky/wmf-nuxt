@@ -103,10 +103,6 @@ describe('BaseInput Component', () => {
       },
     })
 
-    // Debug what's actually rendered
-    console.log('HTML:', wrapper.html())
-    console.log('Error message value:', mockField.errorMessage.value)
-
     expect(wrapper.text()).toContain('This field is required')
     // The BaseErrorMessage should always be rendered, just check if it contains the error
     expect(wrapper.findComponent(BaseErrorMessage).exists()).toBe(true)

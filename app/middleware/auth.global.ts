@@ -1,4 +1,4 @@
-import type { RouteLocationNormalized } from 'vue-router'
+import { useToast } from 'vue-toastification'
 
 type User = {
   id: number
@@ -9,6 +9,7 @@ type User = {
 }
 
 export default defineNuxtRouteMiddleware(async (to, from) => {
+  const toast = useToast()
   const { load: loadTokenCheck, refetch } = useLazyQuery(gql`
     query TokenCheck {
       tokenCheck {
@@ -51,12 +52,8 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     }
 
     const userData = result.tokenCheck.user
-    console.log('Token check result:', userData)
-    console.log('User roles:', userData?.roles)
-    console.log('User roles type:', typeof userData?.roles)
 
     if (!userData) {
-      console.log('No user data, redirecting to login')
       return navigateTo('/login', { replace: true })
     }
 
@@ -66,7 +63,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     const hasAccess = authStore.canAccessRoute(to.path, userData.roles)
 
     if (!hasAccess) {
-      console.log('Insufficient permissions for route:', to.path)
+      toast.error('Insufficient permissions for route')
       throw createError({
         statusCode: 403,
         statusMessage: 'Access Denied',

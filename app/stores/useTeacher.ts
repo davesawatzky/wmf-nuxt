@@ -269,7 +269,6 @@ export const useTeacher = defineStore(
       teacherID?: number,
       teacherEmail?: string
     ) {
-      console.log('Running teacherDuplicateLoad', teacherID, teacherEmail)
       ;(await loadTeacherDuplicate(null, { teacherID, teacherEmail })) ||
         (await refetchTeacherDuplicate({ teacherID, teacherEmail }))
     }
@@ -277,12 +276,11 @@ export const useTeacher = defineStore(
       teacherEmail: string
     ): Promise<Teacher | null> {
       await teacherDuplicateLoad(undefined, teacherEmail)
-      console.log('resultTeacherDuplicate', resultTeacherDuplicate.value)
       return resultTeacherDuplicate.value?.teacher ?? null
     }
-    onTeacherDuplicateResult((result) => {
-      console.log("If not null then there's a duplicate entry.", result.data)
-    })
+    // onTeacherDuplicateResult((result) => {
+    //   console.log("If not null then there's a duplicate entry.", result.data)
+    // })
     onTeacherDuplicateError((error) => {
       console.error(error)
     })
@@ -341,7 +339,6 @@ export const useTeacher = defineStore(
     async function removeTeacherFromDatabaseAndRegistration() {
       try {
         if (teacher.value.id !== 2) {
-          console.log('Removing teacher', teacher.value.id)
           await deleteTeacher(teacher.value.id)
         }
       } catch (error) {

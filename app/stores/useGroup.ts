@@ -156,8 +156,8 @@ export const useGroup = defineStore(
           group: <GroupInput>(groupField || groupProps),
         })
         return 'complete'
-      } catch (e) {
-        console.log(e)
+      } catch (error) {
+        console.error(error)
         return 'error'
       }
     }

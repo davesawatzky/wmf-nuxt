@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { FilterMatchMode, FilterOperator } from '@primevue/core/api'
-  import type { Performer, RegisteredClass } from '~/graphql/gql/graphql'
+  import type { RegisteredClass } from '~/graphql/gql/graphql'
 
   definePageMeta({
     layout: 'admin',
@@ -26,7 +26,7 @@
     initFilters()
   })
 
-  const { result, loading, onResult, refetch } = useQuery(
+  const { result, loading, refetch } = useQuery(
     gql`
       query AdminRegisteredClasses {
         registeredClasses {
@@ -59,9 +59,9 @@
     `,
     () => variables.value
   )
-  onResult(() => {
-    console.log('Registered Classes', result.value)
-  })
+  // onResult(() => {
+  //   console.log('Registered Classes', result.value)
+  // })
 
   function clearFilter() {
     initFilters()

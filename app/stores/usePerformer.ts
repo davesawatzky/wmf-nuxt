@@ -160,7 +160,7 @@ export const usePerformers = defineStore(
       }
     })
     onPerformersError((error) => {
-      console.log('Performer Load Error. ', error)
+      console.error('Performer Load Error. ', error)
     })
 
     /**
@@ -193,8 +193,8 @@ export const usePerformers = defineStore(
           performer: <PerformerInput>(performerField || personProps),
         })
         return 'complete'
-      } catch (e) {
-        console.log(e)
+      } catch (error) {
+        console.error(error)
         return 'error'
       }
     }
