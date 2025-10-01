@@ -56,101 +56,12 @@
   const slideDirection = ref('slide-left')
   const swipeElement = ref(null)
   const { isSwiping, direction } = useSwipe(swipeElement)
-  if (isSwiping.value) {
-    if (direction.value === 'right' && tabIndex.value > 0) {
-      previousTab()
-    } else if (
-      direction.value === 'left' &&
-      tabIndex.value < Object.keys(tabs).length - 1
-    ) {
-      nextTab()
-    }
-  }
 
   const status = reactive<Status>({
     label: registrationStore.registration.label
       ? StatusEnum.saved
       : StatusEnum.null,
   })
-
-  onMounted(() => {
-    currentTab.value = tabNames.value[0]
-    tabIndex.value = 0
-  })
-
-  onBeforeMount(async () => {
-    if (!registrationStore.registrationId) {
-      await navigateTo('/registrations')
-    }
-  })
-
-  onDeactivated(() => {
-    currentTab.value = null
-    tabIndex.value = null
-  })
-
-  function setTab(tab: string, index: number) {
-    currentTab.value = tab
-    if (index > tabIndex.value) {
-      slideDirection.value = 'slide-left'
-    } else if (index < tabIndex.value) {
-      slideDirection.value = 'slide-right'
-    }
-    tabIndex.value = index
-  }
-
-  // async function fieldStatus(stat: string, fieldName: string) {
-  //   await nextTick()
-  //   status[fieldName] = StatusEnum.pending
-  //   await registrationStore.updateRegistration(fieldName)
-  //   if (stat === 'saved') {
-  //     status[fieldName] = StatusEnum.saved
-  //   } else if (stat === 'remove') {
-  //     status[fieldName] = StatusEnum.removed
-  //   } else {
-  //     status[fieldName] = StatusEnum.null
-  //   }
-  // }
-
-  async function fieldStatus(stat: string, fieldName: string) {
-    await nextTick()
-    if (stat === 'valid') {
-      status[fieldName] = StatusEnum.pending
-      const result = await registrationStore.updateRegistration(fieldName)
-      status[fieldName] = StatusEnum.null
-      if (result === 'complete') {
-        if (registrationStore.registration.label !== null) {
-          status[fieldName] = StatusEnum.saved
-        }
-      } else {
-        toast.error(
-          'Could not update field.  Please exit and reload Registration'
-        )
-      }
-    } else if (stat === 'invalid') {
-      status[fieldName] = StatusEnum.pending
-      const result = await registrationStore.updateRegistration(fieldName)
-      status[fieldName] = StatusEnum.null
-      if (result === 'complete') {
-        status[fieldName] = StatusEnum.removed
-      } else {
-        toast.error(
-          'Could not remove invalid field. Please exit and reload Registration'
-        )
-      }
-    } else if (stat === 'removed') {
-      status[fieldName] = StatusEnum.pending
-      const result = await registrationStore.updateRegistration(fieldName)
-      status[fieldName] = StatusEnum.null
-      if (result === 'complete') {
-        status[fieldName] = StatusEnum.removed
-      } else {
-        toast.error(
-          'Could not remove field.  Please exit and reload Registration'
-        )
-      }
-    }
-  }
 
   switch (performerType.value) {
     case 'SOLO':
@@ -192,11 +103,90 @@
 
   const tabNames = ref(Object.keys(tabs))
 
+  function setTab(tab: string, index: number) {
+    currentTab.value = tab
+    if (index > tabIndex.value) {
+      slideDirection.value = 'slide-left'
+    } else if (index < tabIndex.value) {
+      slideDirection.value = 'slide-right'
+    }
+    tabIndex.value = index
+  }
+
   function previousTab() {
     setTab(Object.keys(tabs)[tabIndex.value - 1]!, tabIndex.value - 1)
   }
   function nextTab() {
     setTab(Object.keys(tabs)[tabIndex.value + 1]!, tabIndex.value + 1)
+  }
+
+  watch([isSwiping, direction], ([swiping, swipeDirection]) => {
+    if (!swiping) return
+
+    if (swipeDirection === 'right' && tabIndex.value > 0) {
+      previousTab()
+    } else if (
+      swipeDirection === 'left' &&
+      tabIndex.value < Object.keys(tabs).length - 1
+    ) {
+      nextTab()
+    }
+  })
+
+  onMounted(() => {
+    currentTab.value = tabNames.value[0]
+    tabIndex.value = 0
+  })
+
+  onBeforeMount(async () => {
+    if (!registrationStore.registrationId) {
+      await navigateTo('/registrations')
+    }
+  })
+
+  onDeactivated(() => {
+    currentTab.value = null
+    tabIndex.value = null
+  })
+
+  async function fieldStatus(stat: string, fieldName: string) {
+    await nextTick()
+    if (stat === 'valid') {
+      status[fieldName] = StatusEnum.pending
+      const result = await registrationStore.updateRegistration(fieldName)
+      status[fieldName] = StatusEnum.null
+      if (result === 'complete') {
+        if (registrationStore.registration.label !== null) {
+          status[fieldName] = StatusEnum.saved
+        }
+      } else {
+        toast.error(
+          'Could not update field.  Please exit and reload Registration'
+        )
+      }
+    } else if (stat === 'invalid') {
+      status[fieldName] = StatusEnum.pending
+      const result = await registrationStore.updateRegistration(fieldName)
+      status[fieldName] = StatusEnum.null
+      if (result === 'complete') {
+        status[fieldName] = StatusEnum.removed
+      } else {
+        toast.error(
+          'Could not remove invalid field. Please exit and reload Registration'
+        )
+      }
+    } else if (stat === 'removed') {
+      status[fieldName] = StatusEnum.pending
+      const result = await registrationStore.updateRegistration(fieldName)
+      status[fieldName] = StatusEnum.null
+      if (result === 'complete') {
+        status[fieldName] = StatusEnum.removed
+      } else {
+        toast.error(
+          'Could not remove field.  Please exit and reload Registration'
+        )
+      }
+    }
   }
 
   const validationSchema = yup.object({

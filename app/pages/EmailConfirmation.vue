@@ -12,7 +12,7 @@
       tokenResponse.value = await $fetch(config.public.emailConfirmation, {
         method: 'POST',
         body: tokenBody,
-        onResponseError({ request, response, options }) {
+        onResponseError({ response }) {
           if (response._data.message) {
             errorMessage.value = response._data.message
           }
@@ -25,8 +25,10 @@
   }
   confirmation()
 
-  const status = computed(() => {
-    return tokenResponse.value ? 'success' : 'pending'
+  const confirmed = computed(() => {
+    console.log('Token Response: ', tokenResponse.value)
+    return tokenResponse.value
+    // return tokenResponse.value ? 'success' : 'pending'
   })
 
   async function login() {
@@ -38,7 +40,7 @@
   <div
     v-auto-animate
     class="text-center">
-    <div v-if="status === 'pending'">
+    <div v-if="!confirmed && !tokenError && !errorMessage">
       <h3>Account Verification Page</h3>
       <br />
       <div>
@@ -47,7 +49,7 @@
           name="icomoon-free:spinner9" />
       </div>
     </div>
-    <div v-if="status === 'success' && !tokenError">
+    <div v-if="confirmed && !tokenError && !errorMessage">
       <h3>Congratulations, your account is verified.</h3>
       <br />
       <button

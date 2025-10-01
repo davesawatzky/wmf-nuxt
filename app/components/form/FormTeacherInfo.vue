@@ -285,6 +285,7 @@
         registrationStore.registration.teacherID = newTeacher?.id
         await teacherStore.loadTeacher(newTeacher?.id, undefined)
         await registrationStore.updateRegistration('teacherID')
+        //TODO: status.id = StatusEnum.saved
         teacherStore.emailAlreadyExists = false
       }
     }
