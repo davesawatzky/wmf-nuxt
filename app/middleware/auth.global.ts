@@ -31,7 +31,9 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     '/login',
     '/',
     '/password/EmailVerification',
+    '/password/emailverification',
     '/password/PasswordReset',
+    '/password/passwordreset',
     '/emailconfirmation',
   ]
   const isPublicRoute = publicRoutes.includes(to.path)
