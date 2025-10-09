@@ -156,9 +156,8 @@
         registrationStore.registration.teacherID,
         undefined
       )
-    } else {
-      teacherStore.teacherErrors = 1
     }
+    // teacherErrors automatically computed - no manual setting needed
     await classesStore.loadClasses(registrationId)
     appStore.dataLoading = false
     await navigateTo('/form')
@@ -231,7 +230,7 @@
         communityGroupStore.findInitialCommunityGroupErrors()
         await teacherStore.loadAllTeachers('schoolTeacher')
     }
-    teacherStore.teacherErrors = 1
+    // teacherErrors = 1 automatically when no teacher selected (teacher.id is null/2)
     await classesStore.createClass(registrationId.value)
     classesStore.findInitialClassErrors()
     appStore.dataLoading = false

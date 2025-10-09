@@ -213,22 +213,9 @@
   })
 
   const teacherKeys = fieldConfigStore.performerTypeFields('Teacher')
-  watchEffect(() => {
-    let count = 0
-    if (teacherStore.unlistedTeacher) {
-      for (const key of teacherKeys) {
-        if (status[key as keyof Teacher] !== StatusEnum.saved) {
-          count++
-        }
-      }
-      console.log('Status ID: ', status.id)
-    } else if (status.id !== StatusEnum.saved) {
-      count++
-    } else if (status.id === StatusEnum.saved) {
-      count = 0
-    }
-    teacherStore.teacherErrors = count
-  })
+
+  // teacherErrors is now computed in the store - no manual updates needed!
+  // The store automatically recalculates based on teacher.value changes
 
   watch(
     () => teacherStore.fieldStatusRef,
@@ -263,11 +250,11 @@
           schoolTeacher.value
         )
         registrationStore.registration.teacherID = props.teacherId
-        teacherStore.findInitialTeacherErrors()
         validate()
         await registrationStore.updateRegistration('teacherID')
         teacherStore.teacherCreated = true
         // new teacher creation is complete
+        // teacherErrors automatically computed from new teacher state
       } else {
         // Otherwise
         if (

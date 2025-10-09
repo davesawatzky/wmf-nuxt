@@ -37,7 +37,6 @@ export const useTeacher = defineStore(
     const teacher = ref(<Teacher>{})
     const allTeachers = ref<AllTeachers[]>([])
     const fieldConfigStore = useFieldConfig()
-    const teacherErrors = ref(0)
 
     const emailAlreadyExists = ref(false)
     const chosenTeacher = ref({} as FilteredTeacher)
@@ -49,12 +48,10 @@ export const useTeacher = defineStore(
 
     function $resetTeacher() {
       teacher.value = <Teacher>{}
-      teacherErrors.value = 0
     }
     function $resetAllTeachers() {
       teacher.value = <Teacher>{}
       allTeachers.value.splice(0, allTeachers.value.length)
-      teacherErrors.value = 0
     }
 
     function $resetChosenTeacher() {
@@ -62,6 +59,42 @@ export const useTeacher = defineStore(
     }
 
     /**
+     * Computed teacher errors - automatically tracks teacher state changes
+     * Reactive in Pinia DevTools and always in sync with actual data
+     */
+    const teacherErrors = computed(() => {
+      // Check if 'No Teacher' is selected - this means no teacher is required
+      if (
+        chosenTeacher.value?.firstName === 'Teacher' &&
+        chosenTeacher.value?.lastName === 'No'
+      ) {
+        return 0
+      }
+
+      // No teacher or default "Unlisted" teacher means 1 error (no teacher selected)
+      if (!teacher.value.id || teacher.value.id === 2) {
+        return 1
+      }
+
+      // For unlisted teachers being created, check all required fields
+      if (unlistedTeacher.value) {
+        const teacherKeys = fieldConfigStore.performerTypeFields('Teacher')
+        let count = 0
+
+        for (const key of teacherKeys) {
+          const value = teacher.value[key as keyof Teacher]
+          // Count missing, null, or empty required fields
+          if (!value || value === null || value === '') {
+            count++
+          }
+        }
+
+        return count
+      }
+
+      // Pre-existing teachers with valid IDs have no errors
+      return 0
+    }) /**
      * First name plus last name
      */
     const fullName = computed(() => {
@@ -70,9 +103,7 @@ export const useTeacher = defineStore(
       } else {
         return `${teacher.value.firstName} ${teacher.value.lastName}`
       }
-    })
-
-    /**
+    }) /**
      * Adds Teacher object to store from db
      * @param teach Teacher Object must have valid id property value
      */
@@ -92,20 +123,7 @@ export const useTeacher = defineStore(
       teacher.value.__typename = teach.__typename || 'Teacher'
     }
 
-    function findInitialTeacherErrors() {
-      const teacherKeys = fieldConfigStore.performerTypeFields('Teacher')
-      let count = 0
-      for (const key of teacherKeys) {
-        if (!teacher.value[key as keyof Teacher]) {
-          count++
-        }
-      }
-      teacherErrors.value = count
-    }
-
-    const teacherId = computed(() => teacher.value.id)
-
-    /**
+    const teacherId = computed(() => teacher.value.id) /**
      * Creates a new Teacher record on the db and in the store. One
      * of the following params must be true.
      * @param privateTeacher boolean - Whether this is a private teacher
@@ -364,7 +382,6 @@ export const useTeacher = defineStore(
       addToStore,
       fullName,
       duplicateTeacherCheck,
-      findInitialTeacherErrors,
       removeUnlistedTeacherOnDeactivate,
       removeUnlistedTeacherBeforeUnmount,
       emailAlreadyExists,
