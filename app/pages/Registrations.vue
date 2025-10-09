@@ -82,7 +82,6 @@
    */
   const {
     result,
-    loading,
     refetch: refetchRegistrations,
     onError,
   } = useQuery(RegistrationsDocument, null, () => ({
@@ -257,7 +256,7 @@
   <div v-auto-animate>
     <h1 class="mt-3 mb-2">Winnipeg Music Festival</h1>
     <h2>Registration Forms</h2>
-    <br >
+    <br />
     <!-- <p class="">
       ** A late fee of
       <strong>${{ Number(lateDatesAndCosts.SOLO.amount).toFixed(2) }}</strong>
@@ -391,6 +390,11 @@
                   <BaseButton
                     v-if="!registration.confirmation"
                     class="text-red-600 text-xl md:ml-4 ml-3"
+                    :style="
+                      registrationClosed(registration.performerType)
+                        ? 'cursor: default;'
+                        : 'cursor: pointer;'
+                    "
                     @click="deleteRegistration(registration.id)">
                     <Icon name="fa-solid:trash-alt" />
                   </BaseButton>
@@ -399,7 +403,7 @@
             </tbody>
           </table>
         </div>
-        <br >
+        <br />
         <div class="pb-6">
           <h3 class="pb-3">Registering for the Winnipeg Music Festival</h3>
           <ul class="list-disc pl-5">

@@ -331,12 +331,12 @@
           individual; a teacher for all their individual students, or for all
           their choirs; a parent for their family etc.)
         </p>
-        <!-- <p class="text-center">
+        <p class="text-center">
           <strong
             >Site best used with Google Chrome or Mozilla Firefox, not
             Safari</strong
           >
-        </p> -->
+        </p>
         <!-- <div
         class="mx-auto text-center border-4 border-red-700 rounded-lg mt-4 p-4">
         <h3>Registration for the 2024 music festival is now closed.</h3>

@@ -143,7 +143,7 @@
               status[fieldName] = StatusEnum.saved
             } else {
               toast.error(
-                'Could not update field. Please exit ant reload Registration'
+                'Could not update field. Please exit and reload Registration'
               )
             }
           }
