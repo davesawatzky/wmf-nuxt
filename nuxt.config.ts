@@ -138,6 +138,35 @@ export default defineNuxtConfig({
     corsHandler: {
       origin: '*',
     },
+    headers: {
+      contentSecurityPolicy: false,
+      crossOriginOpenerPolicy: false,
+      crossOriginResourcePolicy: false,
+      // contentSecurityPolicy: {
+      //   'default-src': ["'self'"],
+      //   'script-src': [
+      //     "'self'",
+      //     "'unsafe-inline'",
+      //     "'unsafe-eval'",
+      //     'https://js.stripe.com',
+      //   ],
+      //   'frame-src': [
+      //     "'self'",
+      //     'https://js.stripe.com',
+      //     'https://hooks.stripe.com',
+      //   ],
+      //   'connect-src': [
+      //     "'self'",
+      //     'https://api.stripe.com',
+      //     'http://localhost:3000', // Your GraphQL backend
+      //     'https://iconify.design',
+      //   ],
+      //   'img-src': ["'self'", 'data:', 'https:', 'https://api.iconify.design'],
+      //   'style-src': ["'self'", "'unsafe-inline'"],
+      //   'font-src': ["'self'", 'data:'],
+      // },
+      crossOriginEmbedderPolicy: false, // Disable COEP for Stripe compatibility
+    },
   },
 
   sourcemap: true,

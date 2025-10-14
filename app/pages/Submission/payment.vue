@@ -177,7 +177,7 @@
 
 <template>
   <div v-auto-animate>
-    <h1 class="my-8">Payment - Cash or Credit Card</h1>
+    <h1 class="my-8">Payment - Cash, Cheque, E-Transfer, or Credit Card</h1>
     <p class="m-4 p-3 text-center font-bold text-xl rounded-xl">
       Please do not close your browser after submitting!
     </p>
