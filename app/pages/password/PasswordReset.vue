@@ -4,9 +4,10 @@
 
   YupPassword(yup)
 
-  const password1 = ref('')
-  const password2 = ref('')
+  const password1 = ref<string>('')
+  const password2 = ref<string>('')
   const passwordChanged = ref(false)
+  const status1 = ref<string>('')
   const changeError = ref('')
 
   const route = useRoute()
@@ -15,7 +16,14 @@
   const { handleSubmit } = useForm({
     validationSchema: toTypedSchema(
       yup.object({
-        password1: yup.string().trim().password().required().label('Password'),
+        password1: yup
+          .string()
+          .trim()
+          .password()
+          .required(
+            'Please enter a password (min. 8 characters with at least one number, uppercase, and special character)'
+          )
+          .label('Password'),
         password2: yup
           .string()
           .trim()
@@ -27,6 +35,10 @@
 
   const submitPasswordChange = handleSubmit(async () => {
     await changePassword()
+  })
+
+  const validPassword = computed(() => {
+    return status1.value === 'valid' && password1.value === password2.value
   })
 
   const {
@@ -65,10 +77,6 @@
       changeError.value = result.data?.passwordChange.userErrors[0].message
     }
   })
-
-  async function login() {
-    await navigateTo('/login')
-  }
 </script>
 
 <template>
@@ -86,7 +94,8 @@
           name="password1"
           type="password"
           placeholder="New Password"
-          label="Please enter a new password for your account" />
+          label="Please enter a new password for your account"
+          @change-status="(stat) => (status1 = stat)" />
         <BaseInput
           v-model="password2"
           v-auto-animate
@@ -94,8 +103,8 @@
           type="password"
           placeholder="Re-enter password"
           label="Please re-enter your password" />
-
         <BaseButton
+          :disabled="!validPassword"
           class="w-full mx-auto mt-4 btn btn-blue"
           @click="submitPasswordChange()">
           Reset Password

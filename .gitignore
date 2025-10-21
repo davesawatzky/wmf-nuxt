@@ -20,6 +20,7 @@ apollo.config.cjs
 test-results
 playwright
 playwright-report
+playwright
 blob-report
 
 

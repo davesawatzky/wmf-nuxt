@@ -24,32 +24,41 @@
     changeStatus: [stat: string]
   }>()
 
+  const name = toRef(props, 'name')
+
   const uuid = UniqueID().getID()
 
-  const { value, resetField, errorMessage, meta, handleChange, validate } =
-    useField(() => props.name, undefined, {
-      validateOnValueUpdate: true,
-      initialValue: props.modelValue,
-      syncVModel: true,
-    })
+  const {
+    value,
+    resetField,
+    errorMessage,
+    meta,
+    handleChange,
+    handleBlur,
+    validate,
+  } = useField(() => props.name, undefined, {
+    validateOnValueUpdate: false,
+    initialValue: props.modelValue,
+    syncVModel: true,
+  })
 
   const validationListeners = {
+    input: (evt: Event) => {
+      // Only validate after first blur (when field is touched)
+      handleChange(evt, meta.touched && !!errorMessage.value)
+    },
     change: async (evt: Event) => {
-      handleChange(evt, true)
+      handleChange(evt, !!errorMessage.value)
       await validate()
-      if (value.value && !meta.valid) {
+      if (!meta.valid && value.value) {
+        emit('changeStatus', 'invalid')
+      } else if (!meta.valid! && !value.value) {
         resetField({ value: props.type === 'number' ? 0 : null })
         emit('changeStatus', 'invalid')
-      } else if (!value.value && meta.initialValue) {
-        resetField({ value: props.type === 'number' ? 0 : null })
-        emit('changeStatus', 'removed')
       } else if (meta.valid) {
         resetField({ value: value.value })
         emit('changeStatus', 'valid')
       }
-    },
-    input: (evt: Event) => {
-      handleChange(evt, !!errorMessage.value)
     },
   }
 </script>
@@ -81,7 +90,7 @@
       :value="value"
       :aria-describedby="errorMessage ? `${uuid}-error` : ''"
       :aria-invalid="errorMessage ? true : false"
-      v-on="validationListeners" >
+      v-on="validationListeners" />
     <BaseErrorMessage :data-testid="errorMessage ? 'input-error' : ''">
       {{ errorMessage }}
     </BaseErrorMessage>
