@@ -455,8 +455,8 @@ export async function renderSubmissionEmail( payload: any ) {
             align="center">
             <strong
               >Payment may be made by cheque or e-transfer to the<br />
-              Winnipeg Music Festival (<a href="mailto:wmf@mts.net"
-                ><strong>wmf@mts.net</strong></a
+              Winnipeg Music Festival (<a href="mailto:wmf@mymts.net"
+                ><strong>wmf@mymts.net</strong></a
               >).<br />
               Please include the confirmation number when submitting
               payment.</strong
@@ -525,9 +525,9 @@ export async function renderSubmissionEmail( payload: any ) {
             <br />
             Email:
             <a
-              mailto="wmf@mts.net"
+              mailto="wmf@mymts.net"
               class="footer-link"
-              >wmf@mts.net</a
+              >wmf@mymts.net</a
             >
           </mj-text>
           <mj-text
