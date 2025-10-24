@@ -23,6 +23,7 @@ export default defineNuxtConfig({
     '@nuxt/image',
     '@formkit/auto-animate/nuxt',
     'nuxt-security',
+    '@sentry/nuxt/module',
   ],
 
   devServer: {
@@ -131,6 +132,7 @@ export default defineNuxtConfig({
       resendConfirmation: '',
       resendPasswordReset: '',
       stripePubKey: '',
+      sentryDsn: '',
     },
   },
 
@@ -168,8 +170,14 @@ export default defineNuxtConfig({
       crossOriginEmbedderPolicy: false, // Disable COEP for Stripe compatibility
     },
   },
-
-  sourcemap: true,
+  sentry: {
+    sourceMapsUploadOptions: {
+      org: 'diatonic-web-design-and-develo',
+      project: 'wmf-nuxt',
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+    },
+  },
+  sourcemap: { client: 'hidden' },
 
   spaLoadingTemplate: true,
   ssr: false,

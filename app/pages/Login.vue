@@ -337,18 +337,20 @@
             Safari</strong
           >
         </p>
-        <!-- <div
-        class="mx-auto text-center border-4 border-red-700 rounded-lg mt-4 p-4">
-        <h3>Registration for the 2024 music festival is now closed.</h3>
-        <p>Please see the Winnipeg Music Festival homepage for information.</p>
-        <BaseButton class="btn btn-blue w-[150px] h-16"
-          ><a href="https://www.winnipegmusicfestival.org"
-            >Winnipeg Music Festival</a
-          ></BaseButton
-        >
-      </div> -->
+        <div
+          class="mx-auto text-center border-4 border-red-700 rounded-lg mt-4 p-4">
+          <h3>Site is undergoing maintenance. Please return shortly.</h3>
+          <!-- <p>
+            Please see the Winnipeg Music Festival homepage for information.
+          </p> -->
+          <BaseButton class="btn btn-blue w-[150px] h-16"
+            ><a href="https://www.winnipegmusicfestival.org"
+              >Winnipeg Music Festival</a
+            ></BaseButton
+          >
+        </div>
       </div>
-      <form
+      <!-- <form
         v-auto-animate
         class="w-full sm:w-3/4 max-w-sm border rounded-lg border-sky-500 p-4 mx-auto mt-8">
         <div v-if="isRegister">
@@ -472,7 +474,7 @@
             </BaseButton>
           </div>
         </div>
-      </form>
+      </form> -->
     </div>
 
     <PVDialog

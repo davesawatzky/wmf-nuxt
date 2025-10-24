@@ -32,3 +32,5 @@ coverage.json
 
 # Vitest coverage outputs  
 tests/coverage/
+# Sentry Config File
+.env.sentry-build-plugin
