@@ -9,4 +9,5 @@ Sentry.init({
   // Enable logs to be sent to Sentry
   enableLogs: true,
   sendDefaultPii: true,
+  tracesSampleRate: 0.5,
 })
