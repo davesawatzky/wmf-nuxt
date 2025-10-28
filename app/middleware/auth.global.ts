@@ -49,7 +49,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   try {
     const result = await loadTokenCheck()
 
-    if (result.tokenCheck.userErrors?.length) {
+    if (result?.tokenCheck?.userErrors?.length) {
       console.warn('Auth validation errors:', result.tokenCheck.userErrors)
       return navigateTo('/login', { replace: true })
     }
@@ -57,6 +57,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     const userData = result.tokenCheck.user
 
     if (!userData) {
+      console.log('No user data found, redirecting to login')
       return navigateTo('/login', { replace: true })
     }
 
@@ -66,25 +67,26 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     const hasAccess = authStore.canAccessRoute(to.path, userData.roles)
 
     if (!hasAccess) {
-      toast.error('Insufficient permissions for route')
-      throw createError({
-        statusCode: 403,
-        statusMessage: 'Access Denied',
-      })
-    }
-  } catch (error) {
-    console.error('Auth middleware error: ', error)
-
-    if (
-      error &&
-      typeof error === 'object' &&
-      ('networkError' in error || 'graphQLErrors' in error)
-    ) {
+      toast.error('You do not have permission to access this page')
       return navigateTo('/login', { replace: true })
     }
-    throw createError({
-      statusCode: 500,
-      statusMessage: 'Internal Server Error',
-    })
+    return
+  } catch (error) {
+    // Network errors or GraphQL connection failures
+    if (error && typeof error === 'object') {
+      const hasNetworkError = 'networkError' in error
+      const hasGraphQLErrors = 'graphQLErrors' in error
+
+      if (hasNetworkError || hasGraphQLErrors) {
+        // Backend unavailable - redirect to login with error message
+        toast.error('Unable to verify authentication. Please login again.')
+        return navigateTo('/login', { replace: true })
+      }
+    }
+
+    // Unexpected errors - still redirect to login instead of throwing
+    // This prevents users from being stuck on error pages
+    toast.error('An authentication error occurred')
+    return navigateTo('/login', { replace: true })
   }
 })

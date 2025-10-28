@@ -1,7 +1,10 @@
 import * as Sentry from '@sentry/nuxt'
 
 Sentry.init({
-  dsn: useRuntimeConfig().public.sentryDsn,
+  dsn:
+    process.env.NODE_ENV === 'production'
+      ? useRuntimeConfig().public.sentryDsn
+      : undefined,
   integrations: [
     // send console.log, console.warn, and console.error calls as logs to Sentry
     Sentry.consoleLoggingIntegration({ levels: ['warn', 'error'] }),

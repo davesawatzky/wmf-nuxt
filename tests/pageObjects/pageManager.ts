@@ -10,7 +10,7 @@ export class PageManager {
     this.authPage = new AuthPage(this.page)
   }
 
-  onAuthPage() {
+  getAuthPage() {
     return this.authPage
   }
 }

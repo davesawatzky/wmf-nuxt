@@ -2,9 +2,14 @@
   const performerStore = usePerformers()
   const classesStore = useClasses()
   const registrationStore = useRegistration()
-  const isOpen = ref(false)
+  const changeInstrumentIsOpen = ref(false)
+  const attentionDialogIsOpen = ref(false)
   const previousInstrument = ref('')
   const cancelInstChange = ref(false)
+
+  onMounted(() => {
+    attentionDialogIsOpen.value = true
+  })
 
   watch(
     () => performerStore.performers[0]?.instrument,
@@ -15,10 +20,10 @@
         !!classesStore.registeredClasses[0]?.discipline
       ) {
         previousInstrument.value = oldInstrument
-        setIsOpen(true)
+        setChangeInstrumentIsOpen(true)
       } else if (cancelInstChange.value === true) {
         cancelInstChange.value = false
-        setIsOpen(false)
+        setChangeInstrumentIsOpen(false)
       }
     },
     {
@@ -28,7 +33,7 @@
 
   async function resetClasses() {
     try {
-      setIsOpen(false)
+      setChangeInstrumentIsOpen(false)
       const regClassIdNumbers = []
       if (classesStore.registeredClasses.length > 0) {
         for (let i = 0; i < classesStore.registeredClasses.length; i++) {
@@ -49,8 +54,8 @@
     performerStore.performers[0]!.instrument = previousInstrument.value
   }
 
-  function setIsOpen(value: boolean) {
-    isOpen.value = value
+  function setChangeInstrumentIsOpen(value: boolean) {
+    changeInstrumentIsOpen.value = value
   }
 </script>
 
@@ -69,7 +74,7 @@
     </div>
 
     <PVDialog
-      v-model:visible="isOpen"
+      v-model:visible="changeInstrumentIsOpen"
       class="p-4 w-full max-w-sm rounded-lg bg-white shadow-lg"
       modal
       :closable="false"
@@ -91,6 +96,31 @@
           class="btn btn-blue"
           @click="cancelInstrumentChange()">
           Cancel
+        </BaseButton>
+      </div>
+    </PVDialog>
+    <PVDialog
+      v-model:visible="attentionDialogIsOpen"
+      class="p-4 w-full max-w-sm rounded-lg bg-white shadow-lg"
+      :closable="false"
+      modal>
+      <h2 class="text-center text-xl font-bold">Attention!</h2>
+      <p class="text-center">
+        Please make sure all entry details are COMPLETE and CORRECT, as forms,
+        once submitted, are <strong>final</strong> and
+        <strong>cannot be edited.</strong>
+      </p>
+      <h2 class="text-center text-xl font-bold">Singers!</h2>
+      <p class="text-center">
+        VOCAL and MUSICAL THEATRE are listed as
+        <strong>separate disciplines</strong>. Be sure to select the appropriate
+        discipline for your selections in the Performer tab.
+      </p>
+      <div class="text-center mt-4">
+        <BaseButton
+          class="btn btn-blue"
+          @click="attentionDialogIsOpen = false">
+          I Understand
         </BaseButton>
       </div>
     </PVDialog>

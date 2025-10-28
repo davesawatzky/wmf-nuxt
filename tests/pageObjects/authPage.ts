@@ -1,230 +1,266 @@
 import type { Locator, Page } from '@playwright/test'
-import { expect } from '@playwright/test'
 import { HelperBase } from './helperBase'
 
 export class AuthPage extends HelperBase {
-  private readonly emailInput: Locator
-  private readonly passwordInput: Locator
-  private readonly signInButton: Locator
+  // Locators
+  readonly emailInput: Locator
+  readonly passwordInput: Locator
+  readonly confirmPasswordInput: Locator
+  readonly signInButton: Locator
+  readonly signUpLink: Locator
+  readonly signUpButton: Locator
+  readonly backToSignInLink: Locator
+  readonly privateTeacherCheckbox: Locator
+  readonly schoolTeacherCheckbox: Locator
+  readonly firstNameInput: Locator
+  readonly lastNameInput: Locator
+  readonly instrumentSelect: Locator
 
   constructor(page: Page) {
     super(page)
-    this.emailInput = page.getByLabel('Email')
-    this.passwordInput = page.getByLabel('Password')
-    this.signInButton = page.getByRole('button', { name: 'Sign In' })
+    this.emailInput = page.getByRole('textbox', { name: 'Email' })
+    this.passwordInput = page.getByRole('textbox', { name: 'Password' }).first()
+    this.confirmPasswordInput = page.getByRole('textbox', {
+      name: 'Re-enter Password',
+    })
+    this.signInButton = page.getByRole('button', {
+      name: 'Sign In',
+      exact: true,
+    })
+    this.signUpLink = page.getByRole('button', { name: 'Sign up here.' })
+    this.signUpButton = page.getByRole('button', {
+      name: 'Register New Account',
+    })
+    this.backToSignInLink = page.getByRole('button', {
+      name: 'Back to Sign In',
+    })
+    this.privateTeacherCheckbox = page.getByRole('checkbox', {
+      name: 'Private Teacher',
+    })
+    this.schoolTeacherCheckbox = page.getByRole('checkbox', {
+      name: 'School Teacher',
+    })
+    this.firstNameInput = page.getByRole('textbox', { name: 'First Name' })
+    this.lastNameInput = page.getByRole('textbox', { name: 'Last Name' })
+    this.instrumentSelect = page.getByLabel('Instrument(s)')
   }
 
-  private async loginEmail(email: string) {
+  // Navigation methods
+  async navigateToLogin() {
+    await this.page.goto('/login')
+  }
+
+  async navigateToProtectedRoute(route: string) {
+    await this.page.goto(route)
+  }
+
+  // Form interaction methods - Login
+  async fillEmail(email: string) {
     await this.emailInput.focus()
     await this.emailInput.fill(email)
+  }
+
+  async fillPassword(password: string) {
+    await this.passwordInput.focus()
+    await this.passwordInput.fill(password)
+  }
+
+  async blurEmail() {
     await this.emailInput.blur()
   }
 
-  private async loginPassword(password: string) {
-    await this.passwordInput.focus()
-    await this.passwordInput.fill(password)
+  async blurPassword() {
     await this.passwordInput.blur()
   }
 
-  /**
-   * Should redirect to login when not authenticated
-   */
-  async shouldRedirectToLoginWhenNotAuthenticated() {
-    await this.page.goto('/form')
-    await expect(this.page).toHaveURL(/.*login/)
-  }
-
-  /**
-   * Should display login form
-   */
-  async shouldDisplayLoginForm() {
-    await this.page.goto('/login')
-    await expect(this.emailInput).toBeVisible({ timeout: 30000 })
-    await expect(this.passwordInput).toBeVisible({ timeout: 30000 })
-    await expect(this.signInButton).toBeVisible({ timeout: 30000 })
-  }
-
-  /**
-   * Should show validation errors for invalid login (empty fields)
-   */
-  async shouldShowValidationErrorsForInvalidLogin() {
-    await this.page.goto('/login')
+  async clickSignIn() {
     await this.signInButton.click()
-    await expect(this.page.getByText('Email is a required field')).toBeVisible()
-    await expect(
-      this.page.getByText('Password must be at least 8 characters')
-    ).toBeVisible()
   }
 
-  /**
-   * Should check for short password
-   * @param testEmail - should not exist in the system
-   * @param initialPassword1 - any password used to trigger validation
-   * @param invalidPassword - password that is too short (e.g., "short")
-   */
-  async shouldCheckForShortPassword(
-    testEmail: string,
-    initialPassword1: string,
-    invalidPassword: string
-  ) {
-    await this.page.goto('/login')
-    await this.loginEmail(testEmail)
-    await this.loginPassword(initialPassword1)
-    await this.signInButton.click()
-    await expect
-      .soft(this.page.getByText('Password is a required field'))
-      .toBeVisible()
-    await this.passwordInput.focus()
-    await this.passwordInput.fill(invalidPassword)
-    await expect(
-      this.page.getByText('Password must be at least 8 characters')
-    ).toBeVisible()
+  async pressEnterOnPassword() {
+    await this.passwordInput.press('Enter')
   }
 
-  /**
-   * Should show error message for password lacking a Capital letter
-   * @param testEmail - should not exist in the system
-   * @param initialPassword - any password used to trigger validation
-   * @param invalidPassword - password lacking a capital letter (e.g., "nouppercase1")
-   */
-  async shouldShowErrorMessageForPasswordLackingCapitalLetter(
-    testEmail: string,
-    initialPassword: string,
-    invalidPassword: string
-  ) {
-    await this.page.goto('/login')
-    await this.loginEmail(testEmail)
-    await this.loginPassword(initialPassword)
-    await this.signInButton.click()
-    await expect
-      .soft(this.page.getByText('Password is a required field'))
-      .toBeVisible()
-    await this.passwordInput.focus()
-    await this.passwordInput.fill(invalidPassword)
-    await expect(
-      this.page.getByText('Password must contain at least 1 uppercase letter')
-    ).toBeVisible()
+  // Combined actions
+  async login(email: string, password: string) {
+    await this.fillEmail(email)
+    await this.blurEmail()
+    await this.fillPassword(password)
+    await this.blurPassword()
+    await this.clickSignIn()
   }
 
-  /**
-   * Should show error message for password lacking a number character
-   * @param testEmail - should not exist in the system
-   * @param initialPassword - any password used to trigger validation
-   * @param invalidPassword - password lacking a number character (e.g., "NoNumberHere!"
-   */
-  async shouldShowErrorForPasswordLackingNumber(
-    testEmail: string,
-    initialPassword: string,
-    invalidPassword: string
-  ) {
-    await this.page.goto('/login')
-    await this.loginEmail(testEmail)
-    await this.loginPassword(initialPassword)
-    await this.signInButton.click()
-    await expect
-      .soft(this.page.getByText('Password is a required field'))
-      .toBeVisible()
-    await this.passwordInput.focus()
-    await this.passwordInput.fill(invalidPassword)
-    await expect(
-      this.page.getByText('Password must contain at least 1 number')
-    ).toBeVisible()
+  async loginWithEnter(email: string, password: string) {
+    await this.fillEmail(email)
+    await this.blurEmail()
+    await this.fillPassword(password)
+    await this.pressEnterOnPassword()
   }
 
-  /**
-   * Should show error message for password lacking a symbol character
-   * @param testEmail - should not exist in the system
-   * @param initialPassword - any password used to trigger validation
-   * @param invalidPassword - password lacking a symbol character (e.g., "NoSymbol1"
-   */
-  async shouldShowErrorForPasswordLackingSymbol(
-    testEmail: string,
-    initialPassword: string,
-    invalidPassword: string
-  ) {
-    await this.page.goto('/login')
-    await this.loginEmail(testEmail)
-    await this.loginPassword(initialPassword)
-    await this.signInButton.click()
-    await expect
-      .soft(this.page.getByText('Password is a required field'))
-      .toBeVisible()
-    await this.passwordInput.focus()
-    await this.passwordInput.fill(invalidPassword)
-    await expect(
-      this.page.getByText('Password must contain at least 1 symbol')
-    ).toBeVisible()
+  // Form interaction methods - Registration
+  async clickSignUpLink() {
+    await this.signUpLink.click()
   }
 
-  /**
-   * Should show error message for incorrect credentials
-   * @param testEmail  - should not exist in the system
-   * @param password - any password fulfilling the validation rules
-   */
-  async shouldShowErrorMessageForIncorrectCredentials(
-    testEmail: string,
-    password: string
-  ) {
-    await this.page.goto('/login')
-    await this.loginEmail(testEmail)
-    await this.loginPassword(password)
-    await this.signInButton.click()
-    await expect(
-      this.page.getByText('Incorrect email or password')
-    ).toBeVisible({
-      timeout: 3000,
-    })
+  async clickBackToSignIn() {
+    await this.backToSignInLink.click()
   }
 
-  async shouldLoadRegistrationPageAfterLogin(email: string, password: string) {
-    await this.page.goto('/login')
-    await this.loginEmail(email)
-    await this.loginPassword(password)
-    await this.signInButton.click()
-    await expect(this.page).toHaveURL(/.*registrations/, {
-      timeout: 30000,
-    })
-    if (this.page.url().includes('/registrations')) {
-      await this.page.getByRole('button', { name: 'Account' }).click()
-      await this.page.getByRole('button', { name: 'Sign Out' }).click()
-      await expect(this.page).toHaveURL('/login')
+  async fillFirstName(firstName: string) {
+    await this.firstNameInput.click()
+    await this.firstNameInput.fill(firstName)
+  }
+
+  async fillLastName(lastName: string) {
+    await this.lastNameInput.click()
+    await this.lastNameInput.fill(lastName)
+  }
+
+  async fillConfirmPassword(password: string) {
+    await this.confirmPasswordInput.focus()
+    await this.confirmPasswordInput.fill(password)
+  }
+
+  async checkPrivateTeacher() {
+    await this.privateTeacherCheckbox.check()
+  }
+
+  async checkSchoolTeacher() {
+    await this.schoolTeacherCheckbox.check()
+  }
+
+  async selectInstrument(instrument: string) {
+    await this.instrumentSelect.selectOption(instrument)
+  }
+
+  async clickRegisterButton() {
+    await this.signUpButton.click()
+  }
+
+  // State checking methods (return boolean/data, no assertions)
+  async isLoginFormVisible() {
+    return {
+      email: await this.emailInput.isVisible(),
+      password: await this.passwordInput.isVisible(),
+      signInButton: await this.signInButton.isVisible(),
+      signUpLink: await this.signUpLink.isVisible(),
     }
   }
 
-  async signUpPrivateTeacher(
+  async isRegistrationFormVisible() {
+    return {
+      email: await this.emailInput.isVisible(),
+      password: await this.passwordInput.isVisible(),
+      confirmPassword: await this.confirmPasswordInput.isVisible(),
+      privateTeacherCheckbox: await this.privateTeacherCheckbox.isVisible(),
+      schoolTeacherCheckbox: await this.schoolTeacherCheckbox.isVisible(),
+      signUpButton: await this.signUpButton.isVisible(),
+      backToSignInLink: await this.backToSignInLink.isVisible(),
+    }
+  }
+
+  async getValidationErrorText(text: string) {
+    const locator = this.page.getByText(text, { exact: false })
+    return {
+      isVisible: await locator.isVisible().catch(() => false),
+      text: await locator.textContent().catch(() => null),
+    }
+  }
+
+  async getAllValidationErrors() {
+    // Get all visible error messages
+    const errorLocators = this.page.locator('[class*="error"]')
+    const count = await errorLocators.count()
+    const errors: string[] = []
+
+    for (let i = 0; i < count; i++) {
+      const text = await errorLocators.nth(i).textContent()
+      if (text) errors.push(text.trim())
+    }
+
+    return errors
+  }
+
+  async getCurrentUrl() {
+    return this.page.url()
+  }
+
+  async getEmailInputValue() {
+    return await this.emailInput.inputValue()
+  }
+
+  async getPasswordInputValue() {
+    return await this.passwordInput.inputValue()
+  }
+
+  async isSignInButtonDisabled() {
+    return await this.signInButton.isDisabled()
+  }
+
+  async isSignUpButtonDisabled() {
+    return await this.signUpButton.isDisabled()
+  }
+
+  // Logout helper
+  async logout() {
+    await this.page.getByRole('button', { name: 'Account' }).click()
+    await this.page.getByRole('button', { name: 'Sign Out' }).click()
+  }
+
+  // Full registration flow (for convenience)
+  async registerPrivateTeacher(
+    firstName: string,
+    lastName: string,
+    email: string,
+    password: string,
+    instrument: string
+  ) {
+    await this.navigateToLogin()
+    await this.clickSignUpLink()
+    await this.checkPrivateTeacher()
+    await this.fillFirstName(firstName)
+    await this.fillLastName(lastName)
+    await this.selectInstrument(instrument)
+    await this.fillEmail(email)
+    await this.fillPassword(password)
+    await this.fillConfirmPassword(password)
+    await this.clickRegisterButton()
+  }
+
+  async registerSchoolTeacher(
     firstName: string,
     lastName: string,
     email: string,
     password: string
   ) {
-    await this.page.goto('/login')
-    await this.page.getByRole('button', { name: 'Sign up here.' }).click()
-    await this.page.getByRole('checkbox', { name: 'Private Teacher' }).check()
-    await expect(this.page.getByLabel('Instrument(s)')).toBeVisible()
+    await this.navigateToLogin()
+    await this.clickSignUpLink()
+    await this.checkSchoolTeacher()
+    await this.fillFirstName(firstName)
+    await this.fillLastName(lastName)
+    await this.fillEmail(email)
+    await this.fillPassword(password)
+    await this.fillConfirmPassword(password)
+    await this.clickRegisterButton()
+  }
 
-    await this.page.getByLabel('First Name').click()
-    await this.page.getByLabel('First Name').fill(firstName)
-    await this.page.getByLabel('Last Name').click()
-    await this.page.getByLabel('Last Name').fill(lastName)
-    await this.page.getByLabel('Instrument(s)').selectOption('Clarinet')
-    await this.page.getByLabel('Email').click()
-    await this.page.getByLabel('Email').fill(email)
-    await this.page.getByLabel('Password').first().focus()
-    await this.page.getByLabel('Password').first().fill(password)
-    await this.page.getByLabel('Re-enter Password', { exact: true }).focus()
-    await this.page
-      .getByLabel('Re-enter Password', { exact: true })
-      .fill(password)
-    await this.page
-      .getByRole('button', { name: 'Register New Account' })
-      .click()
-    await expect(
-      this.page.getByText('Check Email for account verification link')
-    ).toBeVisible({
-      timeout: 10000,
-    })
-    await expect(this.page).toHaveURL(/.*login/, {
-      timeout: 30000,
-    })
+  async registerBothTeachers(
+    firstName: string,
+    lastName: string,
+    email: string,
+    password: string,
+    instrument: string
+  ) {
+    await this.navigateToLogin()
+    await this.clickSignUpLink()
+    await this.checkPrivateTeacher()
+    await this.checkSchoolTeacher()
+    await this.fillFirstName(firstName)
+    await this.fillLastName(lastName)
+    await this.selectInstrument(instrument)
+    await this.fillEmail(email)
+    await this.fillPassword(password)
+    await this.fillConfirmPassword(password)
+    await this.clickRegisterButton()
   }
 }
