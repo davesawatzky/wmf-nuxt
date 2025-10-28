@@ -23,6 +23,7 @@
         {
           label: 'My Registrations',
           icon: 'ic:round-app-registration',
+          visible: () => true,
           command: () => navigateTo('/Registrations'),
         },
         {
@@ -39,11 +40,13 @@
         {
           label: 'User Account',
           icon: 'fluent:inprivate-account-24-filled',
+          visible: () => true,
           command: () => navigateTo('/UserInformation'),
         },
         {
           label: 'Sign Out',
           icon: 'heroicons-outline:logout',
+          visible: () => true,
           command: () => signout(),
         },
       ],
@@ -106,8 +109,8 @@
 </script>
 
 <template>
-  <header class="bg-sky-800 py-2 text-white">
-    <div v-if="route.name !== 'Login' && route.name !== 'EmailConfirmation'">
+  <header class="bg-sky-800 py-2">
+    <div>
       <PVMenubar
         :model="items"
         class="hidden md:flex bg-sky-800 text-white lg:max-w-5xl mx-auto justify-between">
@@ -121,22 +124,27 @@
           </div>
         </template>
         <template #item="{ item, props, root }">
-          <!-- <div v-if="!privateTeacher"> -->
-          <button
-            v-ripple
-            class="w-full px-4 py-2 text-black bg-sky-800 hover:bg-sky-600 focus:outline-0 rounded-md ring-0"
-            :class="{
-              'text-white': root,
-              'border-2': !root,
-              'border-white': !root,
-              'hover:text-white': !root,
-              'bg-white': !root,
-              'hover:bg-sky-600': !root,
-            }"
-            v-bind="props.action">
-            <span>{{ item.label }}</span>
-          </button>
-          <!-- </div> -->
+          <div
+            v-if="
+              route.name.toLowerCase() !== 'login' &&
+              route.name.toLowerCase() !== 'emailconfirmation'
+            ">
+            <button
+              v-ripple
+              class="w-full px-4 py-2 text-black bg-sky-800 hover:bg-sky-600 outline-0 rounded-md ring-0"
+              :class="{
+                'text-white': root,
+                // 'border-1': !root,
+                // 'rounded-md': !root,
+                // 'border-white': !root,
+                'hover:text-white': !root,
+                'bg-white': !root,
+                'hover:bg-sky-600': !root,
+              }"
+              v-bind="props.action">
+              <span>{{ item.label }}</span>
+            </button>
+          </div>
         </template>
       </PVMenubar>
     </div>
@@ -148,13 +156,17 @@
           :img-attrs="{ class: 'inline h-12' }"
           src="/images/wmf-logo-banner.jpg"
           alt="Winnipeg Music Festival Logo" />
-        <div class="ml-2 font-semibold text-sm">
+        <div class="ml-2 font-semibold text-sm text-white">
           Winnipeg<br />Music<br />Festival
         </div>
       </div>
 
       <!-- Hamburger button for mobile -->
       <button
+        v-if="
+          route.name.toLowerCase() !== 'login' &&
+          route.name.toLowerCase() !== 'emailconfirmation'
+        "
         id="hamburger-button"
         type="button"
         class="relative w-8 h-8 text-3xl"
@@ -173,6 +185,7 @@
       class="p-4 bg-sky-700 text-white w-4/5">
       <div class="flex flex-col space-y-4">
         <h2 class="text-xl font-bold mb-4 border-b pb-2">Menu</h2>
+        {{ props.privateTeacher }}
 
         <!-- Main items -->
         <div
@@ -186,15 +199,17 @@
             v-for="(subItem, j) in item.items"
             :key="j"
             class="pl-4 py-2">
-            <button
-              class="flex items-center w-full active:bg-sky-600 rounded-md px-3 py-2"
-              @click="(subItem.command(), (visible = false))">
-              <Icon
-                v-if="subItem.icon"
-                :name="subItem.icon"
-                class="mr-2 text-lg" />
-              {{ subItem.label }}
-            </button>
+            <template v-if="subItem.visible()">
+              <button
+                class="flex items-center w-full active:bg-sky-600 rounded-md px-3 py-2"
+                @click="(subItem.command(), toggleMobileMenu())">
+                <Icon
+                  v-if="subItem.icon"
+                  :name="subItem.icon"
+                  class="mr-2 text-lg" />
+                {{ subItem.label }}
+              </button>
+            </template>
           </div>
         </div>
       </div>

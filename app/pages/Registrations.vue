@@ -6,6 +6,7 @@
     PerformerType,
     RegistrationsDocument,
   } from '~/graphql/gql/graphql'
+  import { useToast } from 'vue-toastification'
 
   const soloPhoto = '/images/opera-singer-on-stage.png'
   const soloPhotoBW = '/images/opera-singer-on-stage-BW.png'
@@ -16,6 +17,7 @@
   const communityPhoto = '/images/community_choir.png'
   const communityPhotoBW = '/images/community_choir-BW.png'
 
+  const toast = useToast()
   const registrationStore = useRegistration()
   const appStore = useAppStore()
   const performerStore = usePerformers()
@@ -65,7 +67,7 @@
   /**
    * Load User details
    */
-  const { onResult: onUserResult, onError: userError } = useQuery(
+  const { onResult: onUserResult, onError: onUserError } = useQuery(
     MyUserDocument,
     null,
     () => ({
@@ -75,25 +77,33 @@
   onUserResult((result) => {
     userStore.addToStore(result.data.myUser)
   })
-  userError((error) => console.error(error))
+  onUserError((error) => {
+    console.error('Error loading user details:', error, {
+      operation: 'useQuery MyUserDocument',
+      userId: userStore.user.id,
+    })
+    toast.error('Error loading user details. Returningn to login page.')
+    navigateTo('/login')
+  })
 
   /**
    * Load all registrations for user
    */
   const {
-    result,
+    result: registrationsResult,
     refetch: refetchRegistrations,
-    onError,
+    onError: onRegistrationsError,
   } = useQuery(RegistrationsDocument, null, () => ({
     fetchPolicy: 'no-cache',
   }))
-  onError((error) => console.error(error))
+  onRegistrationsError((error) => {
+    console.error('Error loading registrations:', error)
+    toast.error('Error loading registrations. Please try again.')
+  })
 
-  const registrations = computed(() => result.value?.registrations ?? [])
-
-  // function openEditor(performerType: PerformerType): boolean {
-  //   return !!eval(`${performerType.toLowerCase()}Open`)
-  // }
+  const registrations = computed(
+    () => registrationsResult.value?.registrations ?? []
+  )
 
   /**
    * Load and Edit Existing Registration
@@ -105,62 +115,78 @@
     registrationId: number,
     performerType: PerformerType
   ) {
-    await refetchRegistrations()
-    await fieldConfigStore.loadRequiredFields()
-    teacherStore.chosenTeacher = null
-    const registration = registrations.value.find((reg) => {
-      return reg.id === registrationId
-    })
+    try {
+      await refetchRegistrations()
+      await fieldConfigStore.loadRequiredFields()
+      teacherStore.chosenTeacher = null
+      const registration = registrations.value.find((reg) => {
+        return reg.id === registrationId
+      })
 
-    registrationStore.registrationId = registrationId
-    registrationStore.addToStore(
-      registration as Partial<Registration & RegistrationInput>
-    )
-    switch (performerType) {
-      case 'SOLO':
-        appStore.performerType = PerformerType.SOLO
-        appStore.dataLoading = true
-        await performerStore.loadPerformers(registrationId)
-        await teacherStore.loadAllTeachers('privateTeacher')
-        appStore.dataLoading = false
-        break
-      case 'GROUP':
-        appStore.performerType = PerformerType.GROUP
-        appStore.dataLoading = true
-        await groupStore.loadGroup(registrationId)
-        await performerStore.loadPerformers(registrationId)
-        await teacherStore.loadAllTeachers('privateTeacher')
-        appStore.dataLoading = false
-        break
-      case 'SCHOOL':
-        appStore.performerType = PerformerType.SCHOOL
-        appStore.dataLoading = true
-        await schoolStore.loadSchool(registrationId)
-        await schoolGroupStore.loadSchoolGroups(registrationId)
-        await teacherStore.loadAllTeachers('schoolTeacher')
-        appStore.dataLoading = false
-        break
-      case 'COMMUNITY':
-        appStore.performerType = PerformerType.COMMUNITY
-        appStore.dataLoading = true
-        await communityStore.loadCommunity(registrationId)
-        await communityGroupStore.loadCommunityGroups(registrationId)
-        await teacherStore.loadAllTeachers('schoolTeacher')
-        appStore.dataLoading = false
-        break
-    }
-    appStore.dataLoading = true
-    if (registration?.teacher?.id) {
-      registrationStore.registration.teacherID = registration.teacher.id
-      await teacherStore.loadTeacher(
-        registrationStore.registration.teacherID,
-        undefined
+      if (!registration) {
+        console.error('Registration not found', null, {
+          operation: 'loadRegistration',
+          registrationId,
+          performerType,
+          availableIds: registrations.value.map((r) => r.id),
+        })
+        toast.error('Registration not found')
+        return
+      }
+
+      registrationStore.registrationId = registrationId
+      registrationStore.addToStore(
+        registration as Partial<Registration & RegistrationInput>
       )
+
+      appStore.dataLoading = true
+
+      switch (performerType) {
+        case 'SOLO':
+          appStore.performerType = PerformerType.SOLO
+          await performerStore.loadPerformers(registrationId)
+          await teacherStore.loadAllTeachers('privateTeacher')
+          break
+        case 'GROUP':
+          appStore.performerType = PerformerType.GROUP
+          await groupStore.loadGroup(registrationId)
+          await performerStore.loadPerformers(registrationId)
+          await teacherStore.loadAllTeachers('privateTeacher')
+          break
+        case 'SCHOOL':
+          appStore.performerType = PerformerType.SCHOOL
+          await schoolStore.loadSchool(registrationId)
+          await schoolGroupStore.loadSchoolGroups(registrationId)
+          await teacherStore.loadAllTeachers('schoolTeacher')
+          break
+        case 'COMMUNITY':
+          appStore.performerType = PerformerType.COMMUNITY
+          await communityStore.loadCommunity(registrationId)
+          await communityGroupStore.loadCommunityGroups(registrationId)
+          await teacherStore.loadAllTeachers('schoolTeacher')
+          break
+        default:
+          throw createError(`Invalid performer type: ${performerType}`)
+      }
+
+      if (registration?.teacher?.id) {
+        registrationStore.registration.teacherID = registration.teacher.id
+        await teacherStore.loadTeacher(
+          registrationStore.registration.teacherID,
+          undefined
+        )
+      }
+      // teacherErrors automatically computed - no manual setting needed
+      await classesStore.loadClasses(registrationId)
+      appStore.dataLoading = false
+      await navigateTo('/form')
+    } catch (error) {
+      console.error('Error loading registration:', error, {
+        operation: 'loadRegistration',
+        registrationId,
+      })
+      toast.error('Error loading registration. Please try again.')
     }
-    // teacherErrors automatically computed - no manual setting needed
-    await classesStore.loadClasses(registrationId)
-    appStore.dataLoading = false
-    await navigateTo('/form')
   }
 
   /**
