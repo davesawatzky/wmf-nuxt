@@ -19,7 +19,7 @@
     teacherSummary: false,
   })
 
-  const emit = defineEmits(['submitForm'])
+  defineEmits(['submitForm'])
 
   const performerStore = usePerformers()
   const teacherStore = useTeacher()
@@ -237,10 +237,10 @@
               {{ schoolStore.school.name }}
             </h4>
           </template>
-          <template
-            #heading3
-            class="text-sm sm:text-base">
-            {{ schoolStore.school.division }}
+          <template #heading3>
+            <div class="sm:text-base">
+              {{ schoolStore.school.division }}
+            </div>
           </template>
           <template #details>
             <div class="flex justify-evenly">
@@ -317,10 +317,10 @@
         v-for="registeredClass in classesStore.registeredClasses"
         :key="registeredClass.id">
         <BaseSummaryCard class="">
-          <template
-            #heading1
-            class="text-lg sm:text-xl">
-            Festival Class Number: {{ registeredClass.classNumber }}
+          <template #heading1>
+            <div class="text-lg sm:text-xl">
+              Festival Class Number: {{ registeredClass.classNumber }}
+            </div>
           </template>
           <template #heading3>
             <h5 v-if="appStore.performerType === 'SCHOOL'">

@@ -23,8 +23,8 @@
         <div>
           <div class="text-lg font-semibold">Winnipeg Music Festival</div>
           <address class="text-sm">
-            2-88 St. Anne's Rd.<br />Winnipeg, MB R2M 2Y7<br />Phone: (204)
-            947-0184<br />Email:
+            2-88 St. Anne's Rd.<br >Winnipeg, MB R2M 2Y7<br >Phone: (204)
+            947-0184<br >Email:
             <a href="mailto:wmf@mymts.net">wmf@mymts.net</a>
           </address>
         </div>

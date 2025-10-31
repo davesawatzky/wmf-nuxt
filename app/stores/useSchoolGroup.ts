@@ -14,12 +14,16 @@ import type {
 export const useSchoolGroup = defineStore(
   'schoolGroup',
   () => {
-    const schoolGroup = ref([] as SchoolGroup[])
     const fieldConfigStore = useFieldConfig()
+    const schoolGroup = ref<SchoolGroup[]>([])
     const schoolGroupErrors = ref<{ id: number; count: number }[]>([])
+
+    /**
+     * Resets the school group store to initial state
+     */
     function $reset() {
-      schoolGroup.value.splice(0, schoolGroup.value.length)
-      schoolGroupErrors.value.splice(0, schoolGroupErrors.value.length)
+      schoolGroup.value = []
+      schoolGroupErrors.value = []
     }
 
     /**
@@ -27,34 +31,29 @@ export const useSchoolGroup = defineStore(
      * @param schoolGrp School Group Object must have valid id property value
      */
     function addToStore(schoolGrp: SchoolGroup): void {
-      try {
-        schoolGroup.value.push({
-          id: schoolGrp.id,
-          name: schoolGrp.name || null,
-          groupSize:
-            schoolGrp.groupSize !== null && schoolGrp.groupSize !== undefined
-              ? schoolGrp.groupSize
-              : null,
-          chaperones:
-            schoolGrp.chaperones !== null && schoolGrp.chaperones !== undefined
-              ? schoolGrp.chaperones
-              : null,
-          wheelchairs:
-            schoolGrp.wheelchairs !== null &&
-            schoolGrp.wheelchairs !== undefined
-              ? schoolGrp.wheelchairs
-              : null,
-          earliestTime: schoolGrp.earliestTime || null,
-          latestTime: schoolGrp.latestTime || null,
-          unavailable: schoolGrp.unavailable || null,
-          conflictPerformers: schoolGrp.conflictPerformers || null,
-          photoPermission: schoolGrp.photoPermission || null,
-          __typename: schoolGrp.__typename || 'SchoolGroup',
-        })
-        schoolGroupErrors.value.push({ id: schoolGrp.id, count: 0 })
-      } catch (error) {
-        console.error(error)
-      }
+      schoolGroup.value.push({
+        id: schoolGrp.id,
+        name: schoolGrp.name || null,
+        groupSize:
+          schoolGrp.groupSize !== null && schoolGrp.groupSize !== undefined
+            ? schoolGrp.groupSize
+            : null,
+        chaperones:
+          schoolGrp.chaperones !== null && schoolGrp.chaperones !== undefined
+            ? schoolGrp.chaperones
+            : null,
+        wheelchairs:
+          schoolGrp.wheelchairs !== null && schoolGrp.wheelchairs !== undefined
+            ? schoolGrp.wheelchairs
+            : null,
+        earliestTime: schoolGrp.earliestTime || null,
+        latestTime: schoolGrp.latestTime || null,
+        unavailable: schoolGrp.unavailable || null,
+        conflictPerformers: schoolGrp.conflictPerformers || null,
+        photoPermission: schoolGrp.photoPermission || null,
+        __typename: schoolGrp.__typename || 'SchoolGroup',
+      })
+      schoolGroupErrors.value.push({ id: schoolGrp.id, count: 0 })
     }
 
     function findInitialSchoolGroupErrors() {
@@ -78,10 +77,8 @@ export const useSchoolGroup = defineStore(
      * Creates a school group record on the db and store
      * @param schoolId ID of School
      */
-
     const {
       mutate: schoolGroupCreate,
-      loading: loadingSchoolGroupCreate,
       onDone: onSchoolGroupCreateDone,
       onError: onSchoolGroupCreateError,
     } = useMutation(SchoolGroupCreateDocument, {
@@ -96,7 +93,10 @@ export const useSchoolGroup = defineStore(
           result.data.schoolGroupCreate.schoolGroup
         addToStore(schoolGroup)
       } else if (result.data?.schoolGroupCreate.userErrors) {
-        console.log(result.data.schoolGroupCreate.userErrors)
+        console.error(
+          'Failed to create school group:',
+          result.data.schoolGroupCreate.userErrors
+        )
       }
     })
     onSchoolGroupCreateError((error) => {
@@ -107,27 +107,27 @@ export const useSchoolGroup = defineStore(
      * Loads SchoolGroups from db into store.
      * @param registrationId ID of Registration Form
      */
-
     const {
       result: resultSchoolGroups,
       load: schoolGroupsLoad,
       refetch: refetchSchoolGroups,
-      onResult: onSchoolGroupsResult,
       onError: onSchoolGroupsError,
     } = useLazyQuery(SchoolGroupInfoDocument, undefined, {
       fetchPolicy: 'no-cache',
     })
     async function loadSchoolGroups(registrationId: number) {
-      ;(await schoolGroupsLoad(null, { registrationId })) ||
-        (await refetchSchoolGroups())
+      const loaded = await schoolGroupsLoad(null, { registrationId })
+      if (!loaded) {
+        await refetchSchoolGroups()
+      }
     }
     watch(resultSchoolGroups, (newResult) => {
       if (newResult?.registration.school?.schoolGroups) {
-        const schoolGroups = <SchoolGroup[]>(
-          newResult.registration.school?.schoolGroups
-        )
-        const length = schoolGroups.length
-        for (let i = 0; i < length; i++) addToStore(schoolGroups[i]!)
+        const schoolGroups = newResult.registration.school
+          .schoolGroups as SchoolGroup[]
+        for (let i = 0; i < schoolGroups.length; i++) {
+          addToStore(schoolGroups[i]!)
+        }
         findInitialSchoolGroupErrors()
       }
     })
@@ -138,35 +138,42 @@ export const useSchoolGroup = defineStore(
     /**
      * Updates individual school group information from store to db
      * @param schoolGroupId ID of registered School Group
-     * @param field optional field name to update.
+     * @param field Optional field name to update
      */
-    const {
-      mutate: schoolGroupUpdate,
-      loading: loadingSchoolGroupUpdate,
-      onDone: onSchoolGroupUpdateDone,
-      onError: onSchoolGroupUpdateError,
-    } = useMutation(SchoolGroupUpdateDocument, {
-      fetchPolicy: 'no-cache',
-    })
-    async function updateSchoolGroup(schoolGroupId: number, field?: string) {
-      const schoolGrp = <SchoolGroup>schoolGroup.value.find((item) => {
-        return item.id === schoolGroupId
+    const { mutate: schoolGroupUpdate, onError: onSchoolGroupUpdateError } =
+      useMutation(SchoolGroupUpdateDocument, {
+        fetchPolicy: 'no-cache',
       })
-      const { id, __typename, ...schlgrpProps } = schoolGrp
+    async function updateSchoolGroup(schoolGroupId: number, field?: string) {
+      const schoolGrp = schoolGroup.value.find(
+        (item) => item.id === schoolGroupId
+      )
+      if (!schoolGrp) {
+        console.error('School group not found:', {
+          operation: 'updateSchoolGroup',
+          schoolGroupId,
+        })
+        return 'error'
+      }
+
+      const { id, __typename, ...schoolGroupProps } = schoolGrp
       let schoolGroupField = null
-      if (field && Object.keys(schlgrpProps).includes(field)) {
+      if (field && Object.keys(schoolGroupProps).includes(field)) {
         schoolGroupField = Object.fromEntries(
-          Array(Object.entries(schlgrpProps).find((item) => item[0] === field)!)
+          Array(
+            Object.entries(schoolGroupProps).find((item) => item[0] === field)!
+          )
         )
       }
       try {
         await schoolGroupUpdate({
           schoolGroupId,
-          schoolGroup: <SchoolGroupInput>(schoolGroupField || schlgrpProps),
+          schoolGroup:
+            schoolGroupField || (schoolGroupProps as SchoolGroupInput),
         })
         return 'complete'
       } catch (error) {
-        console.error(error)
+        console.error('Failed to update school group:', error)
         return 'error'
       }
     }
@@ -177,27 +184,31 @@ export const useSchoolGroup = defineStore(
     /**
      * Updates all School Group info to the db
      */
-    async function updateAllSchoolGroups() {
-      for (let i = 0; i < schoolGroup.value.length; i++)
+    async function updateAllSchoolGroups(): Promise<void> {
+      for (let i = 0; i < schoolGroup.value.length; i++) {
         await updateSchoolGroup(schoolGroup.value[i]!.id)
+      }
     }
 
     /**
      * Removes selected school group from the db and the school registration form
      * @param schoolGroupId ID of School Group
      */
-    const {
-      mutate: schoolGroupDelete,
-      loading: loadingSchoolGroupDelete,
-      onDone: onSchoolGroupDeleteDone,
-      onError: onSchoolGroupDeleteError,
-    } = useMutation(SchoolGroupDeleteDocument)
+    const { mutate: schoolGroupDelete, onError: onSchoolGroupDeleteError } =
+      useMutation(SchoolGroupDeleteDocument)
 
     async function deleteSchoolGroup(schoolGroupId: number) {
       await schoolGroupDelete({ schoolGroupId })
       const index = schoolGroup.value.findIndex((e) => e.id === schoolGroupId)
-      schoolGroup.value.splice(index, 1)
-      schoolGroupErrors.value.splice(index, 1)
+      if (index !== -1) {
+        schoolGroup.value.splice(index, 1)
+        schoolGroupErrors.value.splice(index, 1)
+      } else {
+        console.error('School group not found for deletion:', {
+          operation: 'deleteSchoolGroup',
+          schoolGroupId,
+        })
+      }
     }
     onSchoolGroupDeleteError((error) => {
       console.error(error)

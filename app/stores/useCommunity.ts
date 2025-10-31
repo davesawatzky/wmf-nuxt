@@ -14,11 +14,32 @@ import type {
 export const useCommunity = defineStore(
   'community',
   () => {
-    const community = ref(<Community>{})
     const fieldConfigStore = useFieldConfig()
     const communityErrors = ref(0)
+    const community = ref<Partial<Community>>(createEmptyCommunity())
+
+    /**
+     * Factory function to create an empty community object
+     */
+    function createEmptyCommunity(): Partial<Community> {
+      return {
+        id: 0,
+        name: null,
+        address: null,
+        city: 'Winnipeg',
+        province: 'MB',
+        postalCode: null,
+        phone: null,
+        email: null,
+        __typename: 'Community',
+      }
+    }
+
+    /**
+     * Resets the community store to initial state
+     */
     function $reset() {
-      community.value = <Community>{}
+      community.value = createEmptyCommunity()
       communityErrors.value = 0
     }
 
@@ -27,15 +48,17 @@ export const useCommunity = defineStore(
      * @param comm Community object must have valid id property value
      */
     function addToStore(comm: Partial<Community>) {
-      community.value.id = comm.id!
-      community.value.name = comm.name || null
-      community.value.address = comm.address || null
-      community.value.city = comm.city || 'Winnipeg'
-      community.value.province = comm.province || 'MB'
-      community.value.postalCode = comm.postalCode || null
-      community.value.phone = comm.phone || null
-      community.value.email = comm.email || null
-      community.value.__typename = comm.__typename || 'Community'
+      community.value = {
+        id: comm.id!,
+        name: comm.name || null,
+        address: comm.address || null,
+        city: comm.city || 'Winnipeg',
+        province: comm.province || 'MB',
+        postalCode: comm.postalCode || null,
+        phone: comm.phone || null,
+        email: comm.email || null,
+        __typename: comm.__typename || 'Community',
+      }
     }
 
     function findInitialCommunityErrors() {
@@ -52,11 +75,9 @@ export const useCommunity = defineStore(
     /**
      * Creates new Community in db and adds it to the store
      * @param registrationId ID of Registration Form
-     * @returns Promise
      */
     const {
       mutate: communityCreate,
-      loading: communityCreateLoading,
       onDone: onCommunityCreateDone,
       onError: onCommunityCreateError,
     } = useMutation(CommunityCreateDocument)
@@ -75,7 +96,10 @@ export const useCommunity = defineStore(
           result.data.communityCreate.community
         addToStore(community)
       } else if (result.data?.communityCreate.userErrors) {
-        console.log(result.data.communityCreate.userErrors)
+        console.error(
+          'Failed to create community:',
+          result.data.communityCreate.userErrors
+        )
       }
     })
     onCommunityCreateError((error) => {
@@ -90,14 +114,15 @@ export const useCommunity = defineStore(
       result: resultCommunity,
       load: communityLoad,
       refetch: refetchCommunity,
-      onResult: onLoadCommunityResult,
       onError: onLoadCommunityError,
     } = useLazyQuery(CommunityInfoDocument, undefined, {
       fetchPolicy: 'no-cache',
     })
     async function loadCommunity(registrationId: number) {
-      ;(await communityLoad(null, { registrationId })) ||
-        (await refetchCommunity())
+      const loaded = await communityLoad(null, { registrationId })
+      if (!loaded) {
+        await refetchCommunity()
+      }
     }
     watch(resultCommunity, (newResult) => {
       if (newResult?.registration.community) {
@@ -111,16 +136,12 @@ export const useCommunity = defineStore(
 
     /**
      * Updates Community record in db from store.
-     * @returns Promise
+     * @param field Optional specific field to update
      */
-    const {
-      mutate: communityUpdate,
-      loading: communityUpdateLoading,
-      onDone: onCommunityUpdateDone,
-      onError: onCommunityUpdateError,
-    } = useMutation(CommunityUpdateDocument, {
-      fetchPolicy: 'network-only',
-    })
+    const { mutate: communityUpdate, onError: onCommunityUpdateError } =
+      useMutation(CommunityUpdateDocument, {
+        fetchPolicy: 'network-only',
+      })
     async function updateCommunity(field?: string) {
       const { id, __typename, ...communityProps } = community.value
       let communityField = null
@@ -133,12 +154,12 @@ export const useCommunity = defineStore(
       }
       try {
         await communityUpdate({
-          communityId: community.value.id,
-          community: <CommunityInput>(communityField || communityProps),
+          communityId: community.value.id!,
+          community: communityField || (communityProps as CommunityInput),
         })
         return 'complete'
       } catch (error) {
-        console.error(error)
+        console.error('Failed to update community:', error)
         return 'error'
       }
     }
@@ -152,7 +173,6 @@ export const useCommunity = defineStore(
      */
     const {
       mutate: communityDelete,
-      loading: communityDeleteLoading,
       onDone: onCommunityDeleteDone,
       onError: onCommunityDeleteError,
     } = useMutation(CommunityDeleteDocument)

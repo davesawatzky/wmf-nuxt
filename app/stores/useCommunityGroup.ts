@@ -1,5 +1,4 @@
 import { useFieldConfig } from '~/stores/useFieldConfig'
-import { number } from 'yup'
 import {
   CommunityGroupCreateDocument,
   CommunityGroupDeleteDocument,
@@ -15,13 +14,16 @@ import type {
 export const useCommunityGroup = defineStore(
   'communityGroup',
   () => {
-    const communityGroup = ref([] as CommunityGroup[])
     const fieldConfigStore = useFieldConfig()
+    const communityGroup = ref<CommunityGroup[]>([])
     const communityGroupErrors = ref<{ id: number; count: number }[]>([])
 
+    /**
+     * Resets the community group store to initial state
+     */
     function $reset() {
-      communityGroup.value.splice(0, communityGroup.value.length)
-      communityGroupErrors.value.splice(0, communityGroupErrors.value.length)
+      communityGroup.value = []
+      communityGroupErrors.value = []
     }
 
     /**
@@ -78,10 +80,8 @@ export const useCommunityGroup = defineStore(
      * Creates a community group record on the db and store
      * @param communityId ID of Community
      */
-
     const {
       mutate: communityGroupCreate,
-      loading: loadingCommunityGroupCreate,
       onDone: onCommunityGroupCreateDone,
       onError: onCommunityGroupCreateError,
     } = useMutation(CommunityGroupCreateDocument, {
@@ -96,7 +96,10 @@ export const useCommunityGroup = defineStore(
           result.data.communityGroupCreate.communityGroup
         addToStore(communityGroup)
       } else if (result.data?.communityGroupCreate.userErrors) {
-        console.log(result.data.communityGroupCreate.userErrors)
+        console.error(
+          'Failed to create community group:',
+          result.data.communityGroupCreate.userErrors
+        )
       }
     })
     onCommunityGroupCreateError((error) => {
@@ -107,25 +110,24 @@ export const useCommunityGroup = defineStore(
      * Loads CommunityGroups from db into store.
      * @param registrationId ID of Registration Form
      */
-
     const {
       result: resultCommunityGroups,
       load: communityGroupsLoad,
       refetch: refetchCommunityGroups,
-      onResult: onCommunityGroupsResult,
       onError: onCommunityGroupsError,
     } = useLazyQuery(CommunityGroupInfoDocument, undefined, {
       fetchPolicy: 'no-cache',
     })
     async function loadCommunityGroups(registrationId: number) {
-      ;(await communityGroupsLoad(null, { registrationId })) ||
-        (await refetchCommunityGroups())
+      const loaded = await communityGroupsLoad(null, { registrationId })
+      if (!loaded) {
+        await refetchCommunityGroups()
+      }
     }
     watch(resultCommunityGroups, (newResult) => {
       if (newResult?.registration.community?.communityGroups) {
-        const communityGroups = <CommunityGroup[]>(
-          newResult.registration.community?.communityGroups
-        )
+        const communityGroups = newResult.registration.community
+          .communityGroups as CommunityGroup[]
         for (let i = 0; i < communityGroups.length; i++) {
           addToStore(communityGroups[i]!)
         }
@@ -139,12 +141,10 @@ export const useCommunityGroup = defineStore(
     /**
      * Updates individual community group information from store to db
      * @param communityGroupId ID of registered Community Group
-     * @param field optional field name to update.
+     * @param field Optional field name to update
      */
     const {
       mutate: communityGroupUpdate,
-      loading: loadingCommunityGroupUpdate,
-      onDone: onCommunityGroupUpdateDone,
       onError: onCommunityGroupUpdateError,
     } = useMutation(CommunityGroupUpdateDocument, {
       fetchPolicy: 'no-cache',
@@ -153,26 +153,37 @@ export const useCommunityGroup = defineStore(
       communityGroupId: number,
       field?: string
     ) {
-      const communityGrp = <CommunityGroup>communityGroup.value.find((item) => {
-        return item.id === communityGroupId
-      })
-      const { id, __typename, ...schlgrpProps } = communityGrp
+      const communityGrp = communityGroup.value.find(
+        (item) => item.id === communityGroupId
+      )
+      if (!communityGrp) {
+        console.error('Community group not found:', {
+          operation: 'updateCommunityGroup',
+          communityGroupId,
+        })
+        return 'error'
+      }
+
+      const { id, __typename, ...communityGroupProps } = communityGrp
       let communityGroupField = null
-      if (field && Object.keys(schlgrpProps).includes(field)) {
+      if (field && Object.keys(communityGroupProps).includes(field)) {
         communityGroupField = Object.fromEntries(
-          Array(Object.entries(schlgrpProps).find((item) => item[0] === field)!)
+          Array(
+            Object.entries(communityGroupProps).find(
+              (item) => item[0] === field
+            )!
+          )
         )
       }
       try {
         await communityGroupUpdate({
           communityGroupId,
-          communityGroup: <CommunityGroupInput>(
-            (communityGroupField || schlgrpProps)
-          ),
+          communityGroup:
+            communityGroupField || (communityGroupProps as CommunityGroupInput),
         })
         return 'complete'
       } catch (error) {
-        console.error(error)
+        console.error('Failed to update community group:', error)
         return 'error'
       }
     }
@@ -184,8 +195,9 @@ export const useCommunityGroup = defineStore(
      * Updates all Community Group info to the db
      */
     async function updateAllCommunityGroups(): Promise<void> {
-      for (let i = 0; i < communityGroup.value.length; i++)
+      for (let i = 0; i < communityGroup.value.length; i++) {
         await updateCommunityGroup(communityGroup.value[i]!.id)
+      }
     }
 
     /**
@@ -194,8 +206,6 @@ export const useCommunityGroup = defineStore(
      */
     const {
       mutate: communityGroupDelete,
-      loading: loadingCommunityGroupDelete,
-      onDone: onCommunityGroupDeleteDone,
       onError: onCommunityGroupDeleteError,
     } = useMutation(CommunityGroupDeleteDocument)
     async function deleteCommunityGroup(communityGroupId: number) {
@@ -203,8 +213,15 @@ export const useCommunityGroup = defineStore(
       const index = communityGroup.value.findIndex(
         (e) => e.id === communityGroupId
       )
-      communityGroup.value.splice(index, 1)
-      communityGroupErrors.value.splice(index, 1)
+      if (index !== -1) {
+        communityGroup.value.splice(index, 1)
+        communityGroupErrors.value.splice(index, 1)
+      } else {
+        console.error('Community group not found for deletion:', {
+          operation: 'deleteCommunityGroup',
+          communityGroupId,
+        })
+      }
     }
     onCommunityGroupDeleteError((error) => {
       console.error(error)

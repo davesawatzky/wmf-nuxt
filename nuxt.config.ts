@@ -58,7 +58,6 @@ export default defineNuxtConfig({
         tokenName: 'diatonicToken',
         authHeader: 'Authorization',
         authType: 'Bearer',
-        connectToDevTools: true,
         httpLinkOptions: {
           credentials: 'include',
         },
@@ -201,6 +200,12 @@ export default defineNuxtConfig({
   },
 
   vite: {
+    esbuild: {
+      pure:
+        process.env.NODE_ENV === 'production'
+          ? ['console.log', 'console.debug']
+          : [],
+    },
     plugins: [tailwindcss()],
     optimizeDeps: {
       include: [

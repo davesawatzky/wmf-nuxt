@@ -22,14 +22,41 @@ export const useRegistration = defineStore(
     const classesStore = useClasses()
     const appStore = useAppStore()
     const registrationId = ref(0)
-    const registration = ref(<Registration & RegistrationInput>{})
+
+    /**
+     * Factory function to create an empty registration object
+     * Returns a base structure matching RegistrationInput with sensible defaults
+     */
+    function createEmptyRegistration(): RegistrationInput & {
+      id?: number
+      createdAt?: string | null
+      updatedAt?: string | null
+      __typename?: string
+    } {
+      return {
+        id: 0,
+        performerType: undefined,
+        label: null,
+        confirmation: null,
+        submittedAt: null,
+        transactionInfo: null,
+        payedAmt: 0.0,
+        totalAmt: 0.0,
+        createdAt: null,
+        updatedAt: null,
+        teacherID: null,
+        __typename: 'Registration',
+      }
+    }
+
+    const registration = ref(createEmptyRegistration())
 
     /**
      * Resets the registration store
      */
     function $reset() {
       registrationId.value = 0
-      registration.value = <Registration>{}
+      registration.value = createEmptyRegistration()
     }
 
     const totalClassAmt = computed(() => {
@@ -57,9 +84,9 @@ export const useRegistration = defineStore(
       return lateFee.toFixed(2)
     }
 
-    watch(totalClassAmt, async (newValue, oldValue) => {
+    watch(totalClassAmt, async (newValue) => {
       registration.value.totalAmt = Number(newValue)
-      if (registration.value.id > 0) {
+      if (registration.value.id && registration.value.id > 0) {
         await updateRegistration('totalAmt')
       }
     })
@@ -70,18 +97,20 @@ export const useRegistration = defineStore(
      */
     function addToStore(reg: Partial<Registration & RegistrationInput>): void {
       registrationId.value = reg.id!
-      registration.value.id = reg.id!
-      registration.value.performerType = reg.performerType!
-      registration.value.label = reg.label || null
-      registration.value.confirmation = reg.confirmation || null
-      registration.value.createdAt = reg.createdAt || null
-      registration.value.submittedAt = reg.submittedAt || null
-      registration.value.transactionInfo = reg.transactionInfo || null
-      registration.value.payedAmt = Number(reg.payedAmt) || 0.0
-      registration.value.totalAmt = Number(reg.totalAmt) || 0.0
-      registration.value.updatedAt = reg.updatedAt || null
-      registration.value.teacherID = reg.teacherID || null
-      registration.value.__typename = 'Registration'
+      registration.value = {
+        id: reg.id!,
+        performerType: reg.performerType!,
+        label: reg.label || null,
+        confirmation: reg.confirmation || null,
+        createdAt: reg.createdAt || null,
+        submittedAt: reg.submittedAt || null,
+        transactionInfo: reg.transactionInfo || null,
+        payedAmt: Number(reg.payedAmt) || 0.0,
+        totalAmt: Number(reg.totalAmt) || 0.0,
+        updatedAt: reg.updatedAt || null,
+        teacherID: reg.teacherID || null,
+        __typename: 'Registration',
+      }
     }
 
     /**
@@ -92,7 +121,6 @@ export const useRegistration = defineStore(
 
     const {
       mutate: registrationCreate,
-      loading: registrationCreateLoading,
       onDone: onRegistrationCreateDone,
       onError: onRegistrationCreateError,
     } = useMutation(RegistrationCreateDocument)
@@ -108,7 +136,10 @@ export const useRegistration = defineStore(
           result.data.registrationCreate.registration
         addToStore(registration)
       } else if (result.data?.registrationCreate.userErrors) {
-        console.log(result.data.registrationCreate.userErrors)
+        console.error(
+          'Failed to create registration:',
+          result.data.registrationCreate.userErrors
+        )
       }
     })
     onRegistrationCreateError((error) => {
@@ -117,15 +148,13 @@ export const useRegistration = defineStore(
 
     /**
      * Updates Registration form information from store to db.
+     * @param field Optional specific field to update
+     * @param regId Optional registration ID (defaults to current)
      */
-    const {
-      mutate: registrationUpdate,
-      loading: registrationUpdateLoading,
-      onDone: onRegistrationUpdateDone,
-      onError: onRegistrationUpdateError,
-    } = useMutation(RegistrationUpdateDocument, {
-      fetchPolicy: 'network-only',
-    })
+    const { mutate: registrationUpdate, onError: onRegistrationUpdateError } =
+      useMutation(RegistrationUpdateDocument, {
+        fetchPolicy: 'network-only',
+      })
     async function updateRegistration(field?: string, regId?: number) {
       const { id, __typename, updatedAt, createdAt, ...regProps } =
         registration.value
@@ -138,11 +167,12 @@ export const useRegistration = defineStore(
       try {
         await registrationUpdate({
           registrationId: regId || registrationId.value,
-          registrationInput: <RegistrationInput>(registrationField || regProps),
+          registrationInput:
+            registrationField || (regProps as RegistrationInput),
         })
         return 'complete'
       } catch (error) {
-        console.error(error)
+        console.error('Failed to update registration:', error)
         return 'error'
       }
     }
@@ -152,17 +182,15 @@ export const useRegistration = defineStore(
 
     /**
      * Removes registration from db
-     * @param registrationId ID of Registration Form
-     * @returns Promise
+     * @param regId ID of Registration Form
      */
     const {
       mutate: registrationDelete,
-      loading: registrationDeleteLoading,
       onDone: onRegistrationDeleteDone,
       onError: onRegistrationDeleteError,
     } = useMutation(RegistrationDeleteDocument)
-    async function deleteRegistration(registrationId: number) {
-      await registrationDelete({ registrationId })
+    async function deleteRegistration(regId: number) {
+      await registrationDelete({ registrationId: regId })
     }
     onRegistrationDeleteDone(() => {
       $reset()

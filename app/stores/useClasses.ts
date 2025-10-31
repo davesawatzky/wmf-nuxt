@@ -23,12 +23,11 @@ export const useClasses = defineStore(
     const registeredClasses = ref<RegisteredClass[]>([])
     const MOZART_CLASSES = ['7700', '7701', '7702', '7703', '7704', '7705']
     const fieldConfigStore = useFieldConfig()
-    const registrationStore = useRegistration()
     const classErrors = ref<ClassErrors[]>([])
 
     function $reset() {
-      registeredClasses.value.splice(0, registeredClasses.value.length)
-      classErrors.value.splice(0, classErrors.value.length)
+      registeredClasses.value = []
+      classErrors.value = []
     }
 
     /**
@@ -147,7 +146,6 @@ export const useClasses = defineStore(
      */
     const {
       mutate: classCreate,
-      loading: createClassLoading,
       onDone: onCreateClassDone,
       onError: onCreateClassError,
     } = useMutation(ClassCreateDocument, { fetchPolicy: 'no-cache' })
@@ -177,13 +175,15 @@ export const useClasses = defineStore(
       result: resultClasses,
       load: classesLoad,
       refetch: refetchClasses,
-      onResult: onLoadClassesResult,
       onError: onLoadClassesError,
     } = useLazyQuery(RegisteredClassesDocument, undefined, {
       fetchPolicy: 'no-cache',
     })
     async function loadClasses(registrationId: number) {
-      ;(await classesLoad(null, { registrationId })) || (await refetchClasses())
+      const loaded = await classesLoad(null, { registrationId })
+      if (!loaded) {
+        await refetchClasses()
+      }
     }
     watch(resultClasses, (newResult) => {
       if (newResult?.registration.registeredClasses) {
@@ -207,12 +207,10 @@ export const useClasses = defineStore(
      * @param classId ID of the Registered Class
      * @param field class field
      */
-    const {
-      mutate: classUpdate,
-      loading: classUpdateLoading,
-      onDone: onClassUpdateDone,
-      onError: onClassUpdateError,
-    } = useMutation(ClassUpdateDocument, { fetchPolicy: 'no-cache' })
+    const { mutate: classUpdate, onError: onClassUpdateError } = useMutation(
+      ClassUpdateDocument,
+      { fetchPolicy: 'no-cache' }
+    )
     async function updateClass(classId: number, field?: string) {
       const regClass = registeredClasses.value.find(
         (item) => item.id === classId
@@ -255,12 +253,8 @@ export const useClasses = defineStore(
      * @param registeredClassId ID of Registered Class
      * @returns classIndex number
      */
-    const {
-      mutate: classDelete,
-      loading: classDeleteLoading,
-      onDone: onClassDeleteDone,
-      onError: onClassDeleteError,
-    } = useMutation(ClassDeleteDocument)
+    const { mutate: classDelete, onError: onClassDeleteError } =
+      useMutation(ClassDeleteDocument)
     async function deleteClass(registeredClassId: number): Promise<number> {
       await classDelete({ registeredClassId })
       const classIndex = registeredClasses.value.findIndex(
@@ -281,7 +275,6 @@ export const useClasses = defineStore(
     let registeredClassSelectionId = 0
     const {
       mutate: selectionCreate,
-      loading: createSelectionLoading,
       onDone: onCreateSelectionDone,
       onError: onCreateSelectionError,
     } = useMutation(SelectionCreateDocument, { fetchPolicy: 'no-cache' })
@@ -307,14 +300,10 @@ export const useClasses = defineStore(
      * @param selectionId ID of selection
      * @param field selection field
      */
-    const {
-      mutate: selectionUpdate,
-      loading: selectionUpdateLoading,
-      onDone: onSelectionUpdateDone,
-      onError: onSelectionUpdateError,
-    } = useMutation(SelectionUpdateDocument, {
-      fetchPolicy: 'no-cache',
-    })
+    const { mutate: selectionUpdate, onError: onSelectionUpdateError } =
+      useMutation(SelectionUpdateDocument, {
+        fetchPolicy: 'no-cache',
+      })
     async function updateSelection(
       classId: number,
       selectionId: number,
@@ -374,12 +363,8 @@ export const useClasses = defineStore(
      * @param selectionId ID of Selection item
      * @returns Promise
      */
-    const {
-      mutate: selectionDelete,
-      loading: selectionDeleteLoading,
-      onDone: onSelectionDeleteDone,
-      onError: onSelectionDeleteError,
-    } = useMutation(SelectionDeleteDocument)
+    const { mutate: selectionDelete, onError: onSelectionDeleteError } =
+      useMutation(SelectionDeleteDocument)
     async function deleteSelection(classId: number, selectionId: number) {
       await selectionDelete({ selectionId })
       const classIndex = registeredClasses.value.findIndex(

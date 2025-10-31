@@ -3,9 +3,9 @@
   import _ from 'lodash'
   import type {
     Stripe,
-    StripeElements,
-    StripeElementsOptions,
-    StripePaymentElementOptions,
+    StripeError,
+    ConfirmationToken,
+    PaymentIntent,
   } from '@stripe/stripe-js'
   import { useToast } from 'vue-toastification'
 
@@ -15,23 +15,35 @@
   const submitDisabled = ref(false)
   const toast = useToast()
 
-  type DeepObject = {
-    [key: string]: string | number | DeepObject
+  interface CreatePaymentIntentResponse {
+    totalPayment: number
+    client_secret: string
+    // Add other fields returned by your backend
   }
 
-  type PaymentDetails = {
+  type PaymentSummaryResponse = {
     amount: number
     stripeFee: string
     totalAmount: number
-    confirmationToken: {
+    confirmationToken: Pick<ConfirmationToken, 'payment_method_preview'> & {
       payment_method_preview: {
-        name: string
-        email: string | null
-        address: {
-          city: string | null
-          state: string | null
-          country: string | null
-          postal_code: string | null
+        type: string
+        billing_details: {
+          name: string | null
+          email: string | null
+          address: {
+            city: string | null
+            state: string | null
+            country: string | null
+            postal_code: string | null
+          } | null
+        }
+        card?: {
+          brand: string
+          country: string
+          exp_month: number
+          exp_year: number
+          last4: string
         }
       }
     }
@@ -43,66 +55,111 @@
 
   const stripe: Stripe | null = await loadStripe(config.public.stripePubKey)
 
-  const handleError = (error: any) => {
-    toast.error(error.message)
+  const handleError = async (error: StripeError) => {
+    toast.error(error.message ?? 'An unknown error occurred.')
     submitDisabled.value = false
+    await navigateTo('/Submission/payment')
     return
   }
 
-  let response: any
+  let response: PaymentSummaryResponse | undefined
 
   if (appStore.stripePayment === 'ccard') {
-    response = await $fetch<PaymentDetails>(
-      `${config.public.serverAddress}/payment/summarize-payment`,
-      {
-        method: 'POST',
-        body: {
-          regId: registrationStore.registrationId,
-          tokenId: appStore.stripeTokenId,
-        },
-      }
-    )
+    try {
+      response = await $fetch<PaymentSummaryResponse>(
+        `${config.public.serverAddress}/payment/summarize-payment`,
+        {
+          method: 'POST',
+          body: {
+            regId: registrationStore.registrationId,
+            tokenId: appStore.stripeTokenId,
+          },
+        }
+      )
+    } catch (error) {
+      console.error('Failed to summarize payment:', error)
+      toast.error('Failed to fetch payment summary. Please try again.')
+      submitDisabled.value = false
+    }
   }
 
   const paymentDetails = computed(() => {
-    return response ?? {}
+    return response ?? ({} as PaymentSummaryResponse)
   })
 
   async function confirmPayment() {
+    if (!stripe) {
+      toast.error('Stripe has not been initialized.')
+      return
+    }
+
     submitDisabled.value = true
     registrationStore.registration.confirmation = WMFNumber(
       registrationStore.registrationId
     )
-    const PaymentIntent: any = await $fetch(
-      `${config.public.serverAddress}/payment/create-payment-intent`,
-      {
-        method: 'POST',
-        body: {
-          regId: registrationStore.registrationId,
-          WMFconfirmationId: registrationStore.registration.confirmation,
-          tokenId: appStore.stripeTokenId,
+
+    try {
+      const paymentIntentResponse = await $fetch<CreatePaymentIntentResponse>(
+        `${config.public.serverAddress}/payment/create-payment-intent`,
+        {
+          method: 'POST',
+          body: {
+            regId: registrationStore.registrationId,
+            WMFconfirmationId: registrationStore.registration.confirmation,
+            tokenId: appStore.stripeTokenId,
+          },
+        }
+      )
+      const { totalPayment, client_secret: clientSecret } =
+        paymentIntentResponse
+
+      registrationStore.registration.payedAmt = +totalPayment / 100
+
+      const result = await stripe.confirmPayment({
+        clientSecret,
+        confirmParams: {
+          confirmation_token: appStore.stripeTokenId,
+          return_url: `${config.public.apiBase}/submission/result`,
         },
+      })
+
+      // This point will only be reached if there is an immediate error when
+      // confirming the payment. Otherwise, your customer will be redirected to
+      // your `return_url`. For some payment methods like iDEAL, your customer will
+      // be redirected to an intermediate site first to authorize the payment, then
+      // redirected to the `return_url`.
+      if (result.error) {
+        console.error('Stripe payment confirmation failed', {
+          error_type: result.error.type,
+          error_code: result.error.code,
+          decline_code: result.error.decline_code,
+          payment_intent_id: result.error.payment_intent?.id,
+          registration_id: registrationStore.registrationId,
+        })
+        handleError(result.error)
+        return
       }
-    )
-    const { totalPayment, client_secret: clientSecret }: any = PaymentIntent
 
-    registrationStore.registration.payedAmt = +totalPayment / 100
+      // If we reach here without redirect, the payment succeeded without requiring action
+      // This is rare but can happen for certain payment methods
+      const paymentIntent = (
+        'paymentIntent' in result ? result.paymentIntent : null
+      ) as PaymentIntent | null
+      if (paymentIntent) {
+        console.info('PaymentIntent confirmed locally:', {
+          id: paymentIntent.id,
+          status: paymentIntent.status,
+        })
+      }
 
-    const { error } = await stripe!.confirmPayment({
-      clientSecret,
-      confirmParams: {
-        confirmation_token: appStore.stripeTokenId,
-        return_url: `${config.public.apiBase}/submission/result`,
-      },
-    })
+      // await registrationStore.updateRegistration()
 
-    // This point will only be reached if there is an immediate error when
-    // confirming the payment. Otherwise, your customer will be redirected to
-    // your `return_url`. For some payment methods like iDEAL, your customer will
-    // be redirected to an intermediate site first to authorize the payment, then
-    // redirected to the `return_url`.
-    if (error) {
-      handleError(error)
+      // This point will only be reached if there is an immediate error
+      // Otherwise, customer will be redirected to return_url
+    } catch (err) {
+      console.error('Payment confirmation failed:', err)
+      toast.error('Payment confirmation failed. Please try again.')
+      submitDisabled.value = false
     }
   }
 
@@ -164,19 +221,19 @@
             <tr
               v-if="
                 paymentDetails.confirmationToken.payment_method_preview.card
-                  .display_brand
+                  ?.brand
               ">
               <td>Card Type</td>
               <td class="text-right">
                 {{
-                  paymentDetails.confirmationToken.payment_method_preview.card.display_brand.toUpperCase()
+                  paymentDetails.confirmationToken.payment_method_preview.card.brand.toUpperCase()
                 }}
               </td>
             </tr>
             <tr
               v-if="
                 paymentDetails.confirmationToken.payment_method_preview.card
-                  .country
+                  ?.country
               ">
               <td>Issuing Country</td>
               <td class="text-right">
@@ -189,7 +246,7 @@
             <tr
               v-if="
                 paymentDetails.confirmationToken.payment_method_preview.card
-                  .exp_month
+                  ?.exp_month
               ">
               <td>Exp. Month</td>
               <td class="text-right">
@@ -202,7 +259,7 @@
             <tr
               v-if="
                 paymentDetails.confirmationToken.payment_method_preview.card
-                  .exp_year
+                  ?.exp_year
               ">
               <td>Exp. Year</td>
               <td class="text-right">
@@ -215,7 +272,7 @@
             <tr
               v-if="
                 paymentDetails.confirmationToken.payment_method_preview.card
-                  .last4
+                  ?.last4
               ">
               <td>Last 4 Digits</td>
               <td class="text-right">

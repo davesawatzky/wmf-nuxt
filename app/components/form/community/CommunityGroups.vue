@@ -1,12 +1,23 @@
 <script setup lang="ts">
   import { useCommunityGroup } from '~/stores/useCommunityGroup'
   import { useCommunity } from '~/stores/useCommunity'
+  import { useToast } from 'vue-toastification'
 
   const communityGroupStore = useCommunityGroup()
   const communityStore = useCommunity()
+  const toast = useToast()
 
-  async function addCommunityGroup(communityId: number) {
-    await communityGroupStore.createCommunityGroup(communityId)
+  async function addCommunityGroup(communityId?: number) {
+    try {
+      if (communityId) {
+        await communityGroupStore.createCommunityGroup(communityId)
+      } else {
+        toast.error('Cannot add community group. Community ID is missing')
+      }
+    } catch (error) {
+      console.error('Error adding community group:', error)
+      toast.error('Error adding community group')
+    }
   }
   async function removeCommunityGroup(communityGroupId: number) {
     await communityGroupStore.deleteCommunityGroup(communityGroupId)

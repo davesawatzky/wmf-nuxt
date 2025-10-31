@@ -25,7 +25,7 @@ export const useFieldConfig = defineStore(
     const requiredFields = ref<FieldConfig[]>([])
     const appStore = useAppStore()
     function $reset() {
-      requiredFields.value.splice(0, requiredFields.value.length)
+      requiredFields.value = []
     }
 
     function performerTypeFields(tableName: string): string[] {
@@ -53,7 +53,6 @@ export const useFieldConfig = defineStore(
     }
 
     const {
-      result: resultFieldConfigs,
       load: requiredFieldsLoad,
       refetch: refetchRequiredFields,
       onError: onLoadRequiredFieldsError,
@@ -62,7 +61,10 @@ export const useFieldConfig = defineStore(
       fetchPolicy: 'no-cache',
     })
     async function loadRequiredFields() {
-      ;(await requiredFieldsLoad()) || (await refetchRequiredFields())
+      const loaded = await requiredFieldsLoad()
+      if (!loaded) {
+        await refetchRequiredFields()
+      }
     }
     onRequiredFieldsResult((result) => {
       for (let i = 0; i < result.data.fieldConfigs.length; i++) {

@@ -10,7 +10,6 @@ declare module 'vue' {
   export interface GlobalComponents {
     PVAutoComplete: typeof import('primevue/autocomplete')['default']
     PVBadge: typeof import('primevue/badge')['default']
-    PVbutton: typeof import('primevue/button')['default']
     PVButton: typeof import('primevue/button')['default']
     PVCard: typeof import('primevue/card')['default']
     PVColumn: typeof import('primevue/column')['default']

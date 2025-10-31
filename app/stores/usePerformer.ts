@@ -11,20 +11,20 @@ import type {
   PerformerCreateMutation,
   PerformerInput,
 } from '~/graphql/gql/graphql'
-import { number } from 'yup'
-import type { count } from 'console'
 
 export const usePerformers = defineStore(
   'performers',
   () => {
-    const performers = ref([] as Performer[])
     const fieldConfigStore = useFieldConfig()
-    const registrationStore = useRegistration()
+    const performers = ref<Performer[]>([])
     const performerErrors = ref<{ id: number; count: number }[]>([])
 
+    /**
+     * Resets the performers store to initial state
+     */
     function $reset() {
-      performers.value.splice(0, performers.value.length)
-      performerErrors.value.splice(0, performerErrors.value.length)
+      performers.value = []
+      performerErrors.value = []
     }
 
     const numberOfPerformers = computed(() => {
@@ -33,9 +33,9 @@ export const usePerformers = defineStore(
 
     const averageAge = computed(() => {
       let totalAge = 0
-      for (let i = 0; i < performers.value.length; i++)
+      for (let i = 0; i < performers.value.length; i++) {
         totalAge += performers.value[i]?.age ?? 0
-
+      }
       return Math.round(totalAge / performers.value.length)
     })
 
@@ -58,8 +58,8 @@ export const usePerformers = defineStore(
      * @param performer At minimum, must include valid id property value
      */
     function addToStore(performer: Partial<Performer>): void {
-      performers.value.push(<Performer>{
-        id: performer.id,
+      performers.value.push({
+        id: performer.id!,
         pronouns: performer.pronouns || null,
         firstName: performer.firstName || null,
         lastName: performer.lastName || null,
@@ -109,7 +109,6 @@ export const usePerformers = defineStore(
      */
     const {
       mutate: performerCreate,
-      loading: performerCreateLoading,
       onDone: onPerformerCreateDone,
       onError: onPerformerCreateError,
     } = useMutation(PerformerCreateDocument)
@@ -128,7 +127,10 @@ export const usePerformers = defineStore(
           result.data.performerCreate.performer
         addToStore(performer)
       } else if (result.data?.performerCreate.userErrors) {
-        console.log(result.data.performerCreate.userErrors)
+        console.error(
+          'Failed to create performer:',
+          result.data.performerCreate.userErrors
+        )
       }
     })
     onPerformerCreateError((error) => {
@@ -143,12 +145,13 @@ export const usePerformers = defineStore(
       result: resultPerformers,
       load: performersLoad,
       refetch: performersRefetch,
-      onResult: onPerformersResult,
       onError: onPerformersError,
     } = useLazyQuery(PerformersDocument, undefined, { fetchPolicy: 'no-cache' })
     async function loadPerformers(registrationId: number) {
-      ;(await performersLoad(null, { registrationId })) ||
-        (await performersRefetch())
+      const loaded = await performersLoad(null, { registrationId })
+      if (!loaded) {
+        await performersRefetch()
+      }
     }
     watch(resultPerformers, (newResult) => {
       if (newResult?.performers) {
@@ -160,7 +163,7 @@ export const usePerformers = defineStore(
       }
     })
     onPerformersError((error) => {
-      console.error('Performer Load Error. ', error)
+      console.error('Performer load error:', error)
     })
 
     /**
@@ -168,18 +171,20 @@ export const usePerformers = defineStore(
      * @param performerId ID of performer to update
      * @param field Optional single fieldname to update
      */
-    const {
-      mutate: performerUpdate,
-      loading: performerUpdateLoading,
-      onDone: onPerformerUpdateDone,
-      onError: onPerformerUpdateError,
-    } = useMutation(PerformerUpdateDocument, {
-      fetchPolicy: 'no-cache',
-    })
-    async function updatePerformer(performerId: number, field?: string) {
-      const person = <Performer>performers.value.find((item) => {
-        return item.id === performerId
+    const { mutate: performerUpdate, onError: onPerformerUpdateError } =
+      useMutation(PerformerUpdateDocument, {
+        fetchPolicy: 'no-cache',
       })
+    async function updatePerformer(performerId: number, field?: string) {
+      const person = performers.value.find((item) => item.id === performerId)
+      if (!person) {
+        console.error('Performer not found:', {
+          operation: 'updatePerformer',
+          performerId,
+        })
+        return 'error'
+      }
+
       const { id, __typename, ...personProps } = person
       let performerField = null
       if (field && Object.keys(personProps).includes(field)) {
@@ -190,11 +195,11 @@ export const usePerformers = defineStore(
       try {
         await performerUpdate({
           performerId,
-          performer: <PerformerInput>(performerField || personProps),
+          performer: performerField || (personProps as PerformerInput),
         })
         return 'complete'
       } catch (error) {
-        console.error(error)
+        console.error('Failed to update performer:', error)
         return 'error'
       }
     }
@@ -213,23 +218,24 @@ export const usePerformers = defineStore(
 
     /**
      * Removes a performer from the store and the db
-     *
      * @param performerId ID of the individual performer in the Array
-     * @returns performer array index number
      */
-    const {
-      mutate: performerDelete,
-      loading: performerDeleteLoading,
-      onDone: onPerformerDeleteDone,
-      onError: onPerformerDeleteError,
-    } = useMutation(PerformerDeleteDocument)
+    const { mutate: performerDelete, onError: onPerformerDeleteError } =
+      useMutation(PerformerDeleteDocument)
     async function deletePerformer(performerId: number) {
       await performerDelete({ performerId })
       const performerIndex = performers.value.findIndex(
         (item) => item.id === performerId
       )
-      performers.value.splice(performerIndex, 1)
-      performerErrors.value.splice(performerIndex, 1)
+      if (performerIndex !== -1) {
+        performers.value.splice(performerIndex, 1)
+        performerErrors.value.splice(performerIndex, 1)
+      } else {
+        console.error('Performer not found for deletion:', {
+          operation: 'deletePerformer',
+          performerId,
+        })
+      }
     }
     onPerformerDeleteError((error) => {
       console.error(error)

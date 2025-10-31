@@ -4,42 +4,71 @@ import type { User, UserInput } from '~/graphql/gql/graphql'
 export const useUser = defineStore(
   'user',
   () => {
-    const user = ref(<User>{})
-
-    function $reset() {
-      user.value = <User>{}
+    /**
+     * Factory function to create an empty user object with default values
+     */
+    function createEmptyUser(): Partial<User> {
+      return {
+        id: 0,
+        firstName: null,
+        lastName: null,
+        isActive: false,
+        email: null,
+        emailConfirmed: false,
+        privateTeacher: false,
+        schoolTeacher: false,
+        address: null,
+        city: null,
+        province: null,
+        postalCode: null,
+        phone: null,
+        instrument: null,
+        __typename: 'User',
+      }
     }
 
+    const user = ref<Partial<User>>(createEmptyUser())
+
+    function $reset() {
+      user.value = createEmptyUser()
+    }
+
+    /**
+     * Adds User object to store from db
+     * @param userDetails Partial User object with data to store
+     */
     function addToStore(userDetails: Partial<User>): void {
-      user.value.id = userDetails.id!
-      user.value.firstName = userDetails.firstName || null
-      user.value.lastName = userDetails.lastName || null
-      user.value.isActive = userDetails.isActive || false
-      user.value.email = userDetails.email || null
-      user.value.emailConfirmed = userDetails.emailConfirmed || false
-      user.value.privateTeacher = userDetails.privateTeacher || false
-      user.value.schoolTeacher = userDetails.schoolTeacher || false
-      user.value.address = userDetails.address || null
-      user.value.city = userDetails.city || null
-      user.value.province = userDetails.province || null
-      user.value.postalCode = userDetails.postalCode || null
-      user.value.phone = userDetails.phone || null
-      user.value.instrument = userDetails.instrument || null
+      user.value = {
+        id: userDetails.id ?? 0,
+        firstName: userDetails.firstName ?? null,
+        lastName: userDetails.lastName ?? null,
+        isActive: userDetails.isActive ?? false,
+        email: userDetails.email ?? null,
+        emailConfirmed: userDetails.emailConfirmed ?? false,
+        privateTeacher: userDetails.privateTeacher ?? false,
+        schoolTeacher: userDetails.schoolTeacher ?? false,
+        address: userDetails.address ?? null,
+        city: userDetails.city ?? null,
+        province: userDetails.province ?? null,
+        postalCode: userDetails.postalCode ?? null,
+        phone: userDetails.phone ?? null,
+        instrument: userDetails.instrument ?? null,
+        __typename: userDetails.__typename ?? 'User',
+      }
     }
 
     /**
      * Updates the User record from the store to the db.
      * But does not change names, password, or email.
-     * @returns Promise
+     * @param field Optional specific field to update
+     * @returns Promise resolving to 'complete' or 'error'
      */
-    const {
-      mutate: userUpdate,
-      loading: userUpdateLoading,
-      onDone: onUserUpdateDone,
-      onError: onUserUpdateError,
-    } = useMutation(UserUpdateDocument, {
-      fetchPolicy: 'network-only',
-    })
+    const { mutate: userUpdate, onError: onUserUpdateError } = useMutation(
+      UserUpdateDocument,
+      {
+        fetchPolicy: 'network-only',
+      }
+    )
     async function updateUser(field?: string) {
       const { id, __typename, firstName, lastName, email, ...userProps } =
         user.value
@@ -51,27 +80,33 @@ export const useUser = defineStore(
       }
       try {
         await userUpdate({
-          userId: user.value.id,
-          user: <UserInput>(userField || userProps),
+          userId: user.value.id!,
+          user: userField || (userProps as UserInput),
         })
         return 'complete'
       } catch (error) {
-        console.error(error)
+        console.error('Failed to update user:', error, {
+          operation: 'updateUser',
+          field,
+          userId: user.value.id,
+        })
         return 'error'
       }
     }
     onUserUpdateError((error) => {
-      console.error(error)
+      console.error('User update error:', error, {
+        operation: 'updateUser',
+      })
     })
 
     /**
-     * Password Check
+     * Password Check - verifies if user has a password set
+     * @param id User ID to check
      */
     const {
       result: resultHasPassword,
       load: hasPasswordLoad,
       refetch: refetchHasPassword,
-      onResult: onHasPasswordResult,
       onError: onHasPasswordError,
     } = useLazyQuery(
       gql`
@@ -86,14 +121,18 @@ export const useUser = defineStore(
       { fetchPolicy: 'network-only' }
     )
     async function loadHasPassword(id: number) {
-      const result =
-        (await hasPasswordLoad(null, { checkIfPasswordExistsId: id })) ||
-        refetchHasPassword({ checkIfPasswordExistsId: id })
-      return result
+      const loaded = await hasPasswordLoad(null, {
+        checkIfPasswordExistsId: id,
+      })
+      if (!loaded) {
+        await refetchHasPassword({ checkIfPasswordExistsId: id })
+      }
     }
-    const checkPassword = computed(() => resultHasPassword.value.pass ?? null)
+    const checkPassword = computed(() => resultHasPassword.value?.pass ?? null)
     onHasPasswordError((error) => {
-      console.error(error)
+      console.error('Password check failed:', error, {
+        operation: 'loadHasPassword',
+      })
     })
 
     return {

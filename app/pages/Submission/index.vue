@@ -1,6 +1,4 @@
 <script setup lang="ts">
-  import { DateTime } from 'luxon'
-
   type Confirmed = {
     importantNotes: boolean
     nonrefundable: boolean
@@ -19,8 +17,6 @@
     rulesAndTrophyForms: false,
   })
 
-  const photoPermission = ref(false)
-
   const proceedToPayment = computed(() => {
     for (const key in readConfirmation.value) {
       if (!readConfirmation.value[key as keyof Confirmed]) {
@@ -32,7 +28,10 @@
 
   function checkIfParentConsentRequired() {
     if (registrationStore.registration.performerType === 'SOLO') {
-      if (performerStore.performers[0]?.age! < 18) {
+      if (
+        performerStore.performers[0]?.age &&
+        performerStore.performers[0].age < 18
+      ) {
         return true
       } else {
         readConfirmation.value.parentGuardian = true
@@ -42,13 +41,6 @@
       readConfirmation.value.parentGuardian = true
     }
   }
-
-  function printWindow() {
-    window.print()
-  }
-
-  const date = new Date()
-  const formattedDate = DateTime.now().toLocaleString(DateTime.DATETIME_MED)
 
   definePageMeta({
     middleware: ['user', 'submission'],

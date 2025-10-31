@@ -7,7 +7,15 @@ export default withNuxt(
   // { typescript: { tsconfigPath: 'tsconfig.json' }, vue: true },
   {
     rules: {
-      'no-console': process.env.NODE_ENV === 'development' ? 'off' : 'warn',
+      'no-console': 'off',
+      // process.env.NODE_ENV === 'development'
+      //   ? 'off'
+      //   : [
+      //       'warn',
+      //       {
+      //         allow: ['warn', 'error', 'info'],
+      //       },
+      //     ],
       '@typescript-eslint/no-console':
         process.env.NODE_ENV === 'development' ? 'off' : 'off',
     },

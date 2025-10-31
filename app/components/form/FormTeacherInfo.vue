@@ -8,7 +8,7 @@
   import type { Teacher } from '~/graphql/gql/graphql'
   import { useToast } from 'vue-toastification'
   import { StatusEnum } from '#imports'
-  import type { FilteredTeacher } from '~/stores/useTeacher'
+  import type { AllTeachers, FilteredTeacher } from '~/stores/useTeacher'
 
   const props = defineProps<{
     modelValue: ContactInfo
@@ -34,7 +34,7 @@
     set: (value) => emits('update:modelValue', value),
   })
   const privateTeacher = ref(false)
-  const schoolTeacher = ref(false)
+  const schoolTeach = ref(false)
 
   const fieldConfigStore = useFieldConfig()
   const userStore = useUser()
@@ -49,17 +49,21 @@
       appStore.performerType === 'COMMUNITY'
     ) {
       privateTeacher.value = false
-      schoolTeacher.value = true
+      schoolTeach.value = true
     } else {
       privateTeacher.value = true
-      schoolTeacher.value = false
+      schoolTeach.value = false
     }
-    if (!!registrationStore.registration.teacherID) {
-      let { id, firstName, lastName } = teacherStore.teacher
-      firstName = firstName ?? ''
-      lastName = lastName ?? ''
-      // instrument = instrument ?? undefined
-      teacherStore.chosenTeacher = { id, firstName, lastName }
+    if (registrationStore.registration.teacherID) {
+      const { id, firstName, lastName } = teacherStore.teacher
+      // Only set chosenTeacher if all required fields are present
+      if (id && firstName && lastName) {
+        teacherStore.chosenTeacher = {
+          id,
+          firstName,
+          lastName,
+        }
+      }
       checkForPassword(registrationStore.registration.teacherID)
     }
   })
@@ -122,8 +126,6 @@
     validationSchema = teacherSchema
   }
 
-  const currentYear = new Date().getFullYear()
-
   // Does not run when simply changing a teacher from the dropdown
   // only when changing fields in the unlisted teacher form
   async function fieldStatus(stat: string, fieldName: string) {
@@ -183,13 +185,13 @@
     }
   }
 
-  const { errors, validate, values } = useForm({
+  const { validate } = useForm({
     validationSchema,
     validateOnMount: true,
   })
 
   const { handleChange } = useField(() => 'id', undefined)
-  async function newStatus(event: any, fieldName: string) {
+  async function newStatus(event: Event, fieldName: string) {
     handleChange(event, true)
     await fieldStatus('valid', fieldName)
   }
@@ -219,7 +221,7 @@
 
   watch(
     () => teacherStore.fieldStatusRef,
-    async (newStatus, oldStatus) => {
+    async (newStatus) => {
       if (newStatus?.stat === 'removed' && newStatus?.field === 'id') {
         await fieldStatus(newStatus.stat, newStatus?.field)
       }
@@ -229,89 +231,81 @@
   // Adds teacher id to registration store
   // unless it's an unlisted teacher
   // if unlisted then the unlisted teacher watcher will run
-  watch(
-    () => teacherStore.chosenTeacher,
-    async (newTeacher, oldTeacher) => {
-      if (newTeacher?.lastName === 'Unlisted') {
-        // turns everything null or default to
-        // give a clean slate for a new teacher
-        teacherStore.unlistedTeacher = true
-        teacherStore.$resetTeacher()
-        for (const key of teacherKeys) {
-          if (status[key as keyof Teacher] !== StatusEnum.null) {
-            status[key as keyof Teacher] = StatusEnum.null
-          }
+  async function changeChosenTeacher(newTeacher: AllTeachers) {
+    if (newTeacher?.lastName === 'Unlisted') {
+      // turns everything null or default to
+      // give a clean slate for a new teacher
+      teacherStore.unlistedTeacher = true
+      teacherStore.$resetTeacher()
+      for (const key of teacherKeys) {
+        if (status[key as keyof Teacher] !== StatusEnum.null) {
+          status[key as keyof Teacher] = StatusEnum.null
         }
-        registrationStore.registration.teacherID = null
-
-        // new blank teacher record is created
-        await teacherStore.createTeacher(
-          privateTeacher.value,
-          schoolTeacher.value
-        )
-        registrationStore.registration.teacherID = props.teacherId
-        validate()
-        await registrationStore.updateRegistration('teacherID')
-        teacherStore.teacherCreated = true
-        // new teacher creation is complete
-        // teacherErrors automatically computed from new teacher state
-      } else {
-        // Otherwise
-        if (
-          // if we're coming from a dirty unlisted teacher
-          // remove the unlisted teacher from the database
-          oldTeacher?.lastName === 'Unlisted' &&
-          teacherStore.teacherCreated === true &&
-          !teacherStore.emailAlreadyExists
-        ) {
-          if (props.teacherId) {
-            await teacherStore.removeTeacherFromDatabaseAndRegistration()
-          }
-          // Cancels signs of new teacher creation
-          teacherStore.unlistedTeacher = false
-          teacherStore.teacherCreated = false
-        }
-
-        // Now we load the existing teacher record from the db.
-        // and update the registration
-        //TODO: Props.teacherId can be undefined here?
-        registrationStore.registration.teacherID = newTeacher?.id
-        await teacherStore.loadTeacher(newTeacher?.id, undefined)
-        await registrationStore.updateRegistration('teacherID')
-        teacherStore.emailAlreadyExists = false
-
-        // Update statuses for pre-defined teacher
-        // This ensures teacherErrors is reset to 0
-        await nextTick()
-        status.id = StatusEnum.saved
-        status.firstName = teacherStore.teacher.firstName
-          ? StatusEnum.saved
-          : StatusEnum.null
-        status.lastName = teacherStore.teacher.lastName
-          ? StatusEnum.saved
-          : StatusEnum.null
-        status.email = teacherStore.teacher.email
-          ? StatusEnum.saved
-          : StatusEnum.null
-        status.phone = teacherStore.teacher.phone
-          ? StatusEnum.saved
-          : StatusEnum.null
-        if (teacherStore.teacher.instrument) {
-          status.instrument = StatusEnum.saved
-        }
-
-        // Trigger validation to ensure form state is updated
-        validate()
       }
+      registrationStore.registration.teacherID = null
+
+      // new blank teacher record is created
+      await teacherStore.createTeacher(privateTeacher.value, schoolTeach.value)
+      registrationStore.registration.teacherID = props.teacherId
+      validate()
+      await registrationStore.updateRegistration('teacherID')
+      teacherStore.teacherCreated = true
+      // new teacher creation is complete
+      // teacherErrors automatically computed from new teacher state
+    } else {
+      // Otherwise
+      if (
+        // if we're coming from a dirty unlisted teacher
+        // remove the unlisted teacher from the database
+        teacherStore.unlistedTeacher &&
+        teacherStore.teacherCreated &&
+        !teacherStore.emailAlreadyExists
+      ) {
+        if (props.teacherId) {
+          await teacherStore.removeTeacherFromDatabaseAndRegistration()
+        }
+        // Cancels signs of new teacher creation
+        teacherStore.unlistedTeacher = false
+        teacherStore.teacherCreated = false
+      }
+
+      // Now we load the existing teacher record from the db.
+      // and update the registration
+      //TODO: Props.teacherId can be undefined here?
+      registrationStore.registration.teacherID = newTeacher?.id
+      await teacherStore.loadTeacher(newTeacher?.id, undefined)
+      await registrationStore.updateRegistration('teacherID')
+      teacherStore.emailAlreadyExists = false
+
+      // Update statuses for pre-defined teacher
+      // This ensures teacherErrors is reset to 0
+      await nextTick()
+      status.id = StatusEnum.saved
+      status.firstName = teacherStore.teacher.firstName
+        ? StatusEnum.saved
+        : StatusEnum.null
+      status.lastName = teacherStore.teacher.lastName
+        ? StatusEnum.saved
+        : StatusEnum.null
+      status.email = teacherStore.teacher.email
+        ? StatusEnum.saved
+        : StatusEnum.null
+      status.phone = teacherStore.teacher.phone
+        ? StatusEnum.saved
+        : StatusEnum.null
+      if (teacherStore.teacher.instrument) {
+        status.instrument = StatusEnum.saved
+      }
+
+      // Trigger validation to ensure form state is updated
+      validate()
     }
-  )
+  }
 
   watch(
     () => teacherStore.teacher.id,
     (newTeacherId, oldTeacherId) => {
       if (newTeacherId !== oldTeacherId && newTeacherId !== props.teacherId) {
-        console.log('Teacher ID changed in store:', newTeacherId)
-
         // Update status to reflect the new teacher
         if (newTeacherId) {
           status.id = StatusEnum.saved
@@ -379,7 +373,7 @@
   })
 
   const filteredTeachers = ref([] as FilteredTeacher[])
-  function search(event: any) {
+  function search(event: { query: string }) {
     filteredTeachers.value = teacherStore.allTeachers.filter((teacher) => {
       return `${teacher.lastName}, ${teacher.firstName}`
         .toLowerCase()
@@ -411,17 +405,22 @@
       </div>
 
       <PVAutoComplete
-        class="w-full"
         v-model="teacherStore.chosenTeacher"
+        class="w-full"
         dropdown
-        forceSelection
+        force-selection
         name="id"
-        :optionLabel="
+        :option-label="
           (filteredTeacher: FilteredTeacher) => displayName(filteredTeacher)
         "
         :suggestions="filteredTeachers"
         @complete="search"
-        @change="async (event: any) => await newStatus(event, 'id')">
+        @option-select="
+          async (event: any) => {
+            await changeChosenTeacher(event.value)
+            await newStatus(event.value, 'id')
+          }
+        ">
         <template #option="slotProps">
           <div>
             {{ slotProps.option.lastName }}, {{ slotProps.option.firstName }}
