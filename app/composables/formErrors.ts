@@ -31,7 +31,7 @@ export const formErrors = computed(() => {
   switch (appStore.performerType) {
     case 'SOLO':
       tabName.value = {
-        Performer: performerStore.performerErrors[0]!.count,
+        Performer: performerStore.totalPerformerErrors,
         Teacher: teacherStore.teacherErrors,
         'Solo Classes': sumErrorsArray(classesStore.classErrors),
         Summary: 0,
