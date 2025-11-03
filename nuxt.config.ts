@@ -175,6 +175,7 @@ export default defineNuxtConfig({
           'https://iconify.design',
           'https://api.iconify.design',
           'wss://localhost:3000', // WebSocket support if needed
+          'https://*.sentry.io', // Sentry error reporting (all regions)
         ],
         'img-src': [
           "'self'",
