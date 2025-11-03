@@ -159,31 +159,19 @@ export default defineNuxtConfig({
           "'self'",
           "'unsafe-inline'",
           "'unsafe-eval'",
-          'https://js.stripe.com',
-          'https://cdnjs.cloudflare.com',
+          'https://*.stripe.com',
+          'https://*.cloudflare.com',
         ],
-        'frame-src': [
-          "'self'",
-          'https://js.stripe.com',
-          'https://hooks.stripe.com',
-        ],
+        'frame-src': ["'self'", 'https://*.stripe.com'],
         'connect-src': [
           "'self'",
-          'https://api.stripe.com',
-          'http://localhost:3000', // Development GraphQL backend
+          'https://*.stripe.com',
           process.env.NUXT_GRAPHQL_SERVER || 'http://localhost:3000', // Production GraphQL backend
-          'https://iconify.design',
-          'https://api.iconify.design',
           'wss://localhost:3000', // WebSocket support if needed
+          'https://*.iconify.design',
           'https://*.sentry.io', // Sentry error reporting (all regions)
         ],
-        'img-src': [
-          "'self'",
-          'data:',
-          'https:',
-          'https://api.iconify.design',
-          'blob:',
-        ],
+        'img-src': ["'self'", 'data:', 'https:', 'blob:'],
         'style-src': ["'self'", "'unsafe-inline'", 'https:'],
         'font-src': ["'self'", 'data:', 'https:'],
         'object-src': ["'none'"],
