@@ -123,7 +123,10 @@ export const useRegistration = defineStore(
       mutate: registrationCreate,
       onDone: onRegistrationCreateDone,
       onError: onRegistrationCreateError,
-    } = useMutation(RegistrationCreateDocument)
+    } = useMutation(RegistrationCreateDocument, {
+      fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
+    })
     async function createRegistration(
       performerType: PerformerType,
       label: string
@@ -154,6 +157,7 @@ export const useRegistration = defineStore(
     const { mutate: registrationUpdate, onError: onRegistrationUpdateError } =
       useMutation(RegistrationUpdateDocument, {
         fetchPolicy: 'network-only',
+        errorPolicy: 'all',
       })
     async function updateRegistration(field?: string, regId?: number) {
       const { id, __typename, updatedAt, createdAt, ...regProps } =

@@ -80,7 +80,10 @@ export const useCommunity = defineStore(
       mutate: communityCreate,
       onDone: onCommunityCreateDone,
       onError: onCommunityCreateError,
-    } = useMutation(CommunityCreateDocument)
+    } = useMutation(CommunityCreateDocument, {
+      fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
+    })
     async function createCommunity(registrationId: number) {
       await communityCreate({
         registrationId,
@@ -117,6 +120,7 @@ export const useCommunity = defineStore(
       onError: onLoadCommunityError,
     } = useLazyQuery(CommunityInfoDocument, undefined, {
       fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
     })
     async function loadCommunity(registrationId: number) {
       const loaded = await communityLoad(null, { registrationId })
@@ -141,6 +145,7 @@ export const useCommunity = defineStore(
     const { mutate: communityUpdate, onError: onCommunityUpdateError } =
       useMutation(CommunityUpdateDocument, {
         fetchPolicy: 'network-only',
+        errorPolicy: 'all',
       })
     async function updateCommunity(field?: string) {
       const { id, __typename, ...communityProps } = community.value

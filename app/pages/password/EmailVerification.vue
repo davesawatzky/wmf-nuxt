@@ -20,7 +20,8 @@
     `,
     () => ({
       email: email.value,
-    })
+    }),
+    { fetchPolicy: 'network-only', errorPolicy: 'all' }
   )
 
   onSendResult(async (result) => {

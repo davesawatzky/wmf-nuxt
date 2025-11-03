@@ -35,6 +35,7 @@
     onError: userError,
   } = useQuery(MyUserDocument, null, () => ({
     fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
   }))
   onUserResult(async (result) => {
     userStore.addToStore(result.data.myUser)

@@ -38,8 +38,14 @@
     isOpen.value = value
   }
 
-  const { result: instrumentQuery, onError: instrumentsError } =
-    useQuery(InstrumentsDocument)
+  const { result: instrumentQuery, onError: instrumentsError } = useQuery(
+    InstrumentsDocument,
+    null,
+    () => ({
+      fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
+    })
+  )
   const instruments = computed(() => instrumentQuery.value?.instruments ?? [])
   instrumentsError((error) => {
     console.error(error)
@@ -125,7 +131,7 @@
     mutate: signinMutation,
     onError: signinError,
     onDone: doneSignin,
-  } = useMutation(SignInDocument)
+  } = useMutation(SignInDocument, { fetchPolicy: 'network-only' })
 
   const signin = handleSubmit(async (values) => {
     await signinMutation({
@@ -211,7 +217,7 @@
       }
     `,
     { email },
-    { fetchPolicy: 'network-only' }
+    { fetchPolicy: 'network-only', errorPolicy: 'all' }
   )
   async function doesTeacherExistLoad() {
     const result =

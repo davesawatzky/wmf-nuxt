@@ -72,6 +72,7 @@
     null,
     () => ({
       fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
     })
   )
   onUserResult((result) => {
@@ -95,6 +96,7 @@
     onError: onRegistrationsError,
   } = useQuery(RegistrationsDocument, null, () => ({
     fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
   }))
   onRegistrationsError((error) => {
     console.error('Error loading registrations:', error)

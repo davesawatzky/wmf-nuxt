@@ -59,6 +59,11 @@
           # }
         }
       }
+    },
+    null,
+    {
+      fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
     }
   `)
   onResult(async () => {

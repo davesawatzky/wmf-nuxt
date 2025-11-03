@@ -111,7 +111,10 @@ export const usePerformers = defineStore(
       mutate: performerCreate,
       onDone: onPerformerCreateDone,
       onError: onPerformerCreateError,
-    } = useMutation(PerformerCreateDocument)
+    } = useMutation(PerformerCreateDocument, {
+      fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
+    })
     async function createPerformer(registrationId: number) {
       await performerCreate({
         registrationId,
@@ -146,7 +149,10 @@ export const usePerformers = defineStore(
       load: performersLoad,
       refetch: performersRefetch,
       onError: onPerformersError,
-    } = useLazyQuery(PerformersDocument, undefined, { fetchPolicy: 'no-cache' })
+    } = useLazyQuery(PerformersDocument, undefined, {
+      fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
+    })
     async function loadPerformers(registrationId: number) {
       const loaded = await performersLoad(null, { registrationId })
       if (!loaded) {
@@ -174,6 +180,7 @@ export const usePerformers = defineStore(
     const { mutate: performerUpdate, onError: onPerformerUpdateError } =
       useMutation(PerformerUpdateDocument, {
         fetchPolicy: 'no-cache',
+        errorPolicy: 'all',
       })
     async function updatePerformer(performerId: number, field?: string) {
       const person = performers.value.find((item) => item.id === performerId)

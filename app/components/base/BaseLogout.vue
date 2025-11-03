@@ -21,11 +21,18 @@
     load: loadLogout,
     onResult,
     onError,
-  } = useLazyQuery(gql`
-    query Logout {
-      logout
+  } = useLazyQuery(
+    gql`
+      query Logout {
+        logout
+      }
+    `,
+    undefined,
+    {
+      fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
     }
-  `)
+  )
   onResult(async () => {
     await navigateTo('/login')
   })

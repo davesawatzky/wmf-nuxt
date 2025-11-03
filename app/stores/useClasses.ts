@@ -148,7 +148,10 @@ export const useClasses = defineStore(
       mutate: classCreate,
       onDone: onCreateClassDone,
       onError: onCreateClassError,
-    } = useMutation(ClassCreateDocument, { fetchPolicy: 'no-cache' })
+    } = useMutation(ClassCreateDocument, {
+      fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
+    })
     async function createClass(registrationId: number) {
       await classCreate({ registrationId })
     }
@@ -178,6 +181,7 @@ export const useClasses = defineStore(
       onError: onLoadClassesError,
     } = useLazyQuery(RegisteredClassesDocument, undefined, {
       fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
     })
     async function loadClasses(registrationId: number) {
       const loaded = await classesLoad(null, { registrationId })
@@ -209,7 +213,7 @@ export const useClasses = defineStore(
      */
     const { mutate: classUpdate, onError: onClassUpdateError } = useMutation(
       ClassUpdateDocument,
-      { fetchPolicy: 'no-cache' }
+      { fetchPolicy: 'no-cache', errorPolicy: 'all' }
     )
     async function updateClass(classId: number, field?: string) {
       const regClass = registeredClasses.value.find(
@@ -277,7 +281,10 @@ export const useClasses = defineStore(
       mutate: selectionCreate,
       onDone: onCreateSelectionDone,
       onError: onCreateSelectionError,
-    } = useMutation(SelectionCreateDocument, { fetchPolicy: 'no-cache' })
+    } = useMutation(SelectionCreateDocument, {
+      fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
+    })
     async function createSelection(registeredClassId: number) {
       registeredClassSelectionId = registeredClassId
       await selectionCreate({ registeredClassId })
@@ -303,6 +310,7 @@ export const useClasses = defineStore(
     const { mutate: selectionUpdate, onError: onSelectionUpdateError } =
       useMutation(SelectionUpdateDocument, {
         fetchPolicy: 'no-cache',
+        errorPolicy: 'all',
       })
     async function updateSelection(
       classId: number,
@@ -372,11 +380,14 @@ export const useClasses = defineStore(
       )
       const selectionIndex = registeredClasses.value[
         classIndex
-      ]?.selections!.findIndex((item) => item.id === selectionId)
-      registeredClasses.value[classIndex]?.selections?.splice(
-        selectionIndex!,
-        1
-      )
+      ]?.selections?.findIndex((item) => item.id === selectionId)
+      if (selectionIndex) {
+        registeredClasses.value[classIndex]?.selections?.splice(
+          selectionIndex,
+          1
+        )
+        classErrors.value[classIndex]?.selections.splice(selectionIndex, 1)
+      }
     }
     onSelectionDeleteError((error) => {
       console.error(error)

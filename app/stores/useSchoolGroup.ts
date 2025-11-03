@@ -83,6 +83,7 @@ export const useSchoolGroup = defineStore(
       onError: onSchoolGroupCreateError,
     } = useMutation(SchoolGroupCreateDocument, {
       fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
     })
     async function createSchoolGroup(schoolId: number) {
       await schoolGroupCreate({ schoolId })
@@ -114,6 +115,7 @@ export const useSchoolGroup = defineStore(
       onError: onSchoolGroupsError,
     } = useLazyQuery(SchoolGroupInfoDocument, undefined, {
       fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
     })
     async function loadSchoolGroups(registrationId: number) {
       const loaded = await schoolGroupsLoad(null, { registrationId })
@@ -143,6 +145,7 @@ export const useSchoolGroup = defineStore(
     const { mutate: schoolGroupUpdate, onError: onSchoolGroupUpdateError } =
       useMutation(SchoolGroupUpdateDocument, {
         fetchPolicy: 'no-cache',
+        errorPolicy: 'all',
       })
     async function updateSchoolGroup(schoolGroupId: number, field?: string) {
       const schoolGrp = schoolGroup.value.find(

@@ -21,7 +21,10 @@ export const useItemStore = defineStore('itemStore', () => {
     loading: itemCreateLoading,
     onDone: onItemCreateDone,
     onError: onItemCreateError,
-  } = useMutation(ItemCreateDocument)
+  } = useMutation(ItemCreateDocument, {
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  })
   async function createItem(itemInput: ItemInput) {
     await itemCreate({
       itemInput,
@@ -33,7 +36,10 @@ export const useItemStore = defineStore('itemStore', () => {
     load: itemsLoad,
     refetch: itemsRefetch,
     onError: onItemsError,
-  } = useLazyQuery(ItemsDocument, undefined, { fetchPolicy: 'no-cache' })
+  } = useLazyQuery(ItemsDocument, undefined, {
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  })
   async function loadItems() {
     ;(await itemsLoad()) || (await itemsRefetch())
   }

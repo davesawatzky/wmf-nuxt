@@ -89,7 +89,10 @@ export const useGroup = defineStore(
       loading: createGroupLoading,
       onDone: onCreateGroupDone,
       onError: onCreateGroupError,
-    } = useMutation(GroupCreateDocument)
+    } = useMutation(GroupCreateDocument, {
+      fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
+    })
     async function createGroup(registrationId: number) {
       await groupCreate({ registrationId })
     }
@@ -117,7 +120,10 @@ export const useGroup = defineStore(
       refetch: refetchGroup,
       onResult: onGroupLoadResult,
       onError: onGroupLoadError,
-    } = useLazyQuery(GroupInfoDocument, undefined, { fetchPolicy: 'no-cache' })
+    } = useLazyQuery(GroupInfoDocument, undefined, {
+      fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
+    })
     async function loadGroup(registrationId: number) {
       ;(await groupLoad(null, { registrationId })) || (await refetchGroup())
     }
@@ -141,7 +147,10 @@ export const useGroup = defineStore(
       loading: updateGroupLoading,
       onDone: onGroupUpdateDone,
       onError: onGroupUpdateError,
-    } = useMutation(GroupUpdateDocument, { fetchPolicy: 'network-only' })
+    } = useMutation(GroupUpdateDocument, {
+      fetchPolicy: 'network-only',
+      errorPolicy: 'all',
+    })
     async function updateGroup(field?: string) {
       const { id, __typename, ...groupProps } = group.value
       let groupField = null

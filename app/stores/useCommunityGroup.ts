@@ -86,6 +86,7 @@ export const useCommunityGroup = defineStore(
       onError: onCommunityGroupCreateError,
     } = useMutation(CommunityGroupCreateDocument, {
       fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
     })
     async function createCommunityGroup(communityId: number) {
       await communityGroupCreate({ communityId })
@@ -117,6 +118,7 @@ export const useCommunityGroup = defineStore(
       onError: onCommunityGroupsError,
     } = useLazyQuery(CommunityGroupInfoDocument, undefined, {
       fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
     })
     async function loadCommunityGroups(registrationId: number) {
       const loaded = await communityGroupsLoad(null, { registrationId })
@@ -148,6 +150,7 @@ export const useCommunityGroup = defineStore(
       onError: onCommunityGroupUpdateError,
     } = useMutation(CommunityGroupUpdateDocument, {
       fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
     })
     async function updateCommunityGroup(
       communityGroupId: number,

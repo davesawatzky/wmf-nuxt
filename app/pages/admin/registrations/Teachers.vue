@@ -67,7 +67,11 @@
         }
       }
     `,
-    () => variables.value
+    () => variables.value,
+    {
+      fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
+    }
   )
 
   function clearFilter() {

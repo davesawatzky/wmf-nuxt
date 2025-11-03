@@ -22,7 +22,10 @@ export const useOrders = defineStore('orderStore', () => {
     loading: orderCreateLoading,
     onDone: onOrderCreateDone,
     onError: onOrderCreateError,
-  } = useMutation(OrderCreateDocument)
+  } = useMutation(OrderCreateDocument, {
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  })
   async function createOrder(orderInput: OrderInput) {
     await orderCreate({
       orderInput,
@@ -48,7 +51,10 @@ export const useOrders = defineStore('orderStore', () => {
     refetch: ordersRefetch,
     onResult: onOrdersResult,
     onError: onOrdersError,
-  } = useLazyQuery(OrdersDocument, undefined, { fetchPolicy: 'no-cache' })
+  } = useLazyQuery(OrdersDocument, undefined, {
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  })
 
   watch(resultOrders, (newResult) => {
     if (newResult?.orders) {

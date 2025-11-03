@@ -49,10 +49,17 @@ export default defineNuxtConfig({
     defaultOptions: {
       query: {
         fetchPolicy: 'no-cache',
+        errorPolicy: 'all',
       },
     },
     clients: {
       default: {
+        defaultOptions: {
+          query: {
+            fetchPolicy: 'no-cache',
+            errorPolicy: 'all',
+          },
+        },
         httpEndpoint:
           process.env.NUXT_GRAPHQL_SERVER || 'http://localhost:3000/graphql',
         tokenName: 'diatonicToken',
@@ -137,36 +144,71 @@ export default defineNuxtConfig({
 
   security: {
     corsHandler: {
-      origin: '*',
+      origin:
+        process.env.NODE_ENV === 'production'
+          ? [process.env.NUXT_GRAPHQL_SERVER || 'http://localhost:3000']
+          : '*',
+      credentials: true,
     },
     headers: {
-      contentSecurityPolicy: false,
       crossOriginOpenerPolicy: false,
       crossOriginResourcePolicy: false,
-      // contentSecurityPolicy: {
-      //   'default-src': ["'self'"],
-      //   'script-src': [
-      //     "'self'",
-      //     "'unsafe-inline'",
-      //     "'unsafe-eval'",
-      //     'https://js.stripe.com',
-      //   ],
-      //   'frame-src': [
-      //     "'self'",
-      //     'https://js.stripe.com',
-      //     'https://hooks.stripe.com',
-      //   ],
-      //   'connect-src': [
-      //     "'self'",
-      //     'https://api.stripe.com',
-      //     'http://localhost:3000', // Your GraphQL backend
-      //     'https://iconify.design',
-      //   ],
-      //   'img-src': ["'self'", 'data:', 'https:', 'https://api.iconify.design'],
-      //   'style-src': ["'self'", "'unsafe-inline'"],
-      //   'font-src': ["'self'", 'data:'],
-      // },
+      contentSecurityPolicy: {
+        'default-src': ["'self'"],
+        'script-src': [
+          "'self'",
+          "'unsafe-inline'",
+          "'unsafe-eval'",
+          'https://js.stripe.com',
+          'https://cdnjs.cloudflare.com',
+        ],
+        'frame-src': [
+          "'self'",
+          'https://js.stripe.com',
+          'https://hooks.stripe.com',
+        ],
+        'connect-src': [
+          "'self'",
+          'https://api.stripe.com',
+          'http://localhost:3000', // Development GraphQL backend
+          process.env.NUXT_GRAPHQL_SERVER || 'http://localhost:3000', // Production GraphQL backend
+          'https://iconify.design',
+          'https://api.iconify.design',
+          'wss://localhost:3000', // WebSocket support if needed
+        ],
+        'img-src': [
+          "'self'",
+          'data:',
+          'https:',
+          'https://api.iconify.design',
+          'blob:',
+        ],
+        'style-src': ["'self'", "'unsafe-inline'", 'https:'],
+        'font-src': ["'self'", 'data:', 'https:'],
+        'object-src': ["'none'"],
+        'base-uri': ["'self'"],
+        'form-action': ["'self'"],
+        'frame-ancestors': ["'none'"],
+      },
       crossOriginEmbedderPolicy: false, // Disable COEP for Stripe compatibility
+      xFrameOptions: 'DENY',
+      xContentTypeOptions: 'nosniff',
+      xXSSProtection: '1; mode=block',
+      referrerPolicy: 'strict-origin-when-cross-origin',
+      permissionsPolicy: {
+        camera: [],
+        microphone: [],
+        geolocation: [],
+      },
+    },
+    rateLimiter: {
+      tokensPerInterval: 150,
+      interval: 300000, // 5 minutes
+      headers: true,
+      driver: {
+        name: 'lruCache',
+      },
+      throwError: false,
     },
   },
   sentry: {

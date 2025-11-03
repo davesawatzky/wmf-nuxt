@@ -67,6 +67,7 @@ export const useUser = defineStore(
       UserUpdateDocument,
       {
         fetchPolicy: 'network-only',
+        errorPolicy: 'all',
       }
     )
     async function updateUser(field?: string) {
@@ -118,7 +119,7 @@ export const useUser = defineStore(
         }
       `,
       undefined,
-      { fetchPolicy: 'network-only' }
+      { fetchPolicy: 'network-only', errorPolicy: 'all' }
     )
     async function loadHasPassword(id: number) {
       const loaded = await hasPasswordLoad(null, {

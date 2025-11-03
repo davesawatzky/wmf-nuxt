@@ -9,7 +9,7 @@
   import { useClasses } from '~/stores/useClasses'
   import { useRegistration } from '~/stores/useRegistration'
   import { useAppStore } from '~/stores/appStore'
-  import { formErrors } from '~/composables/formErrors'
+  import { useFormErrors } from '~/composables/formErrors'
 
   interface TeacherSummary {
     teacherSummary?: boolean
@@ -31,6 +31,7 @@
   const classesStore = useClasses()
   const appStore = useAppStore()
   const registrationStore = useRegistration()
+  const formErrors = useFormErrors()
 
   function schoolClassGroup(id: number) {
     return schoolGroupStore.schoolGroup.find((item) => item.id === id)
@@ -44,7 +45,7 @@
   }
 
   const totalErrors = computed(() => {
-    const errors: number[] = Object.values(formErrors.value.value)
+    const errors: number[] = Object.values(formErrors.value)
     return errors.reduce((a, b) => {
       return a + b
     }, 0)

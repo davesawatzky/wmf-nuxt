@@ -167,7 +167,11 @@ export const useTeacher = defineStore(
      * @param schoolTeacher boolean - Whether this is a school teacher
      */
     const { mutate: teacherCreate, onDone: onTeacherCreateDone } = useMutation(
-      TeacherCreateDocument
+      TeacherCreateDocument,
+      {
+        fetchPolicy: 'no-cache',
+        errorPolicy: 'all',
+      }
     )
     async function createTeacher(
       privateTeacher: boolean,
@@ -208,6 +212,7 @@ export const useTeacher = defineStore(
       onError: onLoadTeacherError,
     } = useLazyQuery(TeacherInfoDocument, undefined, {
       fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
     })
     async function loadTeacher(teacherID?: number, teacherEmail?: string) {
       const loaded = await teacherLoad(null, { teacherID, teacherEmail })
@@ -235,6 +240,7 @@ export const useTeacher = defineStore(
       onResult: onTeachersResult,
     } = useLazyQuery(AllTeachersSearchDocument, undefined, {
       fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
     })
     async function loadAllTeachers(
       teacherType: 'privateTeacher' | 'schoolTeacher'
@@ -259,6 +265,7 @@ export const useTeacher = defineStore(
     const { mutate: teacherUpdate, onError: onTeacherUpdateError } =
       useMutation(TeacherUpdateDocument, {
         fetchPolicy: 'network-only',
+        errorPolicy: 'all',
       })
     async function updateTeacher(field?: string) {
       const { id, __typename, ...teachProps } = teacher.value
@@ -328,6 +335,7 @@ export const useTeacher = defineStore(
       onError: onTeacherDuplicateError,
     } = useLazyQuery(TeacherInfoDocument, undefined, {
       fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
     })
 
     async function teacherDuplicateLoad(

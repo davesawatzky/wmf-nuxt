@@ -32,8 +32,14 @@
     set: (value) => emits('update:modelValue', value),
   })
 
-  const { result: instrumentQuery, onError: instrumentsError } =
-    useQuery(InstrumentsDocument)
+  const { result: instrumentQuery, onError: instrumentsError } = useQuery(
+    InstrumentsDocument,
+    null,
+    () => ({
+      fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
+    })
+  )
   const instruments = computed(() => instrumentQuery.value?.instruments ?? [])
   instrumentsError((error) => {
     console.error(error)

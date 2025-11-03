@@ -57,7 +57,11 @@
         }
       }
     `,
-    () => variables.value
+    () => variables.value,
+    {
+      fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
+    }
   )
   // onResult(() => {
   //   console.log('Registered Classes', result.value)

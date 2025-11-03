@@ -65,14 +65,15 @@
     result,
     refetch: refetchRegistrations,
     onError,
-  } = useQuery(StudentRegistrationsDocument, null, () => ({
+  } = useQuery(StudentRegistrationsDocument, null, {
     fetchPolicy: 'no-cache',
-  }))
-  onError((error) => console.error(error))
+    errorPolicy: 'all',
+  })
+  onError((error) => console.warn(error))
 
-  const registrations = computed(
-    () => result.value?.myStudents.registrations ?? []
-  )
+  const registrations = computed(() => {
+    return result.value?.myStudents.registrations ?? []
+  })
 
   /**
    * Load Viewable Student Registration

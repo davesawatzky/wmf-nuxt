@@ -84,7 +84,10 @@ export const useSchool = defineStore(
       mutate: schoolCreate,
       onDone: onSchoolCreateDone,
       onError: onSchoolCreateError,
-    } = useMutation(SchoolCreateDocument)
+    } = useMutation(SchoolCreateDocument, {
+      fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
+    })
 
     async function createSchool(registrationId: number) {
       await schoolCreate({
@@ -129,6 +132,7 @@ export const useSchool = defineStore(
       onError: onLoadSchoolError,
     } = useLazyQuery(SchoolInfoDocument, undefined, {
       fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
     })
 
     async function loadSchool(registrationId: number) {
@@ -160,6 +164,7 @@ export const useSchool = defineStore(
       SchoolUpdateDocument,
       {
         fetchPolicy: 'network-only',
+        errorPolicy: 'all',
       }
     )
 

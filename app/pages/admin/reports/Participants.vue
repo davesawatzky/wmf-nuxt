@@ -74,6 +74,11 @@
           }
         }
       }
+    },
+    null,
+    {
+      fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
     }
   `)
 

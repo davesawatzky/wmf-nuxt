@@ -61,6 +61,10 @@
     `,
     {
       teacherType: 'privateTeacher',
+    },
+    {
+      fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
     }
   )
 

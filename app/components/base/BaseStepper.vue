@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { formErrors } from '~/composables/formErrors'
+  import { useFormErrors } from '~/composables/formErrors'
 
   defineProps<{
     currentTab: string
@@ -13,6 +13,11 @@
   const queryLoading = useGlobalQueryLoading()
   const mutationLoading = useGlobalMutationLoading()
   const appStore = useAppStore()
+  const formErrors = useFormErrors()
+
+  function getErrorCount(tab: string): number {
+    return formErrors.value[tab] ?? 0
+  }
 
   function changeTab(tab: string, index: number) {
     emit('setTab', tab, index)
@@ -47,10 +52,10 @@
         @click="changeTab(tab, index)">
         {{ index + 1 }}
         <BaseBadge
-          v-if="formErrors.value[tab]! > 0"
+          v-if="getErrorCount(tab) > 0"
           has-errors
           class="-right-2 top-0">
-          {{ formErrors.value[tab] }}
+          {{ getErrorCount(tab) }}
         </BaseBadge>
         <BaseBadge v-else-if="tab !== 'Summary'" />
       </button>

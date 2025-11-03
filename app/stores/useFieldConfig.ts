@@ -59,6 +59,7 @@ export const useFieldConfig = defineStore(
       onResult: onRequiredFieldsResult,
     } = useLazyQuery(FieldConfigsDocument, undefined, {
       fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
     })
     async function loadRequiredFields() {
       const loaded = await requiredFieldsLoad()

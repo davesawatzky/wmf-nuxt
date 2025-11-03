@@ -43,7 +43,7 @@
   const performerStore = usePerformers()
   const groupStore = useGroup()
   const classesStore = useClasses()
-  const classSelection = ref(<FestivalClass>{}) // Used for Festival Class Searchrd
+  const classSelection = ref(<FestivalClass>{}) // Used for Festival Class Search
   const loadInfoFirstRun = ref(true) // Flag to keep track of when to load extra information.
   const fieldConfigStore = useFieldConfig()
   const allSelectionErrors = ref<{ selectionId: number; count: number }[]>([])
@@ -125,8 +125,14 @@
   })
 
   // Loading the instruments table.
-  const { result: instrumentQuery, onError: instrumentsError } =
-    useQuery(InstrumentsDocument)
+  const { result: instrumentQuery, onError: instrumentsError } = useQuery(
+    InstrumentsDocument,
+    null,
+    () => ({
+      fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
+    })
+  )
   const instruments = computed(() => instrumentQuery.value?.instruments ?? [])
   instrumentsError((error) => {
     console.error(error)
@@ -143,8 +149,8 @@
     DisciplinesByTypeDocument,
     () => ({
       performerType: appStore.performerType,
-    })
-    // { fetchPolicy: 'network-only' }
+    }),
+    { errorPolicy: 'all' }
   )
   const disciplineQuery = computed(() => {
     return disciplineResult.value ?? <DisciplinesByTypeQuery>{}
@@ -269,8 +275,8 @@
     () => ({
       disciplineId: chosenDiscipline.value.id,
       performerType: appStore.performerType,
-    })
-    // { fetchPolicy: 'network-only' }
+    }),
+    { errorPolicy: 'all' }
   )
   errorSubdisciplines((error) => {
     console.error(error)
@@ -299,8 +305,8 @@
     LevelsDocument,
     () => ({
       subdisciplineId: chosenSubdiscipline.value.id,
-    })
-    // { fetchPolicy: 'network-only' }
+    }),
+    { errorPolicy: 'all' }
   )
   errorLevel((error) => console.error(error))
   const levels = computed(() => gradeLevels.value?.levels ?? [])
@@ -326,8 +332,8 @@
     () => ({
       subdisciplineId: chosenSubdiscipline.value.id,
       levelId: chosenGradeLevel.value.id,
-    })
-    // { fetchPolicy: 'network-only' }
+    }),
+    { errorPolicy: 'all' }
   )
   errorCategories((error) => console.error(error))
   const categories = computed(() => cat.value?.categories ?? [])
@@ -343,7 +349,7 @@
 
   /**
    * Class Name
-   * Once all three attributes are selected, the the final
+   * Once all three attributes are selected, the final
    * classname can be computed and showed on the page
    */
   const className = computed(() => {
@@ -375,7 +381,7 @@
         categoryID: chosenCategory.value.id,
       },
     }),
-    { fetchPolicy: 'network-only' }
+    { fetchPolicy: 'network-only', errorPolicy: 'all' }
   )
   /**
    * Once the specific class has been retrieved (classSelection), the details
