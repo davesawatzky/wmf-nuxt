@@ -174,6 +174,12 @@ export default defineNuxtConfig({
             '/payment/create-payment-intent',
           (process.env.NUXT_PUBLIC_SERVER_ADDRESS || 'http://localhost:3000') +
             '/graphql',
+          (process.env.NUXT_PUBLIC_SERVER_ADDRESS || 'http://localhost:3000') +
+            '/email-confirmation/confirm',
+          (process.env.NUXT_PUBLIC_SERVER_ADDRESS || 'http://localhost:3000') +
+            '/email-confirmation/resend-confirmation-link',
+          (process.env.NUXT_PUBLIC_SERVER_ADDRESS || 'http://localhost:3000') +
+            '/email-confirmation/resend-password-link',
           'wss://localhost:3000', // WebSocket support if needed
           'https://*.iconify.design',
           'https://*.sentry.io', // Sentry error reporting (all regions)
