@@ -506,7 +506,7 @@
         <div>
           This account needs to be verified before signing in. Check your email
           inbox and spam folders for a verification link. You may also request
-          another email. Check you spam folder as well.
+          another email. Check your spam folder as well.
         </div>
         <div>
           <BaseButton

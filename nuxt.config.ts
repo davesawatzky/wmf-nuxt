@@ -145,9 +145,8 @@ export default defineNuxtConfig({
   security: {
     corsHandler: {
       origin:
-        process.env.NODE_ENV === 'production'
-          ? [process.env.NUXT_GRAPHQL_SERVER || 'http://localhost:3000']
-          : '*',
+        (process.env.NUXT_PUBLIC_SERVER_ADDRESS || 'http://localhost:3000') +
+        '/*',
       credentials: true,
     },
     headers: {
@@ -162,11 +161,19 @@ export default defineNuxtConfig({
           'https://*.stripe.com',
           'https://*.cloudflare.com',
         ],
+        'worker-src': ["'self'", 'blob:'], // Allow blob workers
         'frame-src': ["'self'", 'https://*.stripe.com'],
         'connect-src': [
           "'self'",
           'https://*.stripe.com',
-          process.env.NUXT_GRAPHQL_SERVER || 'http://localhost:3000', // Production GraphQL backend
+          'http://*.stripe.com',
+          'http://*.diatonic.ca/*',
+          (process.env.NUXT_PUBLIC_SERVER_ADDRESS || 'http://localhost:3000') +
+            '/payment/summarize-payment',
+          (process.env.NUXT_PUBLIC_SERVER_ADDRESS || 'http://localhost:3000') +
+            '/payment/create-payment-intent',
+          (process.env.NUXT_PUBLIC_SERVER_ADDRESS || 'http://localhost:3000') +
+            '/graphql',
           'wss://localhost:3000', // WebSocket support if needed
           'https://*.iconify.design',
           'https://*.sentry.io', // Sentry error reporting (all regions)
