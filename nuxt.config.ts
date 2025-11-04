@@ -167,7 +167,7 @@ export default defineNuxtConfig({
           "'self'",
           'https://*.stripe.com',
           'http://*.stripe.com',
-          'http://*.diatonic.ca/*',
+          'https://*.diatonic.ca/*',
           (process.env.NUXT_PUBLIC_SERVER_ADDRESS || 'http://localhost:3000') +
             '/payment/summarize-payment',
           (process.env.NUXT_PUBLIC_SERVER_ADDRESS || 'http://localhost:3000') +
