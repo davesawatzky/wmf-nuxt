@@ -26,7 +26,7 @@
     initFilters()
   })
 
-  const { result, loading, refetch } = useQuery(
+  const { result, loading } = useQuery(
     gql`
       query AdminRegisteredClasses {
         registeredClasses {
@@ -63,9 +63,6 @@
       errorPolicy: 'all',
     }
   )
-  // onResult(() => {
-  //   console.log('Registered Classes', result.value)
-  // })
 
   function clearFilter() {
     initFilters()
@@ -78,15 +75,6 @@
         value: null,
         matchMode: FilterMatchMode.CONTAINS,
       },
-      // performerType: {
-      //   operator: FilterOperator.AND,
-      //   constraints: [
-      //     {
-      //       value: null,
-      //       matchMode: FilterMatchMode.STARTS_WITH,
-      //     },
-      //   ],
-      // },
       classNumber: {
         operator: FilterOperator.AND,
         constraints: [

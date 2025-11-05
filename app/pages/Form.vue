@@ -21,26 +21,29 @@
     middleware: ['user', 'form'],
   })
 
-  const FormSoloPerformer = <Component>resolveComponent('FormSoloPerformer')
-  const FormSoloTeacher = <Component>resolveComponent('FormSoloTeacher')
-  const FormGroupInfo = <Component>resolveComponent('FormGroupInfo')
-  const FormGroupPerformers = <Component>resolveComponent('FormGroupPerformers')
-  const FormGroupTeacher = <Component>resolveComponent('FormGroupTeacher')
-  const FormSchoolInfo = <Component>resolveComponent('FormSchoolInfo')
-  const FormSchoolTeacher = <Component>resolveComponent('FormSchoolTeacher')
-  const FormSchoolGroups = <Component>resolveComponent('FormSchoolGroups')
-  const FormCommunityInfo = <Component>resolveComponent('FormCommunityInfo')
-  const FormCommunityTeacher = <Component>(
-    resolveComponent('FormCommunityTeacher')
-  )
-  const FormCommunityGroups = <Component>resolveComponent('FormCommunityGroups')
-  const FormTypeClasses = <Component>resolveComponent('FormTypeClasses')
-  const Summary = <Component>resolveComponent('Summary')
+  const FormSoloPerformer = resolveComponent('FormSoloPerformer') as Component
+  const FormSoloTeacher = resolveComponent('FormSoloTeacher') as Component
+  const FormGroupInfo = resolveComponent('FormGroupInfo') as Component
+  const FormGroupPerformers = resolveComponent(
+    'FormGroupPerformers'
+  ) as Component
+  const FormGroupTeacher = resolveComponent('FormGroupTeacher') as Component
+  const FormSchoolInfo = resolveComponent('FormSchoolInfo') as Component
+  const FormSchoolTeacher = resolveComponent('FormSchoolTeacher') as Component
+  const FormSchoolGroups = resolveComponent('FormSchoolGroups') as Component
+  const FormCommunityInfo = resolveComponent('FormCommunityInfo') as Component
+  const FormCommunityTeacher = resolveComponent(
+    'FormCommunityTeacher'
+  ) as Component
+  const FormCommunityGroups = resolveComponent(
+    'FormCommunityGroups'
+  ) as Component
+  const FormTypeClasses = resolveComponent('FormTypeClasses') as Component
+  const Summary = resolveComponent('Summary') as Component
 
   const registrationStore = useRegistration()
   const appStore = useAppStore()
   const performerType = toRef(appStore.performerType)
-  let tabs = {} as DynamicComponent
   const breakpoints = useBreakpoints(breakpointsTailwind)
   const mobile = breakpoints.smaller('sm')
   const toast = useToast()
@@ -63,45 +66,45 @@
       : StatusEnum.null,
   })
 
-  switch (performerType.value) {
-    case 'SOLO':
-      tabs = {
-        Performer: FormSoloPerformer,
-        Teacher: FormSoloTeacher,
-        'Solo Classes': FormTypeClasses,
-        Summary,
-      }
-      break
-    case 'GROUP':
-      tabs = {
-        Group: FormGroupInfo,
-        Performers: FormGroupPerformers,
-        Teacher: FormGroupTeacher,
-        'Group Classes': FormTypeClasses,
-        Summary,
-      }
-      break
-    case 'SCHOOL':
-      tabs = {
-        School: FormSchoolInfo,
-        Teacher: FormSchoolTeacher,
-        Groups: FormSchoolGroups,
-        'School Classes': FormTypeClasses,
-        Summary,
-      }
-      break
-    case 'COMMUNITY':
-      tabs = {
-        Community: FormCommunityInfo,
-        Contact: FormCommunityTeacher,
-        Groups: FormCommunityGroups,
-        'Community Classes': FormTypeClasses,
-        Summary,
-      }
-      break
-  }
+  const tabs = computed((): DynamicComponent => {
+    switch (performerType.value) {
+      case 'SOLO':
+        return {
+          Performer: FormSoloPerformer,
+          Teacher: FormSoloTeacher,
+          'Solo Classes': FormTypeClasses,
+          Summary,
+        }
+      case 'GROUP':
+        return {
+          Group: FormGroupInfo,
+          Performers: FormGroupPerformers,
+          Teacher: FormGroupTeacher,
+          'Group Classes': FormTypeClasses,
+          Summary,
+        }
+      case 'SCHOOL':
+        return {
+          School: FormSchoolInfo,
+          Teacher: FormSchoolTeacher,
+          Groups: FormSchoolGroups,
+          'School Classes': FormTypeClasses,
+          Summary,
+        }
+      case 'COMMUNITY':
+        return {
+          Community: FormCommunityInfo,
+          Contact: FormCommunityTeacher,
+          Groups: FormCommunityGroups,
+          'Community Classes': FormTypeClasses,
+          Summary,
+        }
+      default:
+        return {}
+    }
+  })
 
-  const tabNames = ref(Object.keys(tabs))
+  const tabNames = computed(() => Object.keys(tabs.value))
 
   function setTab(tab: string, index: number) {
     currentTab.value = tab
@@ -114,10 +117,10 @@
   }
 
   function previousTab() {
-    setTab(Object.keys(tabs)[tabIndex.value - 1]!, tabIndex.value - 1)
+    setTab(Object.keys(tabs.value)[tabIndex.value - 1]!, tabIndex.value - 1)
   }
   function nextTab() {
-    setTab(Object.keys(tabs)[tabIndex.value + 1]!, tabIndex.value + 1)
+    setTab(Object.keys(tabs.value)[tabIndex.value + 1]!, tabIndex.value + 1)
   }
 
   watch([isSwiping, direction], ([swiping, swipeDirection]) => {
@@ -160,6 +163,7 @@
           status[fieldName] = StatusEnum.saved
         }
       } else {
+        console.error('Could not update field in registration: ', fieldName)
         toast.error(
           'Could not update field.  Please exit and reload Registration'
         )
@@ -171,6 +175,10 @@
       if (result === 'complete') {
         status[fieldName] = StatusEnum.removed
       } else {
+        console.error(
+          'Could not remove invalid field in registration: ',
+          fieldName
+        )
         toast.error(
           'Could not remove invalid field. Please exit and reload Registration'
         )
@@ -182,6 +190,7 @@
       if (result === 'complete') {
         status[fieldName] = StatusEnum.removed
       } else {
+        console.error('Could not remove field in registration: ', fieldName)
         toast.error(
           'Could not remove field.  Please exit and reload Registration'
         )
@@ -193,7 +202,7 @@
     label: yup.string().trim().required('Please enter a label for this form'),
   })
 
-  const { values, errors, meta, handleSubmit } = useForm({
+  useForm({
     validationSchema,
   })
 
@@ -204,11 +213,7 @@
   const queryLoading = useGlobalQueryLoading()
   const mutationLoading = useGlobalMutationLoading()
   const disableButton = computed(() => {
-    if (queryLoading.value || mutationLoading.value || appStore.dataLoading) {
-      return true
-    } else {
-      return false
-    }
+    return queryLoading.value || mutationLoading.value || appStore.dataLoading
   })
 </script>
 

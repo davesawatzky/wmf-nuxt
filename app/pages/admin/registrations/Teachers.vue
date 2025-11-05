@@ -32,7 +32,7 @@
     initFilters()
   })
 
-  const { result, loading, refetch } = useQuery(
+  const { result, loading } = useQuery(
     gql`
       query AdminPrivateTeachers($teacherType: String!) {
         teachers(teacherType: $teacherType) {

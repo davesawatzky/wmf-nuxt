@@ -70,7 +70,7 @@
     await navigateTo('/login')
   })
   onError(async (error) => {
-    console.error(error)
+    console.error('Error on logout:', error)
     await navigateTo('/login')
   })
 
@@ -92,7 +92,7 @@
 
       await clearUserSession()
     } catch (error) {
-      console.error('Error during signout:', error)
+      console.error('Error during log out:', error)
       await navigateTo('/login', { replace: true })
     }
   }
@@ -124,7 +124,7 @@
             src="/images/wmf-logo-banner.jpg"
             alt="Winnipeg Music Festival Logo" />
           <div class="ml-4 font-semibold">
-            Winnipeg<br >Music<br >Festival
+            Winnipeg<br />Music<br />Festival
           </div>
         </template>
         <template #item="{ item, props, root }">
@@ -161,7 +161,7 @@
           src="/images/wmf-logo-banner.jpg"
           alt="Winnipeg Music Festival Logo" />
         <div class="ml-2 font-semibold text-sm text-white">
-          Winnipeg<br >Music<br >Festival
+          Winnipeg<br />Music<br />Festival
         </div>
       </div>
 

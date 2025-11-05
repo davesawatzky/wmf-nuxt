@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import _ from 'lodash'
   import { DateTime } from 'luxon'
+  import { useToast } from 'vue-toastification'
 
   // import type { LocationQueryValue } from '#vue-router'
   const performerStore = usePerformers()
@@ -15,6 +16,7 @@
   const userStore = useUser()
   const registrationStore = useRegistration()
   const route = useRoute()
+  const toast = useToast()
 
   const confirmationNumber = ref('')
   const stripePayment = appStore.stripePayment
@@ -78,14 +80,19 @@
         console.log(
           "Payment Processing.  We'll update you when payment is received."
         )
+        toast.info(
+          "Payment Processing.  We'll update you when payment is received."
+        )
         break
       case 'requires_payment_method':
         registrationStore.registration.transactionInfo = 'failed'
-        console.log('Payment failed.  Please try another payment method.')
+        console.error('Payment failed.  Please try another payment method.')
+        toast.error('Payment failed.  Please try another payment method.')
         break
       case 'failed':
         registrationStore.registration.transactionInfo = 'failed'
-        console.log('Payment failed.  Please try another payment method.')
+        console.error('Payment failed.  Please try another payment method.')
+        toast.error('Payment failed.  Please try another payment method.')
         break
     }
   }
@@ -101,9 +108,6 @@
       } else if (appStore.stripePayment === 'cash') {
         registrationStore.registration.transactionInfo =
           'cash/cheque/e-transfer'
-        // registrationStore.registration.payedAmt = Number(
-        //   registrationStore.registration.totalAmt
-        // )
       }
       await registrationStore.updateRegistration()
       const payload = Object.assign(
@@ -136,7 +140,11 @@
     } catch (error) {
       dataSending.value = false
       emailWaiting.value = false
-      console.error(error)
+      console.error('Error sending registration email: ', error)
+      toast.error(
+        'Error sending registration email. Please contact WMF office.',
+        { timeout: false, closeOnClick: true }
+      )
     }
   }
 </script>

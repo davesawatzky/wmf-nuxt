@@ -1,16 +1,8 @@
 import { useToast } from 'vue-toastification'
 
-type User = {
-  id: number
-  email: string
-  isActive: boolean
-  roles: string[]
-  permissions: string[]
-}
-
-export default defineNuxtRouteMiddleware(async (to, from) => {
+export default defineNuxtRouteMiddleware(async (to) => {
   const toast = useToast()
-  const { load: loadTokenCheck, refetch } = useLazyQuery(gql`
+  const { load: loadTokenCheck, refetch: refetchTokenCheck } = useLazyQuery(gql`
     query TokenCheck {
       tokenCheck {
         user {
@@ -47,17 +39,19 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   }
 
   try {
-    const result = await loadTokenCheck()
+    const result = (await loadTokenCheck()) || (await refetchTokenCheck())
 
     if (result?.tokenCheck?.userErrors?.length) {
       console.warn('Auth validation errors:', result.tokenCheck.userErrors)
+      toast.error('Authentication required. Please login.')
       return navigateTo('/login', { replace: true })
     }
 
     const userData = result.tokenCheck.user
 
     if (!userData) {
-      console.log('No user data found, redirecting to login')
+      console.warn('No user data found, redirecting to login')
+      toast.error('Authentication required. Please login.')
       return navigateTo('/login', { replace: true })
     }
 
@@ -67,6 +61,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     const hasAccess = authStore.canAccessRoute(to.path, userData.roles)
 
     if (!hasAccess) {
+      console.warn('User lacks permission for route:', to.path)
       toast.error('You do not have permission to access this page')
       return navigateTo('/login', { replace: true })
     }
@@ -79,6 +74,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
 
       if (hasNetworkError || hasGraphQLErrors) {
         // Backend unavailable - redirect to login with error message
+        console.error('Network or GraphQL error during auth check:', error)
         toast.error('Unable to verify authentication. Please login again.')
         return navigateTo('/login', { replace: true })
       }
@@ -86,6 +82,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
 
     // Unexpected errors - still redirect to login instead of throwing
     // This prevents users from being stuck on error pages
+    console.error('Unexpected error during auth check:', error)
     toast.error('An authentication error occurred')
     return navigateTo('/login', { replace: true })
   }

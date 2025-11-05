@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { useFormErrors } from '~/composables/formErrors'
+  import { useTabErrors } from '~/composables/tabErrors'
 
   defineProps<{
     currentTab: string
@@ -13,10 +13,10 @@
   const queryLoading = useGlobalQueryLoading()
   const mutationLoading = useGlobalMutationLoading()
   const appStore = useAppStore()
-  const formErrors = useFormErrors()
+  const tabErrors = useTabErrors()
 
   function getErrorCount(tab: string): number {
-    return formErrors.value[tab] ?? 0
+    return tabErrors.value[tab] ?? 0
   }
 
   function changeTab(tab: string, index: number) {

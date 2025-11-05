@@ -1,5 +1,6 @@
 <script setup lang="ts">
   import * as yup from 'yup'
+  import { useToast } from 'vue-toastification'
   import YupPassword from 'yup-password'
 
   YupPassword(yup)
@@ -9,6 +10,7 @@
   const passwordChanged = ref(false)
   const status1 = ref<string>('')
   const changeError = ref('')
+  const toast = useToast()
 
   const route = useRoute()
   const tokenParam = route.query.token
@@ -43,10 +45,8 @@
 
   const {
     mutate: changePassword,
-    loading,
     onDone: onPasswordChangeDone,
-    onError,
-    error,
+    onError: onPasswordChangeError,
   } = useMutation(
     gql`
       mutation PasswordChange($passwordChangeInput: PasswordChangeInput!) {
@@ -69,12 +69,19 @@
       },
     })
   )
-
+  onPasswordChangeError((error) => {
+    console.error('Password change error: ', error)
+    toast.error(
+      'There was an error changing your password. Please try again later.'
+    )
+  })
   onPasswordChangeDone(async (result) => {
     if (result.data?.passwordChange.passwordChanged) {
       passwordChanged.value = true
     } else if (result.data?.passwordChange.userErrors) {
       changeError.value = result.data?.passwordChange.userErrors[0].message
+      console.error(changeError.value)
+      toast.error(changeError.value)
     }
   })
 </script>

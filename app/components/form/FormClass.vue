@@ -4,27 +4,22 @@
     CategoriesDocument,
     DisciplinesByTypeDocument,
     FestivalClassSearchDocument,
-    FestivalClassesDocument,
-    InstrumentsDocument,
     LevelsDocument,
-    RegisteredClassesDocument,
     SubdisciplinesByTypeDocument,
   } from '~/graphql/gql/graphql'
-  import { logErrorMessages } from '@vue/apollo-util'
   import { useClasses } from '~/stores/useClasses'
   import { useAppStore } from '~/stores/appStore'
   import { usePerformers } from '~/stores/usePerformer'
   import { useGroup } from '~/stores/useGroup'
+  import { useToast } from 'vue-toastification'
   import type {
     Category,
     Discipline,
-    DisciplineInput,
     DisciplinesByTypeQuery,
     FestivalClass,
     Level,
     RegisteredClass,
     RegisteredClassInput,
-    Selection,
     Subdiscipline,
   } from '~/graphql/gql/graphql'
 
@@ -38,15 +33,14 @@
     'update:modelValue': [value: RegisteredClassInput]
   }>()
 
-  const instrumentRequired = ref(false) // used to be for mozart classes.  Might not need this anymore.
   const appStore = useAppStore()
   const performerStore = usePerformers()
   const groupStore = useGroup()
   const classesStore = useClasses()
-  const classSelection = ref(<FestivalClass>{}) // Used for Festival Class Search
+  const classSelection = ref<Partial<FestivalClass>>({}) // Used for Festival Class Search
   const loadInfoFirstRun = ref(true) // Flag to keep track of when to load extra information.
   const fieldConfigStore = useFieldConfig()
-  const allSelectionErrors = ref<{ selectionId: number; count: number }[]>([])
+  const toast = useToast()
 
   /**
    * Registration first gets loaded form the 'Registration' page
@@ -57,14 +51,18 @@
    */
   onMounted(async () => {
     await loadDisciplines()
+    nextTick()
     if (props.modelValue.subdiscipline) {
       await loadSubdisciplines()
+      nextTick()
     }
     if (props.modelValue.level) {
       await loadLevels()
+      nextTick()
     }
     if (props.modelValue.category) {
       await loadCategories()
+      nextTick()
       selectedClasses.value.numberOfSelections =
         props.modelValue.numberOfSelections
       loadInfoFirstRun.value = true
@@ -98,11 +96,11 @@
 
   const classKeys = fieldConfigStore.performerTypeFields('FestivalClasses')
   watchEffect(() => {
-    let index = classesStore.classErrors.findIndex(
+    const index = classesStore.classErrors.findIndex(
       (item) => item.id === props.classId
     )
     let count = 0
-    for (let key of classKeys) {
+    for (const key of classKeys) {
       if (
         key !== 'selections' &&
         key !== 'schoolGroupID' &&
@@ -124,20 +122,6 @@
     classesStore.classErrors[index]!.count = count
   })
 
-  // Loading the instruments table.
-  const { result: instrumentQuery, onError: instrumentsError } = useQuery(
-    InstrumentsDocument,
-    null,
-    () => ({
-      fetchPolicy: 'no-cache',
-      errorPolicy: 'all',
-    })
-  )
-  const instruments = computed(() => instrumentQuery.value?.instruments ?? [])
-  instrumentsError((error) => {
-    console.error(error)
-  })
-
   /**
    * Disciplines combobox data
    */
@@ -152,11 +136,12 @@
     }),
     { errorPolicy: 'all' }
   )
-  const disciplineQuery = computed(() => {
-    return disciplineResult.value ?? <DisciplinesByTypeQuery>{}
+  const disciplineQuery = computed((): DisciplinesByTypeQuery | undefined => {
+    return disciplineResult.value
   })
   onErrorDisciplines((error) => {
-    console.error(error)
+    console.error('Error loading disciplines: ', error)
+    toast.error('Error loading disciplines')
   })
 
   /**
@@ -170,30 +155,18 @@
     if (
       appStore.performerType === 'SOLO' &&
       !!performerStore.performers[0]?.instrument &&
-      disciplineQuery.value.disciplines
+      disciplineQuery.value?.disciplines
     ) {
       const Mozart = disciplineQuery.value.disciplines.filter((item) => {
         return item.name.toLowerCase().includes('mozart')
       })
-      // if (performerStore.performers[0].instrument.toLowerCase() === 'voice') {
-      //   return (
-      //     disciplineQuery.value.disciplines.filter((item) => {
-      //       return (
-      //         item.name.toLowerCase() === 'vocal' ||
-      //         item.name.toLowerCase() === 'musical theatre' ||
-      //         item.name.toLowerCase().includes('mozart')
-      //       )
-      //     }) ?? []
-      //   )
-      // } else {
-      // Adds Mozart Classes to all the other instruments
       let isMozart = false
       const discipline = disciplineQuery.value?.disciplines.filter((item) => {
         const disc = item.instruments?.find(
           (el) => el.name === performerStore.performers[0]?.instrument
         )
         if (!isMozart) {
-          disc?.mozart === true ? (isMozart = true) : (isMozart = false)
+          isMozart = !!disc?.mozart
         }
         return disc
       })
@@ -201,10 +174,9 @@
         discipline?.push(Mozart[0]!)
       }
       return discipline ?? ''
-      // }
     } else if (
       appStore.performerType === 'GROUP' &&
-      disciplineQuery.value.disciplines
+      disciplineQuery.value?.disciplines
     ) {
       if (groupStore.group.groupType === 'vocal') {
         return (
@@ -241,15 +213,14 @@
     } else {
       return disciplineQuery.value?.disciplines ?? []
     }
+    return []
   })
   // chosenDiscipline is the discipline chosen from the template
   // through the vmodel on selectedClasses.discipline
-  const chosenDiscipline = computed(() => {
-    return (
-      disciplines.value?.find((item) => {
-        return item.name === selectedClasses.value.discipline
-      }) ?? <Discipline>{}
-    )
+  const chosenDiscipline = computed((): Discipline | undefined => {
+    return disciplines.value?.find((item) => {
+      return item.name === selectedClasses.value.discipline
+    })
   })
 
   const isDisciplineDisabled = computed(() => {
@@ -273,25 +244,28 @@
   } = useLazyQuery(
     SubdisciplinesByTypeDocument,
     () => ({
-      disciplineId: chosenDiscipline.value.id,
+      disciplineId: chosenDiscipline.value?.id ?? 0,
       performerType: appStore.performerType,
     }),
     { errorPolicy: 'all' }
   )
   errorSubdisciplines((error) => {
-    console.error(error)
+    console.error('Error loading subdisciplines:', error, {
+      operation: 'loadSubdisciplines',
+      disciplineId: chosenDiscipline.value?.id,
+      performerType: appStore.performerType,
+    })
+    toast.error('Error loading subdisciplines')
   })
   const subdisciplines = computed(() => {
     return subdisc.value?.subdisciplines ?? []
   })
   // chosenSubdiscipline is the subdiscipline chosen from the template
   // through the vmodel on selectedClasses.subdiscipline
-  const chosenSubdiscipline = computed(() => {
-    return (
-      subdisciplines.value.find((item: Subdiscipline) => {
-        return item.name === selectedClasses.value.subdiscipline
-      }) ?? <Subdiscipline>{}
-    )
+  const chosenSubdiscipline = computed((): Subdiscipline | undefined => {
+    return subdisciplines.value.find((item: Subdiscipline) => {
+      return item.name === selectedClasses.value.subdiscipline
+    })
   })
 
   /**
@@ -304,20 +278,24 @@
   } = useLazyQuery(
     LevelsDocument,
     () => ({
-      subdisciplineId: chosenSubdiscipline.value.id,
+      subdisciplineId: chosenSubdiscipline.value?.id ?? 0,
     }),
     { errorPolicy: 'all' }
   )
-  errorLevel((error) => console.error(error))
+  errorLevel((error) => {
+    console.error('Error loading levels:', error, {
+      operation: 'loadLevels',
+      subdisciplineId: chosenSubdiscipline.value?.id,
+    })
+    toast.error('Error loading levels')
+  })
   const levels = computed(() => gradeLevels.value?.levels ?? [])
   // chosenGradeLevel is the grade/level chosen from the template
   // through the vmodel on selectedClasses.level
-  const chosenGradeLevel = computed(() => {
-    return (
-      levels.value.find((item: Level) => {
-        return item.name === selectedClasses.value.level
-      }) ?? <Level>{}
-    )
+  const chosenGradeLevel = computed((): Level | undefined => {
+    return levels.value.find((item: Level) => {
+      return item.name === selectedClasses.value.level
+    })
   })
 
   /**
@@ -330,21 +308,26 @@
   } = useLazyQuery(
     CategoriesDocument,
     () => ({
-      subdisciplineId: chosenSubdiscipline.value.id,
-      levelId: chosenGradeLevel.value.id,
+      subdisciplineId: chosenSubdiscipline.value?.id ?? 0,
+      levelId: chosenGradeLevel.value?.id ?? 0,
     }),
     { errorPolicy: 'all' }
   )
-  errorCategories((error) => console.error(error))
+  errorCategories((error) => {
+    console.error('Error loading categories:', error, {
+      operation: 'loadCategories',
+      subdisciplineId: chosenSubdiscipline.value?.id,
+      levelId: chosenGradeLevel.value?.id,
+    })
+    toast.error('Error loading categories')
+  })
   const categories = computed(() => cat.value?.categories ?? [])
   // chosenCategory is the category chosen from the template
   // through the vmodel on selectedClasses.category
-  const chosenCategory = computed(() => {
-    return (
-      categories.value.find((item: Category) => {
-        return item.name === selectedClasses.value.category
-      }) ?? <Category>{}
-    )
+  const chosenCategory = computed((): Category | undefined => {
+    return categories.value.find((item: Category) => {
+      return item.name === selectedClasses.value.category
+    })
   })
 
   /**
@@ -376,12 +359,15 @@
     FestivalClassSearchDocument,
     () => ({
       festivalClassSearch: {
-        subdisciplineID: chosenSubdiscipline.value.id,
-        levelID: chosenGradeLevel.value.id,
-        categoryID: chosenCategory.value.id,
+        subdisciplineID: chosenSubdiscipline.value?.id ?? 0,
+        levelID: chosenGradeLevel.value?.id ?? 0,
+        categoryID: chosenCategory.value?.id ?? 0,
       },
     }),
-    { fetchPolicy: 'network-only', errorPolicy: 'all' }
+    {
+      fetchPolicy: 'network-only',
+      errorPolicy: 'all',
+    }
   )
   /**
    * Once the specific class has been retrieved (classSelection), the details
@@ -391,7 +377,21 @@
    */
   onClassSearchResult((result) => {
     appStore.dataLoading = true
-    classSelection.value = <FestivalClass>result.data.festivalClassSearch[0]
+
+    // Safety check: ensure we got a valid result
+    const festivalClass = result.data.festivalClassSearch?.[0]
+    if (!festivalClass) {
+      console.log('No class found for search criteria', {
+        operation: 'onClassSearchResult',
+        subdisciplineId: chosenSubdiscipline.value?.id,
+        levelId: chosenGradeLevel.value?.id,
+        categoryId: chosenCategory.value?.id,
+      })
+      appStore.dataLoading = false
+      return
+    }
+
+    classSelection.value = festivalClass as FestivalClass
     selectedClasses.value.minSelections = classSelection.value.minSelections
     selectedClasses.value.maxSelections = classSelection.value.maxSelections
     selectedClasses.value.price = classSelection.value.price
@@ -406,14 +406,20 @@
         classSelection.value.minSelections
     }
     selectedClasses.value.classNumber = classSelection.value.classNumber
-    selectedClasses.value.classType = classSelection.value.classType.name
+    selectedClasses.value.classType = classSelection.value.classType?.name
 
     classesStore.updateClass(props.classId)
     loadInfoFirstRun.value = false
     appStore.dataLoading = false
   })
   errorClass((error) => {
-    logErrorMessages(error)
+    console.error('Error loading class information:', error, {
+      operation: 'loadClassInformation',
+      subdisciplineId: chosenSubdiscipline.value?.id,
+      levelId: chosenGradeLevel.value?.id,
+      categoryId: chosenCategory.value?.id,
+    })
+    toast.error('Error loading class information')
   })
 
   const notes = computed(() => {
@@ -436,16 +442,33 @@
   watch(
     () => selectedClasses.value.discipline,
     async (newDiscipline, oldDiscipline) => {
-      selectedClasses.value.subdiscipline = null
-      if (newDiscipline !== oldDiscipline) {
-        status.discipline = StatusEnum.pending
-        await classesStore.updateClass(props.classId, 'discipline')
-        newDiscipline !== null
-          ? (status.discipline = StatusEnum.saved)
-          : (status.discipline = StatusEnum.null)
-      }
-      if (!!chosenDiscipline.value.id) {
-        await loadSubdisciplines()
+      try {
+        // Only update if value actually changed (prevents initial load clearing)
+        if (newDiscipline !== oldDiscipline) {
+          // Clear dependent fields when parent changes
+          selectedClasses.value.subdiscipline = null
+          selectedClasses.value.level = null
+          selectedClasses.value.category = null
+          selectedClasses.value.classNumber = null
+
+          status.discipline = StatusEnum.pending
+          await classesStore.updateClass(props.classId, 'discipline')
+          status.discipline =
+            newDiscipline !== null ? StatusEnum.saved : StatusEnum.null
+          // Only load subdisciplines if new discipline is selected (not when clearing)
+          if (newDiscipline !== null && chosenDiscipline.value?.id) {
+            await loadSubdisciplines()
+          }
+        }
+      } catch (error) {
+        console.error('Error in discipline watcher:', error, {
+          operation: 'disciplineWatch',
+          classId: props.classId,
+          newDiscipline,
+          oldDiscipline,
+        })
+        toast.error('Error updating discipline')
+        status.discipline = StatusEnum.null
       }
     }
   )
@@ -453,16 +476,31 @@
   watch(
     () => selectedClasses.value.subdiscipline,
     async (newSubdiscipline, oldSubdiscipline) => {
-      selectedClasses.value.level = null
-      if (newSubdiscipline !== oldSubdiscipline) {
-        status.subdiscipline = StatusEnum.pending
-        await classesStore.updateClass(props.classId, 'subdiscipline')
-        newSubdiscipline !== null
-          ? (status.subdiscipline = StatusEnum.saved)
-          : (status.subdiscipline = StatusEnum.null)
-      }
-      if (!!chosenSubdiscipline.value.id) {
-        await loadLevels()
+      try {
+        // Only update if value actually changed
+        if (newSubdiscipline !== oldSubdiscipline) {
+          // Clear dependent fields when parent changes
+          selectedClasses.value.level = null
+          selectedClasses.value.category = null
+          selectedClasses.value.classNumber = null
+          status.subdiscipline = StatusEnum.pending
+          await classesStore.updateClass(props.classId, 'subdiscipline')
+          status.subdiscipline =
+            newSubdiscipline !== null ? StatusEnum.saved : StatusEnum.null
+          // Only load levels if new subdiscipline is selected (not when clearing)
+          if (newSubdiscipline !== null && chosenSubdiscipline.value?.id) {
+            await loadLevels()
+          }
+        }
+      } catch (error) {
+        console.error('Error in subdiscipline watcher:', error, {
+          operation: 'subdisciplineWatch',
+          classId: props.classId,
+          newSubdiscipline,
+          oldSubdiscipline,
+        })
+        toast.error('Error updating subdiscipline')
+        status.subdiscipline = StatusEnum.null
       }
     }
   )
@@ -470,16 +508,34 @@
   watch(
     () => selectedClasses.value.level,
     async (newLevel, oldLevel) => {
-      selectedClasses.value.category = null
-      if (newLevel !== oldLevel) {
-        status.level = StatusEnum.pending
-        await classesStore.updateClass(props.classId, 'level')
-        newLevel !== null
-          ? (status.level = StatusEnum.saved)
-          : (status.level = StatusEnum.null)
-      }
-      if (!!chosenSubdiscipline.value.id && !!chosenGradeLevel.value.id) {
-        await loadCategories()
+      try {
+        // Only update if value actually changed
+        if (newLevel !== oldLevel) {
+          // Clear dependent fields when parent changes
+          selectedClasses.value.category = null
+          selectedClasses.value.classNumber = null
+
+          status.level = StatusEnum.pending
+          await classesStore.updateClass(props.classId, 'level')
+          status.level = newLevel !== null ? StatusEnum.saved : StatusEnum.null
+          // Only load categories if new level is selected (not when clearing)
+          if (
+            newLevel !== null &&
+            chosenSubdiscipline.value?.id &&
+            chosenGradeLevel.value?.id
+          ) {
+            await loadCategories()
+          }
+        }
+      } catch (error) {
+        console.error('Error in level watcher:', error, {
+          operation: 'levelWatch',
+          classId: props.classId,
+          newLevel,
+          oldLevel,
+        })
+        toast.error('Error updating level')
+        status.level = StatusEnum.null
       }
     }
   )
@@ -487,17 +543,33 @@
   watch(
     () => selectedClasses.value.category,
     async (newCategory, oldCategory) => {
-      if (newCategory !== oldCategory) {
-        status.category = StatusEnum.pending
-        await classesStore.updateClass(props.classId, 'category')
-        newCategory !== null
-          ? (status.category = StatusEnum.saved)
-          : (status.category = StatusEnum.null)
-      }
-      if (selectedClasses.value.category === null) {
-        selectedClasses.value.classNumber = null
-      } else {
-        await loadClassInformation()
+      try {
+        // Only update if value actually changed
+        if (newCategory !== oldCategory) {
+          status.category = StatusEnum.pending
+          await classesStore.updateClass(props.classId, 'category')
+          status.category =
+            newCategory !== null ? StatusEnum.saved : StatusEnum.null
+          // Load class information for the new selection
+          if (newCategory === null) {
+            selectedClasses.value.classNumber = null
+          } else if (
+            chosenSubdiscipline.value?.id &&
+            chosenGradeLevel.value?.id &&
+            chosenCategory.value?.id
+          ) {
+            await loadClassInformation()
+          }
+        }
+      } catch (error) {
+        console.error('Error in category watcher:', error, {
+          operation: 'categoryWatch',
+          classId: props.classId,
+          newCategory,
+          oldCategory,
+        })
+        toast.error('Error updating category')
+        status.category = StatusEnum.null
       }
     }
   )
@@ -505,9 +577,15 @@
   /**
    * Number of Allowed Works in class to choose from
    */
-  const numberOfAllowedWorks = computed(() => {
-    let minWorks = classSelection.value.minSelections!
-    let maxWorks = classSelection.value.maxSelections!
+  const numberOfAllowedWorks = ref<Array<{ value: number; label: string }>>([])
+  watchEffect(() => {
+    const minWorks = classSelection.value?.minSelections
+    const maxWorks = classSelection.value?.maxSelections
+    // Guard clause: only proceed if we have valid min/max values
+    if (!minWorks || !maxWorks) {
+      numberOfAllowedWorks.value = []
+      return
+    }
     if (minWorks === maxWorks) {
       selectedClasses.value.numberOfSelections = minWorks
     }
@@ -515,7 +593,7 @@
     for (let i = minWorks; i <= maxWorks; i++) {
       selectionOptions.push({ value: i, label: `${i.toString()} Selections` })
     }
-    return selectionOptions
+    numberOfAllowedWorks.value = selectionOptions
   })
 
   /**
@@ -524,25 +602,52 @@
   watch(
     () => selectedClasses.value.numberOfSelections,
     async (newNumber) => {
-      let oldNumber =
-        classesStore.registeredClasses[props.classIndex]!.selections!.length
-      if (oldNumber < newNumber!) {
-        while (oldNumber < newNumber!) {
+      if (!newNumber) return
+      const getCurrentSelectionCount = () =>
+        classesStore.registeredClasses[props.classIndex]?.selections?.length ??
+        0
+      let currentCount = getCurrentSelectionCount()
+      if (currentCount < newNumber) {
+        while (currentCount < newNumber) {
           await classesStore.createSelection(props.classId)
-          oldNumber += 1
+          currentCount += 1
         }
-      } else if (oldNumber > newNumber!) {
-        while (oldNumber > newNumber!) {
-          const selectionLength =
-            classesStore.registeredClasses[props.classIndex]!.selections!.length
-          const selectionId =
-            classesStore.registeredClasses[props.classIndex]!.selections![
-              selectionLength - 1
-            ]!.id
+      } else if (currentCount > newNumber) {
+        while (currentCount > newNumber) {
+          const selections =
+            classesStore.registeredClasses[props.classIndex]?.selections
+          if (!selections || selections.length === 0) {
+            console.error('No selections available to delete', {
+              operation: 'updateNumberOfSelections',
+              classId: props.classId,
+              classIndex: props.classIndex,
+              expectedCount: newNumber,
+              actualCount: currentCount,
+            })
+            break
+          }
+
+          const lastSelection = selections[selections.length - 1]
+          if (!lastSelection) {
+            console.warn('Invalid selection ID', {
+              operation: 'updateNumberOfSelections',
+              classId: props.classId,
+              selectionIndex: selections.length - 1,
+            })
+            break
+          }
+
           await classesStore
-            .deleteSelection(props.classId, selectionId)
-            .catch((error) => console.error(error))
-          oldNumber -= 1
+            .deleteSelection(props.classId, lastSelection.id)
+            .catch((error) => {
+              console.error('Failed to delete selection:', error, {
+                operation: 'updateNumberOfSelections',
+                classId: props.classId,
+                selectionId: lastSelection.id,
+              })
+              toast.error('Error updating number of selections')
+            })
+          currentCount -= 1
         }
       }
       await classesStore.updateClass(props.classId, 'numberOfSelections')
@@ -550,7 +655,6 @@
   )
 
   // Validation code
-
   const validationSchema = toTypedSchema(
     yup.object({
       discipline: yup.string().required('Required'),
@@ -633,11 +737,11 @@
           {{ classSelection?.classType?.description }}
         </p>
         <div
-          v-if="(classSelection.trophies ?? []).length > 0"
+          v-if="(classSelection?.trophies ?? []).length > 0"
           v-auto-animate>
           <h4>Trophy Eligibility</h4>
           <div
-            v-for="trophy in classSelection.trophies"
+            v-for="trophy in classSelection?.trophies ?? []"
             :key="trophy.id">
             <h6>{{ trophy.name }}:</h6>
             <p class="text-sm pb-2">
@@ -680,7 +784,11 @@
         </div>
       </div>
       <div
-        v-if="classSelection.minSelections !== classSelection.maxSelections"
+        v-if="
+          classSelection?.minSelections &&
+          classSelection?.maxSelections &&
+          classSelection.minSelections !== classSelection.maxSelections
+        "
         class="col-span-3 md:col-span-2">
         <BaseRadioGroup
           v-model.number="selectedClasses.numberOfSelections"

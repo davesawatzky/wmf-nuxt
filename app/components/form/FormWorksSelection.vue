@@ -1,11 +1,7 @@
 <script setup lang="ts">
   import * as yup from 'yup'
   import { useClasses } from '~/stores/useClasses'
-  import type {
-    RegisteredClass,
-    Selection,
-    SelectionInput,
-  } from '~/graphql/gql/graphql'
+  import type { Selection, SelectionInput } from '~/graphql/gql/graphql'
   import { useToast } from 'vue-toastification'
 
   const toast = useToast()
@@ -24,7 +20,6 @@
 
   const classesStore = useClasses()
   const fieldConfigStore = useFieldConfig()
-  // const selectionError = ref(0)
 
   const work = computed({
     get: () => props.modelValue,
@@ -41,27 +36,6 @@
     duration: props.modelValue.duration ? StatusEnum.saved : StatusEnum.null,
   })
 
-  // async function fieldStatus(stat: string, fieldName: string) {
-  //   await nextTick()
-  //   status[fieldName] = StatusEnum.pending
-  //   const result = await classesStore.updateSelection(
-  //     props.classId,
-  //     props.selectionId,
-  //     fieldName
-  //   )
-  //   if (result === 'complete') {
-  //     if (work.value[fieldName as keyof SelectionInput]) {
-  //       status[fieldName] = StatusEnum.saved
-  //     } else {
-  //       status[fieldName] = StatusEnum.removed
-  //     }
-  //   } else {
-  //     status[fieldName] = StatusEnum.null
-  //     work.value[fieldName as keyof SelectionInput] = null
-  //     toast.error('Something went wrong. Please exit and reload Registration')
-  //   }
-  // }
-
   async function fieldStatus(stat: string, fieldName: string) {
     await nextTick()
     if (stat === 'valid') {
@@ -77,6 +51,7 @@
           status[fieldName] = StatusEnum.saved
         }
       } else {
+        console.error('Could not update selection field:', fieldName)
         toast.error(
           'Could not update field.  Please exit and reload Registration'
         )
@@ -92,6 +67,7 @@
       if (result === 'complete') {
         status[fieldName] = StatusEnum.removed
       } else {
+        console.error('Could not remove invalid selection field:', fieldName)
         toast.error(
           'Could not remove invalid field. Please exit and reload Registration'
         )
@@ -107,6 +83,7 @@
       if (result === 'complete') {
         status[fieldName] = StatusEnum.removed
       } else {
+        console.error('Could not remove selection field:', fieldName)
         toast.error(
           'Could not remove field.  Please exit and reload Registration'
         )
@@ -141,7 +118,7 @@
     ]!.count = count
   })
 
-  const { errors, validate } = useForm({
+  const { validate } = useForm({
     validationSchema,
     validateOnMount: true,
   })

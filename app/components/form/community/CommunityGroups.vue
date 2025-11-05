@@ -12,6 +12,7 @@
       if (communityId) {
         await communityGroupStore.createCommunityGroup(communityId)
       } else {
+        console.error('Community ID is missing')
         toast.error('Cannot add community group. Community ID is missing')
       }
     } catch (error) {
@@ -60,7 +61,7 @@
             @click="removeCommunityGroup(communityGrp.id)">
             Remove This Community Group
           </BaseButton>
-          <br ><br >
+          <br /><br />
           <svg viewBox="0 0 800 2">
             <line
               x1="0"

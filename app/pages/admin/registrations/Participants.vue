@@ -26,7 +26,7 @@
     initFilters()
   })
 
-  const { result, loading, refetch } = useQuery(
+  const { result, loading } = useQuery(
     gql`
       query AdminPerformers {
         performers {

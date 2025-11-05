@@ -49,15 +49,6 @@
     })
   )
 
-  // async function fieldStatus(stat: string, fieldName: string) {
-  //   await nextTick()
-  //   status[fieldName] = StatusEnum.pending
-  //   await schoolStore.updateSchool(fieldName)
-  //   if (stat === 'saved') status[fieldName] = StatusEnum.saved
-  //   else if (stat === 'remove') status[fieldName] = StatusEnum.removed
-  //   else status[fieldName] = StatusEnum.null
-  // }
-
   async function fieldStatus(stat: string, fieldName: string) {
     await nextTick()
     if (stat === 'valid') {
@@ -69,6 +60,7 @@
           status[fieldName] = StatusEnum.saved
         }
       } else {
+        console.error('Could not update school field:', fieldName)
         toast.error(
           'Could not update field.  Please exit and reload Registration'
         )
@@ -80,6 +72,7 @@
       if (result === 'complete') {
         status[fieldName] = StatusEnum.removed
       } else {
+        console.error('Could not remove invalid school field:', fieldName)
         toast.error(
           'Could not remove invalid field. Please exit and reload Registration'
         )
@@ -91,6 +84,7 @@
       if (result === 'complete') {
         status[fieldName] = StatusEnum.removed
       } else {
+        console.error('Could not remove school field:', fieldName)
         toast.error(
           'Could not remove field.  Please exit and reload Registration'
         )
@@ -98,7 +92,7 @@
     }
   }
 
-  const { errors, validate } = useForm({
+  const { validate } = useForm({
     validationSchema,
     validateOnMount: true,
   })

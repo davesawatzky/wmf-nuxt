@@ -9,7 +9,7 @@
   import { useClasses } from '~/stores/useClasses'
   import { useRegistration } from '~/stores/useRegistration'
   import { useAppStore } from '~/stores/appStore'
-  import { useFormErrors } from '~/composables/formErrors'
+  import { useTabErrors } from '~/composables/tabErrors'
 
   interface TeacherSummary {
     teacherSummary?: boolean
@@ -31,7 +31,7 @@
   const classesStore = useClasses()
   const appStore = useAppStore()
   const registrationStore = useRegistration()
-  const formErrors = useFormErrors()
+  const tabErrors = useTabErrors()
 
   function schoolClassGroup(id: number) {
     return schoolGroupStore.schoolGroup.find((item) => item.id === id)
@@ -45,15 +45,16 @@
   }
 
   const totalErrors = computed(() => {
-    const errors: number[] = Object.values(formErrors.value)
+    const errors: number[] = Object.values(tabErrors.value)
     return errors.reduce((a, b) => {
       return a + b
     }, 0)
   })
 
   async function finalErrorCheck() {
-    if (!totalErrors.value && !props.teacherSummary)
+    if (!totalErrors.value && !props.teacherSummary) {
       await navigateTo('/Submission')
+    }
   }
 </script>
 
@@ -65,7 +66,7 @@
       <h3 class="text-center py-2 sm:py-4 bg-red-600 text-white rounded-lg">
         Incomplete registration form
       </h3>
-      <br >
+      <br />
       <h4 class="text-center">
         All information is saved and can be returned to later.
       </h4>

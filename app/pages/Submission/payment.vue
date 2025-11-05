@@ -39,6 +39,12 @@
   const stripe: Stripe | null = await loadStripe(config.public.stripePubKey)
 
   const handleError = (error: StripeError) => {
+    console.error('Stripe Error:', {
+      message: error.message,
+      type: error.type,
+      code: error.code,
+      decline_code: error.decline_code,
+    })
     toast.error(error.message)
     submitDisabled.value = false
     loading.value = false
@@ -175,7 +181,7 @@
       })
 
       toast.error(
-        'An unexpected error occurred. Please try again or contact support.'
+        'An unexpected payment error occurred. Please try again or contact support.'
       )
       submitDisabled.value = false
     } finally {

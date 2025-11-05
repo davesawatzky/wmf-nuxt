@@ -1,13 +1,13 @@
 import { useRegistration } from '~/stores/useRegistration'
-import { useFormErrors } from '~/composables/formErrors'
+import { useTabErrors } from '~/composables/tabErrors'
 
 export default defineNuxtRouteMiddleware(async () => {
   const registrationStore = useRegistration()
-  const formErrors = useFormErrors()
+  const tabErrors = useTabErrors()
   const confirmed = registrationStore.registration.confirmation
   const submitted = registrationStore.registration.submittedAt
 
-  if (!formErrors.value || confirmed || submitted) {
+  if (!tabErrors.value || confirmed || submitted) {
     abortNavigation()
     await navigateTo('/Registrations')
   }

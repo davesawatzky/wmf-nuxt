@@ -1,5 +1,4 @@
 <script setup lang="ts">
-  import Accordion from 'primevue/accordion'
   import * as yup from 'yup'
   import { useGroup } from '~/stores/useGroup'
   import type { Group } from '~/graphql/gql/graphql'
@@ -114,6 +113,7 @@
           status[fieldName] = StatusEnum.saved
         }
       } else {
+        console.error('Could not update community field:', fieldName)
         toast.error(
           'Could not update field.  Please exit and reload Registration'
         )
@@ -125,6 +125,7 @@
       if (result === 'complete') {
         status[fieldName] = StatusEnum.removed
       } else {
+        console.error('Could not remove invalid group field:', fieldName)
         toast.error(
           'Could not remove invalid field. Please exit and reload Registration'
         )
@@ -136,6 +137,7 @@
       if (result === 'complete') {
         status[fieldName] = StatusEnum.removed
       } else {
+        console.error('Could not remove group field:', fieldName)
         toast.error(
           'Could not remove field.  Please exit and reload Registration'
         )
@@ -143,7 +145,7 @@
     }
   }
 
-  const { errors, validate } = useForm({
+  const { validate } = useForm({
     validationSchema,
     validateOnMount: true,
   })

@@ -138,12 +138,14 @@
             .updateTeacher(fieldName)
             .catch((error) => {
               console.error('Trying to remove non-existant teacher', error)
+              toast.error('Trying to remove non-existant teacher')
               stat = ''
             })
           if (result === 'complete') {
             if (contact.value[fieldName as keyof ContactInfo] !== null) {
               status[fieldName] = StatusEnum.saved
             } else {
+              console.error('Could not update teacher field:', fieldName)
               toast.error(
                 'Could not update field. Please exit and reload Registration'
               )
@@ -155,12 +157,14 @@
             .updateTeacher(fieldName)
             .catch((error) => {
               console.error('Trying to remove non-existant teacher', error)
+              toast.error('Trying to remove non-existant teacher')
               stat = ''
             })
           status[fieldName] = StatusEnum.null
           if (result === 'complete') {
             status[fieldName] = StatusEnum.removed
           } else {
+            console.error('Could not remove invalid teacher field:', fieldName)
             toast.error(
               'Something went wrong. Please exit and reload Registration'
             )
@@ -176,8 +180,9 @@
           if (result === 'complete') {
             status[fieldName] = StatusEnum.removed
           } else {
+            console.error('Could not remove teacher field:', fieldName)
             toast.error(
-              'Could not remove field. Plase exit and reload Registrastion'
+              'Could not remove field. Please exit and reload Registration'
             )
           }
         }
@@ -271,7 +276,6 @@
 
       // Now we load the existing teacher record from the db.
       // and update the registration
-      //TODO: Props.teacherId can be undefined here?
       registrationStore.registration.teacherID = newTeacher?.id
       await teacherStore.loadTeacher(newTeacher?.id, undefined)
       await registrationStore.updateRegistration('teacherID')
@@ -328,6 +332,7 @@
         teacherStore.duplicateCheck?.id !== props.teacherId
       ) {
         teacherStore.emailAlreadyExists = true
+        console.warn('Duplicate teacher found with email')
         toast.warning(
           'Email already exists. Changing the teacher details to an existing teacher if available'
         )
@@ -348,13 +353,16 @@
           await registrationStore
             .updateRegistration('teacherID')
             .catch((error) => {
-              console.error(error)
+              console.error('Could not update teacher in registration: ', error)
+              toast.error('Could not update teacher in registration')
             })
           teacherStore.chosenTeacher = teacherStore.allTeachers.find(
             (teacher) => teacher.id === teacherStore.duplicateCheck?.id
           ) as FilteredTeacher
         } else {
-          toast.error('Teacher must be listed as a private or school teacher.')
+          toast.warning(
+            'Teacher must be listed as a private or school teacher.'
+          )
           teacherStore.$resetTeacher()
           teacherStore.chosenTeacher = teacherStore.allTeachers.find(
             (teacher) => teacher.id === 2

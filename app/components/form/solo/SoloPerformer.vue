@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+  import { useToast } from 'vue-toastification'
+
   const performerStore = usePerformers()
   const classesStore = useClasses()
   const registrationStore = useRegistration()
@@ -6,6 +8,7 @@
   const attentionDialogIsOpen = ref(false)
   const previousInstrument = ref('')
   const cancelInstChange = ref(false)
+  const toast = useToast()
 
   onMounted(() => {
     attentionDialogIsOpen.value = true
@@ -45,7 +48,8 @@
       }
       await classesStore.createClass(registrationStore.registrationId)
     } catch (error) {
-      console.error(error)
+      console.error('Error changing instrument and resetting classes:', error)
+      toast.error('Could not change instrument. Please try again.')
     }
   }
 

@@ -1,4 +1,4 @@
-interface FormErrors {
+interface TabErrors {
   [key: string]: number
 }
 
@@ -22,7 +22,7 @@ export function sumErrorsArray(arr: ErrorObject[]): number {
   return sum
 }
 
-export function useFormErrors(): ComputedRef<FormErrors> {
+export function useTabErrors(): ComputedRef<TabErrors> {
   // Initialize stores within the composable function to ensure Pinia is ready
   const performerStore = usePerformers()
   const classesStore = useClasses()
@@ -34,8 +34,8 @@ export function useFormErrors(): ComputedRef<FormErrors> {
   const teacherStore = useTeacher()
   const appStore = useAppStore()
 
-  return computed<FormErrors>(() => {
-    let tabName = {} as FormErrors
+  return computed<TabErrors>(() => {
+    let tabName: TabErrors
 
     switch (appStore.performerType) {
       case 'SOLO':
@@ -79,6 +79,8 @@ export function useFormErrors(): ComputedRef<FormErrors> {
           Summary: 0,
         }
         break
+      default:
+        tabName = {}
     }
     return tabName
   })

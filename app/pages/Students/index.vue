@@ -15,6 +15,7 @@
     PerformerType,
     StudentRegistrationsDocument,
   } from '~/graphql/gql/graphql'
+  import { useToast } from 'vue-toastification'
 
   const registrationStore = useRegistration()
   const appStore = useAppStore()
@@ -27,6 +28,7 @@
   const communityGroupStore = useCommunityGroup()
   const classesStore = useClasses()
   const fieldConfigStore = useFieldConfig()
+  const toast = useToast()
 
   const sm = useMediaQuery('(min-width: 640px)')
   const md = useMediaQuery('(min-width: 768px)')
@@ -69,7 +71,10 @@
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
-  onError((error) => console.warn(error))
+  onError((error) => {
+    console.error('Error loading registrations: ', error)
+    toast.error('Error loading registrations')
+  })
 
   const registrations = computed(() => {
     return result.value?.myStudents.registrations ?? []
@@ -85,48 +90,53 @@
     registrationId: number,
     performerType: PerformerType
   ) {
-    await refetchRegistrations()
-    const registration = registrations.value.find((reg) => {
-      return reg.id === registrationId
-    })
+    try {
+      await refetchRegistrations()
+      const registration = registrations.value.find((reg) => {
+        return reg.id === registrationId
+      })
 
-    registrationStore.registrationId = registrationId
-    registrationStore.addToStore(
-      registration as Partial<Registration & RegistrationInput>
-    )
-    switch (performerType) {
-      case 'SOLO':
-        appStore.performerType = PerformerType.SOLO
-        appStore.dataLoading = true
-        await performerStore.loadPerformers(registrationId)
-        appStore.dataLoading = false
-        break
-      case 'GROUP':
-        appStore.performerType = PerformerType.GROUP
-        appStore.dataLoading = true
-        await groupStore.loadGroup(registrationId)
-        await performerStore.loadPerformers(registrationId)
-        appStore.dataLoading = false
-        break
-      case 'SCHOOL':
-        appStore.performerType = PerformerType.SCHOOL
-        appStore.dataLoading = true
-        await schoolStore.loadSchool(registrationId)
-        await schoolGroupStore.loadSchoolGroups(registrationId)
-        appStore.dataLoading = false
-        break
-      case 'COMMUNITY':
-        appStore.performerType = PerformerType.COMMUNITY
-        appStore.dataLoading = true
-        await communityStore.loadCommunity(registrationId)
-        await communityGroupStore.loadCommunityGroups(registrationId)
-        appStore.dataLoading = false
-        break
+      registrationStore.registrationId = registrationId
+      registrationStore.addToStore(
+        registration as Partial<Registration & RegistrationInput>
+      )
+      switch (performerType) {
+        case 'SOLO':
+          appStore.performerType = PerformerType.SOLO
+          appStore.dataLoading = true
+          await performerStore.loadPerformers(registrationId)
+          appStore.dataLoading = false
+          break
+        case 'GROUP':
+          appStore.performerType = PerformerType.GROUP
+          appStore.dataLoading = true
+          await groupStore.loadGroup(registrationId)
+          await performerStore.loadPerformers(registrationId)
+          appStore.dataLoading = false
+          break
+        case 'SCHOOL':
+          appStore.performerType = PerformerType.SCHOOL
+          appStore.dataLoading = true
+          await schoolStore.loadSchool(registrationId)
+          await schoolGroupStore.loadSchoolGroups(registrationId)
+          appStore.dataLoading = false
+          break
+        case 'COMMUNITY':
+          appStore.performerType = PerformerType.COMMUNITY
+          appStore.dataLoading = true
+          await communityStore.loadCommunity(registrationId)
+          await communityGroupStore.loadCommunityGroups(registrationId)
+          appStore.dataLoading = false
+          break
+      }
+      appStore.dataLoading = true
+      await classesStore.loadClasses(registrationId)
+      appStore.dataLoading = false
+      await navigateTo('/students/summary') // TODO: have to change this to a summary
+    } catch (error) {
+      console.error('Error loading student registrations: ', error)
+      toast.error('Error loading student registrations. Exit and try again.')
     }
-    appStore.dataLoading = true
-    await classesStore.loadClasses(registrationId)
-    appStore.dataLoading = false
-    await navigateTo('/students/summary') // TODO: have to change this to a summary
   }
 </script>
 

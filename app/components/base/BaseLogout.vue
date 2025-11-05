@@ -37,7 +37,7 @@
     await navigateTo('/login')
   })
   onError(async (error) => {
-    console.error(error)
+    console.error('Error logging out: ', error)
     await navigateTo('/login')
   })
 

@@ -46,6 +46,7 @@
           status[fieldName] = StatusEnum.saved
         }
       } else {
+        console.error('Could not update community field:', fieldName)
         toast.error(
           'Could not update field.  Please exit and reload Registration'
         )
@@ -57,6 +58,7 @@
       if (result === 'complete') {
         status[fieldName] = StatusEnum.removed
       } else {
+        console.error('Could not remove invalid community field:', fieldName)
         toast.error(
           'Could not remove invalid field. Please exit and reload Registration'
         )
@@ -68,6 +70,7 @@
       if (result === 'complete') {
         status[fieldName] = StatusEnum.removed
       } else {
+        console.error('Could not remove community field:', fieldName)
         toast.error(
           'Could not remove field.  Please exit and reload Registration'
         )
@@ -106,7 +109,7 @@
     })
   )
 
-  const { errors, validate } = useForm({
+  const { validate } = useForm({
     validationSchema,
     validateOnMount: true,
   })

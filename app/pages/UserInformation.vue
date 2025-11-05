@@ -1,7 +1,6 @@
 <script lang="ts" setup>
   import * as yup from 'yup'
   import 'yup-phone-lite'
-  import { useRegistration } from '~/stores/useRegistration'
   import { useUser } from '~/stores/useUser'
   import { MyUserDocument, type User } from '~/graphql/gql/graphql'
   import { provinces } from '#imports'
@@ -11,16 +10,6 @@
     middleware: ['user'], // Apply only to user pages
   })
 
-  const props = defineProps<{}>()
-
-  const emits = defineEmits<{}>()
-
-  // const contact = computed({
-  //   get: () => props.modelValue
-  //   set: (value) => emits('update:modelValue', value),
-  // })
-
-  const registrationStore = useRegistration()
   const userStore = useUser()
   const teacherView = computed(() => userStore.user.privateTeacher)
   const toast = useToast()
@@ -29,14 +18,14 @@
    * Load User details
    */
 
-  const {
-    result,
-    onResult: onUserResult,
-    onError: userError,
-  } = useQuery(MyUserDocument, null, () => ({
-    fetchPolicy: 'no-cache',
-    errorPolicy: 'all',
-  }))
+  const { onResult: onUserResult, onError: userError } = useQuery(
+    MyUserDocument,
+    null,
+    () => ({
+      fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
+    })
+  )
   onUserResult(async (result) => {
     userStore.addToStore(result.data.myUser)
     if (!userStore.user.isActive) {
@@ -44,7 +33,10 @@
       await userStore.updateUser('isActive')
     }
   })
-  userError((error) => console.error(error))
+  userError((error) => {
+    console.error('Error loading user details: ', error)
+    toast.error('Error loading user details')
+  })
 
   userStore.user.isActive = true
 
@@ -65,15 +57,6 @@
     phone: userStore.user.phone ? StatusEnum.saved : StatusEnum.null,
   })
 
-  // async function fieldStatus(stat: string, fieldName: string) {
-  //   await nextTick()
-  //   status[fieldName] = StatusEnum.pending
-  //   await userStore.updateUser(fieldName)
-  //   if (stat === 'saved') status[fieldName] = StatusEnum.saved
-  //   else if (stat === 'remove') status[fieldName] = StatusEnum.removed
-  //   else status[fieldName] = StatusEnum.null
-  // }
-
   async function fieldStatus(stat: string, fieldName: string) {
     await nextTick()
     if (stat === 'valid') {
@@ -85,6 +68,7 @@
           status[fieldName] = StatusEnum.saved
         }
       } else {
+        console.error(`Error updating user field ${fieldName}`)
         toast.error(
           'Could not update field.  Please exit and reload Registration'
         )
@@ -96,6 +80,7 @@
       if (result === 'complete') {
         status[fieldName] = StatusEnum.removed
       } else {
+        console.error(`Error removing invalid user field ${fieldName}`)
         toast.error(
           'Could not remove invalid field. Please exit and reload Registration'
         )
@@ -107,6 +92,7 @@
       if (result === 'complete') {
         status[fieldName] = StatusEnum.removed
       } else {
+        console.error(`Error removing user field ${fieldName}`)
         toast.error(
           'Could not remove field.  Please exit and reload Registration'
         )
@@ -140,7 +126,7 @@
     })
   )
 
-  const { errors, validate } = useForm({
+  const { validate } = useForm({
     validationSchema,
     validateOnMount: true,
   })
@@ -153,8 +139,6 @@
     preProcess: (val: string) => val.toUpperCase(),
   }
   defineExpose({ maskaUcaseOption })
-
-  const currentYear = new Date().getFullYear()
 </script>
 
 <template>

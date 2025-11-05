@@ -56,6 +56,14 @@
   const stripe: Stripe | null = await loadStripe(config.public.stripePubKey)
 
   const handleError = async (error: StripeError) => {
+    console.error('Stripe Error:', {
+      message: error.message,
+      type: error.type,
+      code: error.code,
+      decline_code: error.decline_code,
+      payment_intent_id: error.payment_intent?.id,
+      registration_id: registrationStore.registrationId,
+    })
     toast.error(error.message ?? 'An unknown error occurred.')
     submitDisabled.value = false
     await navigateTo('/Submission/payment')
@@ -78,8 +86,8 @@
         }
       )
     } catch (error) {
-      console.error('Failed to summarize payment:', error)
-      toast.error('Failed to fetch payment summary. Please try again.')
+      console.error('Failed to load payment summary:', error)
+      toast.error('Failed to load payment summary. Please try again.')
       submitDisabled.value = false
     } finally {
       isLoading.value = false
@@ -94,6 +102,7 @@
 
   async function confirmPayment() {
     if (!stripe) {
+      console.error('Stripe has not been initialized.')
       toast.error('Stripe has not been initialized.')
       return
     }
@@ -135,13 +144,6 @@
       // be redirected to an intermediate site first to authorize the payment, then
       // redirected to the `return_url`.
       if (result.error) {
-        console.error('Stripe payment confirmation failed', {
-          error_type: result.error.type,
-          error_code: result.error.code,
-          decline_code: result.error.decline_code,
-          payment_intent_id: result.error.payment_intent?.id,
-          registration_id: registrationStore.registrationId,
-        })
         handleError(result.error)
         return
       }

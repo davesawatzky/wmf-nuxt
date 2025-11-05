@@ -28,19 +28,12 @@
 
   const uuid = UniqueID().getID()
 
-  const {
-    value,
-    resetField,
-    errorMessage,
-    meta,
-    handleChange,
-    handleBlur,
-    validate,
-  } = useField(() => props.name, undefined, {
-    validateOnValueUpdate: false,
-    initialValue: props.modelValue,
-    syncVModel: true,
-  })
+  const { value, resetField, errorMessage, meta, handleChange, validate } =
+    useField(() => props.name, undefined, {
+      validateOnValueUpdate: false,
+      initialValue: props.modelValue,
+      syncVModel: true,
+    })
 
   const validationListeners = {
     input: (evt: Event) => {
@@ -90,15 +83,10 @@
       :value="value"
       :aria-describedby="errorMessage ? `${uuid}-error` : ''"
       :aria-invalid="errorMessage ? true : false"
-      v-on="validationListeners" >
+      v-on="validationListeners" />
     <BaseErrorMessage :data-testid="errorMessage ? 'input-error' : ''">
       {{ errorMessage }}
     </BaseErrorMessage>
-    <!-- <BaseErrorMessage> Initial Value: {{ meta.initialValue }} </BaseErrorMessage
-    ><BaseErrorMessage>Dirty: {{ meta.dirty }}</BaseErrorMessage
-    ><BaseErrorMessage>Valid: {{ meta.valid }}</BaseErrorMessage
-    ><BaseErrorMessage>Touched: {{ meta.touched }}</BaseErrorMessage
-    ><BaseErrorMessage>Value: {{ value }}</BaseErrorMessage> -->
   </div>
 </template>
 

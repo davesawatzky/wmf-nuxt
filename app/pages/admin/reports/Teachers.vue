@@ -24,7 +24,7 @@
     documentStore.isDirty = false
   })
 
-  const { result, loading, onResult, refetch } = useQuery(
+  const { result, onResult } = useQuery(
     gql`
       query AdminPrivateTeachers($teacherType: String!) {
         teachers(teacherType: $teacherType) {

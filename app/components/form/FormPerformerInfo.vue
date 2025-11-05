@@ -25,7 +25,6 @@
   const fieldConfigStore = useFieldConfig()
   const performerStore = usePerformers()
   const toast = useToast()
-  const appStore = useAppStore()
 
   const contact = computed({
     get: () => props.modelValue,
@@ -42,7 +41,8 @@
   )
   const instruments = computed(() => instrumentQuery.value?.instruments ?? [])
   instrumentsError((error) => {
-    console.error(error)
+    console.error('Error loading instruments: ', error)
+    toast.error('Error loading instruments')
   })
 
   const status = reactive<Status>({
@@ -87,6 +87,7 @@
           status[fieldName] = StatusEnum.saved
         }
       } else {
+        console.error('Could not update field:', fieldName)
         toast.error(
           'Could not update field.  Please exit and reload Registration'
         )
@@ -101,6 +102,7 @@
       if (result === 'complete') {
         status[fieldName] = StatusEnum.removed
       } else {
+        console.error('Could not remove invalid field:', fieldName)
         toast.error(
           'Could not remove invalid field. Please exit and reload Registration'
         )
@@ -115,6 +117,7 @@
       if (result === 'complete') {
         status[fieldName] = StatusEnum.removed
       } else {
+        console.error('Could not remove field:', fieldName)
         toast.error(
           'Could not remove field.  Please exit and reload Registration'
         )
@@ -172,7 +175,7 @@
     })
   )
 
-  const { errors, validate } = useForm({
+  const { validate } = useForm({
     validationSchema,
     validateOnMount: true,
   })

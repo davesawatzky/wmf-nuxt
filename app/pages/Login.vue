@@ -8,7 +8,6 @@
     SignUpDocument,
   } from '~/graphql/gql/graphql'
   import { useUser } from '~/stores/useUser'
-  import { logErrorMessages } from '@vue/apollo-util'
 
   YupPassword(yup)
 
@@ -48,7 +47,7 @@
   )
   const instruments = computed(() => instrumentQuery.value?.instruments ?? [])
   instrumentsError((error) => {
-    console.error(error)
+    console.error('Error loading instruments: ', error)
   })
 
   const { handleSubmit } = useForm({
@@ -190,7 +189,7 @@
       if (teacherExistCheck.value) {
         await userStore.loadHasPassword(teacherExistCheck.value.id)
         if (userStore.checkPassword) {
-          alert('User already exists')
+          toast.error('User already exists')
           return null
         } else if (!userStore.checkPassword) {
           signupAccount()
@@ -225,7 +224,7 @@
     return result
   }
   onDoesTeacherExistError((error) => {
-    logErrorMessages(error)
+    console.error('Error searching for teacher: ', error)
   })
 
   const teacherExistCheck = computed(
@@ -262,7 +261,7 @@
   })
   registerError((error) => {
     toast.error('Error signing up for account')
-    console.error(error)
+    console.error('Error signing up for account: ', error)
     setTimeout(() => resetFields(), 4000)
   })
 
@@ -285,7 +284,7 @@
       accountNotConfirmed.value = false
       resetFields()
     } catch (error) {
-      console.error(error)
+      console.error('Error sending verification email: ', error)
     }
   }
 
@@ -304,7 +303,7 @@
       passwordChangePending.value = false
       resetFields()
     } catch (error) {
-      console.error(error)
+      console.error('Error re-send password verification email: ', error)
     }
   }
 

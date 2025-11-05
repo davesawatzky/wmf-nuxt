@@ -4,13 +4,7 @@
   const email = ref('')
   const appStore = useAppStore()
 
-  const {
-    result: resultSendEmailVerification,
-    load: sendVerification,
-    loading: sendLoading,
-    onError: onSendError,
-    onResult: onSendResult,
-  } = useLazyQuery(
+  const { load: sendVerification, onResult: onSendResult } = useLazyQuery(
     gql`
       query PasswordChangeEmailVerification($email: String!) {
         passwordChangeEmailVerification(email: $email) {
@@ -30,7 +24,7 @@
     }
   })
 
-  const { handleSubmit, values } = useForm({
+  const { handleSubmit } = useForm({
     validationSchema: toTypedSchema(
       yup.object({
         email: yup.string().trim().email().required().label('Email'),
@@ -38,7 +32,7 @@
     ),
   })
 
-  const sendEmailVerification = handleSubmit(async (values) => {
+  const sendEmailVerification = handleSubmit(async () => {
     await sendVerification()
   })
 </script>

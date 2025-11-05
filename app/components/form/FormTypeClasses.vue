@@ -28,7 +28,12 @@
   })
 
   async function addClass() {
-    await classesStore.createClass(registrationStore.registrationId)
+    await classesStore
+      .createClass(registrationStore.registrationId)
+      .catch((error) => {
+        console.error('Could not add class: ', error)
+        toast.error('Could not add class. Please try again.')
+      })
     if (appStore.performerType === PerformerType.SCHOOL)
       status.push({ schoolGroupID: StatusEnum.null })
     if (appStore.performerType === PerformerType.COMMUNITY)
@@ -36,12 +41,19 @@
     validate()
   }
 
-  async function removeClass(classId: number, index: number) {
-    const classIndex = await classesStore.deleteClass(classId)
-    if (appStore.performerType === PerformerType.SCHOOL)
-      status.splice(classIndex, 1)
-    if (appStore.performerType === PerformerType.COMMUNITY)
-      status.splice(classIndex, 1)
+  async function removeClass(classId: number) {
+    const classIndex = await classesStore
+      .deleteClass(classId)
+      .catch((error) => {
+        console.error('Could not remove class: ', error)
+        toast.error('Could not remove class. Please try again.')
+      })
+    if (classIndex) {
+      if (appStore.performerType === PerformerType.SCHOOL)
+        status.splice(classIndex, 1)
+      if (appStore.performerType === PerformerType.COMMUNITY)
+        status.splice(classIndex, 1)
+    }
   }
 
   // SchoolGroup and CommunityGroup status validation
@@ -75,20 +87,6 @@
     })
   )
 
-  // async function fieldStatus(
-  //   stat: string,
-  //   fieldName: string,
-  //   classId: number,
-  //   classIndex: number
-  // ) {
-  //   await nextTick()
-  //   status[classIndex][fieldName] = StatusEnum.pending
-  //   await classesStore.updateClass(classId, fieldName)
-  //   if (stat === 'saved') status[classIndex][fieldName] = StatusEnum.saved
-  //   else if (stat === 'remove')
-  //     status[classIndex][fieldName] = StatusEnum.removed
-  //   else status[classIndex][fieldName] = StatusEnum.null
-  // }
   async function fieldStatus(
     stat: string,
     fieldName: string,
@@ -110,13 +108,14 @@
       }
     } else {
       status[classIndex]![fieldName] = StatusEnum.null
+      console.error('Could not update class field:', fieldName)
       toast.error('Something went wrong. Please exit and reload Registration')
     }
   }
 
   // Class error counts
 
-  const { errors, meta, validate } = useForm({
+  const { validate } = useForm({
     validationSchema,
     validateOnMount: true,
   })
@@ -195,10 +194,10 @@
         <BaseButton
           v-if="classesStore.registeredClasses.length > 1 ? true : false"
           class="btn btn-red mb-6"
-          @click="removeClass(selectedClass.id, classIndex)">
+          @click="removeClass(selectedClass.id)">
           Remove This Class
         </BaseButton>
-        <br ><br >
+        <br /><br />
         <svg viewBox="0 0 800 2">
           <line
             x1="0"
