@@ -1,11 +1,6 @@
 <script setup lang="ts">
   import { FilterMatchMode, FilterOperator } from '@primevue/core/api'
-  import type {
-    Performer,
-    RegisteredClass,
-    Registration,
-    Teacher,
-  } from '~/graphql/gql/graphql'
+  import type { Registration, Teacher } from '~/graphql/gql/graphql'
 
   definePageMeta({
     layout: 'admin',

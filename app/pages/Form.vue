@@ -235,7 +235,7 @@
     <div v-if="!registrationStore.registration.confirmation">
       <div class="text-left">
         <BaseStepper
-          :currentTab="currentTab"
+          :current-tab="currentTab"
           :tabs="tabNames"
           @set-tab="setTab" />
       </div>
@@ -256,19 +256,19 @@
         class="sm:flex sm:justify-between"
         :class="tabIndex === 0 ? 'flex-row-reverse' : ''">
         <BaseButton
-          id="desktop-previous-button"
           v-show="tabIndex > 0"
+          id="desktop-previous-button"
           class="btn btn-blue"
-          @click="previousTab"
-          :disabled="disableButton">
+          :disabled="disableButton"
+          @click="previousTab">
           <Icon name="bxs:left-arrow" />Previous
         </BaseButton>
         <BaseButton
-          id="desktop-next-button"
           v-show="tabIndex < Object.keys(tabs).length - 1"
+          id="desktop-next-button"
           class="btn btn-blue"
-          @click="nextTab"
-          :disabled="disableButton">
+          :disabled="disableButton"
+          @click="nextTab">
           Next<Icon name="bxs:right-arrow" />
         </BaseButton>
       </div>
@@ -278,8 +278,8 @@
             <BaseButton
               id="mobile-previous-button"
               :disabled="!(tabIndex > 0) || disableButton"
-              @click="previousTab"
-              class="text-sky-700 text-3xl disabled:text-slate-300">
+              class="text-sky-700 text-3xl disabled:text-slate-300"
+              @click="previousTab">
               <Icon name="bxs:left-arrow" />
             </BaseButton>
             <BaseButton
@@ -295,8 +295,8 @@
               :disabled="
                 !(tabIndex < Object.keys(tabs).length - 1) || disableButton
               "
-              @click="nextTab"
-              class="text-sky-700 text-3xl disabled:text-slate-300">
+              class="text-sky-700 text-3xl disabled:text-slate-300"
+              @click="nextTab">
               <Icon name="bxs:right-arrow" />
             </BaseButton>
           </BaseBottomBar>
@@ -306,7 +306,7 @@
     <div
       v-else
       class="border border-spacing-1 shadow-md rounded-lg border-sky-500 p-2 sm:p-6 mb-6">
-      <Summary></Summary>
+      <Summary/>
     </div>
   </div>
 </template>

@@ -16,7 +16,6 @@ export const useGroup = defineStore(
   'group',
   () => {
     const group = ref(<Group>{})
-    const registrationStore = useRegistration()
     const performerStore = usePerformers()
     const fieldConfigStore = useFieldConfig()
     const appStore = useAppStore()
@@ -28,7 +27,7 @@ export const useGroup = defineStore(
 
     watch(
       () => performerStore.numberOfPerformers,
-      async (newValue, oldValue) => {
+      async (newValue) => {
         if (
           group.value.numberOfPerformers !== newValue &&
           appStore.performerType === 'GROUP'
@@ -42,7 +41,7 @@ export const useGroup = defineStore(
 
     watch(
       () => performerStore.averageAge,
-      async (newValue, oldValue) => {
+      async (newValue) => {
         if (
           group.value.age !== newValue &&
           appStore.performerType === 'GROUP'
@@ -86,7 +85,6 @@ export const useGroup = defineStore(
 
     const {
       mutate: groupCreate,
-      loading: createGroupLoading,
       onDone: onCreateGroupDone,
       onError: onCreateGroupError,
     } = useMutation(GroupCreateDocument, {
@@ -118,14 +116,16 @@ export const useGroup = defineStore(
       result: resultGroup,
       load: groupLoad,
       refetch: refetchGroup,
-      onResult: onGroupLoadResult,
       onError: onGroupLoadError,
     } = useLazyQuery(GroupInfoDocument, undefined, {
       fetchPolicy: 'no-cache',
       errorPolicy: 'all',
     })
     async function loadGroup(registrationId: number) {
-      ;(await groupLoad(null, { registrationId })) || (await refetchGroup())
+      const loadResult = await groupLoad(null, { registrationId })
+      if (!loadResult) {
+        await refetchGroup()
+      }
     }
     watch(resultGroup, (newResult) => {
       if (newResult?.registration.group) {
@@ -142,15 +142,13 @@ export const useGroup = defineStore(
      * @returns Promise
      */
 
-    const {
-      mutate: groupUpdate,
-      loading: updateGroupLoading,
-      onDone: onGroupUpdateDone,
-      onError: onGroupUpdateError,
-    } = useMutation(GroupUpdateDocument, {
-      fetchPolicy: 'network-only',
-      errorPolicy: 'all',
-    })
+    const { mutate: groupUpdate, onError: onGroupUpdateError } = useMutation(
+      GroupUpdateDocument,
+      {
+        fetchPolicy: 'network-only',
+        errorPolicy: 'all',
+      }
+    )
     async function updateGroup(field?: string) {
       const { id, __typename, ...groupProps } = group.value
       let groupField = null
@@ -181,7 +179,6 @@ export const useGroup = defineStore(
      */
     const {
       mutate: groupDelete,
-      loading: deleteGroupLoading,
       onDone: onGroupDeleteDone,
       onError: onGroupDeleteError,
     } = useMutation(GroupDeleteDocument)

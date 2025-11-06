@@ -130,6 +130,7 @@
         <template #item="{ item, props, root }">
           <div
             v-if="
+              route.name &&
               route.name.toLowerCase() !== 'login' &&
               route.name.toLowerCase() !== 'emailconfirmation'
             ">
@@ -168,6 +169,7 @@
       <!-- Hamburger button for mobile -->
       <button
         v-if="
+          route.name &&
           route.name.toLowerCase() !== 'login' &&
           route.name.toLowerCase() !== 'emailconfirmation'
         "

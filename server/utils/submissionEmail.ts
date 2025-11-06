@@ -1,10 +1,10 @@
 import mjml2html from 'mjml'
-import { DateTime } from 'luxon'
+import {DateTime} from 'luxon'
 import { createSSRApp } from 'vue'
 import { renderToString } from '@vue/server-renderer'
 import type { CommunityGroup, SchoolGroup } from '~/graphql/gql/graphql'
 
-export async function renderSubmissionEmail( payload: any ) {
+export async function renderSubmissionEmail( payload:EmailPayload ) {
   // Create an instance of vue
   try {
     const app = createSSRApp({
@@ -30,11 +30,11 @@ export async function renderSubmissionEmail( payload: any ) {
 
       methods: {
         schoolClassGroup(id: number): SchoolGroup | undefined {
-          return this.schoolGroups.find((item: any) => item.id === id)
+          return this.schoolGroups.find((item: SchoolGroup) => item.id === id)
         },
 
         communityClassGroup(id: number): CommunityGroup | undefined {
-          return this.communityGroups.find((item: any) => item.id === id)
+          return this.communityGroups.find((item: CommunityGroup) => item.id === id)
         },
 
         dateFunction( date: Date | undefined ) {
@@ -543,13 +543,11 @@ export async function renderSubmissionEmail( payload: any ) {
     </mj-wrapper>
   </mj-body>
 </mjml>
-    
-    
-      `,
+    `,
     })
 
     // Tell Vue to recognize mjml components.  See Vue docs
-    app.config.compilerOptions.isCustomElement = (tag: any) => {
+    app.config.compilerOptions.isCustomElement = (tag: string) => {
       return tag === 'mjml' || tag.startsWith('mj-')
     }
 

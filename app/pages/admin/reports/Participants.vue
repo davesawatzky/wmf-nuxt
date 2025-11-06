@@ -33,7 +33,7 @@
     documentStore.isDirty = false
   })
 
-  const { result, loading, onResult, refetch } = useQuery(gql`
+  const { result, onResult } = useQuery(gql`
     query AdminPerformers {
       performers {
         id

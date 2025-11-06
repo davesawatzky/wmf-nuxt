@@ -1,6 +1,6 @@
 // Form Middleware
 
-export default defineNuxtRouteMiddleware(async (to, from) => {
+export default defineNuxtRouteMiddleware(async () => {
   const regExist = sessionStorage.getItem('registrations')
   if (!regExist) {
     abortNavigation()

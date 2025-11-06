@@ -2,6 +2,7 @@
   import _ from 'lodash'
   import { DateTime } from 'luxon'
   import { useToast } from 'vue-toastification'
+  import type { EmailPayload } from '~/utils/types'
 
   // import type { LocationQueryValue } from '#vue-router'
   const performerStore = usePerformers()
@@ -110,26 +111,23 @@
           'cash/cheque/e-transfer'
       }
       await registrationStore.updateRegistration()
-      const payload = Object.assign(
-        {},
-        {
-          performers,
-          teacher,
-          group,
-          school,
-          schoolGroups,
-          community,
-          communityGroups,
-          registeredClasses,
-          performerType,
-          paymentType,
-          registration,
-          lateFee,
-          userFirstName,
-          userLastName,
-          userEmail,
-        }
-      )
+      const payload: EmailPayload = {
+        performers,
+        teacher,
+        group,
+        school,
+        schoolGroups,
+        community,
+        communityGroups,
+        registeredClasses,
+        performerType,
+        paymentType,
+        registration,
+        lateFee,
+        userFirstName,
+        userLastName,
+        userEmail,
+      }
       await $fetch('/api/send-email', {
         watch: false,
         method: 'POST',

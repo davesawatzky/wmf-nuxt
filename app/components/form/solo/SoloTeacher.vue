@@ -1,9 +1,7 @@
 <script lang="ts" setup>
   import { useTeacher } from '~/stores/useTeacher'
-  import { useRegistration } from '~/stores/useRegistration'
 
   const teacherStore = useTeacher()
-  const registrationStore = useRegistration()
 </script>
 
 <template>

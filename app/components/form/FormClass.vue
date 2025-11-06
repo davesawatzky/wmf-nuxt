@@ -682,9 +682,9 @@
       <div class="col-span-6 lg:col-span-2">
         <BaseSelect
           id="disciplines"
+          v-model="selectedClasses.discipline"
           :class="isDisciplineDisabled ? 'off' : ''"
           :disabled="isDisciplineDisabled"
-          v-model="selectedClasses.discipline"
           :status="status.discipline"
           label="Discipline"
           name="discipline"

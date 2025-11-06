@@ -262,15 +262,15 @@
             </mj-column>
           </mj-section>
           <mj-wrapper
-            v-for="group in schoolGroups"
-            :key="group.id"
+            v-for="schgroup in schoolGroups"
+            :key="schgroup.id"
             background-color="#ffffff"
             padding-top="15px">
             <mj-section>
               <mj-column>
                 <mj-text>
                   <div>
-                    <strong>Group: {{ group.name }}</strong>
+                    <strong>Group: {{ schgroup.name }}</strong>
                   </div>
                 </mj-text>
               </mj-column>
@@ -278,18 +278,18 @@
             <mj-section>
               <mj-column>
                 <mj-text>
-                  <div>Chaperones: {{ group.chaperones }}</div>
-                  <div>Wheelchairs: {{ group.wheelchairs }}</div>
-                  <div>Total Group Size: {{ group.groupSize }}</div>
+                  <div>Chaperones: {{ schgroup.chaperones }}</div>
+                  <div>Wheelchairs: {{ schgroup.wheelchairs }}</div>
+                  <div>Total Group Size: {{ schgroup.groupSize }}</div>
                 </mj-text>
               </mj-column>
               <mj-column>
                 <mj-text>
-                  <div>Earliest Time: {{ group.earliestTime }}</div>
-                  <div>Latest Time: {{ group.latestTime }}</div>
-                  <div>Scheduling Requests: {{ group.unavailable }}</div>
+                  <div>Earliest Time: {{ schgroup.earliestTime }}</div>
+                  <div>Latest Time: {{ schgroup.latestTime }}</div>
+                  <div>Scheduling Requests: {{ schgroup.unavailable }}</div>
                   <div>
-                    Performers in other classes: {{ group.conflictPerformers }}
+                    Performers in other classes: {{ schgroup.conflictPerformers }}
                   </div>
                 </mj-text>
               </mj-column>
