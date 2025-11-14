@@ -5,6 +5,7 @@
   "scripts": {
     "build": "nuxi build --dotenv .env.production",
     "dev": "nuxi dev --dotenv .env.development",
+    "dev:test": "nuxi dev --dotenv .env.test",
     "debug": "nuxi dev --dotenv .env.development --host --inspect",
     "generate": "nuxt generate",
     "preview": "nuxt preview",

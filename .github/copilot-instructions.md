@@ -167,43 +167,57 @@ app/
 
 ### Testing Architecture
 
-The project uses **Playwright** for comprehensive E2E testing with a structured approach:
+The project uses **Playwright** for comprehensive E2E testing with:
 
 - **Multi-browser testing** (Chromium, Firefox, WebKit, Mobile Chrome)
-- **Worker-scoped authentication** for parallel test execution
-- **Page Object Model** pattern for maintainable test code
-- **Authentication fixtures** for isolated user sessions
+- **Page Object Model** for maintainable, reusable test code
+- **Authentication helpers** for quick test setup
+- **Worker-scoped fixtures** for parallel test execution
+- **MailHog integration** for email verification testing
 
 ### Test Structure
 
 ```
 tests/
-├── e2e/                    # Playwright E2E tests
-│   └── testPages.spec.ts   # Main test suite for user flows
-├── pageObjects/            # Page Object Model implementation
-│   ├── authPage.ts         # Authentication page actions
-│   ├── helperBase.ts       # Base class with common utilities
-│   └── pageManager.ts      # Centralized page object management
-├── nuxt/                   # Nuxt-integrated tests (Vitest)
-│   ├── components/         # Component testing with mount()
-│   └── stores/             # Store testing with Pinia
-├── unit/                   # Pure unit tests
-│   └── utils/              # Utility function tests
-├── setup.ts               # Comprehensive Nuxt test setup
-├── setup-unit.ts          # Pure unit test setup
-└── setup-simple.ts       # Minimal test setup
+├── e2e/ # Playwright E2E tests
+│ ├── authentication.example.spec.ts # Example authentication test suite
+│ └── testPages.spec.ts # Existing test suite
+├── pageObjects/ # Page Object Model implementation
+│ ├── helperBase.ts # Base class with common utilities
+│ ├── loginPage.ts # Login/registration page actions
+│ ├── emailConfirmationPage.ts # Email verification flows
+│ ├── passwordResetPage.ts # Password reset flows
+│ ├── registrationsPage.ts # Main authenticated page
+│ ├── pageManager.ts # Centralized page access
+│ └── index.ts # Exports
+├── helpers/ # Reusable test utilities
+│ ├── authHelper.ts # Authentication and MailHog helpers
+│ └── index.ts # Exports
+├── nuxt/ # Nuxt-integrated tests (Vitest)
+│ ├── components/ # Component testing
+│ └── stores/ # Store testing
+├── unit/ # Pure unit tests
+│ └── utils/ # Utility tests
+├── TESTING_GUIDE.md # Comprehensive testing documentation
+├── setup.ts # Comprehensive Nuxt test setup
+├── setup-unit.ts # Pure unit test setup
+└── setup-simple.ts # Minimal test setup
 ```
 
-### Playwright Configuration
+### Playwright Infrastructure
 
 ```
 playwright/
-├── .auth/                  # Pre-created authentication files
-│   ├── user_1.json         # Test user credentials
-│   ├── user_2.json         # Additional test accounts
-│   └── user_3.json         # For parallel worker isolation
-├── fixtures.ts            # Authentication fixtures and setup
-└── report/                # Test execution reports
+├── .auth/ # Authentication files
+│ ├── test-accounts.json # 5 pre-configured test users
+│ └── *.json (generated) # Worker authentication states
+├── fixtures.ts # Worker-scoped authentication fixtures
+├── README.md # Fixture documentation
+└── report/ # Test execution reports
+
+specs/
+├── authentication-test-plan.md # Comprehensive test scenarios (50+)
+└── authentication-implementation-summary.md # Implementation overview
 ```
 
 ### Testing Patterns
@@ -221,33 +235,112 @@ playwright/
 - **Form submission** triggers comprehensive validation
 - **Async validation timing** handled with appropriate timeouts
 
-#### Page Object Model
+#### Page Object Model Usage
 
 ```typescript
-// Example usage pattern
-const authPage = new AuthPage(page)
-await authPage.shouldCheckForShortPassword('test@example.com', 'init', 'short')
+import { PageManager } from '../pageObjects/pageManager'
+
+test('sign in example', async ({ page }) => {
+  const pm = new PageManager(page)
+
+  await pm.loginPage.goto()
+  await pm.loginPage.signIn('user@example.com', 'Password123!')
+  await pm.loginPage.verifySuccessfulSignIn()
+})
 ```
+
+#### Authentication Helper Usage
+
+```typescript
+import { AuthHelper, TEST_USERS } from '../helpers/authHelper'
+
+test('quick authentication', async ({ page }) => {
+  // Sign in with pre-defined test user
+  await AuthHelper.signInAsUser(page, 'REGULAR_USER')
+
+  // Or custom credentials
+  await AuthHelper.signIn(page, 'user@example.com', 'Password123!')
+})
+```
+
+#### MailHog Integration
+
+```typescript
+// Wait for verification email
+const received = await AuthHelper.waitForEmailInMailHog(
+  'user@example.com',
+  'WMF account verification',
+  10000
+)
+
+// Extract verification token
+const token =
+  await AuthHelper.getVerificationTokenFromMailHog('user@example.com')
+
+// Clear all emails
+await AuthHelper.clearMailHog()
+```
+
+#### Worker-Scoped Fixtures
+
+```typescript
+import { test } from '../../playwright/fixtures'
+
+// Each worker gets unique authenticated state
+test('authenticated test', async ({ page, testAccount }) => {
+  console.log('Using account:', testAccount.email)
+  // Already authenticated, can access protected routes
+})
+```
+
+### Test Data
+
+#### Pre-defined Test Users (TEST_USERS)
+
+```
+| Constant        | Email                    | Account Type    | Active After Verification |
+| :-------------- | :----------------------- | :-------------- | :------------------------ |
+| REGULAR_USER    | test.user@wmf.test       | Regular         | Yes                       |
+| PRIVATE_TEACHER | private.teacher@wmf.test | Private Teacher | No (needs approval)       |
+| SCHOOL_TEACHER  | school.teacher@wmf.test  | School Teacher  | Yes                       |
+| BOTH_TEACHERS   | both.teacher@wmf.test    | Both Teachers   |	No (needs approval)      |
+| ADMIN           |	admin@wmf.test           | Admin           | Yes                       |
+```
+
+- All test users use passwords matching pattern: [Type][Number]!@# (e.g., Test123!@#)
 
 ### Key Testing Considerations
 
-#### Backend Dependency
+#### Service Dependencies
 
-- Tests require **wmf-nest backend** running on `localhost:3000`
+- Tests require these services running:
+
+```bash
+# Backend (Terminal 1)
+cd ../wmf-nest && pnpm dev  # localhost:3000
+
+# Frontend (Terminal 2)
+pnpm dev  # localhost:3001
+
+# MailHog (Terminal 3)
+mailhog  # localhost:8025 (web UI), localhost:1025 (SMTP)
+```
+
 - GraphQL endpoints must be available for authentication flows
 - **Network error simulation** via route blocking for resilience testing
 
-#### VeeValidate Integration
+#### Form Validation Testing
 
-- Field validation triggered by **blur events** or **form submission**
-- **Reactive validation timing** requires proper await strategies
-- **Email context** needed for password validation in multi-field forms
+- **VeeValidate** field validation triggered by blur events or form submission
+- **Async validation timing** requires appropriate waits
+- **Multi-field validation** (e.g., password validation needs email context)
 
-#### Authentication Flows
+#### Authentication Testing
 
-- **Route protection** tested via middleware redirection
-- **Role-based access** validated through auth store integration
-- **Session persistence** using httpOnly cookies
+- **httpOnly cookie authentication** matches production flow
+- **Route protection** via auth middleware tested
+- **Role-based access** validated through store integration
+- **Email verification** tested via MailHog integration
 
 ### Test Execution
 
@@ -262,19 +355,35 @@ pnpm test:e2e:headed
 pnpm test:e2e:debug
 
 # Run specific test file
-npx playwright test tests/e2e/testPages.spec.ts
+npx playwright test tests/e2e/authentication.example.spec.ts
 
 # Run tests in specific browser
 npx playwright test --project=chromium
 ```
 
-### Common Testing Scenarios
+#### Test Coverage
 
-1. **Authentication flows** - login, validation, redirection
-2. **Form validation** - VeeValidate error display and timing
-3. **Route protection** - middleware-based access control
-4. **User registration** - multi-step form completion
-5. **Error handling** - network failures and user feedback
+- Comprehensive test plan `authentication-test-plan.md` covers:
+  ✅ Registration - All user types with validation
+  ✅ Email Verification - Valid, expired, invalid tokens
+  ✅ Sign In - Happy paths and error cases
+  ✅ Form Validation - Email format, password requirements
+  ✅ Password Reset - Request and reset flows
+  ✅ Route Protection - Middleware-based access control
+  ✅ MailHog Integration - Email testing without production emails
+  ✅ GraphQL API - Direct backend testing
+  ✅ Security - SQL injection, XSS, CSRF scenarios
+  ✅ Accessibility - WCAG compliance testing
+
+#### Testing Resources
+
+- **Test Plan**: `authentication-test-plan.md` - 50+ test scenarios
+- **Testing Guide**: `TESTING_GUIDE.md` - Usage examples, patterns, troubleshooting
+- **Implementation Summary**: `authentication-implementation-summary.md`
+- **Example Tests**: `authentication.example.spec.ts`
+- **Page Objects**: `pageObjects` - Reusable page components
+- **Helpers**: `helpers` - Authentication and MailHog utilities
+- **Fixtures**: `fixtures.ts` - Worker-scoped authentication
 
 ## Security Notes
 

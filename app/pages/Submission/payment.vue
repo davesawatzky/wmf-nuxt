@@ -197,6 +197,24 @@
       submitDisabled.value = !success
     }
   })
+
+  // Clear token if user navigates away from payment page before submitting
+  // but NOT if they're going to ConfirmPayment (normal flow)
+  onBeforeRouteLeave(async (to, _from) => {
+    // Only clear token if NOT navigating to ConfirmPayment page
+    if (to.path !== '/Submission/ConfirmPayment' && appStore.stripeTokenId) {
+      await $fetch(
+        `${config.public.serverAddress}/payment/cancel-confirmation-token`,
+        {
+          method: 'POST',
+          body: {
+            regId: registrationStore.registrationId,
+          },
+        }
+      )
+      appStore.stripeTokenId = ''
+    }
+  })
 </script>
 
 <template>

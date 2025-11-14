@@ -101,17 +101,16 @@
   })
 
   async function confirmPayment() {
+    if (submitDisabled.value) return
     if (!stripe) {
       console.error('Stripe has not been initialized.')
       toast.error('Stripe has not been initialized.')
       return
     }
-
     submitDisabled.value = true
     registrationStore.registration.confirmation = WMFNumber(
       registrationStore.registrationId
     )
-
     try {
       const paymentIntentResponse = await $fetch<CreatePaymentIntentResponse>(
         `${config.public.serverAddress}/payment/create-payment-intent`,
@@ -124,12 +123,10 @@
           },
         }
       )
-
       const { totalPayment, client_secret: clientSecret } =
         paymentIntentResponse
-
+      console.log('Payment Intent Response:', paymentIntentResponse)
       registrationStore.registration.payedAmt = +totalPayment / 100
-
       const result = await stripe.confirmPayment({
         clientSecret,
         confirmParams: {
@@ -163,9 +160,6 @@
           `/Submission/result?payment_intent=${paymentIntent.id}&redirect_status=succeeded`
         )
       }
-
-      // await registrationStore.updateRegistration()
-
       // This point will only be reached if there is an immediate error
       // Otherwise, customer will be redirected to return_url
     } catch (err) {
@@ -176,9 +170,43 @@
   }
 
   async function cancelPayment() {
-    toast.info('Payment cancelled')
+    appStore.stripeTokenId = ''
+    const result = await $fetch<{
+      success: boolean
+      message: string
+      error?: string
+    }>(`${config.public.serverAddress}/payment/cancel-confirmation-token`, {
+      method: 'POST',
+      body: {
+        regId: registrationStore.registrationId,
+      },
+    })
+    if (result.success) {
+      toast.info('Payment cancelled')
+    }
     await navigateTo('/registrations')
   }
+
+  // Clean up payment intent if user navigates away without confirming
+  onBeforeRouteLeave(async () => {
+    const result = await $fetch<{
+      success: boolean
+      message: string
+      error?: string
+    }>(`${config.public.serverAddress}/payment/cancel-confirmation-token`, {
+      method: 'POST',
+      body: {
+        regId: registrationStore.registrationId,
+      },
+    })
+    if (!result.success) {
+      toast.warning(
+        'Failed to clean up confirmation token: ' +
+          (result.error ?? result.message)
+      )
+    }
+    appStore.stripeTokenId = ''
+  })
 </script>
 
 <template>
@@ -195,8 +223,8 @@
       <p>No payment details available.</p>
       <BaseButton
         class="btn btn-blue mt-4"
-        @click="navigateTo('/Submission/payment')">
-        Back to Payment
+        @click="navigateTo('/Registrations')">
+        Back to Registrations
       </BaseButton>
     </div>
 

@@ -120,7 +120,6 @@ export default defineNuxtConfig({
       exclude: ['Editor', 'Form', 'FormField'],
     },
   },
-
   runtimeConfig: {
     graphqlServer: '',
     apiBase: '',
@@ -172,6 +171,8 @@ export default defineNuxtConfig({
             '/payment/summarize-payment',
           (process.env.NUXT_PUBLIC_SERVER_ADDRESS || 'http://localhost:3000') +
             '/payment/create-payment-intent',
+          (process.env.NUXT_PUBLIC_SERVER_ADDRESS || 'http://localhost:3000') +
+            '/payment/cancel-confirmation-token',
           (process.env.NUXT_PUBLIC_SERVER_ADDRESS || 'http://localhost:3000') +
             '/graphql',
           (process.env.NUXT_PUBLIC_SERVER_ADDRESS || 'http://localhost:3000') +
