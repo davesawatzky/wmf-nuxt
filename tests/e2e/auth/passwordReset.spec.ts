@@ -10,7 +10,9 @@ test.describe('7. Password Reset Flow', () => {
 
   test.beforeEach(async ({ page }) => {
     pm = new PageManager(page)
-    await AuthHelper.clearMailHog()
+
+    // Clear MailHog before each test
+    // await AuthHelper.clearMailHog()
   })
 
   test.describe('7.1 Request Password Reset', () => {
@@ -75,6 +77,37 @@ test.describe('7. Password Reset Flow', () => {
       // Try to sign in with new password
       await pm.loginPage.signIn(TEST_USERS.REGULAR_USER.email, 'NewPass123!@#')
       await pm.loginPage.verifySuccessfulSignIn()
+    })
+
+    // Reset password back to original after test to avoid breaking other tests
+    test('cleanup: reset password back to original', async ({ page }) => {
+      const tempPm = new PageManager(page)
+
+      // Request password reset
+      await tempPm.passwordResetPage.gotoForgotPassword()
+      await tempPm.passwordResetPage.requestPasswordReset(
+        TEST_USERS.REGULAR_USER.email
+      )
+
+      // Wait for email
+      await AuthHelper.waitForEmailInMailHog(
+        TEST_USERS.REGULAR_USER.email,
+        'WMF password reset',
+        10000
+      )
+
+      // Get reset token
+      const token = await AuthHelper.getVerificationTokenFromMailHog(
+        TEST_USERS.REGULAR_USER.email
+      )
+      expect(token).not.toBeNull()
+
+      // Reset password back to original
+      await tempPm.passwordResetPage.resetPassword(
+        token!,
+        TEST_USERS.REGULAR_USER.password
+      )
+      await tempPm.passwordResetPage.verifyPasswordResetSuccess()
     })
   })
 

@@ -164,7 +164,7 @@ await AuthHelper.registerUser(page, {
 const emailReceived = await AuthHelper.waitForEmailInMailHog(
   'user@example.com',
   'WMF account verification',
-  10000 // timeout in ms
+  20000 // timeout in ms
 )
 
 // Extract verification token

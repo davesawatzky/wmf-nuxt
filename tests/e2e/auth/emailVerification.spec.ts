@@ -52,34 +52,34 @@ test.describe('2. Email Verification', () => {
   })
 
   test.describe('2.2 Verify with Expired Token', () => {
-    // FIXME: Backend redirects to /login instead of showing error on /EmailConfirmation page
-    // Expected: Error message "Email confirmation token expired" displayed on EmailConfirmation page
-    // Actual: Page redirects to /login (shown by URL: http://localhost:3001/login)
-    test.fixme(
-      'should show error message for expired token',
-      async ({ page: _page }) => {
-        // Use an old/expired token (simulated)
-        await pm.emailConfirmationPage.gotoWithToken('expired-token-123456789')
+    test.skip('should show error message for expired token', async ({
+      page: _page,
+    }) => {
+      // NOTE: To properly test expired tokens, we need a real JWT token that has expired.
+      // Creating a fake string like 'expired-token-123456789' results in "Bad confirmation token"
+      // rather than "Email confirmation token expired" because the backend first validates
+      // the JWT signature before checking expiration.
+      //
+      // To implement this test properly, we would need to:
+      // 1. Register a user and get their real verification token
+      // 2. Wait for the token to expire (default: 6 hours)
+      // 3. Or use a backend testing endpoint that generates expired tokens
+      // 4. Then verify the expired message appears
 
-        // Verify expired token message
-        await pm.emailConfirmationPage.verifyExpiredTokenMessage()
-      }
-    )
+      await pm.emailConfirmationPage.gotoWithToken('expired-token-123456789')
+      await pm.emailConfirmationPage.verifyExpiredTokenMessage()
+    })
   })
 
   test.describe('2.3 Verify with Invalid Token', () => {
-    // FIXME: Backend redirects to /login instead of showing error on /EmailConfirmation page
-    // Expected: Error message "Bad confirmation token" displayed on EmailConfirmation page
-    // Actual: Page redirects to /login (shown by URL: http://localhost:3001/login)
-    test.fixme(
-      'should show error for invalid verification token',
-      async ({ page: _page }) => {
-        // Use a completely invalid token format
-        await pm.emailConfirmationPage.gotoWithToken('invalid-token-format')
+    test('should show error for invalid verification token', async ({
+      page: _page,
+    }) => {
+      // Use a completely invalid token format
+      await pm.emailConfirmationPage.gotoWithToken('invalid-token-format')
 
-        // Verify invalid token message
-        await pm.emailConfirmationPage.verifyInvalidTokenMessage()
-      }
-    )
+      // Verify invalid token message
+      await pm.emailConfirmationPage.verifyInvalidTokenMessage()
+    })
   })
 })

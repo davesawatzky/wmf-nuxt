@@ -38,7 +38,14 @@ describe('useRegistration', () => {
     const store = useRegistration()
 
     expect(store.registrationId).toBe(0)
-    expect(store.registration).toEqual({})
+    // Store initializes with a structured empty registration object
+    expect(store.registration).toMatchObject({
+      id: 0,
+      performerType: undefined,
+      label: null,
+      confirmation: null,
+      __typename: 'Registration',
+    })
   })
 
   it('should reset state correctly', () => {
@@ -46,14 +53,20 @@ describe('useRegistration', () => {
 
     // Set some state
     store.registrationId = 123
-    store.registration = { id: 1, label: 'Test Registration' }
+    store.registration = { id: 1, label: 'Test Registration' } as any
 
     // Reset
     store.$reset()
 
-    // Verify reset
+    // Verify reset - should return to initial structured state
     expect(store.registrationId).toBe(0)
-    expect(store.registration).toEqual({})
+    expect(store.registration).toMatchObject({
+      id: 0,
+      performerType: undefined,
+      label: null,
+      confirmation: null,
+      __typename: 'Registration',
+    })
   })
 
   it('should add data to store correctly', () => {

@@ -426,7 +426,7 @@ export class GraphQLHelper {
   static async checkUserByEmail(email: string): Promise<any> {
     const query = `
       query FindUserByEmail($email: String!) {
-        findUserByEmail(email: $email) {
+        user(email: $email) {
           id
           email
           emailConfirmed
@@ -437,5 +437,41 @@ export class GraphQLHelper {
     `
 
     return await this.executeQuery(query, { email })
+  }
+
+  /**
+   * Delete user by email (for test cleanup)
+   */
+  static async deleteUserByEmail(email: string): Promise<any> {
+    // First, get the user ID
+    const userResult = await this.checkUserByEmail(email)
+    console.log('User check result:', userResult)
+
+    if (!userResult.data?.user) {
+      return {
+        data: null,
+        errors: [{ message: `User with email ${email} not found` }],
+      }
+    }
+
+    const userId = userResult.data.user.id
+
+    // Then delete by ID
+    const mutation = `
+      mutation UserDelete($userID: Int!) {
+        userDelete(userID: $userID) {
+          user {
+            id
+            email
+          }
+          userErrors {
+            message
+            field
+          }
+        }
+      }
+    `
+
+    return await this.executeMutation(mutation, { userID: parseInt(userId) })
   }
 }

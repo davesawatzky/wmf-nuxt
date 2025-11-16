@@ -36,13 +36,12 @@ export class LoginPage extends HelperBase {
   private readonly forgotPasswordLink = () =>
     this.page.getByRole('link', { name: /forgot your password/i })
 
-  // Dialog locators
-  private readonly dialog = () =>
-    this.page.locator('Vue-Toastification__container')
+  // Dialog locators (PrimeVue Dialog)
+  private readonly dialog = () => this.page.locator('.p-dialog')
   private readonly dialogCloseButton = () =>
     this.dialog().getByRole('button', { name: /close/i })
   private readonly resendVerificationButton = () =>
-    this.dialog().getByRole('button', { name: /re-send verification/i })
+    this.dialog().getByRole('button', { name: /re-send verificat/i })
   private readonly resendPasswordButton = () =>
     this.dialog().getByRole('button', {
       name: /re-send password change email/i,
@@ -232,7 +231,7 @@ export class LoginPage extends HelperBase {
    * Verify successful sign in by checking redirect
    */
   async verifySuccessfulSignIn(expectedUrl: string = '/registrations') {
-    await this.page.waitForURL(`**${expectedUrl}**`, { timeout: 10000 })
+    await this.page.waitForURL(`**${expectedUrl}**`, { timeout: 20000 })
     await expect(this.page).toHaveURL(new RegExp(expectedUrl))
   }
 
@@ -294,13 +293,17 @@ export class LoginPage extends HelperBase {
    */
   async verifyDialogVisible(headerText: string | RegExp) {
     await expect(this.dialog()).toBeVisible()
-    await expect(this.dialog().locator('h3')).toContainText(headerText)
+    await expect(
+      this.dialog().getByRole('heading', { level: 3 })
+    ).toContainText(headerText)
   }
 
   /**
    * Verify unverified account dialog
    */
   async verifyUnverifiedAccountDialog() {
+    // Wait for PrimeVue dialog to appear (it may take a moment after sign in attempt)
+    await this.page.waitForSelector('.p-dialog:visible', { timeout: 10000 })
     await this.verifyDialogVisible(/account not verified/i)
     await expect(this.dialog()).toContainText(/check your email inbox/i)
   }

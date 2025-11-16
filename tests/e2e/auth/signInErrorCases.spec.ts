@@ -16,42 +16,42 @@ test.describe('4. Sign In - Error Cases', () => {
     test('should show unverified account dialog with resend option', async ({
       page,
     }) => {
-      // Skip if test users don't exist in database
-      test.skip(
-        !process.env.TEST_USERS_EXIST,
-        'Requires test users in database'
+      // Create an unverified test user on the fly
+      const email = `unverified.${Date.now()}@test.com`
+      await pm.loginPage.goto()
+      await pm.loginPage.registerRegularUser(
+        'Unverified',
+        'User',
+        email,
+        'Test123!@#'
       )
-
+      await pm.loginPage.verifySuccessfulRegistration()
+      await pm.loginPage.waitForFormClear()
       await pm.loginPage.goto()
 
       // Try to sign in with unverified account
-      await pm.loginPage.signIn('unverified@wmf.test', 'Unverified123!')
+      await pm.loginPage.signIn(email, 'Test123!@#')
 
       // Verify dialog appears
       await pm.loginPage.verifyUnverifiedAccountDialog()
 
-      // Verify dialog has expected buttons
-      await expect(page.getByRole('button', { name: /close/i })).toBeVisible()
+      // Verify dialog has expected buttons (using dialog locator to avoid DevTools button)
+      const dialog = page.locator('.p-dialog')
+      await expect(dialog.getByRole('button', { name: /close/i })).toBeVisible()
       await expect(
-        page.getByRole('button', { name: /re-send verification/i })
+        dialog.getByRole('button', { name: /re-send verificat/i })
       ).toBeVisible()
     })
   })
 
   test.describe('4.2 Sign In with Incorrect Password', () => {
     test('should show error toast and clear form fields', async ({ page }) => {
-      // Skip if test users don't exist in database
-      test.skip(
-        !process.env.TEST_USERS_EXIST,
-        'Requires test users in database'
-      )
-
       await pm.loginPage.goto()
 
-      // Enter valid email but wrong password
+      // Enter valid email but wrong password (must have symbol for validation)
       await pm.loginPage.signIn(
         TEST_USERS.REGULAR_USER.email,
-        'WrongPassword123'
+        'WrongPassword123!@#'
       )
 
       // Verify error toast

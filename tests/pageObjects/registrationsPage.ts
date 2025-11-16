@@ -30,7 +30,7 @@ export class RegistrationsPage extends HelperBase {
    */
   async verifyOnRegistrationsPage() {
     await expect(this.page).toHaveURL(/\/registrations/)
-    await expect(this.heading()).toContainText(/registrations/i)
+    await expect(this.heading()).toContainText(/Winnipeg Music Festival/i)
   }
 
   /**

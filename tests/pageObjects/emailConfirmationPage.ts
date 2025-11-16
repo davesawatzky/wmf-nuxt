@@ -10,7 +10,7 @@ export class EmailConfirmationPage extends HelperBase {
   private readonly heading = () => this.page.locator('h3')
   private readonly messageText = () => this.page.locator('p')
   private readonly continueButton = () =>
-    this.page.getByRole('button', { name: /proceed to sign in/i })
+    this.page.getByRole('button', { name: 'Proceed to Sign In', exact: true })
   private readonly resendButton = () =>
     this.page.getByRole('button', { name: /resend/i })
   private readonly returnToLoginLink = () =>
@@ -36,7 +36,7 @@ export class EmailConfirmationPage extends HelperBase {
    * Verify successful email verification
    */
   async verifySuccessMessage() {
-    await expect(this.heading()).toContainText(/account is verified/i)
+    await expect(this.heading()).toContainText('account is verified')
     await expect(this.continueButton()).toBeVisible()
   }
 

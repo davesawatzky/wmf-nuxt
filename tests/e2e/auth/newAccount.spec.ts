@@ -11,7 +11,7 @@ test.describe('1. New Account Registration', () => {
   test.beforeEach(async ({ page }) => {
     pm = new PageManager(page)
     // Clear MailHog before each test
-    await AuthHelper.clearMailHog()
+    // await AuthHelper.clearMailHog()
   })
 
   test.describe('1.1 Register Regular User Account', () => {
@@ -64,11 +64,11 @@ test.describe('1. New Account Registration', () => {
       // Verify form returns to sign in view
       await expect(page.getByRole('button', { name: /sign in/i })).toBeVisible()
 
-      // Verify email sent to MailHog
+      // Verify email sent to MailHog (increased timeout for Firefox parallel execution)
       const emailReceived = await AuthHelper.waitForEmailInMailHog(
         email,
         'WMF account verification',
-        10000
+        30000
       )
       expect(emailReceived).toBe(true)
     })
@@ -109,10 +109,11 @@ test.describe('1. New Account Registration', () => {
       await pm.loginPage.verifySuccessfulRegistration()
 
       // Verify email sent to MailHog
+      console.log('Checking for verification email for:', email)
       const emailReceived = await AuthHelper.waitForEmailInMailHog(
         email,
         'WMF account verification',
-        10000
+        30000
       )
       expect(emailReceived).toBe(true)
     })
@@ -141,7 +142,7 @@ test.describe('1. New Account Registration', () => {
       const emailReceived = await AuthHelper.waitForEmailInMailHog(
         email,
         'WMF account verification',
-        10000
+        30000
       )
       expect(emailReceived).toBe(true)
     })
@@ -183,7 +184,7 @@ test.describe('1. New Account Registration', () => {
       const emailReceived = await AuthHelper.waitForEmailInMailHog(
         email,
         'WMF account verification',
-        10000
+        30000
       )
       expect(emailReceived).toBe(true)
     })

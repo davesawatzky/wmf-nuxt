@@ -10,7 +10,7 @@ test.describe('8. Resend Verification/Reset Emails', () => {
 
   test.beforeEach(async ({ page }) => {
     pm = new PageManager(page)
-    await AuthHelper.clearMailHog()
+    // await AuthHelper.clearMailHog()
   })
 
   test.describe('8.1 Resend Verification Email from Dialog', () => {
@@ -27,11 +27,17 @@ test.describe('8. Resend Verification/Reset Emails', () => {
         'Test123!@#'
       )
 
-      // Clear the first verification email
-      await AuthHelper.clearMailHog()
+      // Verify registration was successful
+      await pm.loginPage.verifySuccessfulRegistration()
+
+      // Wait for form to clear after successful registration
+      await pm.loginPage.waitForFormClear()
 
       // Try to sign in without verifying
       await pm.loginPage.signIn(email, 'Test123!@#')
+
+      // Wait a moment for the sign-in request to complete
+      await pm.loginPage.page.waitForTimeout(2000)
 
       // Dialog should appear
       await pm.loginPage.verifyUnverifiedAccountDialog()

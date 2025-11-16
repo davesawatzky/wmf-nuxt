@@ -27,6 +27,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
     '/password/PasswordReset',
     '/password/passwordreset',
     '/emailconfirmation',
+    '/EmailConfirmation',
   ]
   const isPublicRoute = publicRoutes.includes(to.path)
 
