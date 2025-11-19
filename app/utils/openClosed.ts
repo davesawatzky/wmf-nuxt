@@ -12,16 +12,16 @@ export const lateDatesAndCosts = {
   GROUP: {
     lateDate: new Date(2025, 12 - 1, 1, 23, 59, 59),
     amount: 20.0,
-    cutOffDate: new Date(2025, 12 - 1, 3, 23, 59, 59),
+    cutOffDate: new Date(2025, 12 - 1, 4, 23, 59, 59),
   },
   SCHOOL: {
     lateDate: new Date(2025, 12 - 1, 1, 23, 59, 59),
     amount: 20.0,
-    cutOffDate: new Date(2025, 12 - 1, 3, 23, 59, 59),
+    cutOffDate: new Date(2025, 12 - 1, 4, 23, 59, 59),
   },
   COMMUNITY: {
     lateDate: new Date(2025, 12 - 1, 1, 23, 59, 59),
     amount: 20.0,
-    cutOffDate: new Date(2025, 12 - 1, 3, 23, 59, 59),
+    cutOffDate: new Date(2025, 12 - 1, 4, 23, 59, 59),
   },
 }
