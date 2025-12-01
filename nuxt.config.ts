@@ -91,7 +91,7 @@ export default defineNuxtConfig({
   },
 
   pinia: {
-    storesDirs: ['./app/stores/**'],
+    storesDirs: ['./stores'],
   },
 
   piniaPluginPersistedstate: {
