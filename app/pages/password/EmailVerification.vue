@@ -4,7 +4,7 @@ import * as yup from 'yup'
 const email = ref('')
 const appStore = useAppStore()
 
-const { load: sendVerification, onResult: onSendResult, onError: onError } = useLazyQuery(
+const { load: sendVerification, onResult: onSendResult, onError } = useLazyQuery(
   gql`
       query PasswordChangeEmailVerification($email: String!) {
         passwordChangeEmailVerification(email: $email) {

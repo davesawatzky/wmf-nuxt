@@ -3,7 +3,7 @@ module.exports = {
     service: {
       name: 'wmf-nest',
       // URL to the GraphQL API
-      url: process.env.NUXT_GRAPHQL_SERVER,
+      url: process.env.NUXT_GRAPHQL_SERVER || 'http://localhost:3000/graphql',
     },
     // Files processed by the extension
     includes: [
