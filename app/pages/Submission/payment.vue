@@ -272,8 +272,8 @@
               Payment may be made by cash, cheque, or e-transfer to the Winnipeg
               Music Festival (<a
                 class="text-sky-600"
-                href="mailto:wmf@mymts.net"
-                ><strong>wmf@mymts.net</strong></a
+                href="mailto:admin@winnipegmusicfestival.org"
+                ><strong>admin@winnipegmusicfestival.org</strong></a
               >).
             </li>
             <li>
