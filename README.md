@@ -1,6 +1,8 @@
 # Winnipeg Music Festival Registration Application
-This is a web form application for the Winnipeg Music Festival.  This frontend application requires the backend application, 'wmf-nest', to function.
+
+This is a web form application for the Winnipeg Music Festival. This frontend application requires the backend application, 'wmf-nest', to function.
 This app has several notable features:
+
 - auto save form inputs with indicator
 - allow for the creation of multiple festival registrations per user.
 - all form content is saved to db before submission.

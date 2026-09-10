@@ -69,6 +69,21 @@
     middleware: ['user'], // Apply only to user pages
   })
 
+  onBeforeRouteLeave(async (to, from) => {
+    // Prevent navigating back to payment page
+    if (
+      from.path.includes('/Submission/ConfirmPayment') ||
+      from.path.includes('/Submission/result')
+    ) {
+      return await navigateTo('/Registrations')
+    } else if (
+      to.path.includes('/Submission/ConfirmPayment') ||
+      to.path.includes('/Submission/payment')
+    ) {
+      return await navigateTo('/Registrations')
+    }
+  })
+
   async function checkPaymentIntent() {
     paymentIntentStatus.value = route.query.redirect_status
     switch (paymentIntentStatus.value) {

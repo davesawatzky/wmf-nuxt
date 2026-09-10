@@ -4,10 +4,6 @@ import { WMFPreset } from './app/utils/wmfpreset'
 import tailwindcss from '@tailwindcss/vite'
 
 export default defineNuxtConfig({
-  future: {
-    compatibilityVersion: 4,
-  },
-
   modules: [
     '@nuxt/eslint',
     '@nuxtjs/apollo',
@@ -28,7 +24,7 @@ export default defineNuxtConfig({
 
   devServer: {
     port: 3001,
-    host: '0.0.0.0',
+    host: 'localhost',
   },
 
   devtools: {
@@ -72,15 +68,15 @@ export default defineNuxtConfig({
     },
   },
 
-  app: {
-    head: {
-      script: [
-        {
-          src: 'https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?version=4.8.0&features=globalThis',
-        },
-      ],
-    },
-  },
+  // app: {
+  //   head: {
+  //     script: [
+  //       {
+  //         src: 'https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?version=4.8.0&features=globalThis',
+  //       },
+  //     ],
+  //   },
+  // },
 
   experimental: {
     typedPages: true,
@@ -120,7 +116,6 @@ export default defineNuxtConfig({
       exclude: ['Editor', 'Form', 'FormField'],
     },
   },
-
   runtimeConfig: {
     graphqlServer: '',
     apiBase: '',
@@ -173,6 +168,8 @@ export default defineNuxtConfig({
           (process.env.NUXT_PUBLIC_SERVER_ADDRESS || 'http://localhost:3000') +
             '/payment/create-payment-intent',
           (process.env.NUXT_PUBLIC_SERVER_ADDRESS || 'http://localhost:3000') +
+            '/payment/cancel-confirmation-token',
+          (process.env.NUXT_PUBLIC_SERVER_ADDRESS || 'http://localhost:3000') +
             '/graphql',
           (process.env.NUXT_PUBLIC_SERVER_ADDRESS || 'http://localhost:3000') +
             '/email-confirmation/confirm',
@@ -213,6 +210,7 @@ export default defineNuxtConfig({
       throwError: false,
     },
   },
+
   sentry: {
     sourceMapsUploadOptions: {
       org: 'diatonic-web-design-and-develo',

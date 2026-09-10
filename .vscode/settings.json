@@ -38,5 +38,6 @@
   "editor.formatOnPaste": true,
   "html.format.indentHandlebars": false,
   "editor.minimap.showSlider": "always",
-  "apollographql.devTools.showPanel": "detect"
+  "apollographql.devTools.showPanel": "detect",
+  "editor.linkedEditing": true
 }

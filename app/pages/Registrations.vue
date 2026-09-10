@@ -19,6 +19,7 @@
 
   const toast = useToast()
   const registrationStore = useRegistration()
+
   const appStore = useAppStore()
   const performerStore = usePerformers()
   const teacherStore = useTeacher()

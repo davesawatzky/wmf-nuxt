@@ -98,18 +98,16 @@ vi.mock('@stripe/stripe-js', () => ({
 }))
 
 // Mock browser APIs
-Object.defineProperty(global, 'ResizeObserver', {
-  writable: true,
-  value: vi.fn(() => ({
+global.ResizeObserver = vi.fn(function ResizeObserver() {
+  return {
     observe: vi.fn(),
     unobserve: vi.fn(),
     disconnect: vi.fn(),
-  })),
-})
+  }
+}) as any
 
-Object.defineProperty(global, 'IntersectionObserver', {
-  writable: true,
-  value: vi.fn(() => ({
+global.IntersectionObserver = vi.fn(function IntersectionObserver() {
+  return {
     observe: vi.fn(),
     unobserve: vi.fn(),
     disconnect: vi.fn(),
@@ -117,8 +115,8 @@ Object.defineProperty(global, 'IntersectionObserver', {
     root: null,
     rootMargin: '',
     thresholds: [],
-  })),
-})
+  }
+}) as any
 
 // Configure Vue Test Utils
 config.global.renderStubDefaultSlot = true
