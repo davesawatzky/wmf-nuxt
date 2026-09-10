@@ -1,115 +1,115 @@
 <script lang="ts" setup>
-  const appStore = useAppStore()
-  const registratinStore = useRegistration()
-  const performerStore = usePerformers()
-  const teacherStore = useTeacher()
-  const classStore = useClasses()
-  const groupStore = useGroup()
-  const schoolStore = useSchool()
-  const userStore = useUser()
-  const fieldConfig = useFieldConfig()
+const props = defineProps<{
+  privateTeacher?: boolean
+  schoolTeacher?: boolean
+}>()
+const appStore = useAppStore()
+const registratinStore = useRegistration()
+const performerStore = usePerformers()
+const teacherStore = useTeacher()
+const classStore = useClasses()
+const groupStore = useGroup()
+const schoolStore = useSchool()
+const userStore = useUser()
+const fieldConfig = useFieldConfig()
 
-  const props = defineProps<{
-    privateTeacher?: boolean
-    schoolTeacher?: boolean
-  }>()
+const route = useRoute()
 
-  const route = useRoute()
+const items = ref([
+  {
+    label: 'Registrations',
+    items: [
+      {
+        label: 'My Registrations',
+        icon: 'ic:round-app-registration',
+        visible: () => true,
+        command: () => navigateTo('/Registrations'),
+      },
+      {
+        label: 'My Students',
+        icon: 'mdi:account-music',
+        visible: () => props.privateTeacher,
+        command: () => navigateTo('/Students'),
+      },
+    ],
+  },
+  {
+    label: 'Account',
+    items: [
+      {
+        label: 'User Account',
+        icon: 'fluent:inprivate-account-24-filled',
+        visible: () => true,
+        command: () => navigateTo('/UserInformation'),
+      },
+      {
+        label: 'Sign Out',
+        icon: 'heroicons-outline:logout',
+        visible: () => true,
+        command: () => signout(),
+      },
+    ],
+  },
+])
 
-  const items = ref([
-    {
-      label: 'Registrations',
-      items: [
-        {
-          label: 'My Registrations',
-          icon: 'ic:round-app-registration',
-          visible: () => true,
-          command: () => navigateTo('/Registrations'),
-        },
-        {
-          label: 'My Students',
-          icon: 'mdi:account-music',
-          visible: () => props.privateTeacher,
-          command: () => navigateTo('/Students'),
-        },
-      ],
-    },
-    {
-      label: 'Account',
-      items: [
-        {
-          label: 'User Account',
-          icon: 'fluent:inprivate-account-24-filled',
-          visible: () => true,
-          command: () => navigateTo('/UserInformation'),
-        },
-        {
-          label: 'Sign Out',
-          icon: 'heroicons-outline:logout',
-          visible: () => true,
-          command: () => signout(),
-        },
-      ],
-    },
-  ])
-
-  const {
-    load: loadLogout,
-    onResult,
-    onError,
-  } = useLazyQuery(
-    gql`
+const {
+  load: loadLogout,
+  onResult,
+  onError,
+} = useLazyQuery(
+  gql`
       query Logout {
         logout
       }
     `,
-    undefined,
-    { fetchPolicy: 'no-cache', errorPolicy: 'all' }
-  )
-  onResult(async () => {
-    await navigateTo('/login')
-  })
-  onError(async (error) => {
-    console.error('Error on logout:', error)
-    await navigateTo('/login')
-  })
+  undefined,
+  { fetchPolicy: 'no-cache', errorPolicy: 'all' },
+)
+onResult(async () => {
+  await navigateTo('/login')
+})
+onError(async (error) => {
+  console.error('Error on logout:', error)
+  await navigateTo('/login')
+})
 
-  async function signout() {
-    try {
-      const { clearUserSession } = useNavigationHistory()
-      appStore.$reset()
-      registratinStore.$reset()
-      performerStore.$reset()
-      teacherStore.$resetTeacher()
-      teacherStore.$resetAllTeachers()
-      classStore.$reset()
-      groupStore.$reset()
-      schoolStore.$reset()
-      userStore.$reset()
-      fieldConfig.$reset()
+async function signout() {
+  try {
+    const { clearUserSession } = useNavigationHistory()
+    appStore.$reset()
+    registratinStore.$reset()
+    performerStore.$reset()
+    teacherStore.$resetTeacher()
+    teacherStore.$resetAllTeachers()
+    classStore.$reset()
+    groupStore.$reset()
+    schoolStore.$reset()
+    userStore.$reset()
+    fieldConfig.$reset()
 
-      await loadLogout()
+    await loadLogout()
 
-      await clearUserSession()
-    } catch (error) {
-      console.error('Error during log out:', error)
-      await navigateTo('/login', { replace: true })
-    }
+    await clearUserSession()
   }
-
-  const visible = ref(false)
-
-  function toggleMobileMenu() {
-    visible.value = !visible.value
+  catch (error) {
+    console.error('Error during log out:', error)
+    await navigateTo('/login', { replace: true })
   }
+}
 
-  // async function cleanUpTeachers() {
-  //   if (route.name === 'Form') {
-  //     if (teacherStore.unlistedTeacher === true) {
-  //       await teacherStore.removeUnlistedTeacher()
-  //     }
-  //   }
-  // }
+const visible = ref(false)
+
+function toggleMobileMenu() {
+  visible.value = !visible.value
+}
+
+// async function cleanUpTeachers() {
+//   if (route.name === 'Form') {
+//     if (teacherStore.unlistedTeacher === true) {
+//       await teacherStore.removeUnlistedTeacher()
+//     }
+//   }
+// }
 </script>
 
 <template>
@@ -117,23 +117,26 @@
     <div>
       <PVMenubar
         :model="items"
-        class="hidden md:flex bg-sky-800 text-white lg:max-w-5xl mx-auto justify-between">
+        class="hidden md:flex bg-sky-800 text-white lg:max-w-5xl mx-auto justify-between"
+      >
         <template #start>
           <NuxtPicture
             :img-attrs="{ class: 'inline h-16' }"
             src="/images/wmf-logo-banner.jpg"
-            alt="Winnipeg Music Festival Logo" />
+            alt="Winnipeg Music Festival Logo"
+          />
           <div class="ml-4 font-semibold">
-            Winnipeg<br >Music<br >Festival
+            Winnipeg<br>Music<br>Festival
           </div>
         </template>
         <template #item="{ item, props, root }">
           <div
             v-if="
-              route.name &&
-              route.name.toLowerCase() !== 'login' &&
-              route.name.toLowerCase() !== 'emailconfirmation'
-            ">
+              route.name
+                && route.name.toLowerCase() !== 'login'
+                && route.name.toLowerCase() !== 'emailconfirmation'
+            "
+          >
             <button
               v-ripple
               class="w-full px-4 py-2 text-black bg-sky-800 hover:bg-sky-600 outline-0 rounded-md ring-0"
@@ -146,7 +149,8 @@
                 'bg-white': !root,
                 'hover:bg-sky-600': !root,
               }"
-              v-bind="props.action">
+              v-bind="props.action"
+            >
               <span>{{ item.label }}</span>
             </button>
           </div>
@@ -155,30 +159,34 @@
     </div>
 
     <div
-      class="md:hidden flex items-center justify-between px-4 py-2 lg:max-w-5xl mx-auto">
+      class="md:hidden flex items-center justify-between px-4 py-2 lg:max-w-5xl mx-auto"
+    >
       <div class="flex items-center">
         <NuxtPicture
           :img-attrs="{ class: 'inline h-12' }"
           src="/images/wmf-logo-banner.jpg"
-          alt="Winnipeg Music Festival Logo" />
+          alt="Winnipeg Music Festival Logo"
+        />
         <div class="ml-2 font-semibold text-sm text-white">
-          Winnipeg<br >Music<br >Festival
+          Winnipeg<br>Music<br>Festival
         </div>
       </div>
 
       <!-- Hamburger button for mobile -->
       <button
         v-if="
-          route.name &&
-          route.name.toLowerCase() !== 'login' &&
-          route.name.toLowerCase() !== 'emailconfirmation'
+          route.name
+            && route.name.toLowerCase() !== 'login'
+            && route.name.toLowerCase() !== 'emailconfirmation'
         "
         id="hamburger-button"
         type="button"
         class="relative w-8 h-8 text-3xl"
-        @click="toggleMobileMenu">
+        @click="toggleMobileMenu"
+      >
         <div
-          class="absolute top-4 -mt-0.5 h-1 w-8 rounded-sm bg-white transition-all duration-500 before:absolute before:h-1 before:w-8 before:-translate-x-4 before:-translate-y-3 before:rounded-sm before:bg-white before:transition-all before:duration-500 before:content-[''] after:absolute after:h-1 after:w-8 after:-translate-x-4 after:translate-y-3 after:rounded-sm after:bg-white after:transition-all after:duration-500 after:content-['']" />
+          class="absolute top-4 -mt-0.5 h-1 w-8 rounded-sm bg-white transition-all duration-500 before:absolute before:h-1 before:w-8 before:-translate-x-4 before:-translate-y-3 before:rounded-sm before:bg-white before:transition-all before:duration-500 before:content-[''] after:absolute after:h-1 after:w-8 after:-translate-x-4 after:translate-y-3 after:rounded-sm after:bg-white after:transition-all after:duration-500 after:content-['']"
+        />
       </button>
     </div>
 
@@ -188,31 +196,40 @@
       position="right"
       :modal="true"
       :close-on-escape="true"
-      class="p-4 bg-sky-700 text-white w-4/5">
+      class="p-4 bg-sky-700 text-white w-4/5"
+    >
       <div class="flex flex-col space-y-4">
-        <h2 class="text-xl font-bold mb-4 border-b pb-2">Menu</h2>
+        <h2 class="text-xl font-bold mb-4 border-b pb-2">
+          Menu
+        </h2>
         {{ props.privateTeacher }}
 
         <!-- Main items -->
         <div
           v-for="(item, i) in items"
           :key="i"
-          class="mb-4">
-          <h3 class="text-lg font-semibold mb-2">{{ item.label }}</h3>
+          class="mb-4"
+        >
+          <h3 class="text-lg font-semibold mb-2">
+            {{ item.label }}
+          </h3>
 
           <!-- Sub items -->
           <div
             v-for="(subItem, j) in item.items"
             :key="j"
-            class="pl-4 py-2">
+            class="pl-4 py-2"
+          >
             <template v-if="subItem.visible()">
               <button
                 class="flex items-center w-full active:bg-sky-600 rounded-md px-3 py-2"
-                @click="(subItem.command(), toggleMobileMenu())">
+                @click="(subItem.command(), toggleMobileMenu())"
+              >
                 <Icon
                   v-if="subItem.icon"
                   :name="subItem.icon"
-                  class="mr-2 text-lg" />
+                  class="mr-2 text-lg"
+                />
                 {{ subItem.label }}
               </button>
             </template>

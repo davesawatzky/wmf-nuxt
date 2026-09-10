@@ -1,23 +1,23 @@
-import { defineStore } from 'pinia'
-import { useFieldConfig } from '~/stores/useFieldConfig'
-import {
-  PerformerCreateDocument,
-  PerformerDeleteDocument,
-  PerformerUpdateDocument,
-  PerformersDocument,
-} from '~/graphql/gql/graphql'
 import type {
   Performer,
   PerformerCreateMutation,
   PerformerInput,
 } from '~/graphql/gql/graphql'
+import { defineStore } from 'pinia'
+import {
+  PerformerCreateDocument,
+  PerformerDeleteDocument,
+  PerformersDocument,
+  PerformerUpdateDocument,
+} from '~/graphql/gql/graphql'
+import { useFieldConfig } from '~/stores/useFieldConfig'
 
 export const usePerformers = defineStore(
   'performers',
   () => {
     const fieldConfigStore = useFieldConfig()
     const performers = ref<Performer[]>([])
-    const performerErrors = ref<{ id: number; count: number }[]>([])
+    const performerErrors = ref<{ id: number, count: number }[]>([])
 
     /**
      * Resets the performers store to initial state
@@ -46,7 +46,7 @@ export const usePerformers = defineStore(
       const name = []
       for (let i = 0; i < performers.value.length; i++) {
         name.push(
-          `${performers.value[i]?.firstName} ${performers.value[i]?.lastName}`
+          `${performers.value[i]?.firstName} ${performers.value[i]?.lastName}`,
         )
       }
       return name
@@ -90,7 +90,7 @@ export const usePerformers = defineStore(
           }
         }
         const index = performerErrors.value.findIndex(
-          (item) => item.id === performer.id
+          item => item.id === performer.id,
         )
         performerErrors.value[index]!.count = count
       }
@@ -99,7 +99,7 @@ export const usePerformers = defineStore(
     const totalPerformerErrors = computed(() => {
       return performerErrors.value.reduce(
         (total, item) => total + item.count,
-        0
+        0,
       )
     })
 
@@ -126,13 +126,14 @@ export const usePerformers = defineStore(
     }
     onPerformerCreateDone((result) => {
       if (result.data?.performerCreate.performer) {
-        const performer: PerformerCreateMutation['performerCreate']['performer'] =
-          result.data.performerCreate.performer
+        const performer: PerformerCreateMutation['performerCreate']['performer']
+          = result.data.performerCreate.performer
         addToStore(performer)
-      } else if (result.data?.performerCreate.userErrors) {
+      }
+      else if (result.data?.performerCreate.userErrors) {
         console.error(
           'Failed to create performer:',
-          result.data.performerCreate.userErrors
+          result.data.performerCreate.userErrors,
         )
       }
     })
@@ -177,13 +178,13 @@ export const usePerformers = defineStore(
      * @param performerId ID of performer to update
      * @param field Optional single fieldname to update
      */
-    const { mutate: performerUpdate, onError: onPerformerUpdateError } =
-      useMutation(PerformerUpdateDocument, {
+    const { mutate: performerUpdate, onError: onPerformerUpdateError }
+      = useMutation(PerformerUpdateDocument, {
         fetchPolicy: 'no-cache',
         errorPolicy: 'all',
       })
     async function updatePerformer(performerId: number, field?: string) {
-      const person = performers.value.find((item) => item.id === performerId)
+      const person = performers.value.find(item => item.id === performerId)
       if (!person) {
         console.error('Performer not found:', {
           operation: 'updatePerformer',
@@ -196,7 +197,7 @@ export const usePerformers = defineStore(
       let performerField = null
       if (field && Object.keys(personProps).includes(field)) {
         performerField = Object.fromEntries(
-          Array(Object.entries(personProps).find((item) => item[0] === field)!)
+          new Array(Object.entries(personProps).find(item => item[0] === field)!),
         )
       }
       try {
@@ -205,7 +206,8 @@ export const usePerformers = defineStore(
           performer: performerField || (personProps as PerformerInput),
         })
         return 'complete'
-      } catch (error) {
+      }
+      catch (error) {
         console.error('Failed to update performer:', error)
         return 'error'
       }
@@ -227,17 +229,18 @@ export const usePerformers = defineStore(
      * Removes a performer from the store and the db
      * @param performerId ID of the individual performer in the Array
      */
-    const { mutate: performerDelete, onError: onPerformerDeleteError } =
-      useMutation(PerformerDeleteDocument)
+    const { mutate: performerDelete, onError: onPerformerDeleteError }
+      = useMutation(PerformerDeleteDocument)
     async function deletePerformer(performerId: number) {
       await performerDelete({ performerId })
       const performerIndex = performers.value.findIndex(
-        (item) => item.id === performerId
+        item => item.id === performerId,
       )
       if (performerIndex !== -1) {
         performers.value.splice(performerIndex, 1)
         performerErrors.value.splice(performerIndex, 1)
-      } else {
+      }
+      else {
         console.error('Performer not found for deletion:', {
           operation: 'deletePerformer',
           performerId,
@@ -267,5 +270,5 @@ export const usePerformers = defineStore(
   },
   {
     persist: true,
-  }
+  },
 )

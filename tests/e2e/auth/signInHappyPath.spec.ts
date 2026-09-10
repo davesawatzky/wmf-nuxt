@@ -2,8 +2,8 @@
 // section: 3. Sign In - Happy Path
 
 import { test } from '@playwright/test'
-import { PageManager } from '../../pageObjects/pageManager'
 import { TEST_USERS } from '../../helpers/authHelper'
+import { PageManager } from '../../pageObjects/pageManager'
 
 test.describe('3. Sign In - Happy Path', () => {
   let pm: PageManager
@@ -22,16 +22,17 @@ test.describe('3. Sign In - Happy Path', () => {
       try {
         await pm.loginPage.signIn(
           TEST_USERS.REGULAR_USER.email,
-          TEST_USERS.REGULAR_USER.password
+          TEST_USERS.REGULAR_USER.password,
         )
         await page.waitForURL('**/registrations', { timeout: 3000 })
-      } catch {
+      }
+      catch {
         // Original password failed, try the reset password
         console.log('Original password failed, trying reset password...')
         await pm.loginPage.goto()
         await pm.loginPage.signIn(
           TEST_USERS.REGULAR_USER.email,
-          'NewPass123!@#' // Password from password reset test
+          'NewPass123!@#', // Password from password reset test
         )
       }
 
@@ -52,7 +53,7 @@ test.describe('3. Sign In - Happy Path', () => {
       // Sign in with private teacher credentials
       await pm.loginPage.signIn(
         TEST_USERS.PRIVATE_TEACHER.email,
-        TEST_USERS.PRIVATE_TEACHER.password
+        TEST_USERS.PRIVATE_TEACHER.password,
       )
 
       // Verify redirect to registrations page
@@ -72,7 +73,7 @@ test.describe('3. Sign In - Happy Path', () => {
       // Sign in with admin credentials
       await pm.loginPage.signIn(
         TEST_USERS.ADMIN.email,
-        TEST_USERS.ADMIN.password
+        TEST_USERS.ADMIN.password,
       )
 
       // Verify redirect to admin page

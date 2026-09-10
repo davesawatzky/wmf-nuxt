@@ -4,19 +4,19 @@ import { vi } from 'vitest'
 // Mock Vue dependencies
 vi.stubGlobal(
   'isRef',
-  vi.fn(() => false)
+  vi.fn(() => false),
 )
 vi.stubGlobal(
   'ref',
-  vi.fn((val) => ({ value: val }))
+  vi.fn(val => ({ value: val })),
 )
 vi.stubGlobal(
   'computed',
-  vi.fn((fn) => ({ value: fn() }))
+  vi.fn(fn => ({ value: fn() })),
 )
 vi.stubGlobal(
   'reactive',
-  vi.fn((obj) => obj)
+  vi.fn(obj => obj),
 )
 vi.stubGlobal('defineStore', vi.fn())
 

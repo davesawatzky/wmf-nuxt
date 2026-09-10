@@ -10,10 +10,13 @@ export class RegistrationsPage extends HelperBase {
   private readonly heading = () => this.page.locator('h1')
   private readonly newRegistrationButton = () =>
     this.page.getByRole('button', { name: /new registration/i })
+
   private readonly registrationsList = () =>
     this.page.locator('[data-testid="registrations-list"]')
+
   private readonly userMenu = () =>
     this.page.locator('[data-testid="user-menu"]')
+
   private readonly logoutButton = () =>
     this.page.getByRole('button', { name: /logout/i })
 

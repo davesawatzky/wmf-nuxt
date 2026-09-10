@@ -11,8 +11,10 @@ export class EmailConfirmationPage extends HelperBase {
   private readonly messageText = () => this.page.locator('p')
   private readonly continueButton = () =>
     this.page.getByRole('button', { name: 'Proceed to Sign In', exact: true })
+
   private readonly resendButton = () =>
     this.page.getByRole('button', { name: /resend/i })
+
   private readonly returnToLoginLink = () =>
     this.page.getByRole('link', { name: /return to login/i })
 
@@ -45,7 +47,7 @@ export class EmailConfirmationPage extends HelperBase {
    */
   async verifyExpiredTokenMessage() {
     await expect(this.heading()).toContainText(
-      /email confirmation token expired/i
+      /email confirmation token expired/i,
     )
     await expect(this.continueButton()).toBeVisible()
   }

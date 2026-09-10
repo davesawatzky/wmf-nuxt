@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {StatusEnum} from '#imports'
+import { StatusEnum } from '#imports'
 
 defineProps<{
   status?: StatusEnum

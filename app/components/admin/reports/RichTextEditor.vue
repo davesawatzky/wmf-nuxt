@@ -1,3 +1,15 @@
+<script setup lang="ts">
+defineProps<{
+  previewContent?: string
+}>()
+
+defineEmits<{
+  'update:modelValue': [htmlValue: string]
+}>()
+
+const modelValue = defineModel({ type: String, default: '' })
+</script>
+
 <template>
   <div>
     <div class="richtext-editor">
@@ -6,21 +18,10 @@
     <div
       v-if="previewContent"
       class="preview-overlay prose"
-      v-html="previewContent"/>
+      v-html="previewContent"
+    />
   </div>
 </template>
-
-<script setup lang="ts">
-  const modelValue = defineModel({ type: String, default: '' })
-
-  defineProps<{
-    previewContent?: string
-  }>()
-
-  defineEmits<{
-    'update:modelValue': [htmlValue: string]
-  }>()
-</script>
 
 <style>
   /* include styles */

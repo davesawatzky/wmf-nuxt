@@ -10,26 +10,34 @@ export class LoginPage extends HelperBase {
   private readonly emailInput = () => this.page.locator('input[name="email"]')
   private readonly passwordInput = () =>
     this.page.locator('input[name="password"]')
+
   private readonly password2Input = () =>
     this.page.locator('input[name="password2"]')
+
   private readonly firstNameInput = () =>
     this.page.locator('input[name="firstName"]')
+
   private readonly lastNameInput = () =>
     this.page.locator('input[name="lastName"]')
+
   private readonly instrumentSelect = () =>
     this.page.locator('select[name="instrument"]')
 
   private readonly privateTeacherCheckbox = () =>
     this.page.locator('input[name="privateTeacher"]')
+
   private readonly schoolTeacherCheckbox = () =>
     this.page.locator('input[name="schoolTeacher"]')
 
   private readonly signInButton = () =>
     this.page.getByRole('button', { name: 'Sign In', exact: true })
+
   private readonly registerButton = () =>
     this.page.getByRole('button', { name: /register new account/i })
+
   private readonly signUpLink = () =>
     this.page.getByRole('button', { name: /sign up here/i })
+
   private readonly backToSignInButton = () =>
     this.page.getByRole('button', { name: /back to sign in/i })
 
@@ -40,8 +48,10 @@ export class LoginPage extends HelperBase {
   private readonly dialog = () => this.page.locator('.p-dialog')
   private readonly dialogCloseButton = () =>
     this.dialog().getByRole('button', { name: /close/i })
+
   private readonly resendVerificationButton = () =>
     this.dialog().getByRole('button', { name: /re-send verificat/i })
+
   private readonly resendPasswordButton = () =>
     this.dialog().getByRole('button', {
       name: /re-send password change email/i,
@@ -86,7 +96,7 @@ export class LoginPage extends HelperBase {
     firstName: string,
     lastName: string,
     email: string,
-    password: string
+    password: string,
   ) {
     await this.firstNameInput().fill(firstName)
     await this.lastNameInput().fill(lastName)
@@ -103,7 +113,7 @@ export class LoginPage extends HelperBase {
     lastName: string,
     email: string,
     password: string,
-    instrument: string
+    instrument: string,
   ) {
     await this.privateTeacherCheckbox().check()
     await this.page.waitForTimeout(200) // Wait for instrument dropdown to appear
@@ -123,7 +133,7 @@ export class LoginPage extends HelperBase {
     firstName: string,
     lastName: string,
     email: string,
-    password: string
+    password: string,
   ) {
     await this.schoolTeacherCheckbox().check()
 
@@ -142,7 +152,7 @@ export class LoginPage extends HelperBase {
     lastName: string,
     email: string,
     password: string,
-    instrument: string
+    instrument: string,
   ) {
     await this.privateTeacherCheckbox().check()
     await this.schoolTeacherCheckbox().check()
@@ -185,7 +195,7 @@ export class LoginPage extends HelperBase {
     firstName: string,
     lastName: string,
     email: string,
-    password: string
+    password: string,
   ) {
     await this.showSignUpForm()
     await this.fillSignUpFormRegularUser(firstName, lastName, email, password)
@@ -200,7 +210,7 @@ export class LoginPage extends HelperBase {
     lastName: string,
     email: string,
     password: string,
-    instrument: string
+    instrument: string,
   ) {
     await this.showSignUpForm()
     await this.fillSignUpFormPrivateTeacher(
@@ -208,7 +218,7 @@ export class LoginPage extends HelperBase {
       lastName,
       email,
       password,
-      instrument
+      instrument,
     )
     await this.submitRegistration()
   }
@@ -220,7 +230,7 @@ export class LoginPage extends HelperBase {
     firstName: string,
     lastName: string,
     email: string,
-    password: string
+    password: string,
   ) {
     await this.showSignUpForm()
     await this.fillSignUpFormSchoolTeacher(firstName, lastName, email, password)
@@ -294,7 +304,7 @@ export class LoginPage extends HelperBase {
   async verifyDialogVisible(headerText: string | RegExp) {
     await expect(this.dialog()).toBeVisible()
     await expect(
-      this.dialog().getByRole('heading', { level: 3 })
+      this.dialog().getByRole('heading', { level: 3 }),
     ).toContainText(headerText)
   }
 
@@ -314,7 +324,7 @@ export class LoginPage extends HelperBase {
   async verifyPasswordResetDialog() {
     await this.verifyDialogVisible(/password change pending/i)
     await expect(this.dialog()).toContainText(
-      /password change has been requested/i
+      /password change has been requested/i,
     )
   }
 
@@ -397,7 +407,7 @@ export class LoginPage extends HelperBase {
     const options = await this.instrumentSelect()
       .locator('option')
       .allTextContents()
-    return options.filter((opt) => opt.trim() !== '')
+    return options.filter(opt => opt.trim() !== '')
   }
 
   /**

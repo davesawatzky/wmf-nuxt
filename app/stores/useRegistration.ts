@@ -1,13 +1,13 @@
-import {
-  RegistrationCreateDocument,
-  RegistrationDeleteDocument,
-  RegistrationUpdateDocument,
-} from '~/graphql/gql/graphql'
 import type {
   PerformerType,
   Registration,
   RegistrationCreateMutation,
   RegistrationInput,
+} from '~/graphql/gql/graphql'
+import {
+  RegistrationCreateDocument,
+  RegistrationDeleteDocument,
+  RegistrationUpdateDocument,
 } from '~/graphql/gql/graphql'
 
 /**
@@ -71,11 +71,12 @@ export const useRegistration = defineStore(
       let registrationDate
       if (registration.value.submittedAt) {
         registrationDate = new Date(registration.value.submittedAt)
-      } else {
+      }
+      else {
         registrationDate = new Date()
       }
       const lateDate = new Date(
-        lateDatesAndCosts[appStore.performerType].lateDate
+        lateDatesAndCosts[appStore.performerType].lateDate,
       )
       let lateFee = 0.0
       if (registrationDate > lateDate) {
@@ -129,19 +130,20 @@ export const useRegistration = defineStore(
     })
     async function createRegistration(
       performerType: PerformerType,
-      label: string
+      label: string,
     ) {
       await registrationCreate({ performerType, label })
     }
     onRegistrationCreateDone((result) => {
       if (result.data?.registrationCreate.registration) {
-        const registration: RegistrationCreateMutation['registrationCreate']['registration'] =
-          result.data.registrationCreate.registration
+        const registration: RegistrationCreateMutation['registrationCreate']['registration']
+          = result.data.registrationCreate.registration
         addToStore(registration)
-      } else if (result.data?.registrationCreate.userErrors) {
+      }
+      else if (result.data?.registrationCreate.userErrors) {
         console.error(
           'Failed to create registration:',
-          result.data.registrationCreate.userErrors
+          result.data.registrationCreate.userErrors,
         )
       }
     })
@@ -154,18 +156,18 @@ export const useRegistration = defineStore(
      * @param field Optional specific field to update
      * @param regId Optional registration ID (defaults to current)
      */
-    const { mutate: registrationUpdate, onError: onRegistrationUpdateError } =
-      useMutation(RegistrationUpdateDocument, {
+    const { mutate: registrationUpdate, onError: onRegistrationUpdateError }
+      = useMutation(RegistrationUpdateDocument, {
         fetchPolicy: 'network-only',
         errorPolicy: 'all',
       })
     async function updateRegistration(field?: string, regId?: number) {
-      const { id, __typename, updatedAt, createdAt, ...regProps } =
-        registration.value
+      const { id, __typename, updatedAt, createdAt, ...regProps }
+        = registration.value
       let registrationField = null
       if (field && Object.keys(regProps).includes(field)) {
         registrationField = Object.fromEntries(
-          Array(Object.entries(regProps).find((item) => item[0] === field)!)
+          new Array(Object.entries(regProps).find(item => item[0] === field)!),
         )
       }
       try {
@@ -175,7 +177,8 @@ export const useRegistration = defineStore(
             registrationField || (regProps as RegistrationInput),
         })
         return 'complete'
-      } catch (error) {
+      }
+      catch (error) {
         console.error('Failed to update registration:', error)
         return 'error'
       }
@@ -217,5 +220,5 @@ export const useRegistration = defineStore(
   },
   {
     persist: true,
-  }
+  },
 )

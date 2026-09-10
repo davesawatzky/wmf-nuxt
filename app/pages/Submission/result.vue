@@ -1,172 +1,177 @@
 <script setup lang="ts">
-  import _ from 'lodash'
-  import { DateTime } from 'luxon'
-  import { useToast } from 'vue-toastification'
-  import type { EmailPayload } from '~/utils/types'
+import type { EmailPayload } from '~/utils/types'
+import { DateTime } from 'luxon'
+import { useToast } from 'vue-toastification'
 
-  // import type { LocationQueryValue } from '#vue-router'
-  const performerStore = usePerformers()
-  const teacherStore = useTeacher()
-  const groupStore = useGroup()
-  const schoolStore = useSchool()
-  const schoolGroupStore = useSchoolGroup()
-  const communityStore = useCommunity()
-  const communityGroupStore = useCommunityGroup()
-  const classesStore = useClasses()
-  const appStore = useAppStore()
-  const userStore = useUser()
-  const registrationStore = useRegistration()
-  const route = useRoute()
-  const toast = useToast()
+// import type { LocationQueryValue } from '#vue-router'
+const performerStore = usePerformers()
+const teacherStore = useTeacher()
+const groupStore = useGroup()
+const schoolStore = useSchool()
+const schoolGroupStore = useSchoolGroup()
+const communityStore = useCommunity()
+const communityGroupStore = useCommunityGroup()
+const classesStore = useClasses()
+const appStore = useAppStore()
+const userStore = useUser()
+const registrationStore = useRegistration()
+const route = useRoute()
+const toast = useToast()
 
-  const confirmationNumber = ref('')
-  const stripePayment = appStore.stripePayment
-  const paymentIntentStatus = ref() // failed, inProcess, succeeded, complete
+const confirmationNumber = ref('')
+const stripePayment = appStore.stripePayment
+const paymentIntentStatus = ref() // failed, inProcess, succeeded, complete
 
-  const date = new Date()
-  const formattedDate = DateTime.now().toLocaleString(DateTime.DATETIME_MED)
+const date = new Date()
+const formattedDate = DateTime.now().toLocaleString(DateTime.DATETIME_MED)
 
-  const performers = toValue(performerStore.performers)
-  const teacher = toValue(teacherStore.teacher)
-  const group = toValue(groupStore.group)
-  const school = toValue(schoolStore.school)
-  const schoolGroups = toValue(schoolGroupStore.schoolGroup)
-  const community = toValue(communityStore.community)
-  const communityGroups = toValue(communityGroupStore.communityGroup)
-  const registeredClasses = toValue(classesStore.registeredClasses)
-  const performerType = toValue(appStore.performerType)
-  const paymentType = toValue(appStore.stripePayment)
-  const registration = toValue(registrationStore.registration)
-  const lateFee = toValue(registrationStore.lateRegistrationFee())
-  const userFirstName = toValue(userStore.user.firstName)
-  const userLastName = toValue(userStore.user.lastName)
-  const userEmail = toValue(userStore.user.email)
-  const dataSending = ref(false)
+const performers = toValue(performerStore.performers)
+const teacher = toValue(teacherStore.teacher)
+const group = toValue(groupStore.group)
+const school = toValue(schoolStore.school)
+const schoolGroups = toValue(schoolGroupStore.schoolGroup)
+const community = toValue(communityStore.community)
+const communityGroups = toValue(communityGroupStore.communityGroup)
+const registeredClasses = toValue(classesStore.registeredClasses)
+const performerType = toValue(appStore.performerType)
+const paymentType = toValue(appStore.stripePayment)
+const registration = toValue(registrationStore.registration)
+const lateFee = toValue(registrationStore.lateRegistrationFee())
+const userFirstName = toValue(userStore.user.firstName)
+const userLastName = toValue(userStore.user.lastName)
+const userEmail = toValue(userStore.user.email)
+const dataSending = ref(false)
 
-  const emailWaiting = ref(true)
+const emailWaiting = ref(true)
 
-  function printWindow() {
-    window.print()
+function printWindow() {
+  window.print()
+}
+
+onBeforeMount(async () => {
+  const regExist = registrationStore?.registrationId
+  const submitted = registrationStore.registration?.submittedAt
+
+  if (!regExist || submitted)
+    await navigateTo('/Registrations')
+})
+
+onMounted(async () => {
+  if (appStore.stripePayment === 'ccard') {
+    await checkPaymentIntent()
   }
+  else if (appStore.stripePayment === 'cash') {
+    registrationStore.registration.transactionInfo = 'cash/cheque/e-transfer'
+    await onSuccess()
+  }
+})
 
-  onBeforeMount(async () => {
-    const regExist = registrationStore?.registrationId
-    const submitted = registrationStore.registration?.submittedAt
+definePageMeta({
+  middleware: ['user'], // Apply only to user pages
+})
 
-    if (!regExist || submitted) await navigateTo('/Registrations')
-  })
+onBeforeRouteLeave(async (to, from) => {
+  // Prevent navigating back to payment page
+  if (
+    from.path.includes('/Submission/ConfirmPayment')
+    || from.path.includes('/Submission/result')
+  ) {
+    return await navigateTo('/Registrations')
+  }
+  else if (
+    to.path.includes('/Submission/ConfirmPayment')
+    || to.path.includes('/Submission/payment')
+  ) {
+    return await navigateTo('/Registrations')
+  }
+})
 
-  onMounted(async () => {
-    if (appStore.stripePayment === 'ccard') {
-      await checkPaymentIntent()
-    } else if (appStore.stripePayment === 'cash') {
-      registrationStore.registration.transactionInfo = 'cash/cheque/e-transfer'
+async function checkPaymentIntent() {
+  paymentIntentStatus.value = route.query.redirect_status
+  switch (paymentIntentStatus.value) {
+    case 'succeeded':
+      registrationStore.registration.transactionInfo = 'succeeded'
       await onSuccess()
-    }
-  })
-
-  definePageMeta({
-    middleware: ['user'], // Apply only to user pages
-  })
-
-  onBeforeRouteLeave(async (to, from) => {
-    // Prevent navigating back to payment page
-    if (
-      from.path.includes('/Submission/ConfirmPayment') ||
-      from.path.includes('/Submission/result')
-    ) {
-      return await navigateTo('/Registrations')
-    } else if (
-      to.path.includes('/Submission/ConfirmPayment') ||
-      to.path.includes('/Submission/payment')
-    ) {
-      return await navigateTo('/Registrations')
-    }
-  })
-
-  async function checkPaymentIntent() {
-    paymentIntentStatus.value = route.query.redirect_status
-    switch (paymentIntentStatus.value) {
-      case 'succeeded':
-        registrationStore.registration.transactionInfo = 'succeeded'
-        await onSuccess()
-        break
-      case 'processing':
-        registrationStore.registration.transactionInfo = 'processing'
-        console.log(
-          "Payment Processing.  We'll update you when payment is received."
-        )
-        toast.info(
-          "Payment Processing.  We'll update you when payment is received."
-        )
-        break
-      case 'requires_payment_method':
-        registrationStore.registration.transactionInfo = 'failed'
-        console.error('Payment failed.  Please try another payment method.')
-        toast.error('Payment failed.  Please try another payment method.')
-        break
-      case 'failed':
-        registrationStore.registration.transactionInfo = 'failed'
-        console.error('Payment failed.  Please try another payment method.')
-        toast.error('Payment failed.  Please try another payment method.')
-        break
-    }
-  }
-
-  async function onSuccess() {
-    dataSending.value = true
-    try {
-      confirmationNumber.value = registrationStore.registration.confirmation!
-      registrationStore.registration.submittedAt = date
-      registrationStore.registration.confirmation = confirmationNumber.value
-      if (appStore.stripePayment === 'ccard') {
-        registrationStore.registration.transactionInfo = 'ccard - succeeded'
-      } else if (appStore.stripePayment === 'cash') {
-        registrationStore.registration.transactionInfo =
-          'cash/cheque/e-transfer'
-      }
-      await registrationStore.updateRegistration()
-      const payload: EmailPayload = {
-        performers,
-        teacher,
-        group,
-        school,
-        schoolGroups,
-        community,
-        communityGroups,
-        registeredClasses,
-        performerType,
-        paymentType,
-        registration,
-        lateFee,
-        userFirstName,
-        userLastName,
-        userEmail,
-      }
-      await $fetch('/api/send-email', {
-        watch: false,
-        method: 'POST',
-        body: payload,
-      })
-      dataSending.value = false
-      emailWaiting.value = false
-    } catch (error) {
-      dataSending.value = false
-      emailWaiting.value = false
-      console.error('Error sending registration email: ', error)
-      toast.error(
-        'Error sending registration email. Please contact WMF office.',
-        { timeout: false, closeOnClick: true }
+      break
+    case 'processing':
+      registrationStore.registration.transactionInfo = 'processing'
+      console.log(
+        'Payment Processing.  We\'ll update you when payment is received.',
       )
-    }
+      toast.info(
+        'Payment Processing.  We\'ll update you when payment is received.',
+      )
+      break
+    case 'requires_payment_method':
+      registrationStore.registration.transactionInfo = 'failed'
+      console.error('Payment failed.  Please try another payment method.')
+      toast.error('Payment failed.  Please try another payment method.')
+      break
+    case 'failed':
+      registrationStore.registration.transactionInfo = 'failed'
+      console.error('Payment failed.  Please try another payment method.')
+      toast.error('Payment failed.  Please try another payment method.')
+      break
   }
+}
+
+async function onSuccess() {
+  dataSending.value = true
+  try {
+    confirmationNumber.value = registrationStore.registration.confirmation!
+    registrationStore.registration.submittedAt = date
+    registrationStore.registration.confirmation = confirmationNumber.value
+    if (appStore.stripePayment === 'ccard') {
+      registrationStore.registration.transactionInfo = 'ccard - succeeded'
+    }
+    else if (appStore.stripePayment === 'cash') {
+      registrationStore.registration.transactionInfo
+        = 'cash/cheque/e-transfer'
+    }
+    await registrationStore.updateRegistration()
+    const payload: EmailPayload = {
+      performers,
+      teacher,
+      group,
+      school,
+      schoolGroups,
+      community,
+      communityGroups,
+      registeredClasses,
+      performerType,
+      paymentType,
+      registration,
+      lateFee,
+      userFirstName,
+      userLastName,
+      userEmail,
+    }
+    await $fetch('/api/send-email', {
+      watch: false,
+      method: 'POST',
+      body: payload,
+    })
+    dataSending.value = false
+    emailWaiting.value = false
+  }
+  catch (error) {
+    dataSending.value = false
+    emailWaiting.value = false
+    console.error('Error sending registration email: ', error)
+    toast.error(
+      'Error sending registration email. Please contact WMF office.',
+      { timeout: false, closeOnClick: true },
+    )
+  }
+}
 </script>
 
 <template>
   <div>
     <div
       v-if="paymentIntentStatus === 'succeeded' || stripePayment === 'cash'"
-      class="pb-8">
+      class="pb-8"
+    >
       <div class="p-8 m-4 border-2 border-green-600 rounded-lg text-center">
         <strong>
           <h3 class="mx-auto">Confirmation Number</h3>
@@ -177,14 +182,16 @@
 
       <p
         v-if="stripePayment === 'cash'"
-        class="m-4 p-3 text-center font-bold text-xl bg-green-600 rounded-xl text-white">
+        class="m-4 p-3 text-center font-bold text-xl bg-green-600 rounded-xl text-white"
+      >
         Please include this confirmation number when submitting payment. This
         number will be required with any correspondence with the festival
         regarding your registration.
       </p>
       <p
         v-else-if="stripePayment === 'ccard'"
-        class="m-4 p-3 text-center font-bold text-xl bg-green-600 rounded-xl text-white">
+        class="m-4 p-3 text-center font-bold text-xl bg-green-600 rounded-xl text-white"
+      >
         Please record this confirmation number. This number will be required
         with any correspondence with the festival regarding your registration.
       </p>
@@ -195,20 +202,24 @@
       <h4 class="pt-6 text-center">
         We look forward to having you participate in this year's
       </h4>
-      <h3 class="pb-6 text-center">Winnipeg Music Festival</h3>
+      <h3 class="pb-6 text-center">
+        Winnipeg Music Festival
+      </h3>
       <div class="flex justify-center flex-wrap">
         <BaseRouteButton
           v-if="paymentIntentStatus === 'succeeded' || stripePayment === 'cash'"
           class="btn btn-blue"
           to="/Registrations"
-          :disabled="emailWaiting">
+          :disabled="emailWaiting"
+        >
           Return to Registrations
         </BaseRouteButton>
 
         <BaseButton
           v-if="paymentIntentStatus === 'succeeded' || stripePayment === 'cash'"
           class="btn btn-blue h-16"
-          @click="printWindow">
+          @click="printWindow"
+        >
           Print this page
         </BaseButton>
       </div>

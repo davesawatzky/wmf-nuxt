@@ -17,9 +17,10 @@ export const useDocumentStore = defineStore('document', () => {
    */
   function getValueByPath(
     obj: Record<string, unknown> | unknown,
-    path: string
+    path: string,
   ): unknown {
-    if (!obj || typeof obj !== 'object' || !path) return undefined
+    if (!obj || typeof obj !== 'object' || !path)
+      return undefined
     // Unwrap any refs
     obj = unwrapRef(obj)
     // Simple case - direct property access
@@ -31,10 +32,12 @@ export const useDocumentStore = defineStore('document', () => {
     const keys = path.split('.')
     let current = obj
     for (const key of keys) {
-      if (current === null || typeof current !== 'object') return undefined
+      if (current === null || typeof current !== 'object')
+        return undefined
       current = unwrapRef(current)
       current = (current as Record<string, unknown>)[key]
-      if (current === undefined) return undefined
+      if (current === undefined)
+        return undefined
     }
     return unwrapRef(current)
   }
@@ -44,9 +47,10 @@ export const useDocumentStore = defineStore('document', () => {
    */
   function getArrayByPath(
     obj: Record<string, unknown> | unknown,
-    path: string | undefined
+    path: string | undefined,
   ): unknown[] | undefined {
-    if (path === undefined) return undefined
+    if (path === undefined)
+      return undefined
     const value = getValueByPath(obj, path)
     return Array.isArray(unwrapRef(value))
       ? (unwrapRef(value) as unknown[])
@@ -58,11 +62,12 @@ export const useDocumentStore = defineStore('document', () => {
    */
   function replaceVariables(
     template: string,
-    context: Record<string, unknown> | unknown
+    context: Record<string, unknown> | unknown,
   ): string {
-    return template.replace(/{{([\w.]+)}}/g, (match, path) => {
+    return template.replace(/\{\{([\w.]+)\}\}/g, (match, path) => {
       // Skip if this is an #each block
-      if (path.includes('#each')) return match
+      if (path.includes('#each'))
+        return match
       const value = getValueByPath(context, path)
       return value !== undefined ? String(value) : ''
     })
@@ -74,17 +79,18 @@ export const useDocumentStore = defineStore('document', () => {
    */
   function evaluateCondition(
     condition: string,
-    context: Record<string, unknown> | unknown
+    context: Record<string, unknown> | unknown,
   ): boolean {
     // Handle empty condition as false
-    if (!condition.trim()) return false
+    if (!condition.trim())
+      return false
 
     // If the condition has comparison operators
     if (
-      condition.includes('==') ||
-      condition.includes('!=') ||
-      condition.includes('>') ||
-      condition.includes('<')
+      condition.includes('==')
+      || condition.includes('!=')
+      || condition.includes('>')
+      || condition.includes('<')
     ) {
       // Handle equality: value == 'string' or value != 'string' or value == true
       const equalityRegex = /^\s*(.+?)\s*(==|!=|>|>=|<|<=)\s*(.+?)\s*$/
@@ -100,19 +106,24 @@ export const useDocumentStore = defineStore('document', () => {
         // Check if rightSide is a path or literal value
         let rightValue: unknown
 
-        if (rightSide.startsWith("'") && rightSide.endsWith("'")) {
+        if (rightSide.startsWith('\'') && rightSide.endsWith('\'')) {
           // String literal
           rightValue = rightSide.slice(1, -1)
-        } else if (rightSide === 'true') {
+        }
+        else if (rightSide === 'true') {
           rightValue = true
-        } else if (rightSide === 'false') {
+        }
+        else if (rightSide === 'false') {
           rightValue = false
-        } else if (rightSide === 'null') {
+        }
+        else if (rightSide === 'null') {
           rightValue = null
-        } else if (!isNaN(Number(rightSide))) {
+        }
+        else if (!Number.isNaN(Number(rightSide))) {
           // Number literal
           rightValue = Number(rightSide)
-        } else {
+        }
+        else {
           // Treat as a path
           rightValue = getValueByPath(context, rightSide)
         }
@@ -126,56 +137,56 @@ export const useDocumentStore = defineStore('document', () => {
           case '>':
             // Type guard for comparable values
             if (
-              typeof leftValue === 'number' &&
-              typeof rightValue === 'number'
+              typeof leftValue === 'number'
+              && typeof rightValue === 'number'
             ) {
               return leftValue > rightValue
             }
             if (
-              typeof leftValue === 'string' &&
-              typeof rightValue === 'string'
+              typeof leftValue === 'string'
+              && typeof rightValue === 'string'
             ) {
               return leftValue > rightValue
             }
             return false
           case '>=':
             if (
-              typeof leftValue === 'number' &&
-              typeof rightValue === 'number'
+              typeof leftValue === 'number'
+              && typeof rightValue === 'number'
             ) {
               return leftValue >= rightValue
             }
             if (
-              typeof leftValue === 'string' &&
-              typeof rightValue === 'string'
+              typeof leftValue === 'string'
+              && typeof rightValue === 'string'
             ) {
               return leftValue >= rightValue
             }
             return false
           case '<':
             if (
-              typeof leftValue === 'number' &&
-              typeof rightValue === 'number'
+              typeof leftValue === 'number'
+              && typeof rightValue === 'number'
             ) {
               return leftValue < rightValue
             }
             if (
-              typeof leftValue === 'string' &&
-              typeof rightValue === 'string'
+              typeof leftValue === 'string'
+              && typeof rightValue === 'string'
             ) {
               return leftValue < rightValue
             }
             return false
           case '<=':
             if (
-              typeof leftValue === 'number' &&
-              typeof rightValue === 'number'
+              typeof leftValue === 'number'
+              && typeof rightValue === 'number'
             ) {
               return leftValue <= rightValue
             }
             if (
-              typeof leftValue === 'string' &&
-              typeof rightValue === 'string'
+              typeof leftValue === 'string'
+              && typeof rightValue === 'string'
             ) {
               return leftValue <= rightValue
             }
@@ -197,7 +208,7 @@ export const useDocumentStore = defineStore('document', () => {
    */
   function processTemplate(
     template: string,
-    context: Record<string, unknown> | unknown
+    context: Record<string, unknown> | unknown,
   ): string {
     let result = template
 
@@ -211,7 +222,7 @@ export const useDocumentStore = defineStore('document', () => {
       let hasElse = false
 
       // Extract condition string
-      const condMatch = /{{@if\s+(.+?)}}/.exec(result.substring(ifStartPos))
+      const condMatch = /\{\{@if\s+(.+?)\}\}/.exec(result.substring(ifStartPos))
       if (condMatch && condMatch[1]) {
         conditionStr = condMatch[1]
         const condEndPos = ifStartPos + condMatch[0].length
@@ -224,13 +235,15 @@ export const useDocumentStore = defineStore('document', () => {
         while (i < result.length && depth > 0) {
           if (result.substring(i, i + 6) === '{{@if ') {
             depth++
-          } else if (result.substring(i, i + 6) === '{{else') {
+          }
+          else if (result.substring(i, i + 6) === '{{else') {
             if (depth === 1) {
               // Found else at the same level
               hasElse = true
               elsePos = i
             }
-          } else if (result.substring(i, i + 7) === '{{/if}}') {
+          }
+          else if (result.substring(i, i + 7) === '{{/if}}') {
             depth--
             if (depth === 0) {
               // Found the matching end tag
@@ -240,7 +253,8 @@ export const useDocumentStore = defineStore('document', () => {
                 // Extract the 'if' and 'else' parts
                 innerTemplate = result.substring(condEndPos, elsePos)
                 elseTemplate = result.substring(elsePos + 7, i) // +7 to skip {{else}}
-              } else {
+              }
+              else {
                 // Only 'if' part
                 innerTemplate = result.substring(condEndPos, i)
                 elseTemplate = ''
@@ -256,10 +270,10 @@ export const useDocumentStore = defineStore('document', () => {
                   ? processTemplate(elseTemplate, context)
                   : ''
 
-              result =
-                result.substring(0, ifStartPos) +
-                replacement +
-                result.substring(ifEndPos)
+              result
+                = result.substring(0, ifStartPos)
+                  + replacement
+                  + result.substring(ifEndPos)
 
               // Continue processing from the beginning with the modified template
               return processTemplate(result, context)
@@ -278,8 +292,8 @@ export const useDocumentStore = defineStore('document', () => {
       let innerTemplate = ''
 
       // Extract array path
-      const pathMatch = /{{#each\s+([\w.]+)}}/.exec(
-        result.substring(eachStartPos)
+      const pathMatch = /\{\{#each\s+([\w.]+)\}\}/.exec(
+        result.substring(eachStartPos),
       )
       if (pathMatch && pathMatch[1]) {
         arrayPath = pathMatch[1]
@@ -292,7 +306,8 @@ export const useDocumentStore = defineStore('document', () => {
         while (i < result.length && depth > 0) {
           if (result.substring(i, i + 8) === '{{#each ') {
             depth++
-          } else if (result.substring(i, i + 9) === '{{/each}}') {
+          }
+          else if (result.substring(i, i + 9) === '{{/each}}') {
             depth--
             if (depth === 0) {
               // Found the matching end tag
@@ -322,19 +337,20 @@ export const useDocumentStore = defineStore('document', () => {
                   .join('')
 
                 // Replace the entire each block
-                result =
-                  result.substring(0, eachStartPos) +
-                  renderedContent +
-                  result.substring(eachEndPos)
+                result
+                  = result.substring(0, eachStartPos)
+                    + renderedContent
+                    + result.substring(eachEndPos)
 
                 // Continue processing with the modified template
                 return processTemplate(result, context)
-              } else {
+              }
+              else {
                 // Remove the block if array is empty/missing
-                result =
-                  result.substring(0, eachStartPos) +
-                  '' +
-                  result.substring(eachEndPos)
+                result
+                  = `${result.substring(0, eachStartPos)
+                  }${
+                    result.substring(eachEndPos)}`
 
                 // Continue processing with the modified template
                 return processTemplate(result, context)
@@ -354,7 +370,8 @@ export const useDocumentStore = defineStore('document', () => {
    * Main computed property that generates the rendered content
    */
   const mergedContent = computed(() => {
-    if (!jsonData.value) return template.value
+    if (!jsonData.value)
+      return template.value
     return processTemplate(template.value, unwrapRef(jsonData.value))
   })
 
@@ -368,7 +385,8 @@ export const useDocumentStore = defineStore('document', () => {
     if (Array.isArray(data)) {
       // If data is an array, wrap it in an object with a special key
       jsonData.value = { _root: data } as Record<string, unknown>
-    } else {
+    }
+    else {
       jsonData.value = data as Record<string, unknown>
     }
   }

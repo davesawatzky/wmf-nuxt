@@ -1,55 +1,57 @@
+<script setup lang="ts">
+const props = defineProps<{
+  content: string
+}>()
+
+const editorRef = ref<HTMLElement | null>(null)
+
+onMounted(() => {
+  console.log(
+    'PreviewContent mounted, content length:',
+    (props.content || '').length,
+  )
+  updateContent()
+})
+
+watch(
+  () => props.content,
+  () => {
+    updateContent()
+  },
+  { immediate: true },
+)
+
+// Update content directly without v-html
+function updateContent() {
+  if (!editorRef.value)
+    return
+
+  const content = props.content || ''
+  console.log('Updating content, length:', content.length)
+
+  if (!content) {
+    console.warn('PreviewContent: No content provided')
+    editorRef.value.innerHTML = ''
+    return
+  }
+
+  // Set content directly without DOMPurify
+  // This is safe because we're in a controlled environment
+  // and the content comes from our own application
+  editorRef.value.innerHTML = content
+}
+</script>
+
 <template>
   <div class="preview-content">
     <div class="ql-container">
       <div
         ref="editorRef"
-        class="prose ql-editor pdf-content-area"/>
+        class="prose ql-editor pdf-content-area"
+      />
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-  const props = defineProps<{
-    content: string
-  }>()
-
-  const editorRef = ref<HTMLElement | null>(null)
-
-  onMounted(() => {
-    console.log(
-      'PreviewContent mounted, content length:',
-      (props.content || '').length
-    )
-    updateContent()
-  })
-
-  watch(
-    () => props.content,
-    () => {
-      updateContent()
-    },
-    { immediate: true }
-  )
-
-  // Update content directly without v-html
-  function updateContent() {
-    if (!editorRef.value) return
-
-    const content = props.content || ''
-    console.log('Updating content, length:', content.length)
-
-    if (!content) {
-      console.warn('PreviewContent: No content provided')
-      editorRef.value.innerHTML = ''
-      return
-    }
-
-    // Set content directly without DOMPurify
-    // This is safe because we're in a controlled environment
-    // and the content comes from our own application
-    editorRef.value.innerHTML = content
-  }
-</script>
 
 <style>
   .preview-content {

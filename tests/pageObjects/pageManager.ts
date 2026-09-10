@@ -1,6 +1,6 @@
 import type { Page } from '@playwright/test'
-import { LoginPage } from './loginPage'
 import { EmailConfirmationPage } from './emailConfirmationPage'
+import { LoginPage } from './loginPage'
 import { PasswordResetPage } from './passwordResetPage'
 import { RegistrationsPage } from './registrationsPage'
 

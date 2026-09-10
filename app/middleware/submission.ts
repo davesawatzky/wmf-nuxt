@@ -1,5 +1,5 @@
-import { useRegistration } from '~/stores/useRegistration'
 import { useTabErrors } from '~/composables/tabErrors'
+import { useRegistration } from '~/stores/useRegistration'
 
 export default defineNuxtRouteMiddleware(async () => {
   const registrationStore = useRegistration()

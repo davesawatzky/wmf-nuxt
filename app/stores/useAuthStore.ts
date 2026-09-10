@@ -1,10 +1,11 @@
+import type { MongoAbility } from '@casl/ability'
+import {
+  AbilityBuilder,
+  createMongoAbility,
+
+} from '@casl/ability'
 // stores/useAuth.ts
 import { defineStore } from 'pinia'
-import {
-  createMongoAbility,
-  type MongoAbility,
-  AbilityBuilder,
-} from '@casl/ability'
 
 export interface AuthUser {
   readonly id: number
@@ -76,7 +77,7 @@ export const useAuthStore = defineStore('auth', () => {
     privateState._ability = buildAbility(
       safeUserData.roles,
       safeUserData.permissions,
-      safeUserData.id
+      safeUserData.id,
     )
   }
 
@@ -86,14 +87,15 @@ export const useAuthStore = defineStore('auth', () => {
   function buildAbility(
     roles: readonly string[],
     permissions: readonly string[],
-    userId: number
+    userId: number,
   ) {
     const { can, build } = new AbilityBuilder(createMongoAbility)
 
     // Define abilities based on roles
     if (roles.includes('admin')) {
       can('manage', 'all')
-    } else if (roles.includes('manager')) {
+    }
+    else if (roles.includes('manager')) {
       can('read', 'User')
       can('update', 'User')
       can('read', 'Registration')
@@ -103,9 +105,10 @@ export const useAuthStore = defineStore('auth', () => {
       can('read', 'Profile')
       can('update', 'Profile')
       can('read', 'Report')
-    } else if (roles.includes('user')) {
-      can('manage', 'Registration', { userId: userId })
-      can('manage', 'Form', { userId: userId })
+    }
+    else if (roles.includes('user')) {
+      can('manage', 'Registration', { userId })
+      can('manage', 'Form', { userId })
       can('read', 'Profile', { id: userId })
       can('update', 'Profile', { id: userId })
     }
@@ -132,15 +135,15 @@ export const useAuthStore = defineStore('auth', () => {
     const userRoles = Array.isArray(roles) ? roles : []
 
     // Check exact path match
-    const requiredRoles =
-      routePermissions[path as keyof typeof routePermissions]
+    const requiredRoles
+      = routePermissions[path as keyof typeof routePermissions]
     if (requiredRoles) {
-      return requiredRoles.some((role) => userRoles.includes(role))
+      return requiredRoles.some(role => userRoles.includes(role))
     }
 
     // Check pattern matches for nested routes
     const adminPaths = ['/admin']
-    if (adminPaths.some((adminPath) => path.startsWith(adminPath))) {
+    if (adminPaths.some(adminPath => path.startsWith(adminPath))) {
       return userRoles.includes('admin')
     }
 
@@ -178,7 +181,7 @@ export const useAuthStore = defineStore('auth', () => {
    * Check if user has any of the specified roles
    */
   function hasAnyRole(roles: string[]): boolean {
-    return roles.some((role) => hasRole(role))
+    return roles.some(role => hasRole(role))
   }
 
   return {

@@ -1,9 +1,9 @@
 // spec: specs/authentication-test-plan.md
 // section: 4. Sign In - Error Cases
 
-import { test, expect } from '@playwright/test'
-import { PageManager } from '../../pageObjects/pageManager'
+import { expect, test } from '@playwright/test'
 import { TEST_USERS } from '../../helpers/authHelper'
+import { PageManager } from '../../pageObjects/pageManager'
 
 test.describe('4. Sign In - Error Cases', () => {
   let pm: PageManager
@@ -23,7 +23,7 @@ test.describe('4. Sign In - Error Cases', () => {
         'Unverified',
         'User',
         email,
-        'Test123!@#'
+        'Test123!@#',
       )
       await pm.loginPage.verifySuccessfulRegistration()
       await pm.loginPage.waitForFormClear()
@@ -39,7 +39,7 @@ test.describe('4. Sign In - Error Cases', () => {
       const dialog = page.locator('.p-dialog')
       await expect(dialog.getByRole('button', { name: /close/i })).toBeVisible()
       await expect(
-        dialog.getByRole('button', { name: /re-send verificat/i })
+        dialog.getByRole('button', { name: /re-send verificat/i }),
       ).toBeVisible()
     })
   })
@@ -51,7 +51,7 @@ test.describe('4. Sign In - Error Cases', () => {
       // Enter valid email but wrong password (must have symbol for validation)
       await pm.loginPage.signIn(
         TEST_USERS.REGULAR_USER.email,
-        'WrongPassword123!@#'
+        'WrongPassword123!@#',
       )
 
       // Verify error toast
@@ -93,7 +93,7 @@ test.describe('4. Sign In - Error Cases', () => {
       // Verify buttons
       await expect(page.getByRole('button', { name: /close/i })).toBeVisible()
       await expect(
-        page.getByRole('button', { name: /re-send password change email/i })
+        page.getByRole('button', { name: /re-send password change email/i }),
       ).toBeVisible()
     })
   })

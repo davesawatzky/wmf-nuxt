@@ -1,12 +1,12 @@
 <script setup lang="ts">
-  definePageMeta({
-    layout: 'admin',
-    middleware: 'admin',
-  })
+definePageMeta({
+  layout: 'admin',
+  middleware: 'admin',
+})
 
-  const documentStore = useDocumentStore()
-  const { template, jsonData } = storeToRefs(documentStore)
-  const templateString = `<div>{{#each teachers}}</div>
+const documentStore = useDocumentStore()
+const { template, jsonData } = storeToRefs(documentStore)
+const templateString = `<div>{{#each teachers}}</div>
     <h5>{{firstName}} {{lastName}} - {{instrument}}</h5>
     <div>{{#each registrations}}</div>
     <div>{{confirmation}}   {{#each performers}} {{firstName}} {{lastName}} {{/each}}</div>
@@ -14,18 +14,18 @@
     <div>{{/each}}</div>    
     <br>`
 
-  onMounted(() => {
-    documentStore.updateTemplate(templateString)
-  })
+onMounted(() => {
+  documentStore.updateTemplate(templateString)
+})
 
-  onBeforeUnmount(() => {
-    template.value = ''
-    jsonData.value = {}
-    documentStore.isDirty = false
-  })
+onBeforeUnmount(() => {
+  template.value = ''
+  jsonData.value = {}
+  documentStore.isDirty = false
+})
 
-  const { result, onResult } = useQuery(
-    gql`
+const { result, onResult } = useQuery(
+  gql`
       query AdminPrivateTeachers($teacherType: String!) {
         teachers(teacherType: $teacherType) {
           id
@@ -59,22 +59,23 @@
         }
       }
     `,
-    {
-      teacherType: 'privateTeacher',
-    },
-    {
-      fetchPolicy: 'no-cache',
-      errorPolicy: 'all',
-    }
-  )
+  {
+    teacherType: 'privateTeacher',
+  },
+  {
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  },
+)
 
-  onResult(async () => {
-    if (await result.value) {
-      documentStore.updateJsonData(result.value)
-    } else {
-      console.error('Expected data structure not found in query result')
-    }
-  })
+onResult(async () => {
+  if (await result.value) {
+    documentStore.updateJsonData(result.value)
+  }
+  else {
+    console.error('Expected data structure not found in query result')
+  }
+})
 </script>
 
 <template>
@@ -93,7 +94,8 @@
               <ClientOnly>
                 <adminReportsRichTextEditor
                   v-model="template"
-                  class="h-full" />
+                  class="h-full"
+                />
               </ClientOnly>
             </div>
           </template>
@@ -109,7 +111,8 @@
             <div class="p-2 flex flex-col min-h-0 h-[400px] overflow-auto">
               <adminReportsDataEditor
                 v-model="jsonData"
-                class="h-full" />
+                class="h-full"
+              />
             </div>
           </template>
         </PVCard>
@@ -126,7 +129,8 @@
           <div class="h-[1024px] overflow-hidden">
             <adminReportsDocumentPreview
               :data="jsonData"
-              class="h-full" />
+              class="h-full"
+            />
           </div>
         </template>
       </PVCard>

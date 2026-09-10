@@ -1,4 +1,4 @@
-export const usePermissions = () => {
+export function usePermissions() {
   const authStore = useAuthStore()
 
   const canManageUsers = computed(() => authStore.can('manage', 'User'))

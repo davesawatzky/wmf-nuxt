@@ -1,68 +1,74 @@
 <script setup lang="ts">
-  type Confirmed = {
-    importantNotes: boolean
-    nonrefundable: boolean
-    parentGuardian: boolean
-    rulesAndTrophyForms: boolean
-  }
+interface Confirmed {
+  importantNotes: boolean
+  nonrefundable: boolean
+  parentGuardian: boolean
+  rulesAndTrophyForms: boolean
+}
 
-  const performerStore = usePerformers()
-  const registrationStore = useRegistration()
+const performerStore = usePerformers()
+const registrationStore = useRegistration()
 
-  const submissionComplete = ref(false)
-  const readConfirmation = ref<Confirmed>({
-    importantNotes: false,
-    nonrefundable: false,
-    parentGuardian: false,
-    rulesAndTrophyForms: false,
-  })
+const submissionComplete = ref(false)
+const readConfirmation = ref<Confirmed>({
+  importantNotes: false,
+  nonrefundable: false,
+  parentGuardian: false,
+  rulesAndTrophyForms: false,
+})
 
-  const proceedToPayment = computed(() => {
-    for (const key in readConfirmation.value) {
-      if (!readConfirmation.value[key as keyof Confirmed]) {
-        return false
-      }
+const proceedToPayment = computed(() => {
+  for (const key in readConfirmation.value) {
+    if (!readConfirmation.value[key as keyof Confirmed]) {
+      return false
     }
-    return true
-  })
+  }
+  return true
+})
 
-  function checkIfParentConsentRequired() {
-    if (registrationStore.registration.performerType === 'SOLO') {
-      if (
-        performerStore.performers[0]?.age &&
-        performerStore.performers[0].age < 18
-      ) {
-        return true
-      } else {
-        readConfirmation.value.parentGuardian = true
-        return false
-      }
-    } else {
+function checkIfParentConsentRequired() {
+  if (registrationStore.registration.performerType === 'SOLO') {
+    if (
+      performerStore.performers[0]?.age
+      && performerStore.performers[0].age < 18
+    ) {
+      return true
+    }
+    else {
       readConfirmation.value.parentGuardian = true
+      return false
     }
   }
+  else {
+    readConfirmation.value.parentGuardian = true
+  }
+}
 
-  definePageMeta({
-    middleware: ['user', 'submission'],
-  })
+definePageMeta({
+  middleware: ['user', 'submission'],
+})
 
-  onBeforeMount(async () => {
-    const regExist = registrationStore?.registrationId
-    const confirmed = registrationStore.registration?.confirmation
-    const submitted = registrationStore.registration?.submittedAt
+onBeforeMount(async () => {
+  const regExist = registrationStore?.registrationId
+  const confirmed = registrationStore.registration?.confirmation
+  const submitted = registrationStore.registration?.submittedAt
 
-    if (!regExist || confirmed || submitted) {
-      await navigateTo('/Registrations')
-    }
-  })
+  if (!regExist || confirmed || submitted) {
+    await navigateTo('/Registrations')
+  }
+})
 </script>
 
 <template>
   <div v-auto-animate>
-    <h1 class="my-8">Registration Submission</h1>
+    <h1 class="my-8">
+      Registration Submission
+    </h1>
     <SummaryTable />
     <section class="p-4 border-sky-700 bg-white border rounded-xl">
-      <p class="text-center font-bold text-xl">Important Notes</p>
+      <p class="text-center font-bold text-xl">
+        Important Notes
+      </p>
 
       <p>
         The Festival reserves the right to redirect entries to a more
@@ -96,36 +102,42 @@
       <BaseCheckbox
         id="important-notes"
         v-model="readConfirmation.importantNotes"
-        label="I have read and understand the above text." />
+        label="I have read and understand the above text."
+      />
       <BaseCheckbox
         id="nonrefundable"
         v-model="readConfirmation.nonrefundable"
-        label="I understand that ENTRY FEES ARE NON-REFUNDABLE." />
+        label="I understand that ENTRY FEES ARE NON-REFUNDABLE."
+      />
       <BaseCheckbox
         v-if="checkIfParentConsentRequired()"
         id="parent-guardian"
         v-model="readConfirmation.parentGuardian"
-        label="If participant is under 18 then I certify that I am the parent/guardian of this child." />
+        label="If participant is under 18 then I certify that I am the parent/guardian of this child."
+      />
       <BaseCheckbox
         id="rules-and-trophy-forms"
         v-model="readConfirmation.rulesAndTrophyForms"
-        label="I have read all applicable rules and trophy eligibility forms as found on the music festival website." />
+        label="I have read all applicable rules and trophy eligibility forms as found on the music festival website."
+      />
     </section>
 
-    <br >
+    <br>
 
     <div class="text-center">
       <BaseRouteButton
         v-if="!submissionComplete"
         class="btn btn-blue"
-        to="Registrations">
+        to="Registrations"
+      >
         Cancel
       </BaseRouteButton>
       <BaseRouteButton
         v-if="!submissionComplete"
         class="btn btn-blue"
         :disabled="!proceedToPayment"
-        to="/Submission/payment">
+        to="/Submission/payment"
+      >
         Proceed to Payment
       </BaseRouteButton>
     </div>

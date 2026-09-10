@@ -1,48 +1,49 @@
 <script setup lang="ts">
-  interface Options {
-    value: string | number
-    label: string
-    helpMessage?: string
-    description?: string
-  }
+interface Options {
+  value: string | number
+  label: string
+  helpMessage?: string
+  description?: string
+}
 
-  const props = defineProps<{
-    label?: string
-    options: Options[]
-    helpMessage?: string
-    name: string
-    status?: StatusEnum
-    modelValue?: string | number | null
-    vertical?: boolean
-  }>()
+const props = defineProps<{
+  label?: string
+  options: Options[]
+  helpMessage?: string
+  name: string
+  status?: StatusEnum
+  modelValue?: string | number | null
+  vertical?: boolean
+}>()
 
-  const emit = defineEmits<{
-    (ev: 'changeStatus', stat: string): void
-    (ev: 'update:modelValue', value: any): void
-  }>()
+const emit = defineEmits<{
+  (ev: 'changeStatus', stat: string): void
+  (ev: 'update:modelValue', value: any): void
+}>()
 
-  const uuid = UniqueID().getID()
+const uuid = UniqueID().getID()
 
-  const { value, resetField, errorMessage, meta, handleChange, validate } =
-    useField(() => props.name, undefined, {
-      validateOnValueUpdate: false,
-      initialValue: props.modelValue,
-      syncVModel: true,
-    })
+const { value, resetField, errorMessage, meta, handleChange, validate }
+  = useField(() => props.name, undefined, {
+    validateOnValueUpdate: false,
+    initialValue: props.modelValue,
+    syncVModel: true,
+  })
 
-  const validationListeners = {
-    change: async (evt: Event) => {
-      handleChange(evt, true)
-      await validate()
-      if (meta.valid) {
-        emit('changeStatus', 'valid')
-        resetField({ value: value.value })
-      } else if (!meta.valid && value.value) {
-        emit('changeStatus', 'removed')
-        resetField({ value: '' })
-      }
-    },
-  }
+const validationListeners = {
+  change: async (evt: Event) => {
+    handleChange(evt, true)
+    await validate()
+    if (meta.valid) {
+      emit('changeStatus', 'valid')
+      resetField({ value: value.value })
+    }
+    else if (!meta.valid && value.value) {
+      emit('changeStatus', 'removed')
+      resetField({ value: '' })
+    }
+  },
+}
 </script>
 
 <template>
@@ -52,7 +53,8 @@
         <label
           v-if="label"
           class="baseLabel"
-          :for="uuid">
+          :for="uuid"
+        >
           <h3>{{ label }}</h3>
           <BaseHelpButton :help-message="helpMessage" />
         </label>
@@ -60,7 +62,8 @@
       <div class="grow" />
       <BaseSaved
         class="flex-none mr-2"
-        :status="status" />
+        :status="status"
+      />
     </div>
     <BaseErrorMessage>{{ errorMessage }}</BaseErrorMessage>
     <component
@@ -69,14 +72,16 @@
       :key="option.value"
       :class="{
         horizontal: !vertical,
-      }">
+      }"
+    >
       <BaseRadio
         :label="option.label"
         :description="option.description"
         :value="option.value"
         :model-value="value ?? undefined"
         :name="props.name"
-        v-on="validationListeners" />
+        v-on="validationListeners"
+      />
     </component>
   </fieldset>
 </template>

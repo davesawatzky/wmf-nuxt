@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-extraneous-class */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Page } from '@playwright/test'
 import { expect } from '@playwright/test'
 
@@ -85,7 +83,7 @@ export class AuthHelper {
   static async signIn(
     page: Page,
     email: string,
-    password: string
+    password: string,
   ): Promise<void> {
     await page.goto('/login')
     await page.waitForLoadState('networkidle')
@@ -103,7 +101,7 @@ export class AuthHelper {
    */
   static async signInAsUser(
     page: Page,
-    userKey: keyof typeof TEST_USERS
+    userKey: keyof typeof TEST_USERS,
   ): Promise<void> {
     const user = TEST_USERS[userKey]
     await this.signIn(page, user.email, user.password)
@@ -122,7 +120,7 @@ export class AuthHelper {
       privateTeacher?: boolean
       schoolTeacher?: boolean
       instrument?: string
-    }
+    },
   ): Promise<void> {
     await page.goto('/login')
     await page.waitForLoadState('networkidle')
@@ -159,7 +157,7 @@ export class AuthHelper {
 
     // Wait for success toast
     await expect(
-      page.locator('.Vue-Toastification__toast--success')
+      page.locator('.Vue-Toastification__toast--success'),
     ).toContainText(/check email/i, { timeout: 5000 })
   }
 
@@ -168,7 +166,7 @@ export class AuthHelper {
    */
   static async registerTestUser(
     page: Page,
-    userKey: keyof typeof TEST_USERS
+    userKey: keyof typeof TEST_USERS,
   ): Promise<void> {
     const user = TEST_USERS[userKey]
     await this.registerUser(page, {
@@ -177,11 +175,11 @@ export class AuthHelper {
       email: user.email,
       password: user.password,
       privateTeacher:
-        user.accountType === 'private_teacher' ||
-        user.accountType === 'both_teachers',
+        user.accountType === 'private_teacher'
+        || user.accountType === 'both_teachers',
       schoolTeacher:
-        user.accountType === 'school_teacher' ||
-        user.accountType === 'both_teachers',
+        user.accountType === 'school_teacher'
+        || user.accountType === 'both_teachers',
       instrument: user.instrument,
     })
   }
@@ -218,7 +216,7 @@ export class AuthHelper {
    * Extract verification token from MailHog API
    */
   static async getVerificationTokenFromMailHog(
-    email: string
+    email: string,
   ): Promise<string | null> {
     try {
       const response = await fetch('http://localhost:8025/api/v2/messages')
@@ -227,11 +225,12 @@ export class AuthHelper {
       // Find the most recent email to this address
       const emailMessage = data.items.find((msg: any) =>
         msg.To.some(
-          (recipient: any) => recipient.Mailbox === email.split('@')[0]
-        )
+          (recipient: any) => recipient.Mailbox === email.split('@')[0],
+        ),
       )
 
-      if (!emailMessage) return null
+      if (!emailMessage)
+        return null
 
       // Extract token from email body
       // Email body is in Quoted-Printable encoding where:
@@ -245,14 +244,14 @@ export class AuthHelper {
 
       // Now decode the quoted-printable encoding
       body = body.replace(/=([0-9A-F]{2})/g, (_: string, hex: string) =>
-        String.fromCharCode(parseInt(hex, 16))
-      )
+        String.fromCharCode(Number.parseInt(hex, 16)))
 
       // Look for token= in the decoded body
-      const tokenMatch = body.match(/token=([a-zA-Z0-9._-]+)/i)
+      const tokenMatch = body.match(/token=([\w.-]+)/i)
 
       return tokenMatch ? tokenMatch[1] : null
-    } catch (error) {
+    }
+    catch (error) {
       console.error('Failed to get verification token from MailHog:', error)
       return null
     }
@@ -266,7 +265,8 @@ export class AuthHelper {
       await fetch('http://localhost:8025/api/v1/messages', {
         method: 'DELETE',
       })
-    } catch (error) {
+    }
+    catch (error) {
       console.error('Failed to clear MailHog:', error)
     }
   }
@@ -277,7 +277,7 @@ export class AuthHelper {
   static async waitForEmailInMailHog(
     email: string,
     subject: string,
-    timeoutMs: number = 10000
+    timeoutMs: number = 10000,
   ): Promise<boolean> {
     const startTime = Date.now()
 
@@ -288,24 +288,26 @@ export class AuthHelper {
 
         const found = data.items.some((msg: any) => {
           const recipientMatch = msg.To.some(
-            (recipient: any) => recipient.Mailbox === email.split('@')[0]
+            (recipient: any) => recipient.Mailbox === email.split('@')[0],
           )
-          const subjectMatch =
-            msg.Content.Headers.Subject &&
-            msg.Content.Headers.Subject.some((subj: string) =>
-              subj.includes(subject)
-            )
+          const subjectMatch
+            = msg.Content.Headers.Subject
+              && msg.Content.Headers.Subject.some((subj: string) =>
+                subj.includes(subject),
+              )
 
           return recipientMatch && subjectMatch
         })
 
-        if (found) return true
-      } catch (error) {
+        if (found)
+          return true
+      }
+      catch (error) {
         // Continue waiting
         console.log('Error checking MailHog:', error)
       }
 
-      await new Promise((resolve) => setTimeout(resolve, 500))
+      await new Promise(resolve => setTimeout(resolve, 500))
     }
 
     return false
@@ -321,7 +323,7 @@ export class GraphQLHelper {
    */
   static async executeMutation(
     mutation: string,
-    variables: Record<string, any>
+    variables: Record<string, any>,
   ): Promise<any> {
     const response = await fetch('http://localhost:3000/graphql', {
       method: 'POST',
@@ -342,7 +344,7 @@ export class GraphQLHelper {
    */
   static async executeQuery(
     query: string,
-    variables: Record<string, any> = {}
+    variables: Record<string, any> = {},
   ): Promise<any> {
     const response = await fetch('http://localhost:3000/graphql', {
       method: 'POST',

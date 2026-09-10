@@ -1,25 +1,17 @@
-// import process from 'node:process'
 import withNuxt from './.nuxt/eslint.config.mjs'
-
-// process.env.ESLINT_TSCONFIG = 'tsconfig.json'
+import antfu from '@antfu/eslint-config'
 
 export default withNuxt(
-  // { typescript: { tsconfigPath: 'tsconfig.json' }, vue: true },
-  {
+  antfu({
+    vue: true,
+    typescript: true,
     rules: {
       'no-console': 'off',
-      // process.env.NODE_ENV === 'development'
-      //   ? 'off'
-      //   : [
-      //       'warn',
-      //       {
-      //         allow: ['warn', 'error', 'info'],
-      //       },
-      //     ],
-      '@typescript-eslint/no-console':
+      'ts/no-console':
         process.env.NODE_ENV === 'development' ? 'off' : 'off',
     },
-  },
+  }),
+
   {
     files: ['*.gql'],
     parser: '@graphql-eslint/eslint-plugin',

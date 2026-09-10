@@ -1,6 +1,6 @@
+import { config } from '@vue/test-utils'
 // tests/setup.ts - Setup for Nuxt-integrated tests
 import { vi } from 'vitest'
-import { config } from '@vue/test-utils'
 import { ref } from 'vue'
 import '@testing-library/jest-dom/vitest'
 
@@ -79,7 +79,7 @@ vi.mock('nuxt/app', () => ({
     },
   })),
   useStorage: vi.fn(() => ref({})),
-  defineNuxtPlugin: vi.fn((plugin) => plugin),
+  defineNuxtPlugin: vi.fn(plugin => plugin),
   createError: vi.fn(),
   showError: vi.fn(),
   clearError: vi.fn(),
@@ -98,25 +98,21 @@ vi.mock('@stripe/stripe-js', () => ({
 }))
 
 // Mock browser APIs
-global.ResizeObserver = vi.fn(function ResizeObserver() {
-  return {
-    observe: vi.fn(),
-    unobserve: vi.fn(),
-    disconnect: vi.fn(),
-  }
-}) as any
+globalThis.ResizeObserver = class {
+  observe = vi.fn()
+  unobserve = vi.fn()
+  disconnect = vi.fn()
+} as any
 
-global.IntersectionObserver = vi.fn(function IntersectionObserver() {
-  return {
-    observe: vi.fn(),
-    unobserve: vi.fn(),
-    disconnect: vi.fn(),
-    takeRecords: vi.fn(() => []),
-    root: null,
-    rootMargin: '',
-    thresholds: [],
-  }
-}) as any
+globalThis.IntersectionObserver = class {
+  observe = vi.fn()
+  unobserve = vi.fn()
+  disconnect = vi.fn()
+  takeRecords = vi.fn(() => [])
+  root = null
+  rootMargin = ''
+  thresholds = []
+} as any
 
 // Configure Vue Test Utils
 config.global.renderStubDefaultSlot = true
@@ -145,7 +141,7 @@ Object.defineProperty(window, 'sessionStorage', {
 
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: vi.fn().mockImplementation((query) => ({
+  value: vi.fn().mockImplementation(query => ({
     matches: false,
     media: query,
     onchange: null,

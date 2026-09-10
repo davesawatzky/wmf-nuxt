@@ -2,14 +2,12 @@ export function formattedDate(value?: Date | string | null) {
   if (value) {
     return useDateFormat(value, 'ddd, MMM DD, YYYY')
   }
-  return
 }
 
 export function formattedTime(value?: string | null) {
   if (value) {
     return useDateFormat(value, 'h:mm a')
   }
-  return
 }
 
 export function formattedCurrency(value: number | null) {

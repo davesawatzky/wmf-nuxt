@@ -1,3 +1,231 @@
+<script setup lang="ts">
+import { Table as TiptapTable } from '@tiptap/extension-table'
+import TiptapCell from '@tiptap/extension-table-cell'
+import TiptapTableHeader from '@tiptap/extension-table-header'
+import TiptapTableRow from '@tiptap/extension-table-row'
+import TiptapTextAlign from '@tiptap/extension-text-align'
+import TiptapUnderline from '@tiptap/extension-underline'
+import StarterKit from '@tiptap/starter-kit'
+import { EditorContent, useEditor } from '@tiptap/vue-3'
+
+const props = defineProps<{
+  modelValue: string
+}>()
+
+const emit = defineEmits<{
+  'update:modelValue': [value: string]
+}>()
+
+const headingItems = [
+  {
+    label: 'Heading 1',
+    icon: 'material-symbols:format-h1',
+    command: () => {
+      editor.value?.chain().focus().toggleHeading({ level: 1 }).run()
+    },
+  },
+  {
+    label: 'Heading 2',
+    icon: 'material-symbols:format-h2',
+    command: () => {
+      editor.value?.chain().focus().toggleHeading({ level: 2 }).run()
+    },
+  },
+  {
+    label: 'Heading 3',
+    icon: 'material-symbols:format-h3',
+    command: () => {
+      editor.value?.chain().focus().toggleHeading({ level: 3 }).run()
+    },
+  },
+  {
+    label: 'Heading 4',
+    icon: 'material-symbols:format-h4',
+    command: () => {
+      editor.value?.chain().focus().toggleHeading({ level: 4 }).run()
+    },
+  },
+  {
+    label: 'Heading 5',
+    icon: 'material-symbols:format-h5',
+    command: () => {
+      editor.value?.chain().focus().toggleHeading({ level: 5 }).run()
+    },
+  },
+  {
+    label: 'Heading 6',
+    icon: 'material-symbols:format-h6',
+    command: () => {
+      editor.value?.chain().focus().toggleHeading({ level: 6 }).run()
+    },
+  },
+]
+
+const tableItems = [
+  {
+    label: 'Insert Table',
+    icon: 'material-symbols:table',
+    command: () => {
+      editor.value?.chain().focus().insertTable({ rows: 3, cols: 3 }).run()
+    },
+  },
+  {
+    label: 'Add Column Before',
+    icon: 'material-symbols:add-column-before',
+    command: () => {
+      editor.value?.chain().focus().addColumnBefore().run()
+    },
+  },
+  {
+    label: 'Add Column After',
+    icon: 'material-symbols:add-column-after',
+    command: () => {
+      editor.value?.chain().focus().addColumnAfter().run()
+    },
+  },
+  {
+    label: 'Delete Column',
+    icon: 'material-symbols:delete-column',
+    command: () => {
+      editor.value?.chain().focus().deleteColumn().run()
+    },
+  },
+  {
+    label: 'Add Row Before',
+    icon: 'material-symbols:add-row-before',
+    command: () => {
+      editor.value?.chain().focus().addRowBefore().run()
+    },
+  },
+  {
+    label: 'Add Row After',
+    icon: 'material-symbols:add-row-after',
+    command: () => {
+      editor.value?.chain().focus().addRowAfter().run()
+    },
+  },
+  {
+    label: 'Delete Row',
+    icon: 'material-symbols:delete-row',
+    command: () => {
+      editor.value?.chain().focus().deleteRow().run()
+    },
+  },
+  {
+    label: 'Delete Table',
+    icon: 'material-symbols:delete-table',
+    command: () => {
+      editor.value?.chain().focus().deleteTable().run()
+    },
+  },
+  {
+    label: 'Merge Cells',
+    icon: 'material-symbols:merge-cells',
+    command: () => {
+      editor.value?.chain().focus().mergeCells().run()
+    },
+  },
+  {
+    label: 'Split Cell',
+    icon: 'material-symbols:split-cell',
+    command: () => {
+      editor.value?.chain().focus().splitCell().run()
+    },
+  },
+  {
+    label: 'Toggle Header Column',
+    icon: 'material-symbols:toggle-header-column',
+    command: () => {
+      editor.value?.chain().focus().toggleHeaderColumn().run()
+    },
+  },
+  {
+    label: 'Toggle Header Row',
+    icon: 'material-symbols:toggle-header-row',
+    command: () => {
+      editor.value?.chain().focus().toggleHeaderRow().run()
+    },
+  },
+  {
+    label: 'Toggle Header Cell',
+    icon: 'material-symbols:toggle-header-cell',
+    command: () => {
+      editor.value?.chain().focus().toggleHeaderCell().run()
+    },
+  },
+  {
+    label: 'Merge or Split',
+    icon: 'material-symbols:merge-or-split',
+    command: () => {
+      editor.value?.chain().focus().mergeOrSplit().run()
+    },
+  },
+  {
+    label: 'Fix Tables',
+    icon: 'material-symbols:fix-tables',
+    command: () => {
+      editor.value?.chain().focus().fixTables().run()
+    },
+  },
+  {
+    label: 'Go to Next Cell',
+    icon: 'material-symbols:go-to-next-cell',
+    command: () => {
+      editor.value?.chain().focus().goToNextCell().run()
+    },
+  },
+  {
+    label: 'Go to Previous Cell',
+    icon: 'material-symbols:go-to-previous-cell',
+    command: () => {
+      editor.value?.chain().focus().goToPreviousCell().run()
+    },
+  },
+]
+
+const editor = useEditor({
+  content: props.modelValue,
+  extensions: [
+    StarterKit.configure({
+      // Configure StarterKit with heading support
+      heading: {
+        levels: [1, 2, 3, 4, 5, 6],
+      },
+    }) as any,
+    TiptapTable.configure({
+      resizable: true,
+    }) as any,
+    TiptapTableRow as any,
+    TiptapTableHeader as any,
+    TiptapCell as any,
+    TiptapUnderline as any,
+    TiptapTextAlign.configure({
+      types: ['heading', 'paragraph'],
+    }) as any,
+  ],
+})
+
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    if (editor.value && editor.value.getHTML() !== newValue) {
+      editor.value.commands.setContent(newValue)
+    }
+  },
+  { immediate: true },
+)
+
+onMounted(() => {
+  editor.value?.on('update', () => {
+    emit('update:modelValue', editor.value!.getHTML())
+  })
+})
+
+onBeforeUnmount(() => {
+  unref(editor)?.destroy()
+})
+</script>
+
 <template>
   <div>
     <div v-if="editor">
@@ -7,105 +235,130 @@
             class="button"
             :disabled="!editor.can().chain().focus().toggleBold().run()"
             :class="{ 'is-active': editor.isActive('bold') }"
-            @click="editor.chain().focus().toggleBold().run()">
+            @click="editor.chain().focus().toggleBold().run()"
+          >
             <Icon
               name="material-symbols:format-bold"
-              size="1.2rem" />
+              size="1.2rem"
+            />
           </PVButton>
           <PVButton
             class="button"
             :disabled="!editor.can().chain().focus().toggleItalic().run()"
             :class="{ 'is-active': editor.isActive('italic') }"
-            @click="editor.chain().focus().toggleItalic().run()">
+            @click="editor.chain().focus().toggleItalic().run()"
+          >
             <Icon
               name="material-symbols:format-italic"
-              size="1.2rem" />
+              size="1.2rem"
+            />
           </PVButton>
           <PVButton
             class="button"
             :disabled="!editor.can().chain().focus().toggleUnderline().run()"
             :class="{ 'is-active': editor.isActive('underline') }"
-            @click="editor.chain().focus().toggleUnderline().run()">
+            @click="editor.chain().focus().toggleUnderline().run()"
+          >
             <Icon
               name="material-symbols:format-underlined"
-              size="1.2rem" />
+              size="1.2rem"
+            />
           </PVButton>
           <PVButton
             class="button"
             :disabled="!editor.can().chain().focus().toggleStrike().run()"
             :class="{ 'is-active': editor.isActive('strike') }"
-            @click="editor.chain().focus().toggleStrike().run()">
+            @click="editor.chain().focus().toggleStrike().run()"
+          >
             <Icon
               name="material-symbols:format-strikethrough"
-              size="1.2rem" />
+              size="1.2rem"
+            />
           </PVButton>
           <PVButton
             class="button"
             :class="{ 'is-active': editor.isActive({ textAlign: 'left' }) }"
-            @click="editor.chain().focus().setTextAlign('left').run()">
+            @click="editor.chain().focus().setTextAlign('left').run()"
+          >
             <Icon
               name="material-symbols:format-align-left"
-              size="1.2rem" />
+              size="1.2rem"
+            />
           </PVButton>
           <PVButton
             class="button"
             :class="{ 'is-active': editor.isActive({ textAlign: 'center' }) }"
-            @click="editor.chain().focus().setTextAlign('center').run()">
+            @click="editor.chain().focus().setTextAlign('center').run()"
+          >
             <Icon
               name="material-symbols:format-align-center"
-              size="1.2rem" />
+              size="1.2rem"
+            />
           </PVButton>
           <PVButton
             class="button"
             :class="{ 'is-active': editor.isActive({ textAlign: 'right' }) }"
-            @click="editor.chain().focus().setTextAlign('right').run()">
+            @click="editor.chain().focus().setTextAlign('right').run()"
+          >
             <Icon
               name="material-symbols:format-align-right"
-              size="1.2rem" />
+              size="1.2rem"
+            />
           </PVButton>
           <PVButton
             class="button"
             :class="{ 'is-active': editor.isActive({ textAlign: 'justify' }) }"
-            @click="editor.chain().focus().setTextAlign('justify').run()">
+            @click="editor.chain().focus().setTextAlign('justify').run()"
+          >
             <Icon
               name="material-symbols:format-align-justify"
-              size="1.2rem" />
+              size="1.2rem"
+            />
           </PVButton>
           <PVButton
             class="button"
-            @click="editor.chain().focus().unsetTextAlign().run()">
+            @click="editor.chain().focus().unsetTextAlign().run()"
+          >
             Unset
           </PVButton>
           <PVButton
             class="button"
             :disabled="!editor.can().chain().focus().toggleCode().run()"
             :class="{ 'is-active': editor.isActive('code') }"
-            @click="editor.chain().focus().toggleCode().run()">
+            @click="editor.chain().focus().toggleCode().run()"
+          >
             <Icon
               name="material-symbols:code"
-              size="1.2rem" />
+              size="1.2rem"
+            />
           </PVButton>
           <PVButton
             class="button"
-            @click="editor.chain().focus().unsetAllMarks().run()">
+            @click="editor.chain().focus().unsetAllMarks().run()"
+          >
             <Icon
               name="material-symbols:format-clear"
-              size="1.2rem" />
+              size="1.2rem"
+            />
           </PVButton>
           <PVButton
             class="button"
-            @click="editor.chain().focus().clearNodes().run()">
+            @click="editor.chain().focus().clearNodes().run()"
+          >
             <Icon
               name="material-symbols:layers-clear"
-              size="1.2rem" />
+              size="1.2rem"
+            />
           </PVButton>
           <PVButton
             class="button"
             :class="{ 'is-active': editor.isActive('paragraph') }"
-            @click="editor.chain().focus().setParagraph().run()">
+            @click="editor.chain().focus().setParagraph().run()"
+          >
             <Icon
               name="material-symbols:format-paragraph"
-              size="1.2rem" />
+              size="1.2rem"
+            />
           </PVButton>
           <PVSplitButton
             class="button"
@@ -121,70 +374,89 @@
                   class: 'p-0 m-0 bg-white text-gray-500 w-[15px] border-0',
                 },
               },
-            }">
-            <div class="font-bold text-xl">H</div>
+            }"
+          >
+            <div class="font-bold text-xl">
+              H
+            </div>
           </PVSplitButton>
           <PVButton
             class="button"
             :class="{ 'is-active': editor.isActive('bulletList') }"
-            @click="editor.chain().focus().toggleBulletList().run()">
+            @click="editor.chain().focus().toggleBulletList().run()"
+          >
             <Icon
               name="material-symbols:format-list-bulleted"
-              size="1.2rem" />
+              size="1.2rem"
+            />
           </PVButton>
           <PVButton
             class="button"
             :class="{ 'is-active': editor.isActive('orderedList') }"
-            @click="editor.chain().focus().toggleOrderedList().run()">
+            @click="editor.chain().focus().toggleOrderedList().run()"
+          >
             <Icon
               name="material-symbols:format-list-numbered"
-              size="1.2rem" />
+              size="1.2rem"
+            />
           </PVButton>
           <PVButton
             class="button"
             :class="{ 'is-active': editor.isActive('codeBlock') }"
-            @click="editor.chain().focus().toggleCodeBlock().run()">
+            @click="editor.chain().focus().toggleCodeBlock().run()"
+          >
             <Icon
               name="material-symbols:code-blocks-outline"
-              size="1.2rem" />
+              size="1.2rem"
+            />
           </PVButton>
           <PVButton
             class="button"
             :class="{ 'is-active': editor.isActive('blockquote') }"
-            @click="editor.chain().focus().toggleBlockquote().run()">
+            @click="editor.chain().focus().toggleBlockquote().run()"
+          >
             <Icon
               name="material-symbols:format-quote"
-              size="1.2rem" />
+              size="1.2rem"
+            />
           </PVButton>
           <PVButton
             class="button"
-            @click="editor.chain().focus().setHorizontalRule().run()">
+            @click="editor.chain().focus().setHorizontalRule().run()"
+          >
             <Icon
               name="material-symbols:horizontal-rule"
-              size="1.2rem" />
+              size="1.2rem"
+            />
           </PVButton>
           <PVButton
             class="button"
-            @click="editor.chain().focus().setHardBreak().run()">
+            @click="editor.chain().focus().setHardBreak().run()"
+          >
             <Icon
               name="material-symbols:sound-detection-glass-break-outline"
-              size="1.2rem" />
+              size="1.2rem"
+            />
           </PVButton>
           <PVButton
             class="button"
             :disabled="!editor.can().chain().focus().undo().run()"
-            @click="editor.chain().focus().undo().run()">
+            @click="editor.chain().focus().undo().run()"
+          >
             <Icon
               name="material-symbols:undo"
-              size="1.2rem" />
+              size="1.2rem"
+            />
           </PVButton>
           <PVButton
             class="button"
             :disabled="!editor.can().chain().focus().redo().run()"
-            @click="editor.chain().focus().redo().run()">
+            @click="editor.chain().focus().redo().run()"
+          >
             <Icon
               name="material-symbols:redo"
-              size="1.2rem" />
+              size="1.2rem"
+            />
           </PVButton>
           <PVSplitButton
             :model="tableItems"
@@ -206,254 +478,22 @@
                 .focus()
                 .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
                 .run()
-            ">
+            "
+          >
             <Icon
               name="material-symbols:table"
-              size="1.2rem" />
+              size="1.2rem"
+            />
           </PVSplitButton>
         </template>
       </PVToolbar>
     </div>
     <EditorContent
       class="page overflow-auto"
-      :editor="editor" />
+      :editor="editor"
+    />
   </div>
 </template>
-
-<script setup lang="ts">
-  import { useEditor, EditorContent } from '@tiptap/vue-3'
-  import StarterKit from '@tiptap/starter-kit'
-  import { Table as TiptapTable } from '@tiptap/extension-table'
-  import TiptapTableRow from '@tiptap/extension-table-row'
-  import TiptapTableHeader from '@tiptap/extension-table-header'
-  import TiptapCell from '@tiptap/extension-table-cell'
-  import TiptapUnderline from '@tiptap/extension-underline'
-  import TiptapTextAlign from '@tiptap/extension-text-align'
-
-  const props = defineProps<{
-    modelValue: string
-  }>()
-
-  const emit = defineEmits<{
-    'update:modelValue': [value: string]
-  }>()
-
-  const headingItems = [
-    {
-      label: 'Heading 1',
-      icon: 'material-symbols:format-h1',
-      command: () => {
-        editor.value?.chain().focus().toggleHeading({ level: 1 }).run()
-      },
-    },
-    {
-      label: 'Heading 2',
-      icon: 'material-symbols:format-h2',
-      command: () => {
-        editor.value?.chain().focus().toggleHeading({ level: 2 }).run()
-      },
-    },
-    {
-      label: 'Heading 3',
-      icon: 'material-symbols:format-h3',
-      command: () => {
-        editor.value?.chain().focus().toggleHeading({ level: 3 }).run()
-      },
-    },
-    {
-      label: 'Heading 4',
-      icon: 'material-symbols:format-h4',
-      command: () => {
-        editor.value?.chain().focus().toggleHeading({ level: 4 }).run()
-      },
-    },
-    {
-      label: 'Heading 5',
-      icon: 'material-symbols:format-h5',
-      command: () => {
-        editor.value?.chain().focus().toggleHeading({ level: 5 }).run()
-      },
-    },
-    {
-      label: 'Heading 6',
-      icon: 'material-symbols:format-h6',
-      command: () => {
-        editor.value?.chain().focus().toggleHeading({ level: 6 }).run()
-      },
-    },
-  ]
-
-  const tableItems = [
-    {
-      label: 'Insert Table',
-      icon: 'material-symbols:table',
-      command: () => {
-        editor.value?.chain().focus().insertTable({ rows: 3, cols: 3 }).run()
-      },
-    },
-    {
-      label: 'Add Column Before',
-      icon: 'material-symbols:add-column-before',
-      command: () => {
-        editor.value?.chain().focus().addColumnBefore().run()
-      },
-    },
-    {
-      label: 'Add Column After',
-      icon: 'material-symbols:add-column-after',
-      command: () => {
-        editor.value?.chain().focus().addColumnAfter().run()
-      },
-    },
-    {
-      label: 'Delete Column',
-      icon: 'material-symbols:delete-column',
-      command: () => {
-        editor.value?.chain().focus().deleteColumn().run()
-      },
-    },
-    {
-      label: 'Add Row Before',
-      icon: 'material-symbols:add-row-before',
-      command: () => {
-        editor.value?.chain().focus().addRowBefore().run()
-      },
-    },
-    {
-      label: 'Add Row After',
-      icon: 'material-symbols:add-row-after',
-      command: () => {
-        editor.value?.chain().focus().addRowAfter().run()
-      },
-    },
-    {
-      label: 'Delete Row',
-      icon: 'material-symbols:delete-row',
-      command: () => {
-        editor.value?.chain().focus().deleteRow().run()
-      },
-    },
-    {
-      label: 'Delete Table',
-      icon: 'material-symbols:delete-table',
-      command: () => {
-        editor.value?.chain().focus().deleteTable().run()
-      },
-    },
-    {
-      label: 'Merge Cells',
-      icon: 'material-symbols:merge-cells',
-      command: () => {
-        editor.value?.chain().focus().mergeCells().run()
-      },
-    },
-    {
-      label: 'Split Cell',
-      icon: 'material-symbols:split-cell',
-      command: () => {
-        editor.value?.chain().focus().splitCell().run()
-      },
-    },
-    {
-      label: 'Toggle Header Column',
-      icon: 'material-symbols:toggle-header-column',
-      command: () => {
-        editor.value?.chain().focus().toggleHeaderColumn().run()
-      },
-    },
-    {
-      label: 'Toggle Header Row',
-      icon: 'material-symbols:toggle-header-row',
-      command: () => {
-        editor.value?.chain().focus().toggleHeaderRow().run()
-      },
-    },
-    {
-      label: 'Toggle Header Cell',
-      icon: 'material-symbols:toggle-header-cell',
-      command: () => {
-        editor.value?.chain().focus().toggleHeaderCell().run()
-      },
-    },
-    {
-      label: 'Merge or Split',
-      icon: 'material-symbols:merge-or-split',
-      command: () => {
-        editor.value?.chain().focus().mergeOrSplit().run()
-      },
-    },
-    {
-      label: 'Fix Tables',
-      icon: 'material-symbols:fix-tables',
-      command: () => {
-        editor.value?.chain().focus().fixTables().run()
-      },
-    },
-    {
-      label: 'Go to Next Cell',
-      icon: 'material-symbols:go-to-next-cell',
-      command: () => {
-        editor.value?.chain().focus().goToNextCell().run()
-      },
-    },
-    {
-      label: 'Go to Previous Cell',
-      icon: 'material-symbols:go-to-previous-cell',
-      command: () => {
-        editor.value?.chain().focus().goToPreviousCell().run()
-      },
-    },
-  ]
-
-  const editor = useEditor({
-    content: props.modelValue,
-    extensions: [
-      StarterKit.configure({
-        // Configure StarterKit with heading support
-        heading: {
-          levels: [1, 2, 3, 4, 5, 6],
-        },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      }) as any,
-      TiptapTable.configure({
-        resizable: true,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      }) as any,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      TiptapTableRow as any,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      TiptapTableHeader as any,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      TiptapCell as any,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      TiptapUnderline as any,
-      TiptapTextAlign.configure({
-        types: ['heading', 'paragraph'],
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      }) as any,
-    ],
-  })
-
-  watch(
-    () => props.modelValue,
-    (newValue) => {
-      if (editor.value && editor.value.getHTML() !== newValue) {
-        editor.value.commands.setContent(newValue)
-      }
-    },
-    { immediate: true }
-  )
-
-  onMounted(() => {
-    editor.value?.on('update', () => {
-      emit('update:modelValue', editor.value!.getHTML())
-    })
-  })
-
-  onBeforeUnmount(() => {
-    unref(editor)?.destroy()
-  })
-</script>
 
 <style scoped lang="scss">
   .button {

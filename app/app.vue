@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import '@stripe/stripe-js'
+import '@stripe/stripe-js'
 </script>
 
 <template>

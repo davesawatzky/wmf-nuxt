@@ -1,150 +1,158 @@
 <script lang="ts" setup>
-  import * as yup from 'yup'
-  import 'yup-phone-lite'
-  import { useUser } from '~/stores/useUser'
-  import { MyUserDocument, type User } from '~/graphql/gql/graphql'
-  import { provinces } from '#imports'
-  import { useToast } from 'vue-toastification'
+import type { User } from '~/graphql/gql/graphql'
+import { useToast } from 'vue-toastification'
+import * as yup from 'yup'
+import { provinces } from '#imports'
+import { MyUserDocument } from '~/graphql/gql/graphql'
+import { useUser } from '~/stores/useUser'
+import 'yup-phone-lite'
 
-  definePageMeta({
-    middleware: ['user'], // Apply only to user pages
-  })
+definePageMeta({
+  middleware: ['user'], // Apply only to user pages
+})
 
-  const userStore = useUser()
-  const teacherView = computed(() => userStore.user.privateTeacher)
-  const toast = useToast()
+const userStore = useUser()
+const teacherView = computed(() => userStore.user.privateTeacher)
+const toast = useToast()
 
-  /**
+/**
    * Load User details
    */
 
-  const { onResult: onUserResult, onError: userError } = useQuery(
-    MyUserDocument,
-    null,
-    () => ({
-      fetchPolicy: 'no-cache',
-      errorPolicy: 'all',
-    })
-  )
-  onUserResult(async (result) => {
-    userStore.addToStore(result.data.myUser)
-    if (!userStore.user.isActive) {
-      userStore.user.isActive = true
-      await userStore.updateUser('isActive')
-    }
-  })
-  userError((error) => {
-    console.error('Error loading user details: ', error)
-    toast.error('Error loading user details')
-  })
+const { onResult: onUserResult, onError: userError } = useQuery(
+  MyUserDocument,
+  null,
+  () => ({
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  }),
+)
+onUserResult(async (result) => {
+  userStore.addToStore(result.data.myUser)
+  if (!userStore.user.isActive) {
+    userStore.user.isActive = true
+    await userStore.updateUser('isActive')
+  }
+})
+userError((error) => {
+  console.error('Error loading user details: ', error)
+  toast.error('Error loading user details')
+})
 
-  userStore.user.isActive = true
+userStore.user.isActive = true
 
-  const status = reactive<Status>({
-    privateTeacher: userStore.user.privateTeacher
-      ? StatusEnum.saved
-      : StatusEnum.null,
-    schoolTeacher: userStore.user.schoolTeacher
-      ? StatusEnum.saved
-      : StatusEnum.null,
-    instrument: userStore.user.instrument ? StatusEnum.saved : StatusEnum.null,
-    firstName: userStore.user.firstName ? StatusEnum.saved : StatusEnum.null,
-    lastName: userStore.user.lastName ? StatusEnum.saved : StatusEnum.null,
-    address: userStore.user.address ? StatusEnum.saved : StatusEnum.null,
-    city: userStore.user.city ? StatusEnum.saved : StatusEnum.null,
-    province: userStore.user.province ? StatusEnum.saved : StatusEnum.null,
-    postalCode: userStore.user.postalCode ? StatusEnum.saved : StatusEnum.null,
-    phone: userStore.user.phone ? StatusEnum.saved : StatusEnum.null,
-  })
+const status = reactive<Status>({
+  privateTeacher: userStore.user.privateTeacher
+    ? StatusEnum.saved
+    : StatusEnum.null,
+  schoolTeacher: userStore.user.schoolTeacher
+    ? StatusEnum.saved
+    : StatusEnum.null,
+  instrument: userStore.user.instrument ? StatusEnum.saved : StatusEnum.null,
+  firstName: userStore.user.firstName ? StatusEnum.saved : StatusEnum.null,
+  lastName: userStore.user.lastName ? StatusEnum.saved : StatusEnum.null,
+  address: userStore.user.address ? StatusEnum.saved : StatusEnum.null,
+  city: userStore.user.city ? StatusEnum.saved : StatusEnum.null,
+  province: userStore.user.province ? StatusEnum.saved : StatusEnum.null,
+  postalCode: userStore.user.postalCode ? StatusEnum.saved : StatusEnum.null,
+  phone: userStore.user.phone ? StatusEnum.saved : StatusEnum.null,
+})
 
-  async function fieldStatus(stat: string, fieldName: string) {
-    await nextTick()
-    if (stat === 'valid') {
-      status[fieldName] = StatusEnum.pending
-      const result = await userStore.updateUser(fieldName)
-      status[fieldName] = StatusEnum.null
-      if (result === 'complete') {
-        if (userStore.user[fieldName as keyof User] !== null) {
-          status[fieldName] = StatusEnum.saved
-        }
-      } else {
-        console.error(`Error updating user field ${fieldName}`)
-        toast.error(
-          'Could not update field.  Please exit and reload Registration'
-        )
-      }
-    } else if (stat === 'invalid') {
-      status[fieldName] = StatusEnum.pending
-      const result = await userStore.updateUser(fieldName)
-      status[fieldName] = StatusEnum.null
-      if (result === 'complete') {
-        status[fieldName] = StatusEnum.removed
-      } else {
-        console.error(`Error removing invalid user field ${fieldName}`)
-        toast.error(
-          'Could not remove invalid field. Please exit and reload Registration'
-        )
-      }
-    } else if (stat === 'removed') {
-      status[fieldName] = StatusEnum.pending
-      const result = await userStore.updateUser(fieldName)
-      status[fieldName] = StatusEnum.null
-      if (result === 'complete') {
-        status[fieldName] = StatusEnum.removed
-      } else {
-        console.error(`Error removing user field ${fieldName}`)
-        toast.error(
-          'Could not remove field.  Please exit and reload Registration'
-        )
+async function fieldStatus(stat: string, fieldName: string) {
+  await nextTick()
+  if (stat === 'valid') {
+    status[fieldName] = StatusEnum.pending
+    const result = await userStore.updateUser(fieldName)
+    status[fieldName] = StatusEnum.null
+    if (result === 'complete') {
+      if (userStore.user[fieldName as keyof User] !== null) {
+        status[fieldName] = StatusEnum.saved
       }
     }
+    else {
+      console.error(`Error updating user field ${fieldName}`)
+      toast.error(
+        'Could not update field.  Please exit and reload Registration',
+      )
+    }
   }
-
-  const validationSchema = toTypedSchema(
-    yup.object({
-      privateTeacher: yup.boolean().default(false),
-      schoolTeacher: yup.boolean().default(false),
-      firstName: yup.string().trim().required('Required'),
-      lastName: yup.string().trim().required('Required'),
-      address: yup.string().trim().nullable(),
-      city: yup.string().trim().max(20, 'Too many characters').nullable(),
-      province: yup.string().max(3).nullable(),
-      postalCode: yup
-        .string()
-        .trim()
-        .matches(
-          /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i,
-          'Enter a valid postal code'
-        )
-        .nullable(),
-      phone: yup
-        .string()
-        .trim()
-        .phone('CA', 'Please enter a valid phone number')
-        .nullable(),
-      instrument: yup.string().trim().nullable(),
-    })
-  )
-
-  const { validate } = useForm({
-    validationSchema,
-    validateOnMount: true,
-  })
-
-  onActivated(async () => {
-    await validate()
-  })
-
-  const maskaUcaseOption = {
-    preProcess: (val: string) => val.toUpperCase(),
+  else if (stat === 'invalid') {
+    status[fieldName] = StatusEnum.pending
+    const result = await userStore.updateUser(fieldName)
+    status[fieldName] = StatusEnum.null
+    if (result === 'complete') {
+      status[fieldName] = StatusEnum.removed
+    }
+    else {
+      console.error(`Error removing invalid user field ${fieldName}`)
+      toast.error(
+        'Could not remove invalid field. Please exit and reload Registration',
+      )
+    }
   }
-  defineExpose({ maskaUcaseOption })
+  else if (stat === 'removed') {
+    status[fieldName] = StatusEnum.pending
+    const result = await userStore.updateUser(fieldName)
+    status[fieldName] = StatusEnum.null
+    if (result === 'complete') {
+      status[fieldName] = StatusEnum.removed
+    }
+    else {
+      console.error(`Error removing user field ${fieldName}`)
+      toast.error(
+        'Could not remove field.  Please exit and reload Registration',
+      )
+    }
+  }
+}
+
+const validationSchema = toTypedSchema(
+  yup.object({
+    privateTeacher: yup.boolean().default(false),
+    schoolTeacher: yup.boolean().default(false),
+    firstName: yup.string().trim().required('Required'),
+    lastName: yup.string().trim().required('Required'),
+    address: yup.string().trim().nullable(),
+    city: yup.string().trim().max(20, 'Too many characters').nullable(),
+    province: yup.string().max(3).nullable(),
+    postalCode: yup
+      .string()
+      .trim()
+      .matches(
+        /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i,
+        'Enter a valid postal code',
+      )
+      .nullable(),
+    phone: yup
+      .string()
+      .trim()
+      .phone('CA', 'Please enter a valid phone number')
+      .nullable(),
+    instrument: yup.string().trim().nullable(),
+  }),
+)
+
+const { validate } = useForm({
+  validationSchema,
+  validateOnMount: true,
+})
+
+onActivated(async () => {
+  await validate()
+})
+
+const maskaUcaseOption = {
+  preProcess: (val: string) => val.toUpperCase(),
+}
+defineExpose({ maskaUcaseOption })
 </script>
 
 <template>
   <div class="grid grid-cols-12 gap-x-3 gap-y-1 items-end">
     <div class="col-span-12 pt-8">
-      <h2 class="pb-2">User Account Information</h2>
+      <h2 class="pb-2">
+        User Account Information
+      </h2>
       <h3>
         {{ userStore.user.firstName }}
         {{ userStore.user.lastName }}
@@ -166,7 +174,8 @@
         class="px-4 inline-block"
         @change-status="
           async (stat: string) => await fieldStatus(stat, 'privateTeacher')
-        " />
+        "
+      />
       <BaseCheckbox
         v-model="userStore.user.schoolTeacher"
         :status="status.schoolTeacher"
@@ -175,7 +184,8 @@
         class="px-4 inline-block"
         @change-status="
           async (stat: string) => await fieldStatus(stat, 'schoolTeacher')
-        " />
+        "
+      />
     </fieldset>
     <div class="col-span-12 sm:col-span-6">
       <BaseInput
@@ -186,7 +196,8 @@
         label="First Name"
         @change-status="
           async (stat: string) => await fieldStatus(stat, 'firstName')
-        " />
+        "
+      />
     </div>
     <div class="col-span-12 sm:col-span-6">
       <BaseInput
@@ -197,7 +208,8 @@
         label="Last Name"
         @change-status="
           async (stat: string) => await fieldStatus(stat, 'lastName')
-        " />
+        "
+      />
     </div>
     <div class="col-span-12 sm:col-span-8">
       <BaseInput
@@ -208,7 +220,8 @@
         label="Mailing Address"
         @change-status="
           async (stat: string) => await fieldStatus(stat, 'address')
-        " />
+        "
+      />
     </div>
     <div class="col-span-12 sm:col-span-4">
       <BaseInput
@@ -219,7 +232,8 @@
         label="City/Town"
         @change-status="
           async (stat: string) => await fieldStatus(stat, 'city')
-        " />
+        "
+      />
     </div>
     <div class="col-span-6 sm:col-span-2 self-start">
       <BaseSelect
@@ -230,7 +244,8 @@
         :options="provinces"
         @change-status="
           async (stat: string) => await fieldStatus(stat, 'province')
-        " />
+        "
+      />
     </div>
     <div class="col-span-6 sm:col-span-4">
       <BaseInput
@@ -246,7 +261,8 @@
         label="Postal Code"
         @change-status="
           async (stat: string) => await fieldStatus(stat, 'postalCode')
-        " />
+        "
+      />
     </div>
     <div class="col-span-6 sm:col-span-6">
       <BaseInput
@@ -261,11 +277,13 @@
         label="Phone Number"
         @change-status="
           async (stat: string) => await fieldStatus(stat, 'phone')
-        " />
+        "
+      />
     </div>
     <div
       v-if="teacherView"
-      class="col-span-12 sm:col-span-6">
+      class="col-span-12 sm:col-span-6"
+    >
       <BaseInput
         v-model.trim="userStore.user.instrument"
         :status="status.instrument"
@@ -274,7 +292,8 @@
         label="Instrument(s)"
         @change-status="
           async (stat: string) => await fieldStatus(stat, 'instrument')
-        " />
+        "
+      />
     </div>
   </div>
 </template>

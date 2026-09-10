@@ -1,22 +1,22 @@
-import { useFieldConfig } from '~/stores/useFieldConfig'
+import type {
+  CommunityGroup,
+  CommunityGroupCreateMutation,
+  CommunityGroupInput,
+} from '~/graphql/gql/graphql'
 import {
   CommunityGroupCreateDocument,
   CommunityGroupDeleteDocument,
   CommunityGroupInfoDocument,
   CommunityGroupUpdateDocument,
 } from '~/graphql/gql/graphql'
-import type {
-  CommunityGroup,
-  CommunityGroupCreateMutation,
-  CommunityGroupInput,
-} from '~/graphql/gql/graphql'
+import { useFieldConfig } from '~/stores/useFieldConfig'
 
 export const useCommunityGroup = defineStore(
   'communityGroup',
   () => {
     const fieldConfigStore = useFieldConfig()
     const communityGroup = ref<CommunityGroup[]>([])
-    const communityGroupErrors = ref<{ id: number; count: number }[]>([])
+    const communityGroupErrors = ref<{ id: number, count: number }[]>([])
 
     /**
      * Resets the community group store to initial state
@@ -35,20 +35,11 @@ export const useCommunityGroup = defineStore(
         id: communityGrp.id,
         name: communityGrp.name || null,
         groupSize:
-          communityGrp.groupSize !== null &&
-          communityGrp.groupSize !== undefined
-            ? communityGrp.groupSize
-            : null,
+          communityGrp.groupSize ?? null,
         chaperones:
-          communityGrp.chaperones !== null &&
-          communityGrp.chaperones !== undefined
-            ? communityGrp.chaperones
-            : null,
+          communityGrp.chaperones ?? null,
         wheelchairs:
-          communityGrp.wheelchairs !== null &&
-          communityGrp.wheelchairs !== undefined
-            ? communityGrp.wheelchairs
-            : null,
+          communityGrp.wheelchairs ?? null,
         earliestTime: communityGrp.earliestTime || null,
         latestTime: communityGrp.latestTime || null,
         unavailable: communityGrp.unavailable || null,
@@ -60,8 +51,8 @@ export const useCommunityGroup = defineStore(
     }
 
     function findInitialCommunityGroupErrors() {
-      const communityGroupKeys =
-        fieldConfigStore.performerTypeFields('CommunityGroup')
+      const communityGroupKeys
+        = fieldConfigStore.performerTypeFields('CommunityGroup')
       for (const group of communityGroup.value) {
         let count = 0
         for (const key of communityGroupKeys) {
@@ -70,7 +61,7 @@ export const useCommunityGroup = defineStore(
           }
         }
         const index = communityGroupErrors.value.findIndex(
-          (item) => item.id === group.id
+          item => item.id === group.id,
         )
         communityGroupErrors.value[index]!.count = count
       }
@@ -93,13 +84,14 @@ export const useCommunityGroup = defineStore(
     }
     onCommunityGroupCreateDone((result) => {
       if (result.data?.communityGroupCreate.communityGroup) {
-        const communityGroup: CommunityGroupCreateMutation['communityGroupCreate']['communityGroup'] =
-          result.data.communityGroupCreate.communityGroup
+        const communityGroup: CommunityGroupCreateMutation['communityGroupCreate']['communityGroup']
+          = result.data.communityGroupCreate.communityGroup
         addToStore(communityGroup)
-      } else if (result.data?.communityGroupCreate.userErrors) {
+      }
+      else if (result.data?.communityGroupCreate.userErrors) {
         console.error(
           'Failed to create community group:',
-          result.data.communityGroupCreate.userErrors
+          result.data.communityGroupCreate.userErrors,
         )
       }
     })
@@ -154,10 +146,10 @@ export const useCommunityGroup = defineStore(
     })
     async function updateCommunityGroup(
       communityGroupId: number,
-      field?: string
+      field?: string,
     ) {
       const communityGrp = communityGroup.value.find(
-        (item) => item.id === communityGroupId
+        item => item.id === communityGroupId,
       )
       if (!communityGrp) {
         console.error('Community group not found:', {
@@ -171,11 +163,11 @@ export const useCommunityGroup = defineStore(
       let communityGroupField = null
       if (field && Object.keys(communityGroupProps).includes(field)) {
         communityGroupField = Object.fromEntries(
-          Array(
+          new Array(
             Object.entries(communityGroupProps).find(
-              (item) => item[0] === field
-            )!
-          )
+              item => item[0] === field,
+            )!,
+          ),
         )
       }
       try {
@@ -185,7 +177,8 @@ export const useCommunityGroup = defineStore(
             communityGroupField || (communityGroupProps as CommunityGroupInput),
         })
         return 'complete'
-      } catch (error) {
+      }
+      catch (error) {
         console.error('Failed to update community group:', error)
         return 'error'
       }
@@ -214,12 +207,13 @@ export const useCommunityGroup = defineStore(
     async function deleteCommunityGroup(communityGroupId: number) {
       await communityGroupDelete({ communityGroupId })
       const index = communityGroup.value.findIndex(
-        (e) => e.id === communityGroupId
+        e => e.id === communityGroupId,
       )
       if (index !== -1) {
         communityGroup.value.splice(index, 1)
         communityGroupErrors.value.splice(index, 1)
-      } else {
+      }
+      else {
         console.error('Community group not found for deletion:', {
           operation: 'deleteCommunityGroup',
           communityGroupId,
@@ -245,5 +239,5 @@ export const useCommunityGroup = defineStore(
   },
   {
     persist: true,
-  }
+  },
 )

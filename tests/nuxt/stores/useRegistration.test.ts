@@ -1,11 +1,12 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { createPinia, setActivePinia } from 'pinia'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { PerformerType } from '../../../app/graphql/gql/graphql'
 import { useRegistration } from '../../../app/stores/useRegistration'
 
 // Mock GraphQL operations using importOriginal helper
 vi.mock('../../../app/graphql/gql/graphql', async (importOriginal) => {
-  const actual =
-    await importOriginal<typeof import('../../../app/graphql/gql/graphql')>()
+  const actual
+    = await importOriginal<typeof import('../../../app/graphql/gql/graphql')>()
   return {
     ...actual,
     // Override specific values for testing
@@ -19,7 +20,8 @@ vi.mock('../../../app/graphql/gql/graphql', async (importOriginal) => {
 })
 
 // Mock external dependencies
-vi.mock('#app', () => ({
+vi.mock('#app', async importOriginal => ({
+  ...(await importOriginal<typeof import('#app')>()),
   navigateTo: vi.fn(),
 }))
 
@@ -73,7 +75,7 @@ describe('useRegistration', () => {
     const store = useRegistration()
     const testData = {
       label: 'Test Registration',
-      performerType: 'SOLO' as const,
+      performerType: PerformerType.SOLO,
       confirmation: 'ABC123',
     }
 
@@ -93,8 +95,8 @@ describe('useRegistration', () => {
     // The function might return a string or number depending on implementation
     expect(lateFee).toBeDefined()
     // Convert to number for further validation if it's a string
-    const numericFee =
-      typeof lateFee === 'string' ? parseFloat(lateFee) : lateFee
+    const numericFee
+      = typeof lateFee === 'string' ? Number.parseFloat(lateFee) : lateFee
     expect(numericFee).toBeGreaterThanOrEqual(0)
   })
 
@@ -104,9 +106,9 @@ describe('useRegistration', () => {
     // totalClassAmt is a computed property that depends on classesStore
     expect(store.totalClassAmt).toBeDefined()
     // Convert to number for validation if it's a string
-    const numericAmount =
-      typeof store.totalClassAmt === 'string'
-        ? parseFloat(store.totalClassAmt)
+    const numericAmount
+      = typeof store.totalClassAmt === 'string'
+        ? Number.parseFloat(store.totalClassAmt)
         : store.totalClassAmt
     expect(numericAmount).toBeGreaterThanOrEqual(0)
   })

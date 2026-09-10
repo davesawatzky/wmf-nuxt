@@ -14,7 +14,8 @@ export function sumErrorsArray(arr: ErrorObject[]): number {
     for (const key in obj) {
       if (key === 'selections') {
         sum += sumErrorsArray(obj[key] as ErrorObject[])
-      } else if (key === 'count') {
+      }
+      else if (key === 'count') {
         sum += obj.count ?? 0
       }
     }
@@ -40,43 +41,43 @@ export function useTabErrors(): ComputedRef<TabErrors> {
     switch (appStore.performerType) {
       case 'SOLO':
         tabName = {
-          Performer: performerStore.totalPerformerErrors,
-          Teacher: teacherStore.teacherErrors,
+          'Performer': performerStore.totalPerformerErrors,
+          'Teacher': teacherStore.teacherErrors,
           'Solo Classes': sumErrorsArray(classesStore.classErrors),
-          Summary: 0,
+          'Summary': 0,
         }
         break
       case 'GROUP':
         tabName = {
-          Group: groupStore.groupErrors,
-          Performers: performerStore.totalPerformerErrors,
-          Teacher: teacherStore.teacherErrors,
+          'Group': groupStore.groupErrors,
+          'Performers': performerStore.totalPerformerErrors,
+          'Teacher': teacherStore.teacherErrors,
           'Group Classes': sumErrorsArray(classesStore.classErrors),
-          Summary: 0,
+          'Summary': 0,
         }
         break
       case 'SCHOOL':
         tabName = {
-          School: schoolStore.schoolErrors,
-          Teacher: teacherStore.teacherErrors,
-          Groups: schoolGroupStore.schoolGroupErrors.reduce(
+          'School': schoolStore.schoolErrors,
+          'Teacher': teacherStore.teacherErrors,
+          'Groups': schoolGroupStore.schoolGroupErrors.reduce(
             (a, b) => a + b.count,
-            0
+            0,
           ),
           'School Classes': sumErrorsArray(classesStore.classErrors),
-          Summary: 0,
+          'Summary': 0,
         }
         break
       case 'COMMUNITY':
         tabName = {
-          Community: communityStore.communityErrors,
-          Contact: teacherStore.teacherErrors,
-          Groups: communityGroupStore.communityGroupErrors.reduce(
+          'Community': communityStore.communityErrors,
+          'Contact': teacherStore.teacherErrors,
+          'Groups': communityGroupStore.communityGroupErrors.reduce(
             (a, b) => a + b.count,
-            0
+            0,
           ),
           'Community Classes': sumErrorsArray(classesStore.classErrors),
-          Summary: 0,
+          'Summary': 0,
         }
         break
       default:

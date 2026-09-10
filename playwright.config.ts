@@ -1,5 +1,5 @@
-import { defineConfig, devices } from '@playwright/test'
 import process from 'node:process'
+import { defineConfig, devices } from '@playwright/test'
 // import { fileURLToPath } from 'node:url'
 // import type { ConfigOptions } from '@nuxt/test-utils/playwright'
 
@@ -8,6 +8,7 @@ import process from 'node:process'
  * https://github.com/motdotla/dotenv
  */
 import dotenv from 'dotenv'
+
 dotenv.config({ path: '.env.test' })
 
 /**

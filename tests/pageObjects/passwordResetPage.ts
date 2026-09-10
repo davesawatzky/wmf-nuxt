@@ -10,13 +10,16 @@ export class PasswordResetPage extends HelperBase {
   private readonly emailInput = () => this.page.locator('input[name="email"]')
   private readonly newPasswordInput = () =>
     this.page.locator('input[name="password1"]')
+
   private readonly confirmPasswordInput = () =>
     this.page.locator('input[name="password2"]')
 
   private readonly sendResetLinkButton = () =>
     this.page.getByRole('button', { name: 'Send Reset Link', exact: true })
+
   private readonly resetPasswordButton = () =>
     this.page.getByRole('button', { name: /reset password/i })
+
   private readonly backToLoginLink = () =>
     this.page.getByRole('link', { name: /back to login/i })
 
@@ -53,9 +56,9 @@ export class PasswordResetPage extends HelperBase {
     await Promise.all([
       // Wait for GraphQL query to complete
       this.page.waitForResponse(
-        (response) =>
+        response =>
           response.url().includes('/graphql') && response.status() === 200,
-        { timeout: 5000 }
+        { timeout: 5000 },
       ),
       this.sendResetLinkButton().click(),
     ])
@@ -102,7 +105,7 @@ export class PasswordResetPage extends HelperBase {
   async verifyResetEmailSent() {
     await expect(this.heading()).toContainText('Email Verification Sent')
     await expect(this.messageText()).toContainText(
-      /email verification link has been sent/i
+      /email verification link has been sent/i,
     )
   }
 

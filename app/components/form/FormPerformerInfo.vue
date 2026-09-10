@@ -1,217 +1,223 @@
 <script lang="ts" setup>
-  import * as yup from 'yup'
-  import 'yup-phone-lite'
-  import { usePerformers } from '~/stores/usePerformer'
-  import { InstrumentsDocument } from '~/graphql/gql/graphql'
-  import { provinces, StatusEnum, type ContactInfo } from '#imports'
-  import BaseSelect from '../base/BaseSelect.vue'
-  import type { Performer } from '~/graphql/gql/graphql'
-  import { useToast } from 'vue-toastification'
+import type { ContactInfo } from '#imports'
+import type { Performer } from '~/graphql/gql/graphql'
+import { useToast } from 'vue-toastification'
+import * as yup from 'yup'
+import { provinces, StatusEnum } from '#imports'
+import { InstrumentsDocument } from '~/graphql/gql/graphql'
+import { usePerformers } from '~/stores/usePerformer'
+import BaseSelect from '../base/BaseSelect.vue'
+import 'yup-phone-lite'
 
-  const props = defineProps<{
-    modelValue: ContactInfo
-    teacher?: boolean
-    schoolteacher?: boolean
-    school?: boolean
-    groupperformer?: boolean
-    performerIndex: number
-    performerId: number
-  }>()
+const props = defineProps<{
+  modelValue: ContactInfo
+  teacher?: boolean
+  schoolteacher?: boolean
+  school?: boolean
+  groupperformer?: boolean
+  performerIndex: number
+  performerId: number
+}>()
 
-  const emits = defineEmits<{
-    'update:modelValue': [value: ContactInfo]
-  }>()
+const emits = defineEmits<{
+  'update:modelValue': [value: ContactInfo]
+}>()
 
-  const fieldConfigStore = useFieldConfig()
-  const performerStore = usePerformers()
-  const toast = useToast()
+const fieldConfigStore = useFieldConfig()
+const performerStore = usePerformers()
+const toast = useToast()
 
-  const contact = computed({
-    get: () => props.modelValue,
-    set: (value) => emits('update:modelValue', value),
-  })
+const contact = computed({
+  get: () => props.modelValue,
+  set: value => emits('update:modelValue', value),
+})
 
-  const { result: instrumentQuery, onError: instrumentsError } = useQuery(
-    InstrumentsDocument,
-    null,
-    () => ({
-      fetchPolicy: 'no-cache',
-      errorPolicy: 'all',
-    })
-  )
-  const instruments = computed(() => instrumentQuery.value?.instruments ?? [])
-  instrumentsError((error) => {
-    console.error('Error loading instruments: ', error)
-    toast.error('Error loading instruments')
-  })
+const { result: instrumentQuery, onError: instrumentsError } = useQuery(
+  InstrumentsDocument,
+  null,
+  () => ({
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  }),
+)
+const instruments = computed(() => instrumentQuery.value?.instruments ?? [])
+instrumentsError((error) => {
+  console.error('Error loading instruments: ', error)
+  toast.error('Error loading instruments')
+})
 
-  const status = reactive<Status>({
-    pronouns: props.modelValue.pronouns ? StatusEnum.saved : StatusEnum.null,
-    firstName: props.modelValue.firstName ? StatusEnum.saved : StatusEnum.null,
-    lastName: props.modelValue.lastName ? StatusEnum.saved : StatusEnum.null,
-    age: props.modelValue.age ? StatusEnum.saved : StatusEnum.null,
-    level: props.modelValue.level ? StatusEnum.saved : StatusEnum.null,
-    instrument: props.modelValue.instrument
-      ? StatusEnum.saved
-      : StatusEnum.null,
-    otherClasses: props.modelValue.otherClasses
-      ? StatusEnum.saved
-      : StatusEnum.null,
-    unavailable: props.modelValue.unavailable
-      ? StatusEnum.saved
-      : StatusEnum.null,
-    address: props.modelValue.address ? StatusEnum.saved : StatusEnum.null,
-    city: props.modelValue.city ? StatusEnum.saved : StatusEnum.null,
-    province: props.modelValue.province ? StatusEnum.saved : StatusEnum.null,
-    postalCode: props.modelValue.postalCode
-      ? StatusEnum.saved
-      : StatusEnum.null,
-    email: props.modelValue.email ? StatusEnum.saved : StatusEnum.null,
-    phone: props.modelValue.phone ? StatusEnum.saved : StatusEnum.null,
-    photoPermission: props.modelValue.photoPermission
-      ? StatusEnum.saved
-      : StatusEnum.null,
-  })
+const status = reactive<Status>({
+  pronouns: props.modelValue.pronouns ? StatusEnum.saved : StatusEnum.null,
+  firstName: props.modelValue.firstName ? StatusEnum.saved : StatusEnum.null,
+  lastName: props.modelValue.lastName ? StatusEnum.saved : StatusEnum.null,
+  age: props.modelValue.age ? StatusEnum.saved : StatusEnum.null,
+  level: props.modelValue.level ? StatusEnum.saved : StatusEnum.null,
+  instrument: props.modelValue.instrument
+    ? StatusEnum.saved
+    : StatusEnum.null,
+  otherClasses: props.modelValue.otherClasses
+    ? StatusEnum.saved
+    : StatusEnum.null,
+  unavailable: props.modelValue.unavailable
+    ? StatusEnum.saved
+    : StatusEnum.null,
+  address: props.modelValue.address ? StatusEnum.saved : StatusEnum.null,
+  city: props.modelValue.city ? StatusEnum.saved : StatusEnum.null,
+  province: props.modelValue.province ? StatusEnum.saved : StatusEnum.null,
+  postalCode: props.modelValue.postalCode
+    ? StatusEnum.saved
+    : StatusEnum.null,
+  email: props.modelValue.email ? StatusEnum.saved : StatusEnum.null,
+  phone: props.modelValue.phone ? StatusEnum.saved : StatusEnum.null,
+  photoPermission: props.modelValue.photoPermission
+    ? StatusEnum.saved
+    : StatusEnum.null,
+})
 
-  async function fieldStatus(stat: string, fieldName: string) {
-    await nextTick()
-    if (stat === 'valid') {
-      status[fieldName] = StatusEnum.pending
-      const result = await performerStore.updatePerformer(
-        props.performerId,
-        fieldName
-      )
-      status[fieldName] = StatusEnum.null
-      if (result === 'complete') {
-        if (contact.value[fieldName as keyof ContactInfo] !== null) {
-          status[fieldName] = StatusEnum.saved
-        }
-      } else {
-        console.error('Could not update field:', fieldName)
-        toast.error(
-          'Could not update field.  Please exit and reload Registration'
-        )
-      }
-    } else if (stat === 'invalid') {
-      status[fieldName] = StatusEnum.pending
-      const result = await performerStore.updatePerformer(
-        props.performerId,
-        fieldName
-      )
-      status[fieldName] = StatusEnum.null
-      if (result === 'complete') {
-        status[fieldName] = StatusEnum.removed
-      } else {
-        console.error('Could not remove invalid field:', fieldName)
-        toast.error(
-          'Could not remove invalid field. Please exit and reload Registration'
-        )
-      }
-    } else if (stat === 'removed') {
-      status[fieldName] = StatusEnum.pending
-      const result = await performerStore.updatePerformer(
-        props.performerId,
-        fieldName
-      )
-      status[fieldName] = StatusEnum.null
-      if (result === 'complete') {
-        status[fieldName] = StatusEnum.removed
-      } else {
-        console.error('Could not remove field:', fieldName)
-        toast.error(
-          'Could not remove field.  Please exit and reload Registration'
-        )
-      }
-    }
-  }
-
-  const validationSchema = toTypedSchema(
-    yup.object({
-      pronouns: yup
-        .string()
-        .trim()
-        .notRequired()
-        .oneOf(['', 'She/Her', 'He/Him', 'They/Them'])
-        .nullable(),
-      firstName: yup.string().trim().required('Required'),
-      lastName: yup.string().trim().required('Required'),
-      age: yup
-        .number()
-        .positive('Enter age')
-        .integer('Enter age')
-        .min(1)
-        .max(100, 'Enter age')
-        .required('Required'),
-      address: yup.string().trim().required('Required'),
-      city: yup.string().trim().required('Required'),
-      province: yup.string().max(3).required('Required'),
-      postalCode: yup
-        .string()
-        .trim()
-        .matches(
-          /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i,
-          'Enter a valid postal code'
-        )
-        .required('Required'),
-      phone: yup
-        .string()
-        .trim()
-        .phone('CA', 'Please enter a valid phone number')
-        .required('Required'),
-      email: yup
-        .string()
-        .trim()
-        .email('Must be a valid email address')
-        .required('Required'),
-      instrument: yup.string().trim().required('Required'),
-      level: yup.string().trim().required('Enter Grade or Level'),
-      otherClasses: yup.string().trim().notRequired().nullable(),
-      unavailable: yup.string().trim().notRequired().nullable(),
-      photoPermission: yup
-        .string()
-        .trim()
-        .required('Required')
-        .oneOf(['Yes', 'No']),
-    })
-  )
-
-  const { validate } = useForm({
-    validationSchema,
-    validateOnMount: true,
-  })
-
-  onActivated(async () => {
-    await validate()
-  })
-
-  const performerKeys = fieldConfigStore.performerTypeFields('Performer')
-  watchEffect(() => {
-    let count = 0
-    for (const key of performerKeys) {
-      if (status[key as keyof Performer] !== StatusEnum.saved) {
-        count++
-      }
-    }
-    const index = performerStore.performerErrors.findIndex(
-      (item) => item.id === props.performerId
+async function fieldStatus(stat: string, fieldName: string) {
+  await nextTick()
+  if (stat === 'valid') {
+    status[fieldName] = StatusEnum.pending
+    const result = await performerStore.updatePerformer(
+      props.performerId,
+      fieldName,
     )
-    performerStore.performerErrors[index]!.count = count
-  })
-
-  const maskaUcaseOption = {
-    preProcess: (val: string) => val.toUpperCase(),
+    status[fieldName] = StatusEnum.null
+    if (result === 'complete') {
+      if (contact.value[fieldName as keyof ContactInfo] !== null) {
+        status[fieldName] = StatusEnum.saved
+      }
+    }
+    else {
+      console.error('Could not update field:', fieldName)
+      toast.error(
+        'Could not update field.  Please exit and reload Registration',
+      )
+    }
   }
+  else if (stat === 'invalid') {
+    status[fieldName] = StatusEnum.pending
+    const result = await performerStore.updatePerformer(
+      props.performerId,
+      fieldName,
+    )
+    status[fieldName] = StatusEnum.null
+    if (result === 'complete') {
+      status[fieldName] = StatusEnum.removed
+    }
+    else {
+      console.error('Could not remove invalid field:', fieldName)
+      toast.error(
+        'Could not remove invalid field. Please exit and reload Registration',
+      )
+    }
+  }
+  else if (stat === 'removed') {
+    status[fieldName] = StatusEnum.pending
+    const result = await performerStore.updatePerformer(
+      props.performerId,
+      fieldName,
+    )
+    status[fieldName] = StatusEnum.null
+    if (result === 'complete') {
+      status[fieldName] = StatusEnum.removed
+    }
+    else {
+      console.error('Could not remove field:', fieldName)
+      toast.error(
+        'Could not remove field.  Please exit and reload Registration',
+      )
+    }
+  }
+}
 
-  defineExpose({ maskaUcaseOption })
+const validationSchema = toTypedSchema(
+  yup.object({
+    pronouns: yup
+      .string()
+      .trim()
+      .notRequired()
+      .oneOf(['', 'She/Her', 'He/Him', 'They/Them'])
+      .nullable(),
+    firstName: yup.string().trim().required('Required'),
+    lastName: yup.string().trim().required('Required'),
+    age: yup
+      .number()
+      .positive('Enter age')
+      .integer('Enter age')
+      .min(1)
+      .max(100, 'Enter age')
+      .required('Required'),
+    address: yup.string().trim().required('Required'),
+    city: yup.string().trim().required('Required'),
+    province: yup.string().max(3).required('Required'),
+    postalCode: yup
+      .string()
+      .trim()
+      .matches(
+        /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i,
+        'Enter a valid postal code',
+      )
+      .required('Required'),
+    phone: yup
+      .string()
+      .trim()
+      .phone('CA', 'Please enter a valid phone number')
+      .required('Required'),
+    email: yup
+      .string()
+      .trim()
+      .email('Must be a valid email address')
+      .required('Required'),
+    instrument: yup.string().trim().required('Required'),
+    level: yup.string().trim().required('Enter Grade or Level'),
+    otherClasses: yup.string().trim().notRequired().nullable(),
+    unavailable: yup.string().trim().notRequired().nullable(),
+    photoPermission: yup
+      .string()
+      .trim()
+      .required('Required')
+      .oneOf(['Yes', 'No']),
+  }),
+)
 
-  const currentYear = new Date().getFullYear()
+const { validate } = useForm({
+  validationSchema,
+  validateOnMount: true,
+})
 
-  const pronounOptions = [
-    { id: 'Empty', name: '' },
-    { id: 'She/Her', name: 'She/Her' },
-    { id: 'He/Him', name: 'He/Him' },
-    { id: 'They/Them', name: 'They/Them' },
-  ]
+onActivated(async () => {
+  await validate()
+})
+
+const performerKeys = fieldConfigStore.performerTypeFields('Performer')
+watchEffect(() => {
+  let count = 0
+  for (const key of performerKeys) {
+    if (status[key as keyof Performer] !== StatusEnum.saved) {
+      count++
+    }
+  }
+  const index = performerStore.performerErrors.findIndex(
+    item => item.id === props.performerId,
+  )
+  performerStore.performerErrors[index]!.count = count
+})
+
+const maskaUcaseOption = {
+  preProcess: (val: string) => val.toUpperCase(),
+}
+
+defineExpose({ maskaUcaseOption })
+
+const currentYear = new Date().getFullYear()
+
+const pronounOptions = [
+  { id: 'Empty', name: '' },
+  { id: 'She/Her', name: 'She/Her' },
+  { id: 'He/Him', name: 'He/Him' },
+  { id: 'They/Them', name: 'They/Them' },
+]
 </script>
 
 <template>
@@ -225,7 +231,8 @@
         :options="pronounOptions"
         @change-status="
           async (stat: string) => await fieldStatus(stat, 'pronouns')
-        " />
+        "
+      />
     </div>
     <div class="col-span-8 sm:col-span-4">
       <BaseInput
@@ -236,7 +243,8 @@
         label="First Name"
         @change-status="
           async (stat: string) => await fieldStatus(stat, 'firstName')
-        " />
+        "
+      />
     </div>
     <div class="col-span-12 sm:col-span-5">
       <BaseInput
@@ -247,7 +255,8 @@
         label="Last Name"
         @change-status="
           async (stat: string) => await fieldStatus(stat, 'lastName')
-        " />
+        "
+      />
     </div>
     <div class="col-span-3 sm:col-span-3">
       <BaseInput
@@ -262,7 +271,8 @@
         :help-message="`Age as of December 31, ${currentYear}`"
         @change-status="
           async (stat: string) => await fieldStatus(stat, 'age')
-        " />
+        "
+      />
     </div>
     <div class="col-span-9 sm:col-span-9">
       <BaseInput
@@ -273,7 +283,8 @@
         label="Mailing Address"
         @change-status="
           async (stat: string) => await fieldStatus(stat, 'address')
-        " />
+        "
+      />
     </div>
     <div class="col-span-8 sm:col-span-5">
       <BaseInput
@@ -284,7 +295,8 @@
         label="City/Town"
         @change-status="
           async (stat: string) => await fieldStatus(stat, 'city')
-        " />
+        "
+      />
     </div>
     <div class="col-span-4 sm:col-span-3 self-start">
       <BaseSelect
@@ -295,7 +307,8 @@
         :options="provinces"
         @change-status="
           async (stat: string) => await fieldStatus(stat, 'province')
-        " />
+        "
+      />
     </div>
     <div class="col-span-6 sm:col-span-4">
       <BaseInput
@@ -311,7 +324,8 @@
         label="Postal Code"
         @change-status="
           async (stat: string) => await fieldStatus(stat, 'postalCode')
-        " />
+        "
+      />
     </div>
     <div class="col-span-6 sm:col-span-5">
       <BaseInput
@@ -326,7 +340,8 @@
         label="Phone Number"
         @change-status="
           async (stat: string) => await fieldStatus(stat, 'phone')
-        " />
+        "
+      />
     </div>
     <div class="col-span-12 sm:col-span-7">
       <BaseInput
@@ -338,7 +353,8 @@
         label="Email"
         @change-status="
           async (stat: string) => await fieldStatus(stat, 'email')
-        " />
+        "
+      />
     </div>
     <div class="col-span-12 sm:col-span-4">
       <BaseSelect
@@ -350,7 +366,8 @@
         label="Instrument/Discipline"
         @change-status="
           async (stat: string) => await fieldStatus(stat, 'instrument')
-        " />
+        "
+      />
     </div>
     <div class="self-end col-span-3 sm:col-span-2 lg:col-start-6">
       <BaseSelect
@@ -365,7 +382,8 @@
         label=""
         @change-status="
           async (stat: string) => await fieldStatus(stat, 'photoPermission')
-        " />
+        "
+      />
     </div>
     <p class="col-span-9 sm:col-span-6 lg:col-span-5 text-sm">
       I give permission to use photographs of this participant in Winnipeg Music
@@ -374,7 +392,8 @@
     </p>
     <div
       v-if="groupperformer"
-      class="col-span-6 sm:col-span-6">
+      class="col-span-6 sm:col-span-6"
+    >
       <BaseInput
         v-model.trim="contact.level"
         :status="status.level"
@@ -383,11 +402,13 @@
         label="Level"
         @change-status="
           async (stat: string) => await fieldStatus(stat, 'level')
-        " />
+        "
+      />
     </div>
     <div
       v-if="groupperformer"
-      class="col-span-12">
+      class="col-span-12"
+    >
       <p>
         To avoid scheduling conflicts, please list all other festival classes
         entered but not included on this form. Use only class numbers separated
@@ -400,11 +421,13 @@
         label="Other festival classes entered"
         @change-status="
           async (stat: string) => await fieldStatus(stat, 'otherClasses')
-        " />
+        "
+      />
     </div>
     <div
       v-else
-      class="col-span-12">
+      class="col-span-12"
+    >
       <p>
         List any scheduling requests. The Festival cannot guarantee that
         submitted requests can be accommodated. Entry fees are non-refundable.
@@ -416,7 +439,8 @@
         label="Scheduling Requests"
         @change-status="
           async (stat: string) => await fieldStatus(stat, 'unavailable')
-        " />
+        "
+      />
     </div>
   </div>
 </template>

@@ -1,5 +1,9 @@
+import type {
+  Teacher,
+  TeacherCreateMutation,
+  TeacherInput,
+} from '~/graphql/gql/graphql'
 import { defineStore } from 'pinia'
-import { useFieldConfig } from '~/stores/useFieldConfig'
 import {
   AllTeachersSearchDocument,
   TeacherCreateDocument,
@@ -7,11 +11,7 @@ import {
   TeacherInfoDocument,
   TeacherUpdateDocument,
 } from '~/graphql/gql/graphql'
-import type {
-  Teacher,
-  TeacherCreateMutation,
-  TeacherInput,
-} from '~/graphql/gql/graphql'
+import { useFieldConfig } from '~/stores/useFieldConfig'
 
 export interface AllTeachers {
   id: number
@@ -32,7 +32,7 @@ export const useTeacher = defineStore(
   'teacher',
   () => {
     const fieldConfigStore = useFieldConfig()
-    const fieldStatusRef = ref<{ stat: string; field: string }>()
+    const fieldStatusRef = ref<{ stat: string, field: string }>()
     const teacher = ref<Partial<Teacher>>(createEmptyTeacher())
     const allTeachers = ref<AllTeachers[]>([])
     const emailAlreadyExists = ref(false)
@@ -99,8 +99,8 @@ export const useTeacher = defineStore(
     const teacherErrors = computed(() => {
       // Check if 'No Teacher' is selected - this means no teacher is required
       if (
-        chosenTeacher.value?.firstName === 'Teacher' &&
-        chosenTeacher.value?.lastName === 'No'
+        chosenTeacher.value?.firstName === 'Teacher'
+        && chosenTeacher.value?.lastName === 'No'
       ) {
         return 0
       }
@@ -133,7 +133,8 @@ export const useTeacher = defineStore(
     const fullName = computed(() => {
       if (teacher.value.lastName === 'Unlisted' || teacher.value.id === 2) {
         return `${teacher.value.lastName} ${teacher.value.firstName}`
-      } else {
+      }
+      else {
         return `${teacher.value.firstName} ${teacher.value.lastName}`
       }
     })
@@ -171,11 +172,11 @@ export const useTeacher = defineStore(
       {
         fetchPolicy: 'no-cache',
         errorPolicy: 'all',
-      }
+      },
     )
     async function createTeacher(
       privateTeacher: boolean,
-      schoolTeacher: boolean
+      schoolTeacher: boolean,
     ) {
       await teacherCreate({
         privateTeacher,
@@ -188,13 +189,14 @@ export const useTeacher = defineStore(
     }
     onTeacherCreateDone((result) => {
       if (result.data?.teacherCreate.teacher) {
-        const teacher: TeacherCreateMutation['teacherCreate']['teacher'] =
-          result.data.teacherCreate.teacher
+        const teacher: TeacherCreateMutation['teacherCreate']['teacher']
+          = result.data.teacherCreate.teacher
         addToStore(teacher)
-      } else if (result.data?.teacherCreate.userErrors) {
+      }
+      else if (result.data?.teacherCreate.userErrors) {
         console.error(
           'Failed to create teacher:',
-          result.data.teacherCreate.userErrors
+          result.data.teacherCreate.userErrors,
         )
       }
     })
@@ -243,7 +245,7 @@ export const useTeacher = defineStore(
       errorPolicy: 'all',
     })
     async function loadAllTeachers(
-      teacherType: 'privateTeacher' | 'schoolTeacher'
+      teacherType: 'privateTeacher' | 'schoolTeacher',
     ) {
       const loaded = await allTeachersLoad(null, { teacherType })
       if (!loaded) {
@@ -251,7 +253,7 @@ export const useTeacher = defineStore(
       }
     }
     onTeachersResult((result) => {
-      allTeachers.value = result.data.teachers.map((el) => el) as AllTeachers[]
+      allTeachers.value = result.data.teachers.map(el => el) as AllTeachers[]
     })
     onTeachersLoadError((error) => {
       console.error(error)
@@ -262,8 +264,8 @@ export const useTeacher = defineStore(
      * @param field Optional specific field to update
      * @returns Promise resolving to 'complete' or 'error'
      */
-    const { mutate: teacherUpdate, onError: onTeacherUpdateError } =
-      useMutation(TeacherUpdateDocument, {
+    const { mutate: teacherUpdate, onError: onTeacherUpdateError }
+      = useMutation(TeacherUpdateDocument, {
         fetchPolicy: 'network-only',
         errorPolicy: 'all',
       })
@@ -272,7 +274,7 @@ export const useTeacher = defineStore(
       let teacherField = null
       if (field && Object.keys(teachProps).includes(field)) {
         teacherField = Object.fromEntries(
-          Array(Object.entries(teachProps).find((item) => item[0] === field)!)
+          new Array(Object.entries(teachProps).find(item => item[0] === field)!),
         )
       }
       try {
@@ -281,7 +283,8 @@ export const useTeacher = defineStore(
           teacher: teacherField || (teachProps as TeacherInput),
         })
         return 'complete'
-      } catch (error) {
+      }
+      catch (error) {
         console.error('Failed to update teacher:', error, {
           operation: 'updateTeacher',
           field,
@@ -306,7 +309,8 @@ export const useTeacher = defineStore(
     async function deleteTeacher(teacherId: number) {
       try {
         await teacherDelete({ teacherId })
-      } catch (error) {
+      }
+      catch (error) {
         console.error('Failed to delete teacher:', error, {
           operation: 'deleteTeacher',
           teacherId,
@@ -340,7 +344,7 @@ export const useTeacher = defineStore(
 
     async function teacherDuplicateLoad(
       teacherID?: number,
-      teacherEmail?: string
+      teacherEmail?: string,
     ) {
       const loaded = await loadTeacherDuplicate(null, {
         teacherID,
@@ -351,7 +355,7 @@ export const useTeacher = defineStore(
       }
     }
     async function duplicateTeacherCheck(
-      teacherEmail: string
+      teacherEmail: string,
     ): Promise<Teacher | null> {
       await teacherDuplicateLoad(undefined, teacherEmail)
       return resultTeacherDuplicate.value?.teacher ?? null
@@ -366,11 +370,11 @@ export const useTeacher = defineStore(
     async function removeUnlistedTeacher() {
       try {
         if (
-          (!teacher.value.email ||
-            !teacher.value.phone ||
-            !teacher.value.firstName ||
-            !teacher.value.lastName) &&
-          !!teacherCreated.value
+          (!teacher.value.email
+            || !teacher.value.phone
+            || !teacher.value.firstName
+            || !teacher.value.lastName)
+          && !!teacherCreated.value
         ) {
           await removeTeacherFromDatabaseAndRegistration()
           fieldStatusRef.value = {
@@ -379,7 +383,8 @@ export const useTeacher = defineStore(
           }
           chosenTeacher.value = null
           emailAlreadyExists.value = false
-        } else if (unlistedTeacher.value && teacher.value.id) {
+        }
+        else if (unlistedTeacher.value && teacher.value.id) {
           // TypeScript guard: id is checked above, so it's safe to assert as number
           const teacherId = teacher.value.id as number
           chosenTeacher.value = {
@@ -392,7 +397,8 @@ export const useTeacher = defineStore(
         }
         unlistedTeacher.value = false
         teacherCreated.value = false
-      } catch (error) {
+      }
+      catch (error) {
         console.error('Failed to remove unlisted teacher:', error, {
           operation: 'removeUnlistedTeacher',
         })
@@ -404,13 +410,14 @@ export const useTeacher = defineStore(
         if (runRemovalHook.value) {
           await removeUnlistedTeacher()
         }
-      } catch (error) {
+      }
+      catch (error) {
         console.error(
           'Failed to remove unlisted teacher on deactivate:',
           error,
           {
             operation: 'removeUnlistedTeacherOnDeactivate',
-          }
+          },
         )
       }
     }
@@ -419,13 +426,14 @@ export const useTeacher = defineStore(
       runRemovalHook.value = false
       try {
         await removeUnlistedTeacher()
-      } catch (error) {
+      }
+      catch (error) {
         console.error(
           'Failed to remove unlisted teacher before unmount:',
           error,
           {
             operation: 'removeUnlistedTeacherBeforeUnmount',
-          }
+          },
         )
       }
     }
@@ -437,7 +445,8 @@ export const useTeacher = defineStore(
           const teacherId = teacher.value.id as number
           await deleteTeacher(teacherId)
         }
-      } catch (error) {
+      }
+      catch (error) {
         console.error('Failed to remove teacher from database:', error, {
           operation: 'removeTeacherFromDatabaseAndRegistration',
           teacherId: teacher.value.id,
@@ -475,5 +484,5 @@ export const useTeacher = defineStore(
   },
   {
     persist: true,
-  }
+  },
 )

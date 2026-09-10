@@ -1,8 +1,9 @@
+import type { Item, ItemInput } from '~/graphql/gql/graphql'
 import {
+
   ItemCreateDocument,
+
   ItemsDocument,
-  type Item,
-  type ItemInput,
 } from '~/graphql/gql/graphql'
 
 export const useItemStore = defineStore('itemStore', () => {

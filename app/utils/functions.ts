@@ -15,7 +15,7 @@ export function updateNestedValue<T>(
   newValue: unknown,
   conditionKey: string,
   conditionValue: unknown,
-  targetKey?: string
+  targetKey?: string,
 ): T {
   if (isRef(data)) {
     data.value = updateNestedValue(
@@ -24,22 +24,22 @@ export function updateNestedValue<T>(
       newValue,
       conditionKey,
       conditionValue,
-      targetKey
+      targetKey,
     )
     return data
   }
 
   // If it's an array, map over it.
   if (Array.isArray(data)) {
-    return data.map((item) =>
+    return data.map(item =>
       updateNestedValue(
         item,
         keyToUpdate,
         newValue,
         conditionKey,
         conditionValue,
-        targetKey
-      )
+        targetKey,
+      ),
     ) as unknown as T
   }
   // If it's an object, iterate over its keys.
@@ -48,22 +48,23 @@ export function updateNestedValue<T>(
     const updated = { ...data } as Record<string, unknown>
 
     // If targetKey provided and exists in data, handle that specific property
-    if (targetKey && Object.prototype.hasOwnProperty.call(updated, targetKey)) {
+    if (targetKey && Object.hasOwn(updated, targetKey)) {
       const targetValue = updated[targetKey]
       // Check if targetKey points to an array or object and process accordingly
       if (Array.isArray(targetValue)) {
         // Process each item in the array
-        updated[targetKey] = targetValue.map((item) =>
+        updated[targetKey] = targetValue.map(item =>
           updateNestedValue(
             item,
             keyToUpdate,
             newValue,
             conditionKey,
             conditionValue,
-            undefined // Don't pass targetKey further as we're already inside it
-          )
+            undefined, // Don't pass targetKey further as we're already inside it
+          ),
         )
-      } else {
+      }
+      else {
         // Process as before for objects or other values
         updated[targetKey] = updateNestedValue(
           targetValue,
@@ -71,22 +72,23 @@ export function updateNestedValue<T>(
           newValue,
           conditionKey,
           conditionValue,
-          undefined // Don't pass targetKey further as we're already inside it
+          undefined, // Don't pass targetKey further as we're already inside it
         )
       }
     }
     // Check if this object has the condition key and if it matches the condition value
-    const shouldUpdate =
-      Object.prototype.hasOwnProperty.call(data, conditionKey) &&
-      (data as Record<string, unknown>)[conditionKey] === conditionValue
+    const shouldUpdate
+      = Object.hasOwn(data, conditionKey)
+        && (data as Record<string, unknown>)[conditionKey] === conditionValue
 
     for (const key in data) {
-      if (Object.prototype.hasOwnProperty.call(data, key)) {
+      if (Object.hasOwn(data, key)) {
         // Update the matching key only if the condition is met
         if (key === keyToUpdate && shouldUpdate) {
           updated[key] = newValue
           console.log(`Changed ${keyToUpdate} value to ${newValue}`)
-        } else if (!(targetKey && key === targetKey)) {
+        }
+        else if (!(targetKey && key === targetKey)) {
           // Otherwise, recurse into the property (skip if it was already handled by targetKey above)
           const value = (data as Record<string, unknown>)[key]
           updated[key] = updateNestedValue(
@@ -95,7 +97,7 @@ export function updateNestedValue<T>(
             newValue,
             conditionKey,
             conditionValue,
-            targetKey
+            targetKey,
           )
         }
       }
@@ -120,7 +122,7 @@ export function extractNestedValues<T>(
   data: unknown,
   keyToExtract: string,
   targetContainerKey?: string,
-  searchPath?: string | string[]
+  searchPath?: string | string[],
 ): Set<T> {
   // Handle Vue refs at the top level
   if (isRef(data)) {
@@ -128,15 +130,15 @@ export function extractNestedValues<T>(
       data.value,
       keyToExtract,
       targetContainerKey,
-      searchPath
+      searchPath,
     )
   }
 
   // Use the search path functionality if provided
   if (searchPath) {
     // Convert string path to array if needed (e.g., 'users.addresses' -> ['users', 'addresses'])
-    const pathParts =
-      typeof searchPath === 'string' ? searchPath.split('.') : searchPath
+    const pathParts
+      = typeof searchPath === 'string' ? searchPath.split('.') : searchPath
 
     // Navigate to the specified path
     let currentData = data
@@ -161,7 +163,7 @@ export function extractNestedValues<T>(
       return findAndExtractFromTargetKey(
         currentData,
         keyToExtract,
-        targetContainerKey
+        targetContainerKey,
       )
     }
 
@@ -185,7 +187,7 @@ export function extractNestedValues<T>(
 function findAndExtractFromTargetKey<T>(
   data: unknown,
   keyToExtract: string,
-  targetContainerKey: string
+  targetContainerKey: string,
 ): Set<T> {
   const result = new Set<T>()
 
@@ -194,7 +196,7 @@ function findAndExtractFromTargetKey<T>(
     return findAndExtractFromTargetKey(
       data.value,
       keyToExtract,
-      targetContainerKey
+      targetContainerKey,
     )
   }
 
@@ -204,7 +206,7 @@ function findAndExtractFromTargetKey<T>(
   }
 
   // If this object has the target container key, extract values from it
-  if (Object.prototype.hasOwnProperty.call(data, targetContainerKey)) {
+  if (Object.hasOwn(data, targetContainerKey)) {
     const containerValue = (data as Record<string, unknown>)[targetContainerKey]
     const containerUnwrapped = isRef(containerValue)
       ? containerValue.value
@@ -216,9 +218,9 @@ function findAndExtractFromTargetKey<T>(
       if (Array.isArray(containerUnwrapped)) {
         containerUnwrapped.forEach((item) => {
           if (
-            item &&
-            typeof item === 'object' &&
-            Object.prototype.hasOwnProperty.call(item, keyToExtract)
+            item
+            && typeof item === 'object'
+            && Object.hasOwn(item, keyToExtract)
           ) {
             const extractedValue = (item as Record<string, unknown>)[
               keyToExtract
@@ -226,14 +228,14 @@ function findAndExtractFromTargetKey<T>(
             result.add(
               isRef(extractedValue)
                 ? (extractedValue.value as T)
-                : (extractedValue as T)
+                : (extractedValue as T),
             )
           }
         })
       }
       // If the container is an object, check if it has the key
       else if (
-        Object.prototype.hasOwnProperty.call(containerUnwrapped, keyToExtract)
+        Object.hasOwn(containerUnwrapped, keyToExtract)
       ) {
         const extractedValue = (containerUnwrapped as Record<string, unknown>)[
           keyToExtract
@@ -241,7 +243,7 @@ function findAndExtractFromTargetKey<T>(
         result.add(
           isRef(extractedValue)
             ? (extractedValue.value as T)
-            : (extractedValue as T)
+            : (extractedValue as T),
         )
       }
     }
@@ -253,19 +255,20 @@ function findAndExtractFromTargetKey<T>(
       const itemValues = findAndExtractFromTargetKey<T>(
         item,
         keyToExtract,
-        targetContainerKey
+        targetContainerKey,
       )
-      itemValues.forEach((value) => result.add(value))
+      itemValues.forEach(value => result.add(value))
     })
-  } else {
+  }
+  else {
     Object.values(data).forEach((value) => {
       if (value !== null && typeof value === 'object') {
         const nestedValues = findAndExtractFromTargetKey<T>(
           value,
           keyToExtract,
-          targetContainerKey
+          targetContainerKey,
         )
-        nestedValues.forEach((value) => result.add(value))
+        nestedValues.forEach(value => result.add(value))
       }
     })
   }
@@ -278,7 +281,7 @@ function findAndExtractFromTargetKey<T>(
  */
 function extractNestedValuesInternal<T>(
   data: unknown,
-  keyToExtract: string
+  keyToExtract: string,
 ): Set<T> {
   // Create a Set to store the extracted values
   const result = new Set<T>()
@@ -288,7 +291,8 @@ function extractNestedValuesInternal<T>(
   // Helper to add an item ensuring value-based uniqueness
   const addUniqueItem = (item: unknown) => {
     // Skip undefined and null values
-    if (item === undefined || item === null) return
+    if (item === undefined || item === null)
+      return
 
     // Handle objects (including arrays) using JSON stringification for uniqueness
     if (typeof item === 'object') {
@@ -298,12 +302,14 @@ function extractNestedValuesInternal<T>(
           seenJsonValues.add(itemJson)
           result.add(item as T)
         }
-      } catch (e) {
+      }
+      catch (e) {
         console.error(e)
         // If item cannot be stringified (circular refs, etc.), fall back to reference equality
         result.add(item as T)
       }
-    } else {
+    }
+    else {
       // Primitives can use the Set's built-in uniqueness
       result.add(item as T)
     }
@@ -320,7 +326,7 @@ function extractNestedValuesInternal<T>(
   }
 
   // Check if current object has the key we're looking for
-  if (Object.prototype.hasOwnProperty.call(data, keyToExtract)) {
+  if (Object.hasOwn(data, keyToExtract)) {
     // Handle if the extracted value itself is a ref
     const extractedValue = (data as Record<string, unknown>)[keyToExtract]
     const unwrappedValue = isRef(extractedValue)
@@ -333,7 +339,8 @@ function extractNestedValuesInternal<T>(
       unwrappedValue.forEach((item) => {
         addUniqueItem(item)
       })
-    } else {
+    }
+    else {
       // Add the value as is, whether it's a primitive or object
       addUniqueItem(unwrappedValue)
     }
@@ -344,14 +351,15 @@ function extractNestedValuesInternal<T>(
     // For each item in array, extract values and add to result set
     data.forEach((item) => {
       const itemValues = extractNestedValuesInternal<T>(item, keyToExtract)
-      itemValues.forEach((value) => addUniqueItem(value))
+      itemValues.forEach(value => addUniqueItem(value))
     })
-  } else {
+  }
+  else {
     // For objects, recursively process each property
     Object.values(data).forEach((value) => {
       if (value !== null && typeof value === 'object') {
         const nestedValues = extractNestedValuesInternal<T>(value, keyToExtract)
-        nestedValues.forEach((value) => addUniqueItem(value))
+        nestedValues.forEach(value => addUniqueItem(value))
       }
     })
   }

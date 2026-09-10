@@ -1,10 +1,10 @@
 import { render } from '@testing-library/vue'
 import { DefaultApolloClient } from '@vue/apollo-composable'
-import { expect } from 'vitest'
-import '@testing-library/jest-dom'
 import { createMockClient } from 'mock-apollo-client'
-import Login from './Login.vue'
+import { expect } from 'vitest'
 import { SignInDocument } from '~/graphql/gql/graphql'
+import Login from './Login.vue'
+import '@testing-library/jest-dom/vitest'
 
 let mockClient: any
 let options: any
@@ -27,8 +27,7 @@ beforeEach(() => {
           isActive: true,
         },
       },
-    })
-  )
+    }))
   options = {
     global: {
       provide: {
@@ -60,7 +59,7 @@ describe('test Login and Registration component functions', () => {
       expect(
         queries.getByRole('checkbox', {
           name: 'Register for a New Account',
-        })
+        }),
       ).toBeInTheDocument()
     })
   })

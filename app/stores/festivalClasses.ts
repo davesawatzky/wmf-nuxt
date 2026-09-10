@@ -54,7 +54,8 @@ export const festivalClasses = defineStore(
     function removeDescription(index: number) {
       if (index >= 0 && index < descriptions.value.length) {
         descriptions.value.splice(index, 1)
-      } else {
+      }
+      else {
         console.error('Invalid index for removeDescription:', {
           operation: 'removeDescription',
           index,
@@ -67,5 +68,5 @@ export const festivalClasses = defineStore(
   },
   {
     persist: true,
-  }
+  },
 )

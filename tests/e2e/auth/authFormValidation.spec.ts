@@ -1,7 +1,7 @@
 // spec: specs/authentication-test-plan.md
 // section: 5. Form Validation
 
-import { test, expect } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 import { PageManager } from '../../pageObjects/pageManager'
 
 test.describe('5. Form Validation', () => {
@@ -26,13 +26,13 @@ test.describe('5. Form Validation', () => {
 
       // Verify validation errors appear (based on actual error messages)
       await expect(
-        page.locator('text=/email is a required field/i')
+        page.locator('text=/email is a required field/i'),
       ).toBeVisible()
       await expect(
-        page.locator('text=/password must be at least 8 characters/i')
+        page.locator('text=/password must be at least 8 characters/i'),
       ).toBeVisible()
       await expect(
-        page.locator('text=/password 2 must be at least 8 characters/i')
+        page.locator('text=/password 2 must be at least 8 characters/i'),
       ).toBeVisible()
     })
   })
@@ -151,10 +151,10 @@ test.describe('5. Form Validation', () => {
 
       // Verify validation errors (based on actual error messages)
       await expect(
-        page.locator('text=/email is a required field/i')
+        page.locator('text=/email is a required field/i'),
       ).toBeVisible()
       await expect(
-        page.locator('text=/password must be at least 8 characters/i')
+        page.locator('text=/password must be at least 8 characters/i'),
       ).toBeVisible()
     })
   })

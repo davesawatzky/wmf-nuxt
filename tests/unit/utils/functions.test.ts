@@ -1,7 +1,7 @@
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { updateNestedValue } from '../../../app/utils/functions'
 
-describe('Utils Functions', () => {
+describe('utils Functions', () => {
   describe('updateNestedValue', () => {
     it('should update a nested value in an object', () => {
       const data = {
@@ -17,7 +17,7 @@ describe('Utils Functions', () => {
         true, // newValue
         'id', // conditionKey
         2, // conditionValue
-        'users' // targetKey
+        'users', // targetKey
       )
 
       expect(result.users[1].active).toBe(true)
@@ -35,7 +35,7 @@ describe('Utils Functions', () => {
         'status', // keyToUpdate
         'approved', // newValue
         'id', // conditionKey
-        1 // conditionValue
+        1, // conditionValue
       )
 
       expect(result[0].status).toBe('approved')
@@ -53,7 +53,7 @@ describe('Utils Functions', () => {
         'new',
         'id',
         999, // non-existent id
-        'items'
+        'items',
       )
 
       expect(result.items[0].value).toBe('original')
@@ -75,11 +75,11 @@ describe('Utils Functions', () => {
         'dark',
         'key',
         'theme',
-        'config'
+        'config',
       )
 
       const themeValue = result.config.settings.find(
-        (s) => s.key === 'theme'
+        s => s.key === 'theme',
       )?.value
       expect(themeValue).toBe('dark')
     })

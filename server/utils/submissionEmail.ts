@@ -1,10 +1,10 @@
-import mjml2html from 'mjml'
-import {DateTime} from 'luxon'
-import { createSSRApp } from 'vue'
-import { renderToString } from '@vue/server-renderer'
 import type { CommunityGroup, SchoolGroup } from '~/graphql/gql/graphql'
+import { renderToString } from '@vue/server-renderer'
+import { DateTime } from 'luxon'
+import mjml2html from 'mjml'
+import { createSSRApp } from 'vue'
 
-export async function renderSubmissionEmail( payload:EmailPayload ) {
+export async function renderSubmissionEmail(payload: EmailPayload) {
   // Create an instance of vue
   try {
     const app = createSSRApp({
@@ -37,7 +37,7 @@ export async function renderSubmissionEmail( payload:EmailPayload ) {
           return this.communityGroups.find((item: CommunityGroup) => item.id === id)
         },
 
-        dateFunction( date: Date | undefined ) {
+        dateFunction(date: Date | undefined) {
           if (date) {
             const dateString = date.toString()
             const newDate = DateTime.fromISO(dateString)
@@ -558,8 +558,9 @@ export async function renderSubmissionEmail( payload:EmailPayload ) {
     html = html.replace('<!--[-->', '').replace('<!--]-->', '')
 
     // Let mjml do its magic
-    return mjml2html(html).html
-  } catch (error) {
+    return (await mjml2html(html)).html
+  }
+  catch (error) {
     console.error('Error: ', error)
   }
 }

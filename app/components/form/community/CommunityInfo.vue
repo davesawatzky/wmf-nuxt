@@ -1,150 +1,158 @@
 <script lang="ts" setup>
-  import * as yup from 'yup'
-  import 'yup-phone-lite'
-  import { useCommunity } from '~/stores/useCommunity'
-  import { provinces } from '#imports'
-  import type { Community } from '~/graphql/gql/graphql'
-  import { useToast } from 'vue-toastification'
+import type { Community } from '~/graphql/gql/graphql'
+import { useToast } from 'vue-toastification'
+import * as yup from 'yup'
+import { provinces } from '#imports'
+import { useCommunity } from '~/stores/useCommunity'
+import 'yup-phone-lite'
 
-  const communityStore = useCommunity()
-  const fieldConfigStore = useFieldConfig()
-  const toast = useToast()
+const communityStore = useCommunity()
+const fieldConfigStore = useFieldConfig()
+const toast = useToast()
 
-  const status = reactive<Status>({
-    name: communityStore.community.name ? StatusEnum.saved : StatusEnum.null,
-    address: communityStore.community.address
-      ? StatusEnum.saved
-      : StatusEnum.null,
-    city: communityStore.community.city ? StatusEnum.saved : StatusEnum.null,
-    province: communityStore.community.province
-      ? StatusEnum.saved
-      : StatusEnum.null,
-    postalCode: communityStore.community.postalCode
-      ? StatusEnum.saved
-      : StatusEnum.null,
-    phone: communityStore.community.phone ? StatusEnum.saved : StatusEnum.null,
-    email: communityStore.community.email ? StatusEnum.saved : StatusEnum.null,
-  })
+const status = reactive<Status>({
+  name: communityStore.community.name ? StatusEnum.saved : StatusEnum.null,
+  address: communityStore.community.address
+    ? StatusEnum.saved
+    : StatusEnum.null,
+  city: communityStore.community.city ? StatusEnum.saved : StatusEnum.null,
+  province: communityStore.community.province
+    ? StatusEnum.saved
+    : StatusEnum.null,
+  postalCode: communityStore.community.postalCode
+    ? StatusEnum.saved
+    : StatusEnum.null,
+  phone: communityStore.community.phone ? StatusEnum.saved : StatusEnum.null,
+  email: communityStore.community.email ? StatusEnum.saved : StatusEnum.null,
+})
 
-  // async function fieldStatus(stat: string, fieldName: string) {
-  //   await nextTick()
-  //   status[fieldName] = StatusEnum.pending
-  //   await communityStore.updateCommunity(fieldName)
-  //   if (stat === 'saved') status[fieldName] = StatusEnum.saved
-  //   else if (stat === 'remove') status[fieldName] = StatusEnum.removed
-  //   else status[fieldName] = StatusEnum.null
-  // }
+// async function fieldStatus(stat: string, fieldName: string) {
+//   await nextTick()
+//   status[fieldName] = StatusEnum.pending
+//   await communityStore.updateCommunity(fieldName)
+//   if (stat === 'saved') status[fieldName] = StatusEnum.saved
+//   else if (stat === 'remove') status[fieldName] = StatusEnum.removed
+//   else status[fieldName] = StatusEnum.null
+// }
 
-  async function fieldStatus(stat: string, fieldName: string) {
-    await nextTick()
-    if (stat === 'valid') {
-      status[fieldName] = StatusEnum.pending
-      const result = await communityStore.updateCommunity(fieldName)
-      status[fieldName] = StatusEnum.null
-      if (result === 'complete') {
-        if (communityStore.community[fieldName as keyof Community] !== null) {
-          status[fieldName] = StatusEnum.saved
-        }
-      } else {
-        console.error('Could not update community field:', fieldName)
-        toast.error(
-          'Could not update field.  Please exit and reload Registration'
-        )
-      }
-    } else if (stat === 'invalid') {
-      status[fieldName] = StatusEnum.pending
-      const result = await communityStore.updateCommunity(fieldName)
-      status[fieldName] = StatusEnum.null
-      if (result === 'complete') {
-        status[fieldName] = StatusEnum.removed
-      } else {
-        console.error('Could not remove invalid community field:', fieldName)
-        toast.error(
-          'Could not remove invalid field. Please exit and reload Registration'
-        )
-      }
-    } else if (stat === 'removed') {
-      status[fieldName] = StatusEnum.pending
-      const result = await communityStore.updateCommunity(fieldName)
-      status[fieldName] = StatusEnum.null
-      if (result === 'complete') {
-        status[fieldName] = StatusEnum.removed
-      } else {
-        console.error('Could not remove community field:', fieldName)
-        toast.error(
-          'Could not remove field.  Please exit and reload Registration'
-        )
+async function fieldStatus(stat: string, fieldName: string) {
+  await nextTick()
+  if (stat === 'valid') {
+    status[fieldName] = StatusEnum.pending
+    const result = await communityStore.updateCommunity(fieldName)
+    status[fieldName] = StatusEnum.null
+    if (result === 'complete') {
+      if (communityStore.community[fieldName as keyof Community] !== null) {
+        status[fieldName] = StatusEnum.saved
       }
     }
+    else {
+      console.error('Could not update community field:', fieldName)
+      toast.error(
+        'Could not update field.  Please exit and reload Registration',
+      )
+    }
   }
+  else if (stat === 'invalid') {
+    status[fieldName] = StatusEnum.pending
+    const result = await communityStore.updateCommunity(fieldName)
+    status[fieldName] = StatusEnum.null
+    if (result === 'complete') {
+      status[fieldName] = StatusEnum.removed
+    }
+    else {
+      console.error('Could not remove invalid community field:', fieldName)
+      toast.error(
+        'Could not remove invalid field. Please exit and reload Registration',
+      )
+    }
+  }
+  else if (stat === 'removed') {
+    status[fieldName] = StatusEnum.pending
+    const result = await communityStore.updateCommunity(fieldName)
+    status[fieldName] = StatusEnum.null
+    if (result === 'complete') {
+      status[fieldName] = StatusEnum.removed
+    }
+    else {
+      console.error('Could not remove community field:', fieldName)
+      toast.error(
+        'Could not remove field.  Please exit and reload Registration',
+      )
+    }
+  }
+}
 
-  const validationSchema = toTypedSchema(
-    yup.object({
-      communityName: yup.string().trim().required('Required'),
-      address: yup.string().trim().required(),
-      city: yup
-        .string()
-        .trim()
-        .max(20, 'Too many characters')
-        .required('Required'),
-      province: yup.string().max(3).required(),
-      postalCode: yup
-        .string()
-        .trim()
-        .matches(
-          /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i,
-          'Enter a valid postal code'
-        )
-        .required('Required'),
-      phone: yup
-        .string()
-        .trim()
-        .phone('CA', 'Please enter a valid phone number')
-        .required('Required'),
-      email: yup
-        .string()
-        .trim()
-        .email('Please enter a valid email address')
-        .required('Required'),
-    })
-  )
+const validationSchema = toTypedSchema(
+  yup.object({
+    communityName: yup.string().trim().required('Required'),
+    address: yup.string().trim().required(),
+    city: yup
+      .string()
+      .trim()
+      .max(20, 'Too many characters')
+      .required('Required'),
+    province: yup.string().max(3).required(),
+    postalCode: yup
+      .string()
+      .trim()
+      .matches(
+        /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i,
+        'Enter a valid postal code',
+      )
+      .required('Required'),
+    phone: yup
+      .string()
+      .trim()
+      .phone('CA', 'Please enter a valid phone number')
+      .required('Required'),
+    email: yup
+      .string()
+      .trim()
+      .email('Please enter a valid email address')
+      .required('Required'),
+  }),
+)
 
-  const { validate } = useForm({
-    validationSchema,
-    validateOnMount: true,
-  })
-  onMounted(() => {
-    validate()
-  })
-  onActivated(() => {
-    validate()
-  })
+const { validate } = useForm({
+  validationSchema,
+  validateOnMount: true,
+})
+onMounted(() => {
+  validate()
+})
+onActivated(() => {
+  validate()
+})
 
-  const communityKeys = fieldConfigStore.performerTypeFields('Community')
-  watchEffect(
-    () => {
-      let count = 0
-      for (const key of communityKeys) {
-        if (status[key as keyof Community] !== StatusEnum.saved) {
-          count++
-        }
+const communityKeys = fieldConfigStore.performerTypeFields('Community')
+watchEffect(
+  () => {
+    let count = 0
+    for (const key of communityKeys) {
+      if (status[key as keyof Community] !== StatusEnum.saved) {
+        count++
       }
-      communityStore.communityErrors = count
-    },
-    { flush: 'post' }
-  )
+    }
+    communityStore.communityErrors = count
+  },
+  { flush: 'post' },
+)
 
-  const maskaUcaseOption = {
-    preProcess: (val: string) => val.toUpperCase(),
-  }
-  defineExpose({ maskaUcaseOption })
+const maskaUcaseOption = {
+  preProcess: (val: string) => val.toUpperCase(),
+}
+defineExpose({ maskaUcaseOption })
 </script>
 
 <template>
   <div
     v-auto-animate
-    class="pt-8">
-    <h2 class="pb-4">Community Information</h2>
+    class="pt-8"
+  >
+    <h2 class="pb-4">
+      Community Information
+    </h2>
     <div class="grid grid-cols-12 gap-x-3 gap-y-2">
       <div class="col-span-12 md:col-span-6">
         <BaseInput
@@ -155,7 +163,8 @@
           label="Community Name"
           @change-status="
             async (stat: string) => await fieldStatus(stat, 'name')
-          " />
+          "
+        />
       </div>
       <div class="col-span-12 sm:col-span-8 md:col-span-6">
         <BaseInput
@@ -167,7 +176,8 @@
           label="Mailing Address"
           @change-status="
             async (stat: string) => await fieldStatus(stat, 'address')
-          " />
+          "
+        />
       </div>
       <div class="col-span-6 sm:col-span-4 md:col-span-5">
         <BaseInput
@@ -179,7 +189,8 @@
           label="City/Town"
           @change-status="
             async (stat: string) => await fieldStatus(stat, 'city')
-          " />
+          "
+        />
       </div>
       <div class="col-span-6 sm:col-span-3 md:col-span-3">
         <BaseSelect
@@ -191,7 +202,8 @@
           :options="provinces"
           @change-status="
             async (stat: string) => await fieldStatus(stat, 'province')
-          " />
+          "
+        />
       </div>
       <div class="col-span-6 sm:col-span-4">
         <BaseInput
@@ -208,7 +220,8 @@
           label="Postal Code"
           @change-status="
             async (stat: string) => await fieldStatus(stat, 'postalCode')
-          " />
+          "
+        />
       </div>
       <div class="col-span-6 sm:col-span-5 md:col-span-6">
         <BaseInput
@@ -224,7 +237,8 @@
           label="Phone Number"
           @change-status="
             async (stat: string) => await fieldStatus(stat, 'phone')
-          " />
+          "
+        />
       </div>
       <div class="col-span-12 sm:col-span-12 md:col-span-6">
         <BaseInput
@@ -237,7 +251,8 @@
           label="Email Address"
           @change-status="
             async (stat: string) => await fieldStatus(stat, 'email')
-          " />
+          "
+        />
       </div>
     </div>
   </div>

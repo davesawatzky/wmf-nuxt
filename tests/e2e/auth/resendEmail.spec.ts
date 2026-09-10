@@ -1,9 +1,9 @@
 // spec: specs/authentication-test-plan.md
 // section: 8. Resend Verification/Reset Emails
 
-import { test, expect } from '@playwright/test'
-import { PageManager } from '../../pageObjects/pageManager'
+import { expect, test } from '@playwright/test'
 import { AuthHelper } from '../../helpers/authHelper'
+import { PageManager } from '../../pageObjects/pageManager'
 
 test.describe('8. Resend Verification/Reset Emails', () => {
   let pm: PageManager
@@ -24,7 +24,7 @@ test.describe('8. Resend Verification/Reset Emails', () => {
         'Resend',
         'Test',
         email,
-        'Test123!@#'
+        'Test123!@#',
       )
 
       // Verify registration was successful
@@ -49,7 +49,7 @@ test.describe('8. Resend Verification/Reset Emails', () => {
       const emailReceived = await AuthHelper.waitForEmailInMailHog(
         email,
         'WMF account verification',
-        10000
+        10000,
       )
       expect(emailReceived).toBe(true)
     })
@@ -78,7 +78,7 @@ test.describe('8. Resend Verification/Reset Emails', () => {
       const emailReceived = await AuthHelper.waitForEmailInMailHog(
         'reset.pending@test.com',
         'WMF password reset',
-        10000
+        10000,
       )
       expect(emailReceived).toBe(true)
     })

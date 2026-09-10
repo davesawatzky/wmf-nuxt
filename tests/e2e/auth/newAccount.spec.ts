@@ -1,9 +1,9 @@
 // spec: specs/authentication-test-plan.md
 // section: 1. New Account Registration
 
-import { test, expect } from '@playwright/test'
-import { PageManager } from '../../pageObjects/pageManager'
+import { expect, test } from '@playwright/test'
 import { AuthHelper } from '../../helpers/authHelper'
+import { PageManager } from '../../pageObjects/pageManager'
 
 test.describe('1. New Account Registration', () => {
   let pm: PageManager
@@ -33,7 +33,7 @@ test.describe('1. New Account Registration', () => {
       await expect(page.locator('input[name="privateTeacher"]')).toBeVisible()
       await expect(page.locator('input[name="schoolTeacher"]')).toBeVisible()
       await expect(
-        page.getByRole('button', { name: /register new account/i })
+        page.getByRole('button', { name: /register new account/i }),
       ).toBeVisible()
     })
 
@@ -50,7 +50,7 @@ test.describe('1. New Account Registration', () => {
         'John',
         'Doe',
         `john.doe.${Date.now()}@test.com`,
-        'Test123!@#'
+        'Test123!@#',
       )
 
       const email = await page.locator('input[name="email"]').inputValue()
@@ -68,7 +68,7 @@ test.describe('1. New Account Registration', () => {
       const emailReceived = await AuthHelper.waitForEmailInMailHog(
         email,
         'WMF account verification',
-        30000
+        30000,
       )
       expect(emailReceived).toBe(true)
     })
@@ -102,7 +102,7 @@ test.describe('1. New Account Registration', () => {
         'Smith',
         email,
         'Teacher456!@#',
-        'Piano'
+        'Piano',
       )
 
       // Verify success
@@ -113,7 +113,7 @@ test.describe('1. New Account Registration', () => {
       const emailReceived = await AuthHelper.waitForEmailInMailHog(
         email,
         'WMF account verification',
-        30000
+        30000,
       )
       expect(emailReceived).toBe(true)
     })
@@ -132,7 +132,7 @@ test.describe('1. New Account Registration', () => {
         'Michael',
         'Johnson',
         email,
-        'School789!@#'
+        'School789!@#',
       )
 
       // Verify success
@@ -142,7 +142,7 @@ test.describe('1. New Account Registration', () => {
       const emailReceived = await AuthHelper.waitForEmailInMailHog(
         email,
         'WMF account verification',
-        30000
+        30000,
       )
       expect(emailReceived).toBe(true)
     })
@@ -171,7 +171,7 @@ test.describe('1. New Account Registration', () => {
         'Williams',
         email,
         'Both000!@#',
-        'Violin'
+        'Violin',
       )
 
       // Submit
@@ -184,7 +184,7 @@ test.describe('1. New Account Registration', () => {
       const emailReceived = await AuthHelper.waitForEmailInMailHog(
         email,
         'WMF account verification',
-        30000
+        30000,
       )
       expect(emailReceived).toBe(true)
     })

@@ -1,16 +1,16 @@
-import { useFieldConfig } from '~/stores/useFieldConfig'
-import { usePerformers } from '~/stores/usePerformer'
+import type {
+  Group,
+  GroupCreateMutation,
+  GroupInput,
+} from '~/graphql/gql/graphql'
 import {
   GroupCreateDocument,
   GroupDeleteDocument,
   GroupInfoDocument,
   GroupUpdateDocument,
 } from '~/graphql/gql/graphql'
-import type {
-  Group,
-  GroupCreateMutation,
-  GroupInput,
-} from '~/graphql/gql/graphql'
+import { useFieldConfig } from '~/stores/useFieldConfig'
+import { usePerformers } from '~/stores/usePerformer'
 
 export const useGroup = defineStore(
   'group',
@@ -29,28 +29,28 @@ export const useGroup = defineStore(
       () => performerStore.numberOfPerformers,
       async (newValue) => {
         if (
-          group.value.numberOfPerformers !== newValue &&
-          appStore.performerType === 'GROUP'
+          group.value.numberOfPerformers !== newValue
+          && appStore.performerType === 'GROUP'
         ) {
           group.value.numberOfPerformers = newValue
           await updateGroup('numberOfPerformers')
         }
       },
-      { flush: 'post' }
+      { flush: 'post' },
     )
 
     watch(
       () => performerStore.averageAge,
       async (newValue) => {
         if (
-          group.value.age !== newValue &&
-          appStore.performerType === 'GROUP'
+          group.value.age !== newValue
+          && appStore.performerType === 'GROUP'
         ) {
           group.value.age = newValue
           await updateGroup('age')
         }
       },
-      { flush: 'post' }
+      { flush: 'post' },
     )
 
     /**
@@ -96,10 +96,11 @@ export const useGroup = defineStore(
     }
     onCreateGroupDone((result) => {
       if (result.data?.groupCreate.group) {
-        const group: GroupCreateMutation['groupCreate']['group'] =
-          result.data.groupCreate.group
+        const group: GroupCreateMutation['groupCreate']['group']
+          = result.data.groupCreate.group
         addToStore(group)
-      } else if (result.data?.groupCreate.userErrors) {
+      }
+      else if (result.data?.groupCreate.userErrors) {
         console.log(result.data.groupCreate.userErrors)
       }
     })
@@ -147,14 +148,14 @@ export const useGroup = defineStore(
       {
         fetchPolicy: 'network-only',
         errorPolicy: 'all',
-      }
+      },
     )
     async function updateGroup(field?: string) {
       const { id, __typename, ...groupProps } = group.value
       let groupField = null
       if (field && Object.keys(groupProps).includes(field)) {
         groupField = Object.fromEntries(
-          Array(Object.entries(groupProps).find((item) => item[0] === field)!)
+          new Array(Object.entries(groupProps).find(item => item[0] === field)!),
         )
       }
       try {
@@ -163,7 +164,8 @@ export const useGroup = defineStore(
           group: <GroupInput>(groupField || groupProps),
         })
         return 'complete'
-      } catch (error) {
+      }
+      catch (error) {
         console.error(error)
         return 'error'
       }
@@ -206,5 +208,5 @@ export const useGroup = defineStore(
   },
   {
     persist: true,
-  }
+  },
 )

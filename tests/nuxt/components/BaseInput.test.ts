@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mount } from '@vue/test-utils'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { ref } from 'vue'
 import BaseInput from '../../../app/components/base/BaseInput.vue'
 import { StatusEnum } from '../../../app/utils/types'
@@ -44,7 +44,7 @@ vi.mock('vee-validate', () => ({
   useField: vi.fn(() => mockField),
 }))
 
-describe('BaseInput Component', () => {
+describe('baseInput Component', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockField.value.value = ''

@@ -28,7 +28,7 @@ export default defineEventHandler(async (payload) => {
     html,
   }
 
-  await transporter.sendMail(options).catch((error) => console.error(error))
+  await transporter.sendMail(options).catch(error => console.error(error))
 
   return { message: 'Email sent from send-email.post.ts' }
 })

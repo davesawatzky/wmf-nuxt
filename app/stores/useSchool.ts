@@ -1,15 +1,15 @@
-import { useFieldConfig } from '~/stores/useFieldConfig'
+import type {
+  School,
+  SchoolCreateMutation,
+  SchoolInput,
+} from '~/graphql/gql/graphql'
 import {
   SchoolCreateDocument,
   SchoolDeleteDocument,
   SchoolInfoDocument,
   SchoolUpdateDocument,
 } from '~/graphql/gql/graphql'
-import type {
-  School,
-  SchoolCreateMutation,
-  SchoolInput,
-} from '~/graphql/gql/graphql'
+import { useFieldConfig } from '~/stores/useFieldConfig'
 
 export const useSchool = defineStore(
   'school',
@@ -101,16 +101,17 @@ export const useSchool = defineStore(
 
     onSchoolCreateDone((result) => {
       if (result.data?.schoolCreate.school) {
-        const school: SchoolCreateMutation['schoolCreate']['school'] =
-          result.data.schoolCreate.school
+        const school: SchoolCreateMutation['schoolCreate']['school']
+          = result.data.schoolCreate.school
         addToStore(school)
-      } else if (result.data?.schoolCreate.userErrors) {
+      }
+      else if (result.data?.schoolCreate.userErrors) {
         console.error(
           'School creation failed:',
           result.data.schoolCreate.userErrors,
           {
             operation: 'createSchool',
-          }
+          },
         )
       }
     })
@@ -165,7 +166,7 @@ export const useSchool = defineStore(
       {
         fetchPolicy: 'network-only',
         errorPolicy: 'all',
-      }
+      },
     )
 
     async function updateSchool(field?: string) {
@@ -174,7 +175,7 @@ export const useSchool = defineStore(
 
       if (field && Object.keys(schoolProps).includes(field)) {
         schoolField = Object.fromEntries(
-          Array(Object.entries(schoolProps).find((item) => item[0] === field)!)
+          new Array(Object.entries(schoolProps).find(item => item[0] === field)!),
         )
       }
 
@@ -184,7 +185,8 @@ export const useSchool = defineStore(
           school: schoolField || (schoolProps as SchoolInput),
         })
         return 'complete'
-      } catch (error) {
+      }
+      catch (error) {
         console.error('Failed to update school:', error, {
           operation: 'updateSchool',
           field,
@@ -213,7 +215,8 @@ export const useSchool = defineStore(
     async function deleteSchool(schoolId: number) {
       try {
         await schoolDelete({ schoolId })
-      } catch (error) {
+      }
+      catch (error) {
         console.error('Failed to delete school:', error, {
           operation: 'deleteSchool',
           schoolId,
@@ -246,5 +249,5 @@ export const useSchool = defineStore(
   },
   {
     persist: true,
-  }
+  },
 )

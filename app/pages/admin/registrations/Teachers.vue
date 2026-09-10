@@ -1,34 +1,34 @@
 <script setup lang="ts">
-  import { FilterMatchMode, FilterOperator } from '@primevue/core/api'
-  import type { Registration, Teacher } from '~/graphql/gql/graphql'
+import type { Registration, Teacher } from '~/graphql/gql/graphql'
+import { FilterMatchMode, FilterOperator } from '@primevue/core/api'
 
-  definePageMeta({
-    layout: 'admin',
-    middleware: 'admin',
-  })
+definePageMeta({
+  layout: 'admin',
+  middleware: 'admin',
+})
 
-  const selectedTeacher = ref()
-  const expandedRows = ref({})
-  const expandedRowsRegistrations = ref({})
-  const pagination = ref({
-    currentPage: 1,
-    rowsPerPage: 20,
-  })
+const selectedTeacher = ref()
+const expandedRows = ref({})
+const expandedRowsRegistrations = ref({})
+const pagination = ref({
+  currentPage: 1,
+  rowsPerPage: 20,
+})
 
-  const variables = computed(() => {
-    return {
-      offset: (pagination.value.currentPage - 1) * pagination.value.rowsPerPage,
-      limit: pagination.value.rowsPerPage,
-      teacherType: 'privateTeacher',
-    }
-  })
+const variables = computed(() => {
+  return {
+    offset: (pagination.value.currentPage - 1) * pagination.value.rowsPerPage,
+    limit: pagination.value.rowsPerPage,
+    teacherType: 'privateTeacher',
+  }
+})
 
-  onBeforeMount(() => {
-    initFilters()
-  })
+onBeforeMount(() => {
+  initFilters()
+})
 
-  const { result, loading } = useQuery(
-    gql`
+const { result, loading } = useQuery(
+  gql`
       query AdminPrivateTeachers($teacherType: String!) {
         teachers(teacherType: $teacherType) {
           id
@@ -62,132 +62,132 @@
         }
       }
     `,
-    () => variables.value,
-    {
-      fetchPolicy: 'no-cache',
-      errorPolicy: 'all',
-    }
-  )
+  () => variables.value,
+  {
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  },
+)
 
-  function clearFilter() {
-    initFilters()
+function clearFilter() {
+  initFilters()
+}
+
+const filters = ref()
+function initFilters() {
+  filters.value = {
+    global: {
+      value: null,
+      matchMode: FilterMatchMode.CONTAINS,
+    },
+    id: {
+      operator: FilterOperator.AND,
+      constraints: [
+        {
+          value: null,
+          matchMode: FilterMatchMode.EQUALS,
+        },
+      ],
+    },
+    firstName: {
+      operator: FilterOperator.AND,
+      constraints: [
+        {
+          value: null,
+          matchMode: FilterMatchMode.CONTAINS,
+        },
+      ],
+    },
+    lastName: {
+      operator: FilterOperator.AND,
+      constraints: [
+        {
+          value: null,
+          matchMode: FilterMatchMode.CONTAINS,
+        },
+      ],
+    },
+    address: {
+      operator: FilterOperator.AND,
+      constraints: [
+        {
+          value: null,
+          matchMode: FilterMatchMode.CONTAINS,
+        },
+      ],
+    },
+    city: {
+      operator: FilterOperator.AND,
+      constraints: [
+        {
+          value: null,
+          matchMode: FilterMatchMode.CONTAINS,
+        },
+      ],
+    },
+    province: {
+      operator: FilterOperator.AND,
+      constraints: [
+        {
+          value: null,
+          matchMode: FilterMatchMode.EQUALS,
+        },
+      ],
+    },
+    postalCode: {
+      operator: FilterOperator.AND,
+      constraints: [
+        {
+          value: null,
+          matchMode: FilterMatchMode.STARTS_WITH,
+        },
+      ],
+    },
+    email: {
+      operator: FilterOperator.AND,
+      constraints: [
+        {
+          value: null,
+          matchMode: FilterMatchMode.CONTAINS,
+        },
+      ],
+    },
+    phone: {
+      operator: FilterOperator.AND,
+      constraints: [
+        {
+          value: null,
+          matchMode: FilterMatchMode.STARTS_WITH,
+        },
+      ],
+    },
+    instrument: {
+      operator: FilterOperator.AND,
+      constraints: [
+        {
+          value: null,
+          matchMode: FilterMatchMode.CONTAINS,
+        },
+      ],
+    },
   }
+}
 
-  const filters = ref()
-  function initFilters() {
-    filters.value = {
-      global: {
-        value: null,
-        matchMode: FilterMatchMode.CONTAINS,
-      },
-      id: {
-        operator: FilterOperator.AND,
-        constraints: [
-          {
-            value: null,
-            matchMode: FilterMatchMode.EQUALS,
-          },
-        ],
-      },
-      firstName: {
-        operator: FilterOperator.AND,
-        constraints: [
-          {
-            value: null,
-            matchMode: FilterMatchMode.CONTAINS,
-          },
-        ],
-      },
-      lastName: {
-        operator: FilterOperator.AND,
-        constraints: [
-          {
-            value: null,
-            matchMode: FilterMatchMode.CONTAINS,
-          },
-        ],
-      },
-      address: {
-        operator: FilterOperator.AND,
-        constraints: [
-          {
-            value: null,
-            matchMode: FilterMatchMode.CONTAINS,
-          },
-        ],
-      },
-      city: {
-        operator: FilterOperator.AND,
-        constraints: [
-          {
-            value: null,
-            matchMode: FilterMatchMode.CONTAINS,
-          },
-        ],
-      },
-      province: {
-        operator: FilterOperator.AND,
-        constraints: [
-          {
-            value: null,
-            matchMode: FilterMatchMode.EQUALS,
-          },
-        ],
-      },
-      postalCode: {
-        operator: FilterOperator.AND,
-        constraints: [
-          {
-            value: null,
-            matchMode: FilterMatchMode.STARTS_WITH,
-          },
-        ],
-      },
-      email: {
-        operator: FilterOperator.AND,
-        constraints: [
-          {
-            value: null,
-            matchMode: FilterMatchMode.CONTAINS,
-          },
-        ],
-      },
-      phone: {
-        operator: FilterOperator.AND,
-        constraints: [
-          {
-            value: null,
-            matchMode: FilterMatchMode.STARTS_WITH,
-          },
-        ],
-      },
-      instrument: {
-        operator: FilterOperator.AND,
-        constraints: [
-          {
-            value: null,
-            matchMode: FilterMatchMode.CONTAINS,
-          },
-        ],
-      },
-    }
-  }
-
-  // Process data for date filtering
-  // Changes date and time formats in submittedAt
-  // from string to timestamp for proper filtering
-  // const processedRegistrations = computed(() => {
-  //   if (!result.value?.registrations) return []
-  //   const registrations = result.value.registrations.filter(
-  //     (registration: Registration) => {
-  //       return registration.confirmation !== null
-  //     }
-  //   )
-  //   console.log('Registrations: ', registrations)
-  //   const newData = extractNestedValues(registrations, 'registeredClasses')
-  //   console.log(Array.from(newData))
-  //   return Array.from(newData)
-  // })
+// Process data for date filtering
+// Changes date and time formats in submittedAt
+// from string to timestamp for proper filtering
+// const processedRegistrations = computed(() => {
+//   if (!result.value?.registrations) return []
+//   const registrations = result.value.registrations.filter(
+//     (registration: Registration) => {
+//       return registration.confirmation !== null
+//     }
+//   )
+//   console.log('Registrations: ', registrations)
+//   const newData = extractNestedValues(registrations, 'registeredClasses')
+//   console.log(Array.from(newData))
+//   return Array.from(newData)
+// })
 </script>
 
 <template>
@@ -197,7 +197,9 @@
         <h3>All Private Teachers</h3>
       </template>
       <template #content>
-        <div v-if="loading">Loading...</div>
+        <div v-if="loading">
+          Loading...
+        </div>
         <div v-else>
           <PVDataTable
             v-model:expanded-rows="expandedRows"
@@ -244,48 +246,58 @@
               'email',
               'phone',
               'instrument',
-            ]">
+            ]"
+          >
             <template #header>
               <div class="flex justify-between">
                 <PVButton
                   type="button"
                   label="Clear All"
                   outlined
-                  @click="clearFilter()">
+                  @click="clearFilter()"
+                >
                   <template #icon>
                     <Icon
                       name="mdi:filter-remove"
-                      size="1.25rem" />
+                      size="1.25rem"
+                    />
                   </template>
                 </PVButton>
                 <PVIconField>
                   <PVInputIcon>
                     <Icon
                       name="fluent:search-20-filled"
-                      size="1.25rem" />
+                      size="1.25rem"
+                    />
                   </PVInputIcon>
                   <PVInputText
-                    v-model="filters['global'].value"
-                    placeholder="Keyword Search" />
+                    v-model="filters.global.value"
+                    placeholder="Keyword Search"
+                  />
                 </PVIconField>
               </div>
             </template>
-            <template #empty> No items found. </template>
+            <template #empty>
+              No items found.
+            </template>
 
             <PVColumn
               expander
-              style="width: 5rem" />
+              style="width: 5rem"
+            />
             <PVColumn
               field="id"
               header="ID"
               data-type="text"
               show-clear-button
-              sortable>
+              sortable
+            >
               <template #filter="{ filterModel, filterCallback }">
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by First Name"
-                  @input="filterCallback()" />
+                  @input="filterCallback()"
+                />
               </template>
             </PVColumn>
             <PVColumn header="Edit">
@@ -293,9 +305,10 @@
                 <PVButton
                   icon="material-symbols:edit"
                   class="px-2 py-1 w-20"
-                  @click="() => (selectedTeacher = slotProps.data)">
-                  Edit</PVButton
+                  @click="() => (selectedTeacher = slotProps.data)"
                 >
+                  Edit
+                </PVButton>
               </template>
             </PVColumn>
             <PVColumn
@@ -303,12 +316,14 @@
               header="First Name"
               data-type="text"
               show-clear-button
-              sortable>
+              sortable
+            >
               <template #filter="{ filterModel, filterCallback }">
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by First Name"
-                  @input="filterCallback()" />
+                  @input="filterCallback()"
+                />
               </template>
             </PVColumn>
             <PVColumn
@@ -316,12 +331,14 @@
               header="Last Name"
               data-type="text"
               show-clear-button
-              sortable>
+              sortable
+            >
               <template #filter="{ filterModel, filterCallback }">
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by Last Name"
-                  @input="filterCallback()" />
+                  @input="filterCallback()"
+                />
               </template>
             </PVColumn>
             <PVColumn
@@ -329,12 +346,14 @@
               header="Address"
               data-type="text"
               show-clear-button
-              sortable>
+              sortable
+            >
               <template #filter="{ filterModel, filterCallback }">
                 <PVInputNumber
                   v-model="filterModel.value"
                   placeholder="Search by Address"
-                  @input="filterCallback()" />
+                  @input="filterCallback()"
+                />
               </template>
             </PVColumn>
             <PVColumn
@@ -342,12 +361,14 @@
               header="City"
               data-type="text"
               show-clear-button
-              sortable>
+              sortable
+            >
               <template #filter="{ filterModel, filterCallback }">
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by City"
-                  @input="filterCallback()" />
+                  @input="filterCallback()"
+                />
               </template>
             </PVColumn>
             <PVColumn
@@ -355,12 +376,14 @@
               header="Province"
               data-type="text"
               show-clear-button
-              sortable>
+              sortable
+            >
               <template #filter="{ filterModel, filterCallback }">
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by Prov"
-                  @input="filterCallback()" />
+                  @input="filterCallback()"
+                />
               </template>
             </PVColumn>
             <PVColumn
@@ -368,12 +391,14 @@
               header="Postal Code"
               data-type="text"
               show-clear-button
-              sortable>
+              sortable
+            >
               <template #filter="{ filterModel, filterCallback }">
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by Postal Code"
-                  @input="filterCallback()" />
+                  @input="filterCallback()"
+                />
               </template>
             </PVColumn>
             <PVColumn
@@ -381,12 +406,14 @@
               header="Email"
               data-type="text"
               show-clear-button
-              sortable>
+              sortable
+            >
               <template #filter="{ filterModel, filterCallback }">
                 <PVInputText
                   v-model="filterModel.value"
                   placeholder="Search by Email"
-                  @input="filterCallback()" />
+                  @input="filterCallback()"
+                />
               </template>
             </PVColumn>
             <PVColumn
@@ -394,13 +421,15 @@
               header="Phone"
               data-type="text"
               show-clear-button
-              sortable>
+              sortable
+            >
               <template #filter="{ filterModel, filterCallback }">
                 <PVInputMask
                   v-model="filterModel.value"
                   placeholder="(999) 999-9999"
                   mask="(999) 999-9999"
-                  @input="filterCallback()" />
+                  @input="filterCallback()"
+                />
               </template>
             </PVColumn>
             <template #expansion="slotProps: { data: Teacher }">
@@ -419,40 +448,48 @@
                 size="small"
                 column-resize-mode="fit"
                 :rows-per-page-options="[10, 20, 30, 40, 50]"
-                datatable-style="min-width: 50rem;">
+                datatable-style="min-width: 50rem;"
+              >
                 <PVColumn
                   expander
-                  style="width: 5rem" />
+                  style="width: 5rem"
+                />
                 <PVColumn
                   field="id"
                   header="ID"
                   data-type="text"
-                  sortable />
+                  sortable
+                />
                 <PVColumn
                   field="confirmation"
                   header="Confirmation"
                   data-type="text"
-                  sortable />
+                  sortable
+                />
                 <PVColumn
                   field="user.firstName"
                   header="User First Name"
                   data-type="text"
-                  sortable />
+                  sortable
+                />
                 <PVColumn
                   field="user.lastName"
                   header="User Last Name"
                   data-type="text"
-                  sortable />
+                  sortable
+                />
                 <PVColumn
                   field="user.email"
                   header="User Email"
                   data-type="text"
-                  sortable />
+                  sortable
+                />
                 <PVColumn
                   field="user.phone"
                   header="User Phone"
                   data-type="text"
-                  sortable />
+                  sortable
+                />
                 <template #expansion="slotProps: { data: Registration }">
                   <h5>Student Names</h5>
                   <PVDataTable
@@ -464,27 +501,32 @@
                     size="small"
                     column-resize-mode="fit"
                     :rows-per-page-options="[10, 20, 30, 40, 50]"
-                    datatable-style="min-width: 50rem;">
+                    datatable-style="min-width: 50rem;"
+                  >
                     <PVColumn
                       field="firstName"
                       header="First Name"
                       data-type="text"
-                      sortable />
+                      sortable
+                    />
                     <PVColumn
                       field="lastName"
                       header="Last Name"
                       data-type="text"
-                      sortable />
+                      sortable
+                    />
                     <PVColumn
                       field="email"
                       header="Email"
                       data-type="text"
-                      sortable />
+                      sortable
+                    />
                     <PVColumn
                       field="phone"
                       header="Phone"
                       data-type="text"
-                      sortable />
+                      sortable
+                    />
                   </PVDataTable>
                 </template>
               </PVDataTable>

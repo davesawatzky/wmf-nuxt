@@ -1,136 +1,143 @@
 <script setup lang="ts">
-  import * as yup from 'yup'
-  import { useClasses } from '~/stores/useClasses'
-  import type { Selection, SelectionInput } from '~/graphql/gql/graphql'
-  import { useToast } from 'vue-toastification'
+import type { Selection, SelectionInput } from '~/graphql/gql/graphql'
+import { useToast } from 'vue-toastification'
+import * as yup from 'yup'
+import { useClasses } from '~/stores/useClasses'
 
-  const toast = useToast()
+const props = defineProps<{
+  modelValue: SelectionInput
+  selectionIndex: number
+  selectionId: number
+  classIndex: number
+  classId: number
+}>()
 
-  const props = defineProps<{
-    modelValue: SelectionInput
-    selectionIndex: number
-    selectionId: number
-    classIndex: number
-    classId: number
-  }>()
+const emits = defineEmits<{
+  'update:modelValue': [value: SelectionInput]
+}>()
 
-  const emits = defineEmits<{
-    'update:modelValue': [value: SelectionInput]
-  }>()
+const toast = useToast()
 
-  const classesStore = useClasses()
-  const fieldConfigStore = useFieldConfig()
+const classesStore = useClasses()
+const fieldConfigStore = useFieldConfig()
 
-  const work = computed({
-    get: () => props.modelValue,
-    set: (value) => emits('update:modelValue', value),
-  })
+const work = computed({
+  get: () => props.modelValue,
+  set: value => emits('update:modelValue', value),
+})
 
-  const status = reactive<Status>({
-    title: props.modelValue.title ? StatusEnum.saved : StatusEnum.null,
-    largerWork: props.modelValue.largerWork
-      ? StatusEnum.saved
-      : StatusEnum.null,
-    movement: props.modelValue.movement ? StatusEnum.saved : StatusEnum.null,
-    composer: props.modelValue.composer ? StatusEnum.saved : StatusEnum.null,
-    duration: props.modelValue.duration ? StatusEnum.saved : StatusEnum.null,
-  })
+const status = reactive<Status>({
+  title: props.modelValue.title ? StatusEnum.saved : StatusEnum.null,
+  largerWork: props.modelValue.largerWork
+    ? StatusEnum.saved
+    : StatusEnum.null,
+  movement: props.modelValue.movement ? StatusEnum.saved : StatusEnum.null,
+  composer: props.modelValue.composer ? StatusEnum.saved : StatusEnum.null,
+  duration: props.modelValue.duration ? StatusEnum.saved : StatusEnum.null,
+})
 
-  async function fieldStatus(stat: string, fieldName: string) {
-    await nextTick()
-    if (stat === 'valid') {
-      status[fieldName] = StatusEnum.pending
-      const result = await classesStore.updateSelection(
-        props.classId,
-        props.selectionId,
-        fieldName
-      )
-      status[fieldName] = StatusEnum.null
-      if (result === 'complete') {
-        if (work.value[fieldName as keyof SelectionInput] !== null) {
-          status[fieldName] = StatusEnum.saved
-        }
-      } else {
-        console.error('Could not update selection field:', fieldName)
-        toast.error(
-          'Could not update field.  Please exit and reload Registration'
-        )
+async function fieldStatus(stat: string, fieldName: string) {
+  await nextTick()
+  if (stat === 'valid') {
+    status[fieldName] = StatusEnum.pending
+    const result = await classesStore.updateSelection(
+      props.classId,
+      props.selectionId,
+      fieldName,
+    )
+    status[fieldName] = StatusEnum.null
+    if (result === 'complete') {
+      if (work.value[fieldName as keyof SelectionInput] !== null) {
+        status[fieldName] = StatusEnum.saved
       }
-    } else if (stat === 'invalid') {
-      status[fieldName] = StatusEnum.pending
-      const result = await classesStore.updateSelection(
-        props.classId,
-        props.selectionId,
-        fieldName
+    }
+    else {
+      console.error('Could not update selection field:', fieldName)
+      toast.error(
+        'Could not update field.  Please exit and reload Registration',
       )
-      status[fieldName] = StatusEnum.null
-      if (result === 'complete') {
-        status[fieldName] = StatusEnum.removed
-      } else {
-        console.error('Could not remove invalid selection field:', fieldName)
-        toast.error(
-          'Could not remove invalid field. Please exit and reload Registration'
-        )
-      }
-    } else if (stat === 'removed') {
-      status[fieldName] = StatusEnum.pending
-      const result = await classesStore.updateSelection(
-        props.classId,
-        props.selectionId,
-        fieldName
-      )
-      status[fieldName] = StatusEnum.null
-      if (result === 'complete') {
-        status[fieldName] = StatusEnum.removed
-      } else {
-        console.error('Could not remove selection field:', fieldName)
-        toast.error(
-          'Could not remove field.  Please exit and reload Registration'
-        )
-      }
     }
   }
-
-  const validationSchema = toTypedSchema(
-    yup.object({
-      title: yup.string().trim().required('Required'),
-      composer: yup.string().trim().required('Required'),
-      largerWork: yup.string().trim().nullable(),
-      movement: yup.string().trim().nullable(),
-      duration: yup
-        .string()
-        .matches(/[0-5]{0,1}[0-9]:(?<!00:)[0-5][0-9]/, 'use 01:30 format')
-        .trim()
-        .required('Required'),
-    })
-  )
-
-  const selectionKeys = fieldConfigStore.performerTypeFields('Selection')
-  watchEffect(() => {
-    let count = 0
-    for (const key of selectionKeys) {
-      if (status[key as keyof Selection] !== StatusEnum.saved) {
-        count++
-      }
+  else if (stat === 'invalid') {
+    status[fieldName] = StatusEnum.pending
+    const result = await classesStore.updateSelection(
+      props.classId,
+      props.selectionId,
+      fieldName,
+    )
+    status[fieldName] = StatusEnum.null
+    if (result === 'complete') {
+      status[fieldName] = StatusEnum.removed
     }
-    classesStore.classErrors[props.classIndex]!.selections[
-      props.selectionIndex
-    ]!.count = count
-  })
+    else {
+      console.error('Could not remove invalid selection field:', fieldName)
+      toast.error(
+        'Could not remove invalid field. Please exit and reload Registration',
+      )
+    }
+  }
+  else if (stat === 'removed') {
+    status[fieldName] = StatusEnum.pending
+    const result = await classesStore.updateSelection(
+      props.classId,
+      props.selectionId,
+      fieldName,
+    )
+    status[fieldName] = StatusEnum.null
+    if (result === 'complete') {
+      status[fieldName] = StatusEnum.removed
+    }
+    else {
+      console.error('Could not remove selection field:', fieldName)
+      toast.error(
+        'Could not remove field.  Please exit and reload Registration',
+      )
+    }
+  }
+}
 
-  const { validate } = useForm({
-    validationSchema,
-    validateOnMount: true,
-  })
+const validationSchema = toTypedSchema(
+  yup.object({
+    title: yup.string().trim().required('Required'),
+    composer: yup.string().trim().required('Required'),
+    largerWork: yup.string().trim().nullable(),
+    movement: yup.string().trim().nullable(),
+    duration: yup
+      .string()
+      .matches(/[0-5]?\d:(?<!00:)[0-5]\d/, 'use 01:30 format')
+      .trim()
+      .required('Required'),
+  }),
+)
 
-  onActivated(async () => {
-    await validate()
-  })
+const selectionKeys = fieldConfigStore.performerTypeFields('Selection')
+watchEffect(() => {
+  let count = 0
+  for (const key of selectionKeys) {
+    if (status[key as keyof Selection] !== StatusEnum.saved) {
+      count++
+    }
+  }
+  classesStore.classErrors[props.classIndex]!.selections[
+    props.selectionIndex
+  ]!.count = count
+})
+
+const { validate } = useForm({
+  validationSchema,
+  validateOnMount: true,
+})
+
+onActivated(async () => {
+  await validate()
+})
 </script>
 
 <template>
   <div>
-    <h3 class="pt-6">Selection {{ selectionIndex + 1 }}</h3>
+    <h3 class="pt-6">
+      Selection {{ selectionIndex + 1 }}
+    </h3>
     <div class="grid grid-cols-12 gap-x-3 gap-y-1 pt-4 items-end">
       <div class="col-span-12 sm:col-span-7">
         <BaseInput
@@ -141,7 +148,8 @@
           type="text"
           @change-status="
             async (stat: string) => await fieldStatus(stat, 'title')
-          " />
+          "
+        />
       </div>
       <div class="col-span-12 sm:col-span-5">
         <BaseInput
@@ -152,7 +160,8 @@
           type="text"
           @change-status="
             async (stat: string) => await fieldStatus(stat, 'composer')
-          " />
+          "
+        />
       </div>
       <div class="col-span-12 sm:col-span-5">
         <BaseInput
@@ -163,7 +172,8 @@
           type="text"
           @change-status="
             async (stat: string) => await fieldStatus(stat, 'largerWork')
-          " />
+          "
+        />
       </div>
       <div class="col-span-6 sm:col-span-4">
         <BaseInput
@@ -174,7 +184,8 @@
           type="text"
           @change-status="
             async (stat: string) => await fieldStatus(stat, 'movement')
-          " />
+          "
+        />
       </div>
       <div class="col-span-6 sm:col-span-3">
         <BaseInput
@@ -190,7 +201,8 @@
           type="text"
           @change-status="
             async (stat: string) => await fieldStatus(stat, 'duration')
-          " />
+          "
+        />
       </div>
     </div>
   </div>

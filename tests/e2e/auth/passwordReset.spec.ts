@@ -1,9 +1,9 @@
 // spec: specs/authentication-test-plan.md
 // section: 7. Password Reset Flow
 
-import { test, expect } from '@playwright/test'
-import { PageManager } from '../../pageObjects/pageManager'
+import { expect, test } from '@playwright/test'
 import { AuthHelper, TEST_USERS } from '../../helpers/authHelper'
+import { PageManager } from '../../pageObjects/pageManager'
 
 test.describe('7. Password Reset Flow', () => {
   let pm: PageManager
@@ -27,7 +27,7 @@ test.describe('7. Password Reset Flow', () => {
 
       // Enter email address and submit
       await pm.passwordResetPage.fillResetRequestEmail(
-        TEST_USERS.REGULAR_USER.email
+        TEST_USERS.REGULAR_USER.email,
       )
       await pm.passwordResetPage.submitResetRequest()
 
@@ -35,7 +35,7 @@ test.describe('7. Password Reset Flow', () => {
       const emailReceived = await AuthHelper.waitForEmailInMailHog(
         TEST_USERS.REGULAR_USER.email,
         'WMF password reset',
-        10000
+        10000,
       )
       expect(emailReceived).toBe(true)
     })
@@ -46,19 +46,19 @@ test.describe('7. Password Reset Flow', () => {
       // First request password reset
       await pm.passwordResetPage.gotoForgotPassword()
       await pm.passwordResetPage.requestPasswordReset(
-        TEST_USERS.REGULAR_USER.email
+        TEST_USERS.REGULAR_USER.email,
       )
 
       // Wait for email
       await AuthHelper.waitForEmailInMailHog(
         TEST_USERS.REGULAR_USER.email,
         'WMF password reset',
-        10000
+        10000,
       )
 
       // Get reset token from MailHog
       const token = await AuthHelper.getVerificationTokenFromMailHog(
-        TEST_USERS.REGULAR_USER.email
+        TEST_USERS.REGULAR_USER.email,
       )
       expect(token).not.toBeNull()
 
@@ -86,26 +86,26 @@ test.describe('7. Password Reset Flow', () => {
       // Request password reset
       await tempPm.passwordResetPage.gotoForgotPassword()
       await tempPm.passwordResetPage.requestPasswordReset(
-        TEST_USERS.REGULAR_USER.email
+        TEST_USERS.REGULAR_USER.email,
       )
 
       // Wait for email
       await AuthHelper.waitForEmailInMailHog(
         TEST_USERS.REGULAR_USER.email,
         'WMF password reset',
-        10000
+        10000,
       )
 
       // Get reset token
       const token = await AuthHelper.getVerificationTokenFromMailHog(
-        TEST_USERS.REGULAR_USER.email
+        TEST_USERS.REGULAR_USER.email,
       )
       expect(token).not.toBeNull()
 
       // Reset password back to original
       await tempPm.passwordResetPage.resetPassword(
         token!,
-        TEST_USERS.REGULAR_USER.password
+        TEST_USERS.REGULAR_USER.password,
       )
       await tempPm.passwordResetPage.verifyPasswordResetSuccess()
     })
@@ -120,12 +120,12 @@ test.describe('7. Password Reset Flow', () => {
       async ({ page: _page }) => {
         // Use an expired token
         await pm.passwordResetPage.gotoPasswordResetWithToken(
-          'expired-token-123'
+          'expired-token-123',
         )
 
         // Verify error message
         await pm.passwordResetPage.verifyInvalidToken()
-      }
+      },
     )
   })
 })

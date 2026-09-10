@@ -1,20 +1,20 @@
 import type {
-  CommunityInput,
-  GroupInput,
-  PerformerInput,
-  Performer,
-  Group,
-  School,
-  SchoolGroup,
   Community,
   CommunityGroup,
-  Teacher,
-  RegisteredClass,
+  CommunityInput,
+  Group,
+  GroupInput,
+  Performer,
+  PerformerInput,
   PerformerType,
+  RegisteredClass,
   RegistrationInput,
-  User,
+  School,
+  SchoolGroup,
   SchoolInput,
+  Teacher,
   TeacherInput,
+  User,
 } from '~/graphql/gql/graphql'
 
 export enum StatusEnum {
@@ -32,11 +32,11 @@ export interface ErrorCounts {
   [key: string]: number
 }
 
-export type ContactInfo = PerformerInput &
-  TeacherInput &
-  GroupInput &
-  CommunityInput &
-  SchoolInput
+export type ContactInfo = PerformerInput
+  & TeacherInput
+  & GroupInput
+  & CommunityInput
+  & SchoolInput
 
 export interface ClassErrors {
   id: number

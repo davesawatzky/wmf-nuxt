@@ -66,8 +66,8 @@ export default defineNuxtRouteMiddleware(async (to) => {
       toast.error('You do not have permission to access this page')
       return navigateTo('/login', { replace: true })
     }
-    return
-  } catch (error) {
+  }
+  catch (error) {
     // Network errors or GraphQL connection failures
     if (error && typeof error === 'object') {
       const hasNetworkError = 'networkError' in error

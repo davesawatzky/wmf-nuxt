@@ -13,11 +13,11 @@ interface FieldConfig {
   customFieldType?: string
 }
 
-type ColumnKey =
-  | 'soloRequired'
-  | 'groupRequired'
-  | 'schoolRequired'
-  | 'communityRequired'
+type ColumnKey
+  = | 'soloRequired'
+    | 'groupRequired'
+    | 'schoolRequired'
+    | 'communityRequired'
 
 export const useFieldConfig = defineStore(
   'fieldConfig',
@@ -46,9 +46,9 @@ export const useFieldConfig = defineStore(
           break
       }
       fields = requiredFields.value
-        .filter((el) => el.tableName === tableName)
-        .filter((el) => el[column] === true)
-        .map((el) => el.fieldName)
+        .filter(el => el.tableName === tableName)
+        .filter(el => el[column] === true)
+        .map(el => el.fieldName)
       return fields
     }
 
@@ -85,5 +85,5 @@ export const useFieldConfig = defineStore(
   },
   {
     persist: true,
-  }
+  },
 )

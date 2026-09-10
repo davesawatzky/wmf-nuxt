@@ -6,7 +6,7 @@ export function initPdfJs() {
     // Set the worker source path
     pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
       'pdfjs-dist/build/pdf.worker.mjs',
-      import.meta.url
+      import.meta.url,
     ).toString()
 
     return pdfjsLib

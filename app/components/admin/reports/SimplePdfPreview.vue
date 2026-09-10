@@ -1,48 +1,50 @@
+<script setup lang="ts">
+import { onMounted, ref, watch } from 'vue'
+
+const props = defineProps<{
+  content: string
+}>()
+
+const pageRef = ref<HTMLElement | null>(null)
+
+// Update content when component mounts
+onMounted(() => {
+  updateContent()
+})
+
+// Watch for content changes
+watch(
+  () => props.content,
+  () => {
+    updateContent()
+  },
+)
+
+// Update the content in the page
+function updateContent() {
+  if (!pageRef.value)
+    return
+
+  const content = props.content || ''
+  if (!content) {
+    pageRef.value.innerHTML
+      = '<div class="empty-message">No content to preview</div>'
+    return
+  }
+
+  // Set content directly
+  pageRef.value.innerHTML = content
+}
+</script>
+
 <template>
   <div class="pdf-preview">
     <div
       ref="pageRef"
-      class="page"/>
+      class="page"
+    />
   </div>
 </template>
-
-<script setup lang="ts">
-  import { ref, onMounted, watch } from 'vue'
-
-  const props = defineProps<{
-    content: string
-  }>()
-
-  const pageRef = ref<HTMLElement | null>(null)
-
-  // Update content when component mounts
-  onMounted(() => {
-    updateContent()
-  })
-
-  // Watch for content changes
-  watch(
-    () => props.content,
-    () => {
-      updateContent()
-    }
-  )
-
-  // Update the content in the page
-  function updateContent() {
-    if (!pageRef.value) return
-
-    const content = props.content || ''
-    if (!content) {
-      pageRef.value.innerHTML =
-        '<div class="empty-message">No content to preview</div>'
-      return
-    }
-
-    // Set content directly
-    pageRef.value.innerHTML = content
-  }
-</script>
 
 <style>
   .pdf-preview {

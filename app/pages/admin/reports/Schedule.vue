@@ -1,10 +1,26 @@
+<script setup lang="ts">
+definePageMeta({
+  layout: 'admin',
+  middleware: 'admin',
+})
+
+const documentStore = useDocumentStore()
+const { template, jsonData } = storeToRefs(documentStore)
+
+watchEffect(() => {
+  console.log('Template:', template.value)
+})
+</script>
+
 <template>
   <div class="mx-auto px-12">
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <div class="flex flex-col gap-6">
         <div class="card">
           <div class="toolbar">
-            <h2 class="section-title">Template</h2>
+            <h2 class="section-title">
+              Template
+            </h2>
             <div class="toolbar-actions">
               <!-- <Button variant="primary" size="lg" icon="lucide:save" title="Save">
                 Save
@@ -18,7 +34,8 @@
             <ClientOnly>
               <adminReportsRichTextEditor
                 v-model="template"
-                class="h-full" />
+                class="h-full"
+              />
             </ClientOnly>
           </div>
         </div>
@@ -26,12 +43,15 @@
         <div class="card">
           <!-- Removed flex-1 from card -->
           <div class="toolbar">
-            <h2 class="section-title">Data (JSON)</h2>
+            <h2 class="section-title">
+              Data (JSON)
+            </h2>
           </div>
           <div class="editor-container h-[400px] overflow-hidden">
             <adminReportsDataEditor
               v-model="jsonData"
-              class="h-full" />
+              class="h-full"
+            />
           </div>
         </div>
       </div>
@@ -39,7 +59,9 @@
       <div class="card">
         <!-- Removed flex-1 from card -->
         <div class="toolbar">
-          <h2 class="section-title">Generated Document</h2>
+          <h2 class="section-title">
+            Generated Document
+          </h2>
           <div class="toolbar-actions">
             <!-- <Button variant="secondary" icon="refresh">Auto-refresh</Button> -->
           </div>
@@ -47,26 +69,13 @@
         <div class="h-[1024px] overflow-hidden">
           <adminReportsDocumentPreview
             :data="jsonData"
-            class="h-full" />
+            class="h-full"
+          />
         </div>
       </div>
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-  definePageMeta({
-    layout: 'admin',
-    middleware: 'admin',
-  })
-
-  const documentStore = useDocumentStore()
-  const { template, jsonData } = storeToRefs(documentStore)
-
-  watchEffect(() => {
-    console.log('Template:', template.value)
-  })
-</script>
 
 <style scoped>
   .card {

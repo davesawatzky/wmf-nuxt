@@ -1,5 +1,5 @@
-import { UserUpdateDocument } from '~/graphql/gql/graphql'
 import type { User, UserInput } from '~/graphql/gql/graphql'
+import { UserUpdateDocument } from '~/graphql/gql/graphql'
 
 export const useUser = defineStore(
   'user',
@@ -68,15 +68,15 @@ export const useUser = defineStore(
       {
         fetchPolicy: 'network-only',
         errorPolicy: 'all',
-      }
+      },
     )
     async function updateUser(field?: string) {
-      const { id, __typename, firstName, lastName, email, ...userProps } =
-        user.value
+      const { id, __typename, firstName, lastName, email, ...userProps }
+        = user.value
       let userField = null
       if (field && Object.keys(userProps).includes(field)) {
         userField = Object.fromEntries(
-          Array(Object.entries(userProps).find((item) => item[0] === field)!)
+          new Array(Object.entries(userProps).find(item => item[0] === field)!),
         )
       }
       try {
@@ -85,7 +85,8 @@ export const useUser = defineStore(
           user: userField || (userProps as UserInput),
         })
         return 'complete'
-      } catch (error) {
+      }
+      catch (error) {
         console.error('Failed to update user:', error, {
           operation: 'updateUser',
           field,
@@ -119,7 +120,7 @@ export const useUser = defineStore(
         }
       `,
       undefined,
-      { fetchPolicy: 'network-only', errorPolicy: 'all' }
+      { fetchPolicy: 'network-only', errorPolicy: 'all' },
     )
     async function loadHasPassword(id: number) {
       const loaded = await hasPasswordLoad(null, {
@@ -145,5 +146,5 @@ export const useUser = defineStore(
       loadHasPassword,
     }
   },
-  { persist: true }
+  { persist: true },
 )

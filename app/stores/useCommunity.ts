@@ -1,15 +1,15 @@
-import { useFieldConfig } from '~/stores/useFieldConfig'
+import type {
+  Community,
+  CommunityCreateMutation,
+  CommunityInput,
+} from '~/graphql/gql/graphql'
 import {
   CommunityCreateDocument,
   CommunityDeleteDocument,
   CommunityInfoDocument,
   CommunityUpdateDocument,
 } from '~/graphql/gql/graphql'
-import type {
-  Community,
-  CommunityCreateMutation,
-  CommunityInput,
-} from '~/graphql/gql/graphql'
+import { useFieldConfig } from '~/stores/useFieldConfig'
 
 export const useCommunity = defineStore(
   'community',
@@ -95,13 +95,14 @@ export const useCommunity = defineStore(
     }
     onCommunityCreateDone((result) => {
       if (result.data?.communityCreate.community) {
-        const community: CommunityCreateMutation['communityCreate']['community'] =
-          result.data.communityCreate.community
+        const community: CommunityCreateMutation['communityCreate']['community']
+          = result.data.communityCreate.community
         addToStore(community)
-      } else if (result.data?.communityCreate.userErrors) {
+      }
+      else if (result.data?.communityCreate.userErrors) {
         console.error(
           'Failed to create community:',
-          result.data.communityCreate.userErrors
+          result.data.communityCreate.userErrors,
         )
       }
     })
@@ -142,8 +143,8 @@ export const useCommunity = defineStore(
      * Updates Community record in db from store.
      * @param field Optional specific field to update
      */
-    const { mutate: communityUpdate, onError: onCommunityUpdateError } =
-      useMutation(CommunityUpdateDocument, {
+    const { mutate: communityUpdate, onError: onCommunityUpdateError }
+      = useMutation(CommunityUpdateDocument, {
         fetchPolicy: 'network-only',
         errorPolicy: 'all',
       })
@@ -152,9 +153,9 @@ export const useCommunity = defineStore(
       let communityField = null
       if (field && Object.keys(communityProps).includes(field)) {
         communityField = Object.fromEntries(
-          Array(
-            Object.entries(communityProps).find((item) => item[0] === field)!
-          )
+          new Array(
+            Object.entries(communityProps).find(item => item[0] === field)!,
+          ),
         )
       }
       try {
@@ -163,7 +164,8 @@ export const useCommunity = defineStore(
           community: communityField || (communityProps as CommunityInput),
         })
         return 'complete'
-      } catch (error) {
+      }
+      catch (error) {
         console.error('Failed to update community:', error)
         return 'error'
       }
@@ -205,5 +207,5 @@ export const useCommunity = defineStore(
   },
   {
     persist: true,
-  }
+  },
 )

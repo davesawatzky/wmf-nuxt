@@ -1,9 +1,9 @@
+import type { Order, OrderCreateMutation, OrderInput } from '~/graphql/gql/graphql'
 import {
+
   OrderCreateDocument,
+
   OrdersDocument,
-  type Order,
-  type OrderCreateMutation,
-  type OrderInput,
 } from '~/graphql/gql/graphql'
 
 export const useOrders = defineStore('orderStore', () => {
@@ -34,10 +34,11 @@ export const useOrders = defineStore('orderStore', () => {
 
   onOrderCreateDone((result) => {
     if (result.data?.orderCreate.order) {
-      const order: OrderCreateMutation['orderCreate']['order'] =
-        result.data.orderCreate.order
+      const order: OrderCreateMutation['orderCreate']['order']
+        = result.data.orderCreate.order
       addToStore(order)
-    } else if (result.data?.orderCreate.userErrors) {
+    }
+    else if (result.data?.orderCreate.userErrors) {
       console.log(result.data.orderCreate.userErrors)
     }
   })

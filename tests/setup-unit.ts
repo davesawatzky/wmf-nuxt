@@ -4,23 +4,23 @@ import { vi } from 'vitest'
 // Mock Vue reactivity functions for unit tests
 vi.stubGlobal(
   'isRef',
-  vi.fn(() => false)
+  vi.fn(() => false),
 )
 vi.stubGlobal(
   'ref',
-  vi.fn((val) => ({ value: val }))
+  vi.fn(val => ({ value: val })),
 )
 vi.stubGlobal(
   'computed',
-  vi.fn((fn) => ({ value: fn() }))
+  vi.fn(fn => ({ value: fn() })),
 )
 vi.stubGlobal(
   'reactive',
-  vi.fn((obj) => obj)
+  vi.fn(obj => obj),
 )
 vi.stubGlobal(
   'readonly',
-  vi.fn((obj) => obj)
+  vi.fn(obj => obj),
 )
 vi.stubGlobal('watch', vi.fn())
 vi.stubGlobal('watchEffect', vi.fn())

@@ -1,195 +1,200 @@
 <script setup lang="ts">
-  import * as yup from 'yup'
-  import { useCommunityGroup } from '~/stores/useCommunityGroup'
-  import type {
-    CommunityGroup,
-    CommunityGroupInput,
-  } from '~/graphql/gql/graphql'
-  import { useToast } from 'vue-toastification'
+import type {
+  CommunityGroup,
+  CommunityGroupInput,
+} from '~/graphql/gql/graphql'
+import { useToast } from 'vue-toastification'
+import * as yup from 'yup'
+import { useCommunityGroup } from '~/stores/useCommunityGroup'
 
-  const props = defineProps<{
-    modelValue: CommunityGroupInput
-    communityGroupIndex: number
-    communityGroupId: number
-  }>()
+const props = defineProps<{
+  modelValue: CommunityGroupInput
+  communityGroupIndex: number
+  communityGroupId: number
+}>()
 
-  const emits = defineEmits<{
-    'update:modelValue': [value: CommunityGroupInput]
-  }>()
+const emits = defineEmits<{
+  'update:modelValue': [value: CommunityGroupInput]
+}>()
 
-  const communityGroupStore = useCommunityGroup()
-  const fieldConfigStore = useFieldConfig()
-  const toast = useToast()
+const communityGroupStore = useCommunityGroup()
+const fieldConfigStore = useFieldConfig()
+const toast = useToast()
 
-  const communityGroup = computed({
-    get: () => props.modelValue,
-    set: (value) => emits('update:modelValue', value),
-  })
+const communityGroup = computed({
+  get: () => props.modelValue,
+  set: value => emits('update:modelValue', value),
+})
 
-  const status = reactive<Status>({
-    name: props.modelValue.name ? StatusEnum.saved : StatusEnum.null,
-    earliestTime: props.modelValue.earliestTime
-      ? StatusEnum.saved
-      : StatusEnum.null,
-    latestTime: props.modelValue.latestTime
-      ? StatusEnum.saved
-      : StatusEnum.null,
-    groupSize:
+const status = reactive<Status>({
+  name: props.modelValue.name ? StatusEnum.saved : StatusEnum.null,
+  earliestTime: props.modelValue.earliestTime
+    ? StatusEnum.saved
+    : StatusEnum.null,
+  latestTime: props.modelValue.latestTime
+    ? StatusEnum.saved
+    : StatusEnum.null,
+  groupSize:
       props.modelValue.groupSize || props.modelValue.groupSize === 0
         ? StatusEnum.saved
         : StatusEnum.null,
-    chaperones:
+  chaperones:
       props.modelValue.chaperones || props.modelValue.chaperones === 0
         ? StatusEnum.saved
         : StatusEnum.null,
-    wheelchairs:
+  wheelchairs:
       props.modelValue.wheelchairs || props.modelValue.wheelchairs === 0
         ? StatusEnum.saved
         : StatusEnum.null,
-    unavailable: props.modelValue.unavailable
-      ? StatusEnum.saved
-      : StatusEnum.null,
-    conflictPerformers: props.modelValue.conflictPerformers
-      ? StatusEnum.saved
-      : StatusEnum.null,
-    photoPermission: props.modelValue.photoPermission
-      ? StatusEnum.saved
-      : StatusEnum.null,
-  })
+  unavailable: props.modelValue.unavailable
+    ? StatusEnum.saved
+    : StatusEnum.null,
+  conflictPerformers: props.modelValue.conflictPerformers
+    ? StatusEnum.saved
+    : StatusEnum.null,
+  photoPermission: props.modelValue.photoPermission
+    ? StatusEnum.saved
+    : StatusEnum.null,
+})
 
-  const totalParticipants = computed<number>(() => {
-    return (
-      (communityGroup.value.groupSize ?? 0) +
-      (communityGroup.value.chaperones ?? 0) +
-      (communityGroup.value.wheelchairs ?? 0)
+const totalParticipants = computed<number>(() => {
+  return (
+    (communityGroup.value.groupSize ?? 0)
+    + (communityGroup.value.chaperones ?? 0)
+    + (communityGroup.value.wheelchairs ?? 0)
+  )
+})
+
+async function fieldStatus(stat: string, fieldName: string) {
+  await nextTick()
+  if (stat === 'valid') {
+    status[fieldName] = StatusEnum.pending
+    const result = await communityGroupStore.updateCommunityGroup(
+      props.communityGroupId,
+      fieldName,
     )
-  })
-
-  async function fieldStatus(stat: string, fieldName: string) {
-    await nextTick()
-    if (stat === 'valid') {
-      status[fieldName] = StatusEnum.pending
-      const result = await communityGroupStore.updateCommunityGroup(
-        props.communityGroupId,
-        fieldName
-      )
-      status[fieldName] = StatusEnum.null
-      if (result === 'complete') {
-        if (
-          communityGroup.value[fieldName as keyof CommunityGroupInput] !== null
-        ) {
-          status[fieldName] = StatusEnum.saved
-        }
-      } else {
-        console.error('Could not update community group field:', fieldName)
-        toast.error(
-          'Could not update field.  Please exit and reload Registration'
-        )
+    status[fieldName] = StatusEnum.null
+    if (result === 'complete') {
+      if (
+        communityGroup.value[fieldName as keyof CommunityGroupInput] !== null
+      ) {
+        status[fieldName] = StatusEnum.saved
       }
-    } else if (stat === 'invalid') {
-      status[fieldName] = StatusEnum.pending
-      const result = await communityGroupStore.updateCommunityGroup(
-        props.communityGroupId,
-        fieldName
+    }
+    else {
+      console.error('Could not update community group field:', fieldName)
+      toast.error(
+        'Could not update field.  Please exit and reload Registration',
       )
-      status[fieldName] = StatusEnum.null
-      if (result === 'complete') {
-        status[fieldName] = StatusEnum.removed
-      } else {
-        console.error(
-          'Could not remove invalid community group field:',
-          fieldName
-        )
-        toast.error(
-          'Could not remove invalid field. Please exit and reload Registration'
-        )
-      }
-    } else if (stat === 'removed') {
-      status[fieldName] = StatusEnum.pending
-      const result = await communityGroupStore.updateCommunityGroup(
-        props.communityGroupId,
-        fieldName
-      )
-      status[fieldName] = StatusEnum.null
-      if (result === 'complete') {
-        status[fieldName] = StatusEnum.removed
-      } else {
-        console.error('Could not remove community group field:', fieldName)
-        toast.error(
-          'Could not remove field.  Please exit and reload Registration'
-        )
-      }
     }
   }
-
-  const validationSchema = toTypedSchema(
-    yup.object({
-      groupName: yup.string().trim().required('Required'),
-      earliestTime: yup
-        .string()
-        .matches(/[0-1]{0,1}[0-9]:[0-5][0-9]/, 'Enter a time')
-        .default('08:00')
-        .required('Required'),
-      latestTime: yup
-        .string()
-        .matches(/[0-1]{0,1}[0-9]:[0-5][0-9]/, 'Enter a time')
-        .default('17:00')
-        .required('Required'),
-      groupSize: yup
-        .number()
-        .min(2)
-        .max(300)
-        .integer()
-        .typeError('Please enter a valid number')
-        .required('Required'),
-      chaperones: yup
-        .number()
-        .min(0)
-        .max(100)
-        .integer()
-        .typeError('Please enter a valid number')
-        .required('Required'),
-      wheelchairs: yup
-        .number()
-        .min(0)
-        .max(100)
-        .integer()
-        .typeError('Please enter a valid number')
-        .required('Required'),
-      unavailable: yup.string().trim().nullable(),
-      conflictPerformers: yup.string().trim().nullable(),
-      photoPermission: yup
-        .string()
-        .trim()
-        .required('Required')
-        .oneOf(['Yes', 'No']),
-    })
-  )
-
-  const { validate } = useForm({
-    validationSchema,
-    validateOnMount: true,
-  })
-
-  const communityGroupKeys =
-    fieldConfigStore.performerTypeFields('CommunityGroup')
-
-  watchEffect(() => {
-    let count = 0
-    for (const key of communityGroupKeys) {
-      if (status[key as keyof CommunityGroup] !== StatusEnum.saved) {
-        count++
-      }
-    }
-    const index = communityGroupStore.communityGroupErrors.findIndex(
-      (item) => item.id === props.communityGroupId
+  else if (stat === 'invalid') {
+    status[fieldName] = StatusEnum.pending
+    const result = await communityGroupStore.updateCommunityGroup(
+      props.communityGroupId,
+      fieldName,
     )
-    communityGroupStore.communityGroupErrors[index]!.count = count
-  })
+    status[fieldName] = StatusEnum.null
+    if (result === 'complete') {
+      status[fieldName] = StatusEnum.removed
+    }
+    else {
+      console.error(
+        'Could not remove invalid community group field:',
+        fieldName,
+      )
+      toast.error(
+        'Could not remove invalid field. Please exit and reload Registration',
+      )
+    }
+  }
+  else if (stat === 'removed') {
+    status[fieldName] = StatusEnum.pending
+    const result = await communityGroupStore.updateCommunityGroup(
+      props.communityGroupId,
+      fieldName,
+    )
+    status[fieldName] = StatusEnum.null
+    if (result === 'complete') {
+      status[fieldName] = StatusEnum.removed
+    }
+    else {
+      console.error('Could not remove community group field:', fieldName)
+      toast.error(
+        'Could not remove field.  Please exit and reload Registration',
+      )
+    }
+  }
+}
 
-  onActivated(() => {
-    validate()
-  })
+const validationSchema = toTypedSchema(
+  yup.object({
+    groupName: yup.string().trim().required('Required'),
+    earliestTime: yup
+      .string()
+      .matches(/[01]?\d:[0-5]\d/, 'Enter a time')
+      .default('08:00')
+      .required('Required'),
+    latestTime: yup
+      .string()
+      .matches(/[01]?\d:[0-5]\d/, 'Enter a time')
+      .default('17:00')
+      .required('Required'),
+    groupSize: yup
+      .number()
+      .min(2)
+      .max(300)
+      .integer()
+      .typeError('Please enter a valid number')
+      .required('Required'),
+    chaperones: yup
+      .number()
+      .min(0)
+      .max(100)
+      .integer()
+      .typeError('Please enter a valid number')
+      .required('Required'),
+    wheelchairs: yup
+      .number()
+      .min(0)
+      .max(100)
+      .integer()
+      .typeError('Please enter a valid number')
+      .required('Required'),
+    unavailable: yup.string().trim().nullable(),
+    conflictPerformers: yup.string().trim().nullable(),
+    photoPermission: yup
+      .string()
+      .trim()
+      .required('Required')
+      .oneOf(['Yes', 'No']),
+  }),
+)
+
+const { validate } = useForm({
+  validationSchema,
+  validateOnMount: true,
+})
+
+const communityGroupKeys
+  = fieldConfigStore.performerTypeFields('CommunityGroup')
+
+watchEffect(() => {
+  let count = 0
+  for (const key of communityGroupKeys) {
+    if (status[key as keyof CommunityGroup] !== StatusEnum.saved) {
+      count++
+    }
+  }
+  const index = communityGroupStore.communityGroupErrors.findIndex(
+    item => item.id === props.communityGroupId,
+  )
+  communityGroupStore.communityGroupErrors[index]!.count = count
+})
+
+onActivated(() => {
+  validate()
+})
 </script>
 
 <template>
@@ -204,7 +209,8 @@
           type="text"
           @change-status="
             async (stat: string) => await fieldStatus(stat, 'name')
-          " />
+          "
+        />
 
         <BaseInput
           v-model="communityGroup.earliestTime"
@@ -214,7 +220,8 @@
           type="time"
           @change-status="
             async (stat: string) => await fieldStatus(stat, 'earliestTime')
-          " />
+          "
+        />
 
         <BaseInput
           v-model="communityGroup.latestTime"
@@ -224,10 +231,12 @@
           type="time"
           @change-status="
             async (stat: string) => await fieldStatus(stat, 'latestTime')
-          " />
+          "
+        />
       </div>
       <div
-        class="col-span-12 sm:col-span-4 lg:col-span-4 grid grid-cols-2 gap-x-3 items-start">
+        class="col-span-12 sm:col-span-4 lg:col-span-4 grid grid-cols-2 gap-x-3 items-start"
+      >
         <div class="col-1 sm:col-span-2">
           <BaseInput
             v-model.number="communityGroup.groupSize"
@@ -240,7 +249,8 @@
             type="number"
             @change-status="
               async (stat: string) => await fieldStatus(stat, 'groupSize')
-            " />
+            "
+          />
         </div>
         <div class="col-1 sm:col-span-2">
           <BaseInput
@@ -254,7 +264,8 @@
             type="number"
             @change-status="
               async (stat: string) => await fieldStatus(stat, 'chaperones')
-            " />
+            "
+          />
         </div>
         <div class="col-1 sm:col-span-2">
           <BaseInput
@@ -268,7 +279,8 @@
             type="number"
             @change-status="
               async (stat: string) => await fieldStatus(stat, 'wheelchairs')
-            " />
+            "
+          />
         </div>
         <div class="off col-1 sm:col-span-2 text-sm font-bold">
           Total Number: {{ totalParticipants }}
@@ -286,7 +298,8 @@
           name="photoPermission"
           @change-status="
             async (stat: string) => await fieldStatus(stat, 'photoPermission')
-          " />
+          "
+        />
       </div>
       <div class="col-span-9 sm:col-span-10 lg:col-span-8 text-sm self-center">
         I give permission to use photographs of this participant in Winnipeg
@@ -303,7 +316,8 @@
         rows="3"
         @change-status="
           async (stat: string) => await fieldStatus(stat, 'unavailable')
-        " />
+        "
+      />
       <p class="text-sm mb-2">
         List any scheduling requests. The Festival cannot guarantee that
         submitted requests can be accommodated. Entry fees are non-refundable
@@ -317,7 +331,8 @@
         rows="3"
         @change-status="
           async (stat: string) => await fieldStatus(stat, 'conflictPerformers')
-        " />
+        "
+      />
       <p class="text-sm mb-2">
         If there are any performers in your group participating in other
         festival classes, list their names so that we can do our best to avoid

@@ -1,9 +1,9 @@
 // spec: specs/authentication-test-plan.md
 // section: 2. Email Verification
 
-import { test, expect } from '@playwright/test'
-import { PageManager } from '../../pageObjects/pageManager'
+import { expect, test } from '@playwright/test'
 import { AuthHelper } from '../../helpers/authHelper'
+import { PageManager } from '../../pageObjects/pageManager'
 
 test.describe('2. Email Verification', () => {
   let pm: PageManager
@@ -23,14 +23,14 @@ test.describe('2. Email Verification', () => {
         'Verify',
         'Test',
         email,
-        'Test123!@#'
+        'Test123!@#',
       )
 
       // Wait for email
       await AuthHelper.waitForEmailInMailHog(
         email,
         'WMF account verification',
-        10000
+        10000,
       )
 
       // Get verification token from MailHog

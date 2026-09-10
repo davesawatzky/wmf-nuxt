@@ -1,7 +1,7 @@
+import tailwindcss from '@tailwindcss/vite'
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import { defineNuxtConfig } from 'nuxt/config'
 import { WMFPreset } from './app/utils/wmfpreset'
-import tailwindcss from '@tailwindcss/vite'
 
 export default defineNuxtConfig({
   modules: [
@@ -33,9 +33,15 @@ export default defineNuxtConfig({
 
   debug: false,
 
+  eslint: {
+    config: {
+      standalone: false,
+    },
+  },
+
   alias: {
     '@': './',
-    images: './public/images',
+    'images': './public/images',
   },
 
   apollo: {
@@ -130,54 +136,54 @@ export default defineNuxtConfig({
   security: {
     corsHandler: {
       origin:
-        (process.env.NUXT_PUBLIC_SERVER_ADDRESS || 'http://localhost:3000') +
-        '/*',
+        `${process.env.NUXT_PUBLIC_SERVER_ADDRESS || 'http://localhost:3000'
+        }/*`,
       credentials: true,
     },
     headers: {
       crossOriginOpenerPolicy: false,
       crossOriginResourcePolicy: false,
       contentSecurityPolicy: {
-        'default-src': ["'self'"],
+        'default-src': ['\'self\''],
         'script-src': [
-          "'self'",
-          "'unsafe-inline'",
-          "'unsafe-eval'",
+          '\'self\'',
+          '\'unsafe-inline\'',
+          '\'unsafe-eval\'',
           'https://*.stripe.com',
           'https://*.cloudflare.com',
         ],
-        'worker-src': ["'self'", 'blob:'], // Allow blob workers
-        'frame-src': ["'self'", 'https://*.stripe.com'],
+        'worker-src': ['\'self\'', 'blob:'], // Allow blob workers
+        'frame-src': ['\'self\'', 'https://*.stripe.com'],
         'connect-src': [
-          "'self'",
+          '\'self\'',
           'https://*.stripe.com',
           'http://*.stripe.com',
           'https://*.diatonic.ca/*',
-          (process.env.NUXT_PUBLIC_SERVER_ADDRESS || 'http://localhost:3000') +
-            '/payment/summarize-payment',
-          (process.env.NUXT_PUBLIC_SERVER_ADDRESS || 'http://localhost:3000') +
-            '/payment/create-payment-intent',
-          (process.env.NUXT_PUBLIC_SERVER_ADDRESS || 'http://localhost:3000') +
-            '/payment/cancel-confirmation-token',
-          (process.env.NUXT_PUBLIC_SERVER_ADDRESS || 'http://localhost:3000') +
-            '/graphql',
-          (process.env.NUXT_PUBLIC_SERVER_ADDRESS || 'http://localhost:3000') +
-            '/email-confirmation/confirm',
-          (process.env.NUXT_PUBLIC_SERVER_ADDRESS || 'http://localhost:3000') +
-            '/email-confirmation/resend-confirmation-link',
-          (process.env.NUXT_PUBLIC_SERVER_ADDRESS || 'http://localhost:3000') +
-            '/email-confirmation/resend-password-link',
+          `${process.env.NUXT_PUBLIC_SERVER_ADDRESS || 'http://localhost:3000'
+          }/payment/summarize-payment`,
+          `${process.env.NUXT_PUBLIC_SERVER_ADDRESS || 'http://localhost:3000'
+          }/payment/create-payment-intent`,
+          `${process.env.NUXT_PUBLIC_SERVER_ADDRESS || 'http://localhost:3000'
+          }/payment/cancel-confirmation-token`,
+          `${process.env.NUXT_PUBLIC_SERVER_ADDRESS || 'http://localhost:3000'
+          }/graphql`,
+          `${process.env.NUXT_PUBLIC_SERVER_ADDRESS || 'http://localhost:3000'
+          }/email-confirmation/confirm`,
+          `${process.env.NUXT_PUBLIC_SERVER_ADDRESS || 'http://localhost:3000'
+          }/email-confirmation/resend-confirmation-link`,
+          `${process.env.NUXT_PUBLIC_SERVER_ADDRESS || 'http://localhost:3000'
+          }/email-confirmation/resend-password-link`,
           'wss://localhost:3000', // WebSocket support if needed
           'https://*.iconify.design',
           'https://*.sentry.io', // Sentry error reporting (all regions)
         ],
-        'img-src': ["'self'", 'data:', 'https:', 'blob:'],
-        'style-src': ["'self'", "'unsafe-inline'", 'https:'],
-        'font-src': ["'self'", 'data:', 'https:'],
-        'object-src': ["'none'"],
-        'base-uri': ["'self'"],
-        'form-action': ["'self'"],
-        'frame-ancestors': ["'none'"],
+        'img-src': ['\'self\'', 'data:', 'https:', 'blob:'],
+        'style-src': ['\'self\'', '\'unsafe-inline\'', 'https:'],
+        'font-src': ['\'self\'', 'data:', 'https:'],
+        'object-src': ['\'none\''],
+        'base-uri': ['\'self\''],
+        'form-action': ['\'self\''],
+        'frame-ancestors': ['\'none\''],
       },
       crossOriginEmbedderPolicy: false, // Disable COEP for Stripe compatibility
       xFrameOptions: 'DENY',
@@ -232,12 +238,6 @@ export default defineNuxtConfig({
   },
 
   vite: {
-    esbuild: {
-      pure:
-        process.env.NODE_ENV === 'production'
-          ? ['console.log', 'console.debug']
-          : [],
-    },
     plugins: [tailwindcss()],
     optimizeDeps: {
       include: [
@@ -250,7 +250,6 @@ export default defineNuxtConfig({
         // Other dependencies
         '@vueuse/core',
         'pinia',
-        '@pinia/colada',
       ],
       exclude: ['@nuxt/test-utils'],
     },
@@ -261,5 +260,5 @@ export default defineNuxtConfig({
     },
   },
 
-  compatibilityDate: '2025-04-12',
+  compatibilityDate: '2026-09-10',
 })

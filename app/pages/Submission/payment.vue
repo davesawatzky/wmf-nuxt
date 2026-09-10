@@ -1,256 +1,271 @@
 <script setup lang="ts">
-  import _ from 'lodash'
-  import { loadStripe } from '@stripe/stripe-js'
-  import type {
-    Stripe,
-    StripeElements,
-    StripeElementsOptions,
-    StripeError,
-    StripePaymentElementOptions,
-  } from '@stripe/stripe-js'
-  import { useToast } from 'vue-toastification'
-  import { useRegistration } from '~/stores/useRegistration'
-  import { useUser } from '~/stores/useUser'
-  import { useAppStore } from '~/stores/appStore'
+import type {
+  Stripe,
+  StripeElements,
+  StripeElementsOptions,
+  StripeError,
+  StripePaymentElementOptions,
+} from '@stripe/stripe-js'
+import { loadStripe } from '@stripe/stripe-js'
+import { useToast } from 'vue-toastification'
+import { useAppStore } from '~/stores/appStore'
+import { useRegistration } from '~/stores/useRegistration'
+import { useUser } from '~/stores/useUser'
 
-  const appStore = useAppStore()
-  const userStore = useUser()
-  const toast = useToast()
-  const loading = ref(false)
-  const spinnerHidden = ref(true)
-  const registrationStore = useRegistration()
-  const submitDisabled = ref(true)
+const appStore = useAppStore()
+const userStore = useUser()
+const toast = useToast()
+const loading = ref(false)
+const spinnerHidden = ref(true)
+const registrationStore = useRegistration()
+const submitDisabled = ref(true)
 
-  const config = useRuntimeConfig()
+const config = useRuntimeConfig()
 
-  let elements: StripeElements
+let elements: StripeElements
 
-  definePageMeta({
-    middleware: ['user', 'submission'],
+definePageMeta({
+  middleware: ['user', 'submission'],
+})
+
+onBeforeMount(async () => {
+  const regExist = registrationStore?.registrationId
+  const confirmed = registrationStore.registration?.confirmation
+  const submitted = registrationStore.registration?.submittedAt
+  if (!regExist || confirmed || submitted)
+    await navigateTo('/Registrations')
+})
+
+const stripe: Stripe | null = await loadStripe(config.public.stripePubKey)
+
+function handleError(error: StripeError) {
+  console.error('Stripe Error:', {
+    message: error.message,
+    type: error.type,
+    code: error.code,
+    decline_code: error.decline_code,
   })
+  toast.error(error.message)
+  submitDisabled.value = false
+  loading.value = false
+  spinnerHidden.value = true
+}
 
-  onBeforeMount(async () => {
-    const regExist = registrationStore?.registrationId
-    const confirmed = registrationStore.registration?.confirmation
-    const submitted = registrationStore.registration?.submittedAt
-    if (!regExist || confirmed || submitted) await navigateTo('/Registrations')
-  })
+const totalAmount = computed(() => {
+  return registrationStore.registration.totalAmt
+})
 
-  const stripe: Stripe | null = await loadStripe(config.public.stripePubKey)
+async function loadStripeElements() {
+  if (!stripe) {
+    console.error('Stripe not initialized')
+    toast.error('Payment system not available')
+    return false
+  }
 
-  const handleError = (error: StripeError) => {
-    console.error('Stripe Error:', {
-      message: error.message,
-      type: error.type,
-      code: error.code,
-      decline_code: error.decline_code,
-    })
-    toast.error(error.message)
-    submitDisabled.value = false
+  loading.value = true
+
+  try {
+    if (!totalAmount.value || totalAmount.value <= 0) {
+      throw new Error('Invalid payment amount')
+    }
+
+    const options: StripeElementsOptions = {
+      mode: 'payment',
+      amount: Math.round(totalAmount.value * 100),
+      currency: 'cad',
+      appearance: { theme: 'stripe' },
+    }
+
+    elements = stripe.elements(options)
+
+    const paymentElementOptions: StripePaymentElementOptions = {
+      layout: {
+        type: 'accordion',
+        defaultCollapsed: false,
+        radios: false,
+        spacedAccordionItems: true,
+      },
+    }
+
+    const paymentElement = elements.create('payment', paymentElementOptions)
+    await paymentElement.mount('#payment-element')
+
+    return true
+  }
+  catch (error) {
+    console.error('Failed to load Stripe Elements:', error)
+    toast.error('Failed to initialize payment form. Please refresh the page.')
+    return false
+  }
+  finally {
     loading.value = false
-    spinnerHidden.value = true
+  }
+}
+
+function selectCashPayment() {
+  appStore.stripePayment = 'cash'
+  submitDisabled.value = false
+}
+
+async function selectCreditCardPayment() {
+  appStore.stripePayment = 'ccard'
+  submitDisabled.value = true
+  const success = await loadStripeElements()
+  submitDisabled.value = !success
+}
+
+async function handleSubmit(event: SubmitEvent) {
+  event.preventDefault()
+
+  if (loading.value)
     return
-  }
 
-  const totalAmount = computed(() => {
-    return registrationStore.registration.totalAmt
-  })
+  loading.value = true
+  spinnerHidden.value = false
 
-  async function loadStripeElements() {
-    if (!stripe) {
-      console.error('Stripe not initialized')
-      toast.error('Payment system not available')
-      return false
+  try {
+    if (appStore.stripePayment === 'cash') {
+      registrationStore.registration.confirmation = WMFNumber(
+        registrationStore.registrationId,
+      )
+      await navigateTo('/Submission/result')
+      return
     }
 
-    loading.value = true
-
-    try {
-      if (!totalAmount.value || totalAmount.value <= 0) {
-        throw new Error('Invalid payment amount')
-      }
-
-      const options: StripeElementsOptions = {
-        mode: 'payment',
-        amount: Math.round(totalAmount.value * 100),
-        currency: 'cad',
-        appearance: { theme: 'stripe' },
-      }
-
-      elements = stripe.elements(options)
-
-      const paymentElementOptions: StripePaymentElementOptions = {
-        layout: {
-          type: 'accordion',
-          defaultCollapsed: false,
-          radios: false,
-          spacedAccordionItems: true,
-        },
-      }
-
-      const paymentElement = elements.create('payment', paymentElementOptions)
-      await paymentElement.mount('#payment-element')
-
-      return true
-    } catch (error) {
-      console.error('Failed to load Stripe Elements:', error)
-      toast.error('Failed to initialize payment form. Please refresh the page.')
-      return false
-    } finally {
-      loading.value = false
-    }
-  }
-
-  function selectCashPayment() {
-    appStore.stripePayment = 'cash'
-    submitDisabled.value = false
-  }
-
-  async function selectCreditCardPayment() {
-    appStore.stripePayment = 'ccard'
-    submitDisabled.value = true
-    const success = await loadStripeElements()
-    submitDisabled.value = !success
-  }
-
-  async function handleSubmit(event: SubmitEvent) {
-    event.preventDefault()
-
-    if (loading.value) return
-
-    loading.value = true
-    spinnerHidden.value = false
-
-    try {
-      if (appStore.stripePayment === 'cash') {
-        registrationStore.registration.confirmation = WMFNumber(
-          registrationStore.registrationId
-        )
-        await navigateTo('/Submission/result')
+    if (appStore.stripePayment === 'ccard') {
+      if (!stripe || !elements) {
+        console.error('Stripe not initialized for payment submission', {
+          operation: 'handleSubmit',
+          hasStripe: !!stripe,
+          hasElements: !!elements,
+        })
+        toast.error('Payment system not ready. Please refresh and try again.')
         return
       }
 
-      if (appStore.stripePayment === 'ccard') {
-        if (!stripe || !elements) {
-          console.error('Stripe not initialized for payment submission', {
-            operation: 'handleSubmit',
-            hasStripe: !!stripe,
-            hasElements: !!elements,
-          })
-          toast.error('Payment system not ready. Please refresh and try again.')
-          return
-        }
+      submitDisabled.value = true
 
-        submitDisabled.value = true
+      const { firstName, lastName } = userStore.user
 
-        const { firstName, lastName } = userStore.user
+      const { error: submitError } = await elements.submit()
+      if (submitError) {
+        handleError(submitError)
+        return
+      }
 
-        const { error: submitError } = await elements.submit()
-        if (submitError) {
-          handleError(submitError)
-          return
-        }
-
-        const { error: confirmTokenError, confirmationToken } =
-          await stripe.createConfirmationToken({
-            elements,
-            params: {
-              payment_method_data: {
-                billing_details: {
-                  name: `${firstName} ${lastName}`,
-                },
+      const { error: confirmTokenError, confirmationToken }
+        = await stripe.createConfirmationToken({
+          elements,
+          params: {
+            payment_method_data: {
+              billing_details: {
+                name: `${firstName} ${lastName}`,
               },
             },
-          })
-        if (confirmTokenError) {
-          handleError(confirmTokenError)
-          return
-        }
-        appStore.stripeTokenId = confirmationToken.id
-
-        await navigateTo('/Submission/ConfirmPayment')
+          },
+        })
+      if (confirmTokenError) {
+        handleError(confirmTokenError)
+        return
       }
-    } catch (error) {
-      // Catch unexpected errors (network failures, navigation errors, etc.)
-      console.error('Unexpected error during payment submission:', error, {
-        operation: 'handleSubmit',
-        paymentType: appStore.stripePayment,
-        registrationId: registrationStore.registrationId,
-        userId: userStore.user?.id,
-        amount: totalAmount.value,
-      })
+      appStore.stripeTokenId = confirmationToken.id
 
-      toast.error(
-        'An unexpected payment error occurred. Please try again or contact support.'
-      )
-      submitDisabled.value = false
-    } finally {
-      loading.value = false
-      spinnerHidden.value = true
+      await navigateTo('/Submission/ConfirmPayment')
     }
   }
+  catch (error) {
+    // Catch unexpected errors (network failures, navigation errors, etc.)
+    console.error('Unexpected error during payment submission:', error, {
+      operation: 'handleSubmit',
+      paymentType: appStore.stripePayment,
+      registrationId: registrationStore.registrationId,
+      userId: userStore.user?.id,
+      amount: totalAmount.value,
+    })
 
-  // Load Stripe Elements if credit card payment is already selected
-  onMounted(async () => {
-    if (appStore.stripePayment === 'ccard') {
-      const success = await loadStripeElements()
-      submitDisabled.value = !success
-    }
-  })
+    toast.error(
+      'An unexpected payment error occurred. Please try again or contact support.',
+    )
+    submitDisabled.value = false
+  }
+  finally {
+    loading.value = false
+    spinnerHidden.value = true
+  }
+}
 
-  // Clear token if user navigates away from payment page before submitting
-  // but NOT if they're going to ConfirmPayment (normal flow)
-  onBeforeRouteLeave(async (to, _from) => {
-    // Only clear token if NOT navigating to ConfirmPayment page
-    if (to.path !== '/Submission/ConfirmPayment' && appStore.stripeTokenId) {
-      await $fetch(
-        `${config.public.serverAddress}/payment/cancel-confirmation-token`,
-        {
-          method: 'POST',
-          body: {
-            regId: registrationStore.registrationId,
-          },
-        }
-      )
-      appStore.stripeTokenId = ''
-    }
-  })
+// Load Stripe Elements if credit card payment is already selected
+onMounted(async () => {
+  if (appStore.stripePayment === 'ccard') {
+    const success = await loadStripeElements()
+    submitDisabled.value = !success
+  }
+})
+
+// Clear token if user navigates away from payment page before submitting
+// but NOT if they're going to ConfirmPayment (normal flow)
+onBeforeRouteLeave(async (to, _from) => {
+  // Only clear token if NOT navigating to ConfirmPayment page
+  if (to.path !== '/Submission/ConfirmPayment' && appStore.stripeTokenId) {
+    await $fetch(
+      `${config.public.serverAddress}/payment/cancel-confirmation-token`,
+      {
+        method: 'POST',
+        body: {
+          regId: registrationStore.registrationId,
+        },
+      },
+    )
+    appStore.stripeTokenId = ''
+  }
+})
 </script>
 
 <template>
   <div v-auto-animate>
-    <h1 class="my-8">Payment - Cash, Cheque, E-Transfer, or Credit Card</h1>
+    <h1 class="my-8">
+      Payment - Cash, Cheque, E-Transfer, or Credit Card
+    </h1>
     <p class="m-4 p-3 text-center font-bold text-xl rounded-xl">
       Please do not close your browser after submitting!
     </p>
-    <h3 class="text-center mb-8">Select method of payment</h3>
+    <h3 class="text-center mb-8">
+      Select method of payment
+    </h3>
     <div class="text-center mb-8">
       <BaseButton
         class="btn w-[200px] h-[150px] text-xl font-semibold"
         :class="appStore.stripePayment === 'cash' ? 'btn-green' : 'btn-blue'"
         label="Cash, Cheque, E-Transfer"
-        @click="selectCashPayment">
+        @click="selectCashPayment"
+      >
         Cash, Cheque, E-Transfer
       </BaseButton>
       <BaseButton
         class="btn w-[200px] h-[150px] text-xl font-semibold"
         :class="appStore.stripePayment === 'ccard' ? 'btn-green' : 'btn-blue'"
         label="Pay by Credit Card"
-        @click="selectCreditCardPayment">
+        @click="selectCreditCardPayment"
+      >
         Credit Card
       </BaseButton>
     </div>
 
     <form
       id="payment-form"
-      @submit="handleSubmit">
+      @submit="handleSubmit"
+    >
       <div class="my-6 sm:mt-0">
         <div class="p-4 border border-sky-700 rounded-lg bg-white">
-          <h4 class="mb-6">Final Amount</h4>
+          <h4 class="mb-6">
+            Final Amount
+          </h4>
           <table class="table-fixed w-full">
             <tbody>
               <tr>
-                <td class="">Total</td>
+                <td class="">
+                  Total
+                </td>
                 <td class="text-right">
                   ${{
                     Number(registrationStore.registration.totalAmt).toFixed(2)
@@ -266,15 +281,15 @@
         <div
           v-show="appStore.stripePayment === 'cash'"
           v-auto-animate
-          class="p-4 sm:p-6 border border-sky-700 rounded-lg bg-white">
+          class="p-4 sm:p-6 border border-sky-700 rounded-lg bg-white"
+        >
           <ul class="list-disc">
             <li>
               Payment may be made by cash, cheque, or e-transfer to the Winnipeg
               Music Festival (<a
                 class="text-sky-600"
                 href="mailto:admin@winnipegmusicfestival.org"
-                ><strong>admin@winnipegmusicfestival.org</strong></a
-              >).
+              ><strong>admin@winnipegmusicfestival.org</strong></a>).
             </li>
             <li>
               Registrations will not be considered submitted until payment is
@@ -286,14 +301,16 @@
         <div
           v-show="appStore.stripePayment === 'ccard'"
           v-auto-animate
-          class="p-4 sm:p-6 border border-sky-700 rounded-lg bg-white">
+          class="p-4 sm:p-6 border border-sky-700 rounded-lg bg-white"
+        >
           <div class="pb-8" />
           <div id="payment-element">
             <!-- Stripe.js injects the Payment Element -->
           </div>
           <div
             id="payment-message"
-            class="" />
+            class=""
+          />
         </div>
       </fieldset>
 
@@ -302,11 +319,13 @@
           id="submit"
           :disabled="submitDisabled"
           type="submit"
-          class="mt-8 btn btn-blue w-[200px] h-[75px] relative">
+          class="mt-8 btn btn-blue w-[200px] h-[75px] relative"
+        >
           <div class="flex items-center justify-center gap-3">
             <div
               id="spinner"
-              :class="spinnerHidden ? 'spinner hidden' : 'spinner'" />
+              :class="spinnerHidden ? 'spinner hidden' : 'spinner'"
+            />
             <span id="button-text">Submit Payment</span>
           </div>
         </BaseButton>

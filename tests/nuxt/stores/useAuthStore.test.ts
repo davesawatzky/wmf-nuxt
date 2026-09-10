@@ -1,6 +1,6 @@
+import { createPinia, setActivePinia } from 'pinia'
 // tests/nuxt/stores/useAuthStore.test.ts
-import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { setActivePinia, createPinia } from 'pinia'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useAuthStore } from '../../../app/stores/useAuthStore'
 
 // Mock console.log to avoid test output noise

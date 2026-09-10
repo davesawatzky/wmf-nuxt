@@ -1,4 +1,4 @@
-export const useNavigationHistory = () => {
+export function useNavigationHistory() {
   const clearUserSession = () => {
     // Clear browser history
     window.history.replaceState(null, '', '/login')

@@ -1,185 +1,190 @@
 <script setup lang="ts">
-  import * as yup from 'yup'
-  import { useSchoolGroup } from '~/stores/useSchoolGroup'
-  import type { SchoolGroup, SchoolGroupInput } from '~/graphql/gql/graphql'
-  import { useToast } from 'vue-toastification'
+import type { SchoolGroup, SchoolGroupInput } from '~/graphql/gql/graphql'
+import { useToast } from 'vue-toastification'
+import * as yup from 'yup'
+import { useSchoolGroup } from '~/stores/useSchoolGroup'
 
-  const props = defineProps<{
-    modelValue: SchoolGroupInput
-    schoolGroupIndex: number
-    schoolGroupId: number
-  }>()
+const props = defineProps<{
+  modelValue: SchoolGroupInput
+  schoolGroupIndex: number
+  schoolGroupId: number
+}>()
 
-  const emits = defineEmits<{
-    'update:modelValue': [value: SchoolGroupInput]
-  }>()
+const emits = defineEmits<{
+  'update:modelValue': [value: SchoolGroupInput]
+}>()
 
-  const schoolGroupStore = useSchoolGroup()
-  const fieldConfigStore = useFieldConfig()
-  const toast = useToast()
+const schoolGroupStore = useSchoolGroup()
+const fieldConfigStore = useFieldConfig()
+const toast = useToast()
 
-  const schoolGroup = computed({
-    get: () => props.modelValue,
-    set: (value) => emits('update:modelValue', value),
-  })
+const schoolGroup = computed({
+  get: () => props.modelValue,
+  set: value => emits('update:modelValue', value),
+})
 
-  const status = reactive<Status>({
-    name: props.modelValue.name ? StatusEnum.saved : StatusEnum.null,
-    earliestTime: props.modelValue.earliestTime
-      ? StatusEnum.saved
-      : StatusEnum.null,
-    latestTime: props.modelValue.latestTime
-      ? StatusEnum.saved
-      : StatusEnum.null,
-    groupSize:
+const status = reactive<Status>({
+  name: props.modelValue.name ? StatusEnum.saved : StatusEnum.null,
+  earliestTime: props.modelValue.earliestTime
+    ? StatusEnum.saved
+    : StatusEnum.null,
+  latestTime: props.modelValue.latestTime
+    ? StatusEnum.saved
+    : StatusEnum.null,
+  groupSize:
       props.modelValue.groupSize || props.modelValue.groupSize === 0
         ? StatusEnum.saved
         : StatusEnum.null,
-    chaperones:
+  chaperones:
       props.modelValue.chaperones || props.modelValue.chaperones === 0
         ? StatusEnum.saved
         : StatusEnum.null,
-    wheelchairs:
+  wheelchairs:
       props.modelValue.wheelchairs || props.modelValue.wheelchairs === 0
         ? StatusEnum.saved
         : StatusEnum.null,
-    unavailable: props.modelValue.unavailable
-      ? StatusEnum.saved
-      : StatusEnum.null,
-    conflictPerformers: props.modelValue.conflictPerformers
-      ? StatusEnum.saved
-      : StatusEnum.null,
-    photoPermission: props.modelValue.photoPermission
-      ? StatusEnum.saved
-      : StatusEnum.null,
-  })
+  unavailable: props.modelValue.unavailable
+    ? StatusEnum.saved
+    : StatusEnum.null,
+  conflictPerformers: props.modelValue.conflictPerformers
+    ? StatusEnum.saved
+    : StatusEnum.null,
+  photoPermission: props.modelValue.photoPermission
+    ? StatusEnum.saved
+    : StatusEnum.null,
+})
 
-  const totalParticipants = computed<number>(() => {
-    return (
-      (schoolGroup.value.groupSize ?? 0) +
-      (schoolGroup.value.chaperones ?? 0) +
-      (schoolGroup.value.wheelchairs ?? 0)
+const totalParticipants = computed<number>(() => {
+  return (
+    (schoolGroup.value.groupSize ?? 0)
+    + (schoolGroup.value.chaperones ?? 0)
+    + (schoolGroup.value.wheelchairs ?? 0)
+  )
+})
+
+async function fieldStatus(stat: string, fieldName: string) {
+  await nextTick()
+  if (stat === 'valid') {
+    status[fieldName] = StatusEnum.pending
+    const result = await schoolGroupStore.updateSchoolGroup(
+      props.schoolGroupId,
+      fieldName,
     )
-  })
-
-  async function fieldStatus(stat: string, fieldName: string) {
-    await nextTick()
-    if (stat === 'valid') {
-      status[fieldName] = StatusEnum.pending
-      const result = await schoolGroupStore.updateSchoolGroup(
-        props.schoolGroupId,
-        fieldName
-      )
-      status[fieldName] = StatusEnum.null
-      if (result === 'complete') {
-        if (props.modelValue[fieldName as keyof SchoolGroupInput] !== null) {
-          status[fieldName] = StatusEnum.saved
-        }
-      } else {
-        console.error('Could not update school group field:', fieldName)
-        toast.error(
-          'Could not update field.  Please exit and reload Registration'
-        )
+    status[fieldName] = StatusEnum.null
+    if (result === 'complete') {
+      if (props.modelValue[fieldName as keyof SchoolGroupInput] !== null) {
+        status[fieldName] = StatusEnum.saved
       }
-    } else if (stat === 'invalid') {
-      status[fieldName] = StatusEnum.pending
-      const result = await schoolGroupStore.updateSchoolGroup(
-        props.schoolGroupId,
-        fieldName
+    }
+    else {
+      console.error('Could not update school group field:', fieldName)
+      toast.error(
+        'Could not update field.  Please exit and reload Registration',
       )
-      status[fieldName] = StatusEnum.null
-      if (result === 'complete') {
-        status[fieldName] = StatusEnum.removed
-      } else {
-        console.error('Could not remove invalid school group field:', fieldName)
-        toast.error(
-          'Could not remove invalid field. Please exit and reload Registration'
-        )
-      }
-    } else if (stat === 'removed') {
-      status[fieldName] = StatusEnum.pending
-      const result = await schoolGroupStore.updateSchoolGroup(
-        props.schoolGroupId,
-        fieldName
-      )
-      status[fieldName] = StatusEnum.null
-      if (result === 'complete') {
-        status[fieldName] = StatusEnum.removed
-      } else {
-        console.error('Could not remove school group field:', fieldName)
-        toast.error(
-          'Could not remove field.  Please exit and reload Registration'
-        )
-      }
     }
   }
-
-  const validationSchema = toTypedSchema(
-    yup.object({
-      groupName: yup.string().trim().required('Required'),
-      earliestTime: yup
-        .string()
-        .matches(/[0-1]{0,1}[0-9]:[0-5][0-9]/, 'Enter a time')
-        .default('08:00')
-        .required('Required'),
-      latestTime: yup
-        .string()
-        .default('17:00')
-        .matches(/[0-1]{0,1}[0-9]:[0-5][0-9]/, 'Enter a time')
-        .required('Required'),
-      groupSize: yup
-        .number()
-        .min(2)
-        .max(300)
-        .integer()
-        .typeError('Please enter a valid number')
-        .required('Required'),
-      chaperones: yup
-        .number()
-        .min(0)
-        .max(100)
-        .integer()
-        .typeError('Please enter a valid number')
-        .required('Required'),
-      wheelchairs: yup
-        .number()
-        .min(0)
-        .max(100)
-        .integer()
-        .typeError('Please enter a valid number')
-        .required('Required'),
-      unavailable: yup.string().trim().nullable(),
-      conflictPerformers: yup.string().trim().nullable(),
-      photoPermission: yup
-        .string()
-        .trim()
-        .required('Required')
-        .oneOf(['Yes', 'No']),
-    })
-  )
-
-  const { validate } = useForm({
-    validationSchema,
-    validateOnMount: true,
-  })
-
-  const schoolGroupKeys = fieldConfigStore.performerTypeFields('SchoolGroup')
-  watchEffect(() => {
-    let count = 0
-    for (const key of schoolGroupKeys) {
-      if (status[key as keyof SchoolGroup] !== StatusEnum.saved) {
-        count++
-      }
-    }
-    const index = schoolGroupStore.schoolGroupErrors.findIndex(
-      (item) => item.id === props.schoolGroupId
+  else if (stat === 'invalid') {
+    status[fieldName] = StatusEnum.pending
+    const result = await schoolGroupStore.updateSchoolGroup(
+      props.schoolGroupId,
+      fieldName,
     )
-    schoolGroupStore.schoolGroupErrors[index]!.count = count
-  })
+    status[fieldName] = StatusEnum.null
+    if (result === 'complete') {
+      status[fieldName] = StatusEnum.removed
+    }
+    else {
+      console.error('Could not remove invalid school group field:', fieldName)
+      toast.error(
+        'Could not remove invalid field. Please exit and reload Registration',
+      )
+    }
+  }
+  else if (stat === 'removed') {
+    status[fieldName] = StatusEnum.pending
+    const result = await schoolGroupStore.updateSchoolGroup(
+      props.schoolGroupId,
+      fieldName,
+    )
+    status[fieldName] = StatusEnum.null
+    if (result === 'complete') {
+      status[fieldName] = StatusEnum.removed
+    }
+    else {
+      console.error('Could not remove school group field:', fieldName)
+      toast.error(
+        'Could not remove field.  Please exit and reload Registration',
+      )
+    }
+  }
+}
 
-  onActivated(async () => {
-    await validate()
-  })
+const validationSchema = toTypedSchema(
+  yup.object({
+    groupName: yup.string().trim().required('Required'),
+    earliestTime: yup
+      .string()
+      .matches(/[01]?\d:[0-5]\d/, 'Enter a time')
+      .default('08:00')
+      .required('Required'),
+    latestTime: yup
+      .string()
+      .default('17:00')
+      .matches(/[01]?\d:[0-5]\d/, 'Enter a time')
+      .required('Required'),
+    groupSize: yup
+      .number()
+      .min(2)
+      .max(300)
+      .integer()
+      .typeError('Please enter a valid number')
+      .required('Required'),
+    chaperones: yup
+      .number()
+      .min(0)
+      .max(100)
+      .integer()
+      .typeError('Please enter a valid number')
+      .required('Required'),
+    wheelchairs: yup
+      .number()
+      .min(0)
+      .max(100)
+      .integer()
+      .typeError('Please enter a valid number')
+      .required('Required'),
+    unavailable: yup.string().trim().nullable(),
+    conflictPerformers: yup.string().trim().nullable(),
+    photoPermission: yup
+      .string()
+      .trim()
+      .required('Required')
+      .oneOf(['Yes', 'No']),
+  }),
+)
+
+const { validate } = useForm({
+  validationSchema,
+  validateOnMount: true,
+})
+
+const schoolGroupKeys = fieldConfigStore.performerTypeFields('SchoolGroup')
+watchEffect(() => {
+  let count = 0
+  for (const key of schoolGroupKeys) {
+    if (status[key as keyof SchoolGroup] !== StatusEnum.saved) {
+      count++
+    }
+  }
+  const index = schoolGroupStore.schoolGroupErrors.findIndex(
+    item => item.id === props.schoolGroupId,
+  )
+  schoolGroupStore.schoolGroupErrors[index]!.count = count
+})
+
+onActivated(async () => {
+  await validate()
+})
 </script>
 
 <template>
@@ -194,7 +199,8 @@
           type="text"
           @change-status="
             async (stat: string) => await fieldStatus(stat, 'name')
-          " />
+          "
+        />
 
         <BaseInput
           v-model="schoolGroup.earliestTime"
@@ -204,7 +210,8 @@
           type="time"
           @change-status="
             async (stat: string) => await fieldStatus(stat, 'earliestTime')
-          " />
+          "
+        />
         <BaseInput
           v-model="schoolGroup.latestTime"
           :status="status.latestTime"
@@ -213,10 +220,12 @@
           type="time"
           @change-status="
             async (stat: string) => await fieldStatus(stat, 'latestTime')
-          " />
+          "
+        />
       </div>
       <div
-        class="col-span-12 sm:col-span-4 lg:col-span-4 grid grid-cols-2 gap-x-3 items-start">
+        class="col-span-12 sm:col-span-4 lg:col-span-4 grid grid-cols-2 gap-x-3 items-start"
+      >
         <div class="col-1 sm:col-span-2">
           <BaseInput
             v-model.number="schoolGroup.groupSize"
@@ -229,7 +238,8 @@
             type="number"
             @change-status="
               async (stat: string) => await fieldStatus(stat, 'groupSize')
-            " />
+            "
+          />
         </div>
         <div class="col-1 sm:col-span-2">
           <BaseInput
@@ -243,7 +253,8 @@
             type="number"
             @change-status="
               async (stat: string) => await fieldStatus(stat, 'chaperones')
-            " />
+            "
+          />
         </div>
         <div class="col-1 sm:col-span-2">
           <BaseInput
@@ -257,7 +268,8 @@
             type="number"
             @change-status="
               async (stat: string) => await fieldStatus(stat, 'wheelchairs')
-            " />
+            "
+          />
         </div>
         <div class="off col-1 sm:col-span-2 text-sm font-bold">
           Total Number: {{ totalParticipants }}
@@ -275,7 +287,8 @@
           name="photoPermission"
           @change-status="
             async (stat: string) => await fieldStatus(stat, 'photoPermission')
-          " />
+          "
+        />
       </div>
       <div class="col-span-9 sm:col-span-10 lg:col-span-8 text-sm self-center">
         I give permission to use photographs of this participant in Winnipeg
@@ -292,7 +305,8 @@
         rows="3"
         @change-status="
           async (stat: string) => await fieldStatus(stat, 'unavailable')
-        " />
+        "
+      />
       <p class="text-sm mb-2">
         List any date/time when you are unavailable for performance, including
         school in-service days, using
@@ -308,7 +322,8 @@
         rows="3"
         @change-status="
           async (stat: string) => await fieldStatus(stat, 'conflictPerformers')
-        " />
+        "
+      />
       <p class="text-sm mb-2">
         If there are any students in your group participating in other festival
         classes, list the students' names so that we can do our best to avoid
