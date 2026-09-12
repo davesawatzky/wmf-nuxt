@@ -338,17 +338,17 @@ function resetFields() {
     <div v-auto-animate>
       <div class="w-full sm:w-2/3 lg:w-1/2 mx-auto">
         <h2 class="text-center">
-          Winnipeg Music Festival Registration 2026
+          Winnipeg Music Festival 2027<br /> Registration
         </h2>
         <p class="text-left">
           Begin registration by creating an account (account can be for an
           individual; a teacher for all their individual students, or for all
           their choirs; a parent for their family etc.)
         </p>
-        <p class="text-center">
+        <!-- <p class="text-center">
           <strong>Site best used with Google Chrome or Mozilla Firefox, not
             Safari</strong>
-        </p>
+        </p> -->
         <!-- <div
           class="mx-auto text-center border-4 border-red-700 rounded-lg mt-4 p-4">
           <h3>Site is undergoing maintenance. Please return shortly.</h3>

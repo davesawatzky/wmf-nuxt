@@ -28,7 +28,7 @@ onBeforeMount(() => {
 
 const { result, loading } = useQuery(
   gql`
-      query AdminRegisteredClasses {
+      query AdminRegisteredClasses1 {
         registeredClasses {
           classNumber
           discipline

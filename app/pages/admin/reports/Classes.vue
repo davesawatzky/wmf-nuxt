@@ -32,7 +32,7 @@ onBeforeUnmount(() => {
 })
 
 const { result, onResult } = useQuery(gql`
-    query AdminRegisteredClasses {
+    query AdminRegisteredClasses2 {
       registeredClasses {
         classNumber
         discipline
@@ -59,8 +59,8 @@ const { result, onResult } = useQuery(gql`
           # }
         }
       }
-    }
-  `, {
+    }`,
+  {
   fetchPolicy: 'no-cache',
   errorPolicy: 'all',
 })

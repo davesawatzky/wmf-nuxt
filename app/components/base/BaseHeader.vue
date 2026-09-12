@@ -113,11 +113,11 @@ function toggleMobileMenu() {
 </script>
 
 <template>
-  <header class="bg-sky-800 py-2">
+  <header class="bg-gray-800 py-2">
     <div>
       <PVMenubar
         :model="items"
-        class="hidden md:flex bg-sky-800 text-white lg:max-w-5xl mx-auto justify-between"
+        class="hidden md:flex bg-gray-800 border-none text-white lg:max-w-5xl mx-auto justify-between"
       >
         <template #start>
           <NuxtPicture
@@ -139,20 +139,18 @@ function toggleMobileMenu() {
           >
             <button
               v-ripple
-              class="w-full px-4 py-2 text-black bg-sky-800 hover:bg-sky-600 outline-0 rounded-md ring-0"
+              class="w-full px-4 py-2 text-black bg-gray-800 hover:bg-gray-600 rounded-sm"
               :class="{
                 'text-white': root,
-                // 'border-1': !root,
-                // 'rounded-md': !root,
-                // 'border-white': !root,
                 'hover:text-white': !root,
                 'bg-white': !root,
-                'hover:bg-sky-600': !root,
+                'hover:bg-gray-600': !root,
               }"
               v-bind="props.action"
             >
               <span>{{ item.label }}</span>
             </button>
+
           </div>
         </template>
       </PVMenubar>
@@ -196,7 +194,7 @@ function toggleMobileMenu() {
       position="right"
       :modal="true"
       :close-on-escape="true"
-      class="p-4 bg-sky-700 text-white w-4/5"
+      class="p-4 bg-gray-700 text-white w-4/5"
     >
       <div class="flex flex-col space-y-4">
         <h2 class="text-xl font-bold mb-4 border-b pb-2">
