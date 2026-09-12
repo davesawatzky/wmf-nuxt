@@ -34,7 +34,7 @@ onBeforeUnmount(() => {
 })
 
 const { result, onResult } = useQuery(gql`
-    query AdminPerformers {
+    query AdminReportPerformers {
       performers {
         id
         pronouns
@@ -55,7 +55,6 @@ const { result, onResult } = useQuery(gql`
         registration {
           id
           confirmation
-          photoPermission
           registeredClasses {
             id
             classNumber
@@ -74,13 +73,11 @@ const { result, onResult } = useQuery(gql`
           }
         }
       }
-    },
-    null,
-    {
-      fetchPolicy: 'no-cache',
-      errorPolicy: 'all',
     }
-  `)
+  `, {
+  fetchPolicy: 'no-cache',
+  errorPolicy: 'all',
+})
 
 onResult(async () => {
   if (await result.value) {

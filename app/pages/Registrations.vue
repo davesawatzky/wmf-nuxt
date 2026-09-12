@@ -38,7 +38,7 @@ const sm = useMediaQuery('(min-width: 640px)')
 const md = useMediaQuery('(min-width: 768px)')
 const lg = useMediaQuery('(min-width: 1024px)')
 
-function dateFunction(date: Date | undefined) {
+function dateFunction(date: Date | null | undefined) {
   if (date) {
     const dateString = date.toString()
     return DateTime.fromISO(dateString).toLocaleString(DateTime.DATETIME_MED)
@@ -47,22 +47,6 @@ function dateFunction(date: Date | undefined) {
 
 definePageMeta({
   middleware: ['user'],
-})
-
-onMounted(async () => {
-  registrationStore.$reset()
-  appStore.$reset()
-  performerStore.$reset()
-  teacherStore.$resetTeacher()
-  teacherStore.$resetAllTeachers()
-  groupStore.$reset()
-  communityStore.$reset()
-  communityGroupStore.$reset()
-  schoolStore.$reset()
-  schoolGroupStore.$reset()
-  classesStore.$reset()
-  fieldConfigStore.$reset()
-  await refetchRegistrations()
 })
 
 /**
@@ -99,6 +83,21 @@ const {
   fetchPolicy: 'no-cache',
   errorPolicy: 'all',
 }))
+onMounted(async () => {
+  registrationStore.$reset()
+  appStore.$reset()
+  performerStore.$reset()
+  teacherStore.$resetTeacher()
+  teacherStore.$resetAllTeachers()
+  groupStore.$reset()
+  communityStore.$reset()
+  communityGroupStore.$reset()
+  schoolStore.$reset()
+  schoolGroupStore.$reset()
+  classesStore.$reset()
+  fieldConfigStore.$reset()
+  await refetchRegistrations()
+})
 onRegistrationsError((error) => {
   console.error('Error loading registrations:', error)
   toast.error('Error loading registrations. Please try again.')

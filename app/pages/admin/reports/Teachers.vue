@@ -26,7 +26,7 @@ onBeforeUnmount(() => {
 
 const { result, onResult } = useQuery(
   gql`
-      query AdminPrivateTeachers($teacherType: String!) {
+      query AdminPrivateTeachers2($teacherType: String!) {
         teachers(teacherType: $teacherType) {
           id
           firstName

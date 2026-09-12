@@ -34,7 +34,7 @@ const sm = useMediaQuery('(min-width: 640px)')
 const md = useMediaQuery('(min-width: 768px)')
 const lg = useMediaQuery('(min-width: 1024px)')
 
-function dateFunction(date: Date | undefined) {
+function dateFunction(date: Date | null | undefined) {
   if (date) {
     const dateString = date.toString()
     return DateTime.fromISO(dateString).toLocaleString(DateTime.DATETIME_MED)

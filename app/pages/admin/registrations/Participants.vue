@@ -49,7 +49,6 @@ const { result, loading } = useQuery(
           registration {
             id
             confirmation
-            photoPermission
             registeredClasses {
               id
               classNumber

@@ -59,13 +59,11 @@ const { result, onResult } = useQuery(gql`
           # }
         }
       }
-    },
-    null,
-    {
-      fetchPolicy: 'no-cache',
-      errorPolicy: 'all',
     }
-  `)
+  `, {
+  fetchPolicy: 'no-cache',
+  errorPolicy: 'all',
+})
 onResult(async () => {
   if (await result.value) {
     documentStore.updateJsonData(result.value)

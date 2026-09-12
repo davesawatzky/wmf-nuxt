@@ -47,7 +47,7 @@ function communityClassGroup(id: number): CommunityGroup | undefined {
   return communityGroups.find(item => item.id === id)
 }
 
-function dateFunction(date: Date | undefined) {
+function dateFunction(date: Date | null | undefined) {
   if (date) {
     const dateString = date.toString()
     return DateTime.fromISO(dateString).toLocaleString(DateTime.DATETIME_MED)

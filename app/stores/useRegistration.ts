@@ -103,12 +103,12 @@ export const useRegistration = defineStore(
         performerType: reg.performerType!,
         label: reg.label || null,
         confirmation: reg.confirmation || null,
-        createdAt: reg.createdAt || null,
+        createdAt: reg.createdAt ? new Date(reg.createdAt).toISOString() : null,
         submittedAt: reg.submittedAt || null,
         transactionInfo: reg.transactionInfo || null,
         payedAmt: Number(reg.payedAmt) || 0.0,
         totalAmt: Number(reg.totalAmt) || 0.0,
-        updatedAt: reg.updatedAt || null,
+        updatedAt: reg.updatedAt ? new Date(reg.updatedAt).toISOString() : null,
         teacherID: reg.teacherID || null,
         __typename: 'Registration',
       }
@@ -167,7 +167,7 @@ export const useRegistration = defineStore(
       let registrationField = null
       if (field && Object.keys(regProps).includes(field)) {
         registrationField = Object.fromEntries(
-          new Array(Object.entries(regProps).find(item => item[0] === field)!),
+          [Object.entries(regProps).find(item => item[0] === field)!],
         )
       }
       try {

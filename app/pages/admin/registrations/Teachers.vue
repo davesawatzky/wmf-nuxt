@@ -29,7 +29,7 @@ onBeforeMount(() => {
 
 const { result, loading } = useQuery(
   gql`
-      query AdminPrivateTeachers($teacherType: String!) {
+      query AdminPrivateTeachers1($teacherType: String!) {
         teachers(teacherType: $teacherType) {
           id
           firstName
