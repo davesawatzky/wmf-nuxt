@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { useToast } from 'vue-toastification'
 import { useSchool } from '~/stores/useSchool'
 import { useSchoolGroup } from '~/stores/useSchoolGroup'
 
 const schoolGroupStore = useSchoolGroup()
 const schoolStore = useSchool()
-const toast = useToast()
+const { handleError } = useErrorHandler()
 
 async function addSchoolGroup(schoolId?: number) {
   try {
@@ -13,13 +12,19 @@ async function addSchoolGroup(schoolId?: number) {
       await schoolGroupStore.createSchoolGroup(schoolId)
     }
     else {
-      console.error('Cannot add school group.  School ID is missing')
-      toast.error('Cannot add school group. School ID is missing')
+      throw new Error('Cannot add school group. School ID is missing')
     }
   }
   catch (error) {
-    console.error('Error adding school group:', error)
-    toast.error('Error adding school group')
+    handleError(error, {
+      context: {
+        schoolId,
+      },
+      operation: 'addSchoolGroup in SchoolGroups',
+      level: 'error',
+      toastSeverity: 'error',
+      userMessage: 'Error adding school group',
+    })
   }
 }
 

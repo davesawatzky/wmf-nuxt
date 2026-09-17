@@ -3,7 +3,6 @@ import type {
   CommunityGroup,
   CommunityGroupInput,
 } from '~/graphql/gql/graphql'
-import { useToast } from 'vue-toastification'
 import * as yup from 'yup'
 import { useCommunityGroup } from '~/stores/useCommunityGroup'
 
@@ -19,7 +18,7 @@ const emits = defineEmits<{
 
 const communityGroupStore = useCommunityGroup()
 const fieldConfigStore = useFieldConfig()
-const toast = useToast()
+const { handleError } = useErrorHandler()
 
 const communityGroup = computed({
   get: () => props.modelValue,
@@ -65,65 +64,57 @@ const totalParticipants = computed<number>(() => {
   )
 })
 
+const FIELD_STATUS_MESSAGES: Record<string, { error: string, userMessage: string }> = {
+  valid: {
+    error: 'Could not update community group field',
+    userMessage: 'Could not update field.  Please exit and reload Registration',
+  },
+  invalid: {
+    error: 'Could not remove invalid community group field',
+    userMessage: 'Could not remove invalid field. Please exit and reload Registration',
+  },
+  removed: {
+    error: 'Could not remove community group field',
+    userMessage: 'Could not remove field.  Please exit and reload Registration',
+  },
+}
+
 async function fieldStatus(stat: string, fieldName: string) {
   await nextTick()
+  const messages = FIELD_STATUS_MESSAGES[stat]
+  if (!messages) return
+
+  status[fieldName] = StatusEnum.pending
+  const result = await communityGroupStore.updateCommunityGroup(
+    props.communityGroupId,
+    fieldName,
+  )
+  status[fieldName] = StatusEnum.null
+
+  if (result !== 'complete') {
+    handleError(new Error(messages.error), {
+      context: {
+        communityGroupId: props.communityGroupId,
+        communityGroupIndex: props.communityGroupIndex,
+        fieldName: fieldName,
+      },
+      operation: 'fieldStatus in CommunityGroup',
+      level: 'error',
+      toastSeverity: 'error',
+      userMessage: messages.userMessage,
+    })
+    return
+  }
+
   if (stat === 'valid') {
-    status[fieldName] = StatusEnum.pending
-    const result = await communityGroupStore.updateCommunityGroup(
-      props.communityGroupId,
-      fieldName,
-    )
-    status[fieldName] = StatusEnum.null
-    if (result === 'complete') {
-      if (
-        communityGroup.value[fieldName as keyof CommunityGroupInput] !== null
-      ) {
-        status[fieldName] = StatusEnum.saved
-      }
-    }
-    else {
-      console.error('Could not update community group field:', fieldName)
-      toast.error(
-        'Could not update field.  Please exit and reload Registration',
-      )
+    if (
+      communityGroup.value[fieldName as keyof CommunityGroupInput] !== null
+    ) {
+      status[fieldName] = StatusEnum.saved
     }
   }
-  else if (stat === 'invalid') {
-    status[fieldName] = StatusEnum.pending
-    const result = await communityGroupStore.updateCommunityGroup(
-      props.communityGroupId,
-      fieldName,
-    )
-    status[fieldName] = StatusEnum.null
-    if (result === 'complete') {
-      status[fieldName] = StatusEnum.removed
-    }
-    else {
-      console.error(
-        'Could not remove invalid community group field:',
-        fieldName,
-      )
-      toast.error(
-        'Could not remove invalid field. Please exit and reload Registration',
-      )
-    }
-  }
-  else if (stat === 'removed') {
-    status[fieldName] = StatusEnum.pending
-    const result = await communityGroupStore.updateCommunityGroup(
-      props.communityGroupId,
-      fieldName,
-    )
-    status[fieldName] = StatusEnum.null
-    if (result === 'complete') {
-      status[fieldName] = StatusEnum.removed
-    }
-    else {
-      console.error('Could not remove community group field:', fieldName)
-      toast.error(
-        'Could not remove field.  Please exit and reload Registration',
-      )
-    }
+  else {
+    status[fieldName] = StatusEnum.removed
   }
 }
 

@@ -1,0 +1,123 @@
+- generic [active] [ref=f29e1]:
+  - generic [ref=f29e15]:
+    - banner [ref=f29e16]:
+      - generic [ref=f29e18]:
+        - generic [ref=f29e19]:
+          - img "Winnipeg Music Festival Logo" [ref=f29e21]
+          - generic [ref=f29e22]: WinnipegMusicFestival
+        - menubar [ref=f29e23]:
+          - menuitem "Registrations" [ref=f29e24]:
+            - button "Registrations" [ref=f29e27] [cursor=pointer]
+          - menuitem "Account" [ref=f29e29]:
+            - button "Account" [ref=f29e32] [cursor=pointer]
+    - generic [ref=f29e36]:
+      - heading "Winnipeg Music Festival" [level=1] [ref=f29e37]
+      - heading "Registration Forms" [level=2] [ref=f29e38]
+      - generic [ref=f29e39]:
+        - generic [ref=f29e40]:
+          - generic [ref=f29e41]:
+            - heading "Submitted and In-Process Applications" [level=3] [ref=f29e42]
+            - table [ref=f29e43]:
+              - rowgroup [ref=f29e44]:
+                - row [ref=f29e45]:
+                  - columnheader "View" [ref=f29e46]
+                  - columnheader "ID" [ref=f29e47]
+                  - columnheader "Label" [ref=f29e48]
+                  - columnheader "Created" [ref=f29e49]
+                  - columnheader "Type" [ref=f29e50]
+                  - columnheader "Status" [ref=f29e51]
+                  - columnheader "Total" [ref=f29e52]
+                  - 'columnheader "Conf. #" [ref=f29e53]'
+                  - columnheader "Del" [ref=f29e54]
+              - rowgroup [ref=f29e55]:
+                - row [ref=f29e56]:
+                  - cell [ref=f29e57]:
+                    - button [ref=f29e58] [cursor=pointer]
+                  - cell "8628" [ref=f29e60]
+                  - cell "Registration Form" [ref=f29e61]
+                  - cell "Sep 17, 2026, 2:40 PM" [ref=f29e62]
+                  - cell "SOLO" [ref=f29e63]
+                  - cell [ref=f29e64]:
+                    - paragraph [ref=f29e66]: Incomplete
+                  - cell "$0.00" [ref=f29e67]
+                  - cell "----" [ref=f29e68]
+                  - cell [ref=f29e69]:
+                    - button [ref=f29e70] [cursor=pointer]
+                - row [ref=f29e72]:
+                  - cell [ref=f29e73]:
+                    - button [ref=f29e74] [cursor=pointer]
+                  - cell "8629" [ref=f29e76]
+                  - cell "Registration Form" [ref=f29e77]
+                  - cell "Sep 17, 2026, 2:41 PM" [ref=f29e78]
+                  - cell "GROUP" [ref=f29e79]
+                  - cell [ref=f29e80]:
+                    - paragraph [ref=f29e82]: Incomplete
+                  - cell "$0.00" [ref=f29e83]
+                  - cell "----" [ref=f29e84]
+                  - cell [ref=f29e85]:
+                    - button [ref=f29e86] [cursor=pointer]
+                - row [ref=f29e88]:
+                  - cell [ref=f29e89]:
+                    - button [ref=f29e90] [cursor=pointer]
+                  - cell "8630" [ref=f29e92]
+                  - cell "Registration Form" [ref=f29e93]
+                  - cell "Sep 17, 2026, 2:41 PM" [ref=f29e94]
+                  - cell "SCHOOL" [ref=f29e95]
+                  - cell [ref=f29e96]:
+                    - paragraph [ref=f29e98]: Incomplete
+                  - cell "$0.00" [ref=f29e99]
+                  - cell "----" [ref=f29e100]
+                  - cell [ref=f29e101]:
+                    - button [ref=f29e102] [cursor=pointer]
+                - row [ref=f29e104]:
+                  - cell [ref=f29e105]:
+                    - button [ref=f29e106] [cursor=pointer]
+                  - cell "8631" [ref=f29e108]
+                  - cell "Registration Form" [ref=f29e109]
+                  - cell "Sep 17, 2026, 2:41 PM" [ref=f29e110]
+                  - cell "COMMUNITY" [ref=f29e111]
+                  - cell [ref=f29e112]:
+                    - paragraph [ref=f29e114]: Incomplete
+                  - cell "$0.00" [ref=f29e115]
+                  - cell "----" [ref=f29e116]
+                  - cell [ref=f29e117]:
+                    - button [ref=f29e118] [cursor=pointer]
+          - generic [ref=f29e120]:
+            - heading "Registering for the Winnipeg Music Festival" [level=3] [ref=f29e121]
+            - list [ref=f29e122]:
+              - listitem [ref=f29e123]: Begin registration by creating an account (account can be for an individual; a teacher for all their individual students, or for all their choirs; a parent for their family etc.)
+              - listitem [ref=f29e124]: Only one teacher/one discipline allowed per form. Performers wanting to register in multiple disciplines and/or with multiple teachers require separate forms.
+              - listitem [ref=f29e125]: Applications can be saved and completed/edited later before submission. Once submitted, applications can no longer be edited.
+              - listitem [ref=f29e126]: You can view submitted entries by clicking on the 'eye' link to the left of the table.
+              - listitem [ref=f29e127]: A copy can be printed for your records.
+          - heading "Start A New Registration Form" [level=3] [ref=f29e128]
+        - generic [ref=f29e129]:
+          - generic [ref=f29e130] [cursor=pointer]:
+            - img "New Solo Registration" [ref=f29e133]
+            - generic [ref=f29e134]: Solo
+          - generic [ref=f29e135] [cursor=pointer]:
+            - img "New Group Registration" [ref=f29e138]
+            - generic [ref=f29e139]: Group
+          - generic [ref=f29e140] [cursor=pointer]:
+            - img "New School Registration" [ref=f29e143]
+            - generic [ref=f29e144]: School
+          - generic [ref=f29e145] [cursor=pointer]:
+            - img "New Community Registration" [ref=f29e148]
+            - generic [ref=f29e149]: Community
+    - contentinfo [ref=f29e150]:
+      - generic [ref=f29e152]:
+        - generic [ref=f29e153]: Winnipeg Music Festival
+        - generic [ref=f29e154]:
+          - text: "2-88 St. Anne's Rd.Winnipeg, MB R2M 2Y7Phone: (204) 947-0184Email:"
+          - link "admin@winnipegmusicfestival.org" [ref=f29e155] [cursor=pointer]:
+            - /url: mailto:admin@winnipegmusicfestival.org
+      - generic [ref=f29e156]:
+        - generic [ref=f29e157]: Created by
+        - link "Diatonic Web Design and Development" [ref=f29e158] [cursor=pointer]:
+          - /url: https://www.diatonic.io
+  - generic [ref=f29e159]:
+    - button "Toggle Nuxt DevTools" [ref=f29e160] [cursor=pointer]
+    - generic "Page load time" [ref=f29e164]:
+      - generic [ref=f29e165]: "110"
+      - generic [ref=f29e166]: ms
+    - button "Toggle Component Inspector" [ref=f29e168] [cursor=pointer]

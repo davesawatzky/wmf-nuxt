@@ -6,13 +6,13 @@ import type {
   StripeError,
 } from '@stripe/stripe-js'
 import { loadStripe } from '@stripe/stripe-js'
-import { useToast } from 'vue-toastification'
 
 const appStore = useAppStore()
 const registrationStore = useRegistration()
 const config = useRuntimeConfig()
 const submitDisabled = ref(false)
 const toast = useToast()
+const { handleError } = useErrorHandler()
 
 interface CreatePaymentIntentResponse {
   totalPayment: number
@@ -54,19 +54,17 @@ definePageMeta({
 
 const stripe: Stripe | null = await loadStripe(config.public.stripePubKey)
 
-async function handleError(error: StripeError) {
-  console.error('Stripe Error:', {
-    message: error.message,
-    type: error.type,
-    code: error.code,
-    decline_code: error.decline_code,
-    payment_intent_id: error.payment_intent?.id,
-    registration_id: registrationStore.registrationId,
-  })
-  toast.error(error.message ?? 'An unknown error occurred.')
-  submitDisabled.value = false
-  await navigateTo('/Submission/payment')
-}
+// async function handleError(error: StripeError) {
+//   console.error('Stripe Error:', {
+//     message: error.message,
+//     type: error.type,
+//     code: error.code,
+//     decline_code: error.decline_code,
+//     payment_intent_id: error.payment_intent?.id,
+//     registration_id: registrationStore.registrationId,
+//   })
+//   toast.error(error.message ?? 'An unknown error occurred.')
+// }
 
 let response: PaymentSummaryResponse | undefined
 const isLoading = ref(true)
@@ -85,11 +83,19 @@ if (appStore.stripePayment === 'ccard') {
     )
   }
   catch (error) {
-    console.error('Failed to load payment summary:', error)
-    toast.error('Failed to load payment summary. Please try again.')
-    submitDisabled.value = false
+    handleError( error, {
+      operation: 'loadPaymentSummary',
+      context: {
+        registrationId: registrationStore.registrationId,
+        paymentType: appStore.stripePayment,
+      },
+      level: 'error',
+      toastSeverity: 'error',
+      userMessage: 'Failed to load payment summary. Please try again.'
+    } )
   }
   finally {
+    submitDisabled.value = false
     isLoading.value = false
   }
 }
@@ -104,9 +110,14 @@ const paymentDetails = computed(() => {
 async function confirmPayment() {
   if (submitDisabled.value)
     return
-  if (!stripe) {
-    console.error('Stripe has not been initialized.')
-    toast.error('Stripe has not been initialized.')
+  if ( !stripe ) {
+    handleError( 'Stripe not initialized', {
+      operation: 'confirmPayment',
+      context: {},
+      level: 'error',
+      toastSeverity: 'error',
+      userMessage: 'Payment system not available.'
+    } )
     return
   }
   submitDisabled.value = true
@@ -143,7 +154,22 @@ async function confirmPayment() {
     // be redirected to an intermediate site first to authorize the payment, then
     // redirected to the `return_url`.
     if (result.error) {
-      handleError(result.error)
+      handleError( result.error, {
+        userMessage: result.error.message,
+        level: 'error',
+        toastSeverity: 'error',
+        operation: 'confirmPayment',
+        context: {
+          registration_id: registrationStore.registrationId,
+          payment_intent_id: result.error.payment_intent?.id,
+          decline_code: result.error.decline_code,
+          code: result.error.code,
+          type: result.error.type,
+
+        },
+      } )
+      submitDisabled.value = false
+      await navigateTo('/Submission/payment')
       return
     }
 
@@ -162,36 +188,61 @@ async function confirmPayment() {
         `/Submission/result?payment_intent=${paymentIntent.id}&redirect_status=succeeded`,
       )
     }
+  }
     // This point will only be reached if there is an immediate error
     // Otherwise, customer will be redirected to return_url
-  }
   catch (err) {
-    console.error('Payment confirmation failed:', err)
-    toast.error('Payment confirmation failed. Please try again.')
+    handleError(err, {
+      userMessage: 'Payment confirmation failed. Please try again.',
+      level: 'error',
+      toastSeverity: 'error',
+      operation: 'confirmPayment',
+      context: {
+        registration_id: registrationStore.registrationId,
+      },
+    })
     submitDisabled.value = false
   }
 }
 
 async function cancelPayment() {
   appStore.stripeTokenId = ''
-  const result = await $fetch<{
-    success: boolean
-    message: string
-    error?: string
-  }>(`${config.public.serverAddress}/payment/cancel-confirmation-token`, {
-    method: 'POST',
-    body: {
-      regId: registrationStore.registrationId,
-    },
-  })
-  if (result.success) {
-    toast.info('Payment cancelled')
+  try {
+    const result = await $fetch<{
+      success: boolean
+      message: string
+      error?: string
+    }>(`${config.public.serverAddress}/payment/cancel-confirmation-token`, {
+      method: 'POST',
+      body: {
+        regId: registrationStore.registrationId,
+      },
+    })
+    if (result.success) {
+      toast.add( {
+        severity: 'info',
+        summary: 'Payment cancelled',
+        detail: 'The payment has been successfully cancelled.',
+      })
+    }
+    await navigateTo('/registrations')
   }
-  await navigateTo('/registrations')
+  catch (err) {
+    handleError(err, {
+      userMessage: 'Payment cancellation failed. Please try again.',
+      level: 'error',
+      toastSeverity: 'error',
+      operation: 'cancelPayment',
+      context: {
+        registration_id: registrationStore.registrationId,
+      },
+    })
+  }
 }
 
 // Clean up payment intent if user navigates away without confirming
-onBeforeRouteLeave(async () => {
+onBeforeRouteLeave( async () => {
+  try {
   const result = await $fetch<{
     success: boolean
     message: string
@@ -203,12 +254,26 @@ onBeforeRouteLeave(async () => {
     },
   })
   if (!result.success) {
-    toast.warning(
-      `Failed to clean up confirmation token: ${
+    toast.add({
+      severity: 'warning',
+      summary: 'Failed to clean up confirmation token',
+      detail: `Failed to clean up confirmation token: ${
         result.error ?? result.message}`,
-    )
+    })
   }
   appStore.stripeTokenId = ''
+  }
+  catch (err) {
+    handleError(err, {
+      userMessage: 'Failed to clean up confirmation token.',
+      level: 'error',
+      toastSeverity: 'error',
+      operation: 'onBeforeRouteLeave',
+      context: {
+        registration_id: registrationStore.registrationId,
+      },
+    })
+  }
 })
 </script>
 

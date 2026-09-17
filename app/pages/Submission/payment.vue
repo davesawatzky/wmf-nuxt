@@ -7,18 +7,17 @@ import type {
   StripePaymentElementOptions,
 } from '@stripe/stripe-js'
 import { loadStripe } from '@stripe/stripe-js'
-import { useToast } from 'vue-toastification'
 import { useAppStore } from '~/stores/appStore'
 import { useRegistration } from '~/stores/useRegistration'
 import { useUser } from '~/stores/useUser'
 
 const appStore = useAppStore()
 const userStore = useUser()
-const toast = useToast()
 const loading = ref(false)
 const spinnerHidden = ref(true)
 const registrationStore = useRegistration()
-const submitDisabled = ref(true)
+const submitDisabled = ref( true )
+const {handleError} = useErrorHandler()
 
 const config = useRuntimeConfig()
 
@@ -38,27 +37,19 @@ onBeforeMount(async () => {
 
 const stripe: Stripe | null = await loadStripe(config.public.stripePubKey)
 
-function handleError(error: StripeError) {
-  console.error('Stripe Error:', {
-    message: error.message,
-    type: error.type,
-    code: error.code,
-    decline_code: error.decline_code,
-  })
-  toast.error(error.message)
-  submitDisabled.value = false
-  loading.value = false
-  spinnerHidden.value = true
-}
-
 const totalAmount = computed(() => {
   return registrationStore.registration.totalAmt
 })
 
 async function loadStripeElements() {
-  if (!stripe) {
-    console.error('Stripe not initialized')
-    toast.error('Payment system not available')
+  if ( !stripe ) {
+    handleError( 'Stripe not initialized', {
+      operation: 'loadStripeElements',
+      context: {},
+      level: 'error',
+      toastSeverity: 'error',
+      userMessage: 'Payment system not available.'
+    } )
     return false
   }
 
@@ -68,16 +59,13 @@ async function loadStripeElements() {
     if (!totalAmount.value || totalAmount.value <= 0) {
       throw new Error('Invalid payment amount')
     }
-
     const options: StripeElementsOptions = {
       mode: 'payment',
       amount: Math.round(totalAmount.value * 100),
       currency: 'cad',
       appearance: { theme: 'stripe' },
     }
-
     elements = stripe.elements(options)
-
     const paymentElementOptions: StripePaymentElementOptions = {
       layout: {
         type: 'accordion',
@@ -86,15 +74,18 @@ async function loadStripeElements() {
         spacedAccordionItems: true,
       },
     }
-
     const paymentElement = elements.create('payment', paymentElementOptions)
-    await paymentElement.mount('#payment-element')
-
+    paymentElement.mount('#payment-element')
     return true
   }
-  catch (error) {
-    console.error('Failed to load Stripe Elements:', error)
-    toast.error('Failed to initialize payment form. Please refresh the page.')
+  catch ( error ) {
+    handleError( error, {
+      operation: 'loadStripeElements',
+      context: {},
+      level: 'error',
+      toastSeverity: 'error',
+      userMessage: 'Failed to initialize payment form.'
+    } )
     return false
   }
   finally {
@@ -116,13 +107,11 @@ async function selectCreditCardPayment() {
 
 async function handleSubmit(event: SubmitEvent) {
   event.preventDefault()
-
-  if (loading.value)
+  if (loading.value) {
     return
-
+  }
   loading.value = true
   spinnerHidden.value = false
-
   try {
     if (appStore.stripePayment === 'cash') {
       registrationStore.registration.confirmation = WMFNumber(
@@ -131,25 +120,37 @@ async function handleSubmit(event: SubmitEvent) {
       await navigateTo('/Submission/result')
       return
     }
-
     if (appStore.stripePayment === 'ccard') {
-      if (!stripe || !elements) {
-        console.error('Stripe not initialized for payment submission', {
+      if ( !stripe || !elements ) {
+        handleError( 'Stripe not initialized for payment submission', {
           operation: 'handleSubmit',
-          hasStripe: !!stripe,
-          hasElements: !!elements,
+          context: {
+            hasStripe: !!stripe,
+            hasElements: !!elements,
+          },
+          level: 'error',
+          toastSeverity: 'error',
+          userMessage: 'Payment system not ready. Please refresh and try again.'
         })
-        toast.error('Payment system not ready. Please refresh and try again.')
         return
       }
-
       submitDisabled.value = true
 
       const { firstName, lastName } = userStore.user
-
       const { error: submitError } = await elements.submit()
       if (submitError) {
-        handleError(submitError)
+        handleError( submitError, {
+          operation: 'submitPayment',
+          context: {
+            paymentType: appStore.stripePayment,
+            registrationId: registrationStore.registrationId,
+            userId: userStore.user?.id,
+            amount: totalAmount.value,
+          },
+          level: 'error',
+          toastSeverity: 'error',
+          userMessage: 'Failed to submit payment.'
+        } )
         return
       }
 
@@ -163,32 +164,40 @@ async function handleSubmit(event: SubmitEvent) {
               },
             },
           },
-        })
+        } )
+        
       if (confirmTokenError) {
-        handleError(confirmTokenError)
+        handleError( confirmTokenError, {
+          operation: 'createConfirmationToken',
+          context: {
+            paymentType: appStore.stripePayment,
+            registrationId: registrationStore.registrationId,
+            userId: userStore.user?.id,
+            amount: totalAmount.value,
+          },
+          level: 'error',
+          toastSeverity: 'error',
+          userMessage: 'Failed to create confirmation token.'
+        })
         return
       }
       appStore.stripeTokenId = confirmationToken.id
-
       await navigateTo('/Submission/ConfirmPayment')
     }
   }
-  catch (error) {
-    // Catch unexpected errors (network failures, navigation errors, etc.)
-    console.error('Unexpected error during payment submission:', error, {
-      operation: 'handleSubmit',
-      paymentType: appStore.stripePayment,
-      registrationId: registrationStore.registrationId,
-      userId: userStore.user?.id,
-      amount: totalAmount.value,
+  catch ( error ) {
+    handleError( error, {
+      operation: 'handleSubmitPayment',
+      context: {
+        paymentType: appStore.stripePayment,
+        registrationId: registrationStore.registrationId,
+        userId: userStore.user?.id,
+        amount: totalAmount.value,
+      }
     })
-
-    toast.error(
-      'An unexpected payment error occurred. Please try again or contact support.',
-    )
-    submitDisabled.value = false
   }
   finally {
+    submitDisabled.value = false
     loading.value = false
     spinnerHidden.value = true
   }
@@ -206,19 +215,36 @@ onMounted(async () => {
 // but NOT if they're going to ConfirmPayment (normal flow)
 onBeforeRouteLeave(async (to, _from) => {
   // Only clear token if NOT navigating to ConfirmPayment page
-  if (to.path !== '/Submission/ConfirmPayment' && appStore.stripeTokenId) {
-    await $fetch(
-      `${config.public.serverAddress}/payment/cancel-confirmation-token`,
-      {
-        method: 'POST',
-        body: {
-          regId: registrationStore.registrationId,
+  if ( to.path !== '/Submission/ConfirmPayment' && appStore.stripeTokenId ) {
+    try {
+      await $fetch(
+        `${config.public.serverAddress}/payment/cancel-confirmation-token`,
+        {
+          method: 'POST',
+          body: {
+            regId: registrationStore.registrationId,
+          },
         },
-      },
-    )
-    appStore.stripeTokenId = ''
+      )
+      appStore.stripeTokenId = ''
+    }
+    catch ( error ) {
+      handleError( error, {
+        operation: 'onBeforeRouteLeave on Clear Token',
+        context: {
+          paymentType: appStore.stripePayment,
+          registrationId: registrationStore.registrationId,
+          userId: userStore.user?.id,
+          amount: totalAmount.value,
+        },
+        level: 'error',
+        toastSeverity: 'error',
+        userMessage: 'Failed to cancel confirmation token.'
+      })
+    }
   }
-})
+} )
+
 </script>
 
 <template>

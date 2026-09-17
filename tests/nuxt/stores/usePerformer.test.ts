@@ -1,11 +1,11 @@
 import { createPinia, setActivePinia } from 'pinia'
-import { expect } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { usePerformers } from '~/stores/usePerformer'
 import {
   testFullPerformer1,
   testFullPerformer2,
   testPartialPerformer,
-} from '../utils/testData'
+} from '../../../app/utils/testData'
 
 let performerStore: any
 
@@ -18,11 +18,12 @@ describe('performer Store', () => {
   describe('addToStore', () => {
     it('adds a performer object to the store', () => {
       performerStore.addToStore(testFullPerformer1)
-      expect(performerStore.performers[0]).toMatchObject(testFullPerformer1)
+      // store normalizes falsy values (like the '' fixture data) to null
+      expect(performerStore.performers[0]).toMatchObject({ ...testFullPerformer1, otherClasses: null })
     })
     it('also accepts a partial performer', () => {
       performerStore.addToStore(testPartialPerformer)
-      expect(performerStore.performers[0].email).toBe('')
+      expect(performerStore.performers[0].email).toBeNull()
     })
     it('adds the id as a number', () => {
       performerStore.addToStore(testFullPerformer1)
@@ -34,7 +35,7 @@ describe('performer Store', () => {
     performerStore.addToStore(testFullPerformer1)
     performerStore.addToStore(testFullPerformer2)
     performerStore.$reset()
-    expect(performerStore.performers).is.empty
+    expect(performerStore.performers).toEqual([])
   })
 
   it('gets the full name of the performers', () => {

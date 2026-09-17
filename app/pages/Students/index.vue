@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import type { Registration, RegistrationInput } from '~/graphql/gql/graphql'
 import { DateTime } from 'luxon'
-import { useToast } from 'vue-toastification'
 import {
   PerformerType,
   StudentRegistrationsDocument,
@@ -28,7 +27,7 @@ const communityStore = useCommunity()
 const communityGroupStore = useCommunityGroup()
 const classesStore = useClasses()
 const fieldConfigStore = useFieldConfig()
-const toast = useToast()
+const { handleError } = useErrorHandler()
 
 const sm = useMediaQuery('(min-width: 640px)')
 const md = useMediaQuery('(min-width: 768px)')
@@ -72,8 +71,13 @@ const {
   errorPolicy: 'all',
 })
 onError((error) => {
-  console.error('Error loading registrations: ', error)
-  toast.error('Error loading registrations')
+  handleError(error, {
+    context: {registration: 'load student registrations'},
+    operation: 'StudentRegistrations',
+    level: 'error',
+    toastSeverity: 'error',
+    userMessage: 'Error loading registrations',
+  })
 })
 
 const registrations = computed(() => {
@@ -135,8 +139,13 @@ async function loadRegistration(
     await navigateTo('/students/summary') // TODO: have to change this to a summary
   }
   catch (error) {
-    console.error('Error loading student registrations: ', error)
-    toast.error('Error loading student registrations. Exit and try again.')
+    handleError(error, {
+      context: {registration: 'load student registrations'},
+      operation: 'StudentRegistrations',
+      level: 'error',
+      toastSeverity: 'error',
+      userMessage: 'Error loading student registrations. Exit and try again.',
+    })
   }
 }
 </script>

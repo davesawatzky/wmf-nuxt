@@ -1,0 +1,64 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e15]:
+    - banner [ref=e16]:
+      - generic [ref=e18]:
+        - generic [ref=e19]:
+          - img "Winnipeg Music Festival Logo" [ref=e21]
+          - generic [ref=e22]: WinnipegMusicFestival
+        - menubar:
+          - menuitem "Registrations"
+          - menuitem "Account"
+    - generic [ref=e26]:
+      - generic [ref=e27]:
+        - heading "Winnipeg Music Festival 2027 Registration" [level=2] [ref=e28]
+        - paragraph [ref=e29]: Begin registration by creating an account (account can be for an individual; a teacher for all their individual students, or for all their choirs; a parent for their family etc.)
+      - generic [ref=e30]:
+        - generic [ref=e74]:
+          - heading "Sign up" [level=3] [ref=e75]
+          - group "Select teacher type if applicable" [ref=e76]:
+            - generic [ref=e79]:
+              - checkbox "Private Teacher" [ref=e80]
+              - text: Private Teacher
+            - generic [ref=e82]:
+              - checkbox "School Teacher and/or Community Conductor" [ref=e83]
+              - text: School Teacher and/or Community Conductor
+          - generic [ref=e84]:
+            - generic [ref=e85]: First Name
+            - textbox "First Name" [ref=e88]:
+              - /placeholder: ""
+          - generic [ref=e90]:
+            - generic [ref=e91]: Last Name
+            - textbox "Last Name" [ref=e94]:
+              - /placeholder: ""
+        - generic [ref=e32]:
+          - generic [ref=e33]: Email
+          - textbox "Email" [ref=e36]:
+            - /placeholder: ""
+        - generic [ref=e38]:
+          - generic [ref=e39]: Password (min. 8 characters with at least one number, uppercase, and special character)
+          - textbox "Password (min. 8 characters with at least one number, uppercase, and special character)" [ref=e96]:
+            - /placeholder: ""
+        - generic [ref=e97]:
+          - generic [ref=e98]: Re-enter Password
+          - textbox "Re-enter Password" [ref=e101]:
+            - /placeholder: ""
+        - generic [ref=e103]:
+          - button "Register New Account" [ref=e104]
+          - button "Back to Sign In" [ref=e106] [cursor=pointer]
+    - contentinfo [ref=e51]:
+      - generic [ref=e53]:
+        - generic [ref=e54]: Winnipeg Music Festival
+        - generic [ref=e55]:
+          - text: "2-88 St. Anne's Rd.Winnipeg, MB R2M 2Y7Phone: (204) 947-0184Email:"
+          - link "admin@winnipegmusicfestival.org" [ref=e56] [cursor=pointer]:
+            - /url: mailto:admin@winnipegmusicfestival.org
+      - generic [ref=e57]:
+        - generic [ref=e58]: Created by
+        - link "Diatonic Web Design and Development" [ref=e59] [cursor=pointer]:
+          - /url: https://www.diatonic.io
+  - generic [ref=e60]:
+    - button "Toggle Nuxt DevTools" [ref=e61] [cursor=pointer]
+    - generic "Page load time" [ref=e65]:
+      - generic [ref=e66]: "126"
+      - generic [ref=e67]: ms
+    - button "Toggle Component Inspector" [ref=e69] [cursor=pointer]

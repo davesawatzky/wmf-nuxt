@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import type { Teacher } from '~/graphql/gql/graphql'
 import type { AllTeachers, FilteredTeacher } from '~/stores/useTeacher'
-import { useToast } from 'vue-toastification'
 import * as yup from 'yup'
 import { StatusEnum } from '#imports'
 import { useAppStore } from '~/stores/appStore'
@@ -39,6 +38,7 @@ const schoolTeach = ref(false)
 const fieldConfigStore = useFieldConfig()
 const userStore = useUser()
 const toast = useToast()
+const { handleError } = useErrorHandler()
 const teacherStore = useTeacher()
 const registrationStore = useRegistration()
 const appStore = useAppStore()
@@ -138,9 +138,17 @@ async function fieldStatus(stat: string, fieldName: string) {
         status[fieldName] = StatusEnum.pending
         const result = await teacherStore
           .updateTeacher(fieldName)
-          .catch((error) => {
-            console.error('Trying to remove non-existant teacher', error)
-            toast.error('Trying to remove non-existant teacher')
+          .catch( ( error ) => {
+            handleError(error, {
+              context: {
+                fieldName,
+                teacherId: props.teacherId,
+              },
+              operation: 'fieldStatus in TeacherInfo',
+              level: 'error',
+              toastSeverity: 'error',
+              userMessage: 'Trying to remove non-existant teacher',
+            })
             stat = ''
           })
         if (result === 'complete') {
@@ -148,10 +156,16 @@ async function fieldStatus(stat: string, fieldName: string) {
             status[fieldName] = StatusEnum.saved
           }
           else {
-            console.error('Could not update teacher field:', fieldName)
-            toast.error(
-              'Could not update field. Please exit and reload Registration',
-            )
+            handleError(new Error('Could not update teacher field'), {
+              context: {
+                fieldName,
+                teacherId: props.teacherId,
+              },
+              operation: 'fieldStatus in TeacherInfo',
+              level: 'error',
+              toastSeverity: 'error',
+              userMessage: 'Could not update field. Please exit and reload Registration',
+            })
           }
         }
       }
@@ -160,8 +174,16 @@ async function fieldStatus(stat: string, fieldName: string) {
         const result = await teacherStore
           .updateTeacher(fieldName)
           .catch((error) => {
-            console.error('Trying to remove non-existant teacher', error)
-            toast.error('Trying to remove non-existant teacher')
+            handleError(error, {
+              context: {
+                fieldName,
+                teacherId: props.teacherId,
+              },
+              operation: 'fieldStatus in TeacherInfo',
+              level: 'error',
+              toastSeverity: 'error',
+              userMessage: 'Trying to remove non-existant teacher',
+            })
             stat = ''
           })
         status[fieldName] = StatusEnum.null
@@ -169,10 +191,16 @@ async function fieldStatus(stat: string, fieldName: string) {
           status[fieldName] = StatusEnum.removed
         }
         else {
-          console.error('Could not remove invalid teacher field:', fieldName)
-          toast.error(
-            'Something went wrong. Please exit and reload Registration',
-          )
+          handleError(new Error('Could not remove invalid teacher field'), {
+            context: {
+              fieldName,
+              teacherId: props.teacherId,
+            },
+            operation: 'fieldStatus in TeacherInfo',
+            level: 'error',
+            toastSeverity: 'error',
+            userMessage: 'Something went wrong. Please exit and reload Registration',
+          })
         }
       }
       else if (stat === 'removed') {
@@ -187,10 +215,16 @@ async function fieldStatus(stat: string, fieldName: string) {
           status[fieldName] = StatusEnum.removed
         }
         else {
-          console.error('Could not remove teacher field:', fieldName)
-          toast.error(
-            'Could not remove field. Please exit and reload Registration',
-          )
+          handleError(new Error('Could not remove teacher field'), {
+            context: {
+              fieldName,
+              teacherId: props.teacherId,
+            },
+            operation: 'fieldStatus in TeacherInfo',
+            level: 'error',
+            toastSeverity: 'error',
+            userMessage: 'Could not remove field. Please exit and reload Registration',
+          })
         }
       }
     }
@@ -243,74 +277,86 @@ watch(
 // Adds teacher id to registration store
 // unless it's an unlisted teacher
 // if unlisted then the unlisted teacher watcher will run
-async function changeChosenTeacher(newTeacher: AllTeachers) {
-  if (newTeacher?.lastName === 'Unlisted') {
-    // turns everything null or default to
-    // give a clean slate for a new teacher
-    teacherStore.unlistedTeacher = true
-    teacherStore.$resetTeacher()
-    for (const key of teacherKeys) {
-      if (status[key as keyof Teacher] !== StatusEnum.null) {
-        status[key as keyof Teacher] = StatusEnum.null
+async function changeChosenTeacher( newTeacher: AllTeachers ) {
+  try {
+    if ( newTeacher?.lastName === 'Unlisted' ) {
+      // turns everything null or default to
+      // give a clean slate for a new teacher
+      teacherStore.unlistedTeacher = true
+      teacherStore.$resetTeacher()
+      for ( const key of teacherKeys ) {
+        if ( status[ key as keyof Teacher ] !== StatusEnum.null ) {
+          status[ key as keyof Teacher ] = StatusEnum.null
+        }
       }
-    }
-    registrationStore.registration.teacherID = null
+      registrationStore.registration.teacherID = null
 
-    // new blank teacher record is created
-    await teacherStore.createTeacher(privateTeacher.value, schoolTeach.value)
-    registrationStore.registration.teacherID = props.teacherId
-    validate()
-    await registrationStore.updateRegistration('teacherID')
-    teacherStore.teacherCreated = true
-    // new teacher creation is complete
-    // teacherErrors automatically computed from new teacher state
-  }
-  else {
-    // Otherwise
-    if (
-    // if we're coming from a dirty unlisted teacher
-    // remove the unlisted teacher from the database
-      teacherStore.unlistedTeacher
-      && teacherStore.teacherCreated
-      && !teacherStore.emailAlreadyExists
-    ) {
-      if (props.teacherId) {
-        await teacherStore.removeTeacherFromDatabaseAndRegistration()
+      // new blank teacher record is created
+      await teacherStore.createTeacher( privateTeacher.value, schoolTeach.value )
+      registrationStore.registration.teacherID = props.teacherId
+      validate()
+      await registrationStore.updateRegistration( 'teacherID' )
+      teacherStore.teacherCreated = true
+      // new teacher creation is complete
+      // teacherErrors automatically computed from new teacher state
+    }
+    else {
+      // Otherwise
+      if (
+        // if we're coming from a dirty unlisted teacher
+        // remove the unlisted teacher from the database
+        teacherStore.unlistedTeacher
+        && teacherStore.teacherCreated
+        && !teacherStore.emailAlreadyExists
+      ) {
+        if ( props.teacherId ) {
+          await teacherStore.removeTeacherFromDatabaseAndRegistration()
+        }
+        // Cancels signs of new teacher creation
+        teacherStore.unlistedTeacher = false
+        teacherStore.teacherCreated = false
       }
-      // Cancels signs of new teacher creation
-      teacherStore.unlistedTeacher = false
-      teacherStore.teacherCreated = false
+
+      // Now we load the existing teacher record from the db.
+      // and update the registration
+      registrationStore.registration.teacherID = newTeacher?.id
+      await teacherStore.loadTeacher( newTeacher?.id, undefined )
+      await registrationStore.updateRegistration( 'teacherID' )
+      teacherStore.emailAlreadyExists = false
+
+      // Update statuses for pre-defined teacher
+      // This ensures teacherErrors is reset to 0
+      await nextTick()
+      status.id = StatusEnum.saved
+      status.firstName = teacherStore.teacher.firstName
+        ? StatusEnum.saved
+        : StatusEnum.null
+      status.lastName = teacherStore.teacher.lastName
+        ? StatusEnum.saved
+        : StatusEnum.null
+      status.email = teacherStore.teacher.email
+        ? StatusEnum.saved
+        : StatusEnum.null
+      status.phone = teacherStore.teacher.phone
+        ? StatusEnum.saved
+        : StatusEnum.null
+      if ( teacherStore.teacher.instrument ) {
+        status.instrument = StatusEnum.saved
+      }
+
+      // Trigger validation to ensure form state is updated
+      validate()
     }
-
-    // Now we load the existing teacher record from the db.
-    // and update the registration
-    registrationStore.registration.teacherID = newTeacher?.id
-    await teacherStore.loadTeacher(newTeacher?.id, undefined)
-    await registrationStore.updateRegistration('teacherID')
-    teacherStore.emailAlreadyExists = false
-
-    // Update statuses for pre-defined teacher
-    // This ensures teacherErrors is reset to 0
-    await nextTick()
-    status.id = StatusEnum.saved
-    status.firstName = teacherStore.teacher.firstName
-      ? StatusEnum.saved
-      : StatusEnum.null
-    status.lastName = teacherStore.teacher.lastName
-      ? StatusEnum.saved
-      : StatusEnum.null
-    status.email = teacherStore.teacher.email
-      ? StatusEnum.saved
-      : StatusEnum.null
-    status.phone = teacherStore.teacher.phone
-      ? StatusEnum.saved
-      : StatusEnum.null
-    if (teacherStore.teacher.instrument) {
-      status.instrument = StatusEnum.saved
-    }
-
-    // Trigger validation to ensure form state is updated
-    validate()
+  } catch ( error ) {
+    handleError( error, {
+      context: {
+        teacherId: props.teacherId,
+      },
+      operation: 'changeChosenTeacher in TeacherInfo',
+      level: 'error',
+      toastSeverity: 'error',
+      userMessage: 'An error occurred while changing the chosen teacher. Please exit and reload Registration',
+    } )
   }
 }
 
@@ -342,9 +388,11 @@ async function checkForDuplicate() {
     ) {
       teacherStore.emailAlreadyExists = true
       console.warn('Duplicate teacher found with email')
-      toast.warning(
-        'Email already exists. Changing the teacher details to an existing teacher if available',
-      )
+      toast.add( {
+        severity: 'warning',
+        summary: 'Duplicate Teacher Found',
+        detail: 'Email already exists. Changing the teacher details to an existing teacher if available',
+      })
       teacherStore.unlistedTeacher = false
       if (props.teacherId) {
         await teacherStore.removeTeacherFromDatabaseAndRegistration()
@@ -361,18 +409,27 @@ async function checkForDuplicate() {
       ) {
         await registrationStore
           .updateRegistration('teacherID')
-          .catch((error) => {
-            console.error('Could not update teacher in registration: ', error)
-            toast.error('Could not update teacher in registration')
+          .catch( ( error ) => {
+            handleError( error, {
+              context: {
+                teacherId: props.teacherId,
+              },
+              operation: 'updateRegistration in TeacherInfo',
+              level: 'error',
+              toastSeverity: 'error',
+              userMessage: 'An error occurred while updating the teacher in registration. Please exit and reload Registration',
+            } )
           })
         teacherStore.chosenTeacher = teacherStore.allTeachers.find(
           teacher => teacher.id === teacherStore.duplicateCheck?.id,
         ) as FilteredTeacher
       }
       else {
-        toast.warning(
-          'Teacher must be listed as a private or school teacher.',
-        )
+        toast.add({
+          severity: 'warning',
+          summary: 'Unlisted Teacher',
+          detail: 'Teacher must be listed as a private or school teacher.',
+        })
         teacherStore.$resetTeacher()
         teacherStore.chosenTeacher = teacherStore.allTeachers.find(
           teacher => teacher.id === 2,

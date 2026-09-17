@@ -1,0 +1,91 @@
+- generic [active] [ref=f9e1]:
+  - generic [ref=f9e15]:
+    - banner [ref=f9e16]:
+      - generic [ref=f9e18]:
+        - generic [ref=f9e19]:
+          - img "Winnipeg Music Festival Logo" [ref=f9e21]
+          - generic [ref=f9e22]: WinnipegMusicFestival
+        - menubar [ref=f9e23]:
+          - menuitem "Registrations" [ref=f9e24]:
+            - button "Registrations" [ref=f9e27] [cursor=pointer]
+          - menuitem "Account" [ref=f9e29]:
+            - button "Account" [ref=f9e32] [cursor=pointer]
+    - generic [ref=f9e237]:
+      - generic [ref=f9e238]:
+        - generic [ref=f9e239]: Registration Label
+        - textbox "Registration Label" [ref=f9e244]:
+          - /placeholder: Enter a unique label
+          - text: Registration Form
+      - generic [ref=f9e246]:
+        - generic [ref=f9e248]:
+          - generic [ref=f9e249]:
+            - button "1" [ref=f9e332]
+            - generic [ref=f9e253]: Community
+          - generic [ref=f9e254]:
+            - button "2" [ref=f9e384]
+            - generic [ref=f9e258]: Contact
+          - generic [ref=f9e259]:
+            - button "3 7" [ref=f9e260]:
+              - text: "3"
+              - generic [ref=f9e261]: "7"
+            - generic [ref=f9e263]: Groups
+          - generic [ref=f9e264]:
+            - button "4 5" [ref=f9e265]:
+              - text: "4"
+              - generic [ref=f9e266]: "5"
+            - generic [ref=f9e268]: Community Classes
+          - generic [ref=f9e269]:
+            - button "5" [ref=f9e270]
+            - generic [ref=f9e271]: Summary
+        - generic [ref=f9e334]:
+          - heading "Community Conductor Information" [level=2] [ref=f9e335]
+          - generic [ref=f9e336]:
+            - generic [ref=f9e337]:
+              - generic [ref=f9e338]: Select a conductor from the list
+              - generic [ref=f9e340]:
+                - combobox [ref=f9e341]: Unlisted Teacher
+                - button [ref=f9e342] [cursor=pointer]
+                - status: No results found
+            - generic [ref=f9e353]:
+              - paragraph [ref=f9e354]: Please enter the contact information for your teacher so that we may contact them regarding your entry and include them in our database.
+              - generic [ref=f9e355]:
+                - generic [ref=f9e357]:
+                  - generic [ref=f9e358]: First Name
+                  - textbox "First Name" [ref=f9e361]:
+                    - /placeholder: ""
+                    - text: Nora
+                - generic [ref=f9e364]:
+                  - generic [ref=f9e365]: Last Name
+                  - textbox "Last Name" [ref=f9e368]:
+                    - /placeholder: ""
+                    - text: Fields
+                - generic [ref=f9e371]:
+                  - generic [ref=f9e372]: Phone Number
+                  - textbox "Phone Number" [ref=f9e375]:
+                    - /placeholder: (___) ___-____
+                    - text: (204) 555-6789
+                - generic [ref=f9e378]:
+                  - generic [ref=f9e379]: Email
+                  - textbox "Email" [ref=f9e382]:
+                    - /placeholder: example@email.com
+                    - text: nora.fields@test.com
+        - generic [ref=f9e329]:
+          - button "Previous" [ref=f9e345]
+          - button "Next" [ref=f9e330]
+    - contentinfo [ref=f9e214]:
+      - generic [ref=f9e216]:
+        - generic [ref=f9e217]: Winnipeg Music Festival
+        - generic [ref=f9e218]:
+          - text: "2-88 St. Anne's Rd.Winnipeg, MB R2M 2Y7Phone: (204) 947-0184Email:"
+          - link "admin@winnipegmusicfestival.org" [ref=f9e219] [cursor=pointer]:
+            - /url: mailto:admin@winnipegmusicfestival.org
+      - generic [ref=f9e220]:
+        - generic [ref=f9e221]: Created by
+        - link "Diatonic Web Design and Development" [ref=f9e222] [cursor=pointer]:
+          - /url: https://www.diatonic.io
+  - generic [ref=f9e223]:
+    - button "Toggle Nuxt DevTools" [ref=f9e224] [cursor=pointer]
+    - generic "Page load time" [ref=f9e228]:
+      - generic [ref=f9e229]: "95"
+      - generic [ref=f9e230]: ms
+    - button "Toggle Component Inspector" [ref=f9e232] [cursor=pointer]

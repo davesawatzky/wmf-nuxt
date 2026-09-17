@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { useToast } from 'vue-toastification'
 
 const performerStore = usePerformers()
 const classesStore = useClasses()
@@ -8,7 +7,7 @@ const changeInstrumentIsOpen = ref(false)
 const attentionDialogIsOpen = ref(false)
 const previousInstrument = ref('')
 const cancelInstChange = ref(false)
-const toast = useToast()
+const { handleError } = useErrorHandler()
 
 onMounted(() => {
   attentionDialogIsOpen.value = true
@@ -49,9 +48,16 @@ async function resetClasses() {
     }
     await classesStore.createClass(registrationStore.registrationId)
   }
-  catch (error) {
-    console.error('Error changing instrument and resetting classes:', error)
-    toast.error('Could not change instrument. Please try again.')
+  catch ( error ) {
+    handleError(error, {
+      context: {
+        previousInstrument: previousInstrument.value,
+      },
+      operation: 'resetClasses in SoloPerformer',
+      level: 'error',
+      toastSeverity: 'error',
+      userMessage: 'Could not change instrument. Please try again.',
+    })
   }
 }
 

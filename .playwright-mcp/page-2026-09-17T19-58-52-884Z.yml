@@ -1,0 +1,235 @@
+- generic [active] [ref=f3e1]:
+  - generic [ref=f3e15]:
+    - banner [ref=f3e16]:
+      - generic [ref=f3e18]:
+        - generic [ref=f3e19]:
+          - img "Winnipeg Music Festival Logo" [ref=f3e21]
+          - generic [ref=f3e22]: WinnipegMusicFestival
+        - menubar [ref=f3e23]:
+          - menuitem "Registrations" [ref=f3e24]:
+            - button "Registrations" [ref=f3e27] [cursor=pointer]
+          - menuitem "Account" [ref=f3e29]:
+            - button "Account" [ref=f3e32] [cursor=pointer]
+    - generic [ref=f3e205]:
+      - generic [ref=f3e206]:
+        - generic [ref=f3e207]: Registration Label
+        - textbox "Registration Label" [ref=f3e212]:
+          - /placeholder: Enter a unique label
+          - text: Registration Form
+      - generic [ref=f3e214]:
+        - generic [ref=f3e216]:
+          - generic [ref=f3e217]:
+            - button "1" [ref=f3e300]
+            - generic [ref=f3e221]: School
+          - generic [ref=f3e222]:
+            - button "2" [ref=f3e352]
+            - generic [ref=f3e226]: Teacher
+          - generic [ref=f3e227]:
+            - button "3" [ref=f3e531]
+            - generic [ref=f3e231]: Groups
+          - generic [ref=f3e232]:
+            - button "4" [ref=f3e874]
+            - generic [ref=f3e236]: School Classes
+          - generic [ref=f3e237]:
+            - button "5" [ref=f3e238]
+            - generic [ref=f3e239]: Summary
+        - generic [ref=f3e876]:
+          - generic [ref=f3e877]:
+            - heading "Registration Summary" [level=2] [ref=f3e878]
+            - table [ref=f3e880]:
+              - rowgroup [ref=f3e881]:
+                - row [ref=f3e882]:
+                  - columnheader "Class Number" [ref=f3e883]
+                  - columnheader "Class Name" [ref=f3e884]
+                  - columnheader "Level" [ref=f3e885]
+                  - columnheader "Group" [ref=f3e886]
+                  - columnheader "Category" [ref=f3e887]
+                  - columnheader "Price" [ref=f3e888]
+              - rowgroup [ref=f3e889]:
+                - row [ref=f3e890]:
+                  - cell "8192" [ref=f3e891]
+                  - cell "SCHOOL CHOIR" [ref=f3e892]
+                  - cell "GRADES 4-6" [ref=f3e893]
+                  - cell "Grade 4 Choir" [ref=f3e894]
+                  - cell "OWN CHOICE" [ref=f3e895]
+                  - cell "$60.00" [ref=f3e896]
+                - row [ref=f3e897]:
+                  - cell "8341" [ref=f3e898]
+                  - cell "SCHOOL GUITAR GROUP" [ref=f3e899]
+                  - cell "GRADES 4-6" [ref=f3e900]
+                  - cell "Grade 5 Band" [ref=f3e901]
+                  - cell "OWN CHOICE" [ref=f3e902]
+                  - cell "$60.00" [ref=f3e903]
+                - row [ref=f3e904]:
+                  - cell [ref=f3e905]
+                  - cell [ref=f3e906]
+                  - cell [ref=f3e907]
+                  - cell [ref=f3e908]
+                  - cell "Total:" [ref=f3e909]
+                  - cell "$120.00" [ref=f3e910]
+            - generic [ref=f3e911]:
+              - heading "Teacher" [level=3] [ref=f3e912]
+              - generic [ref=f3e913]:
+                - heading "Mark Taylor" [level=4] [ref=f3e915]
+                - generic [ref=f3e916]:
+                  - generic [ref=f3e917]: "Phone: (204) 555-7890"
+                  - generic [ref=f3e918]: "Email: mark.taylor@test.com"
+            - generic [ref=f3e919]:
+              - heading "School Information" [level=3] [ref=f3e920]
+              - generic [ref=f3e921]:
+                - generic [ref=f3e923]:
+                  - heading [level=4] [ref=f3e924]:
+                    - heading "Riverbend Elementary" [level=4] [ref=f3e925]
+                  - generic [ref=f3e926]: Winnipeg School Division
+                - generic [ref=f3e931]:
+                  - generic [ref=f3e932]: 400 River Ave
+                  - generic [ref=f3e933]: Winnipeg, MB
+                  - generic [ref=f3e934]: R3T 2N2,
+                  - generic [ref=f3e935]: (204) 555-9876
+              - generic [ref=f3e936]:
+                - heading "School Group(s)" [level=4] [ref=f3e939]
+                - generic [ref=f3e942]:
+                  - generic [ref=f3e944]:
+                    - 'heading "Group 1: Grade 4 Choir" [level=4] [ref=f3e945]'
+                    - table [ref=f3e946]:
+                      - rowgroup [ref=f3e947]:
+                        - row [ref=f3e948]:
+                          - cell "Size:" [ref=f3e949]
+                          - cell "20" [ref=f3e950]
+                        - row [ref=f3e951]:
+                          - cell "Chaperones:" [ref=f3e952]
+                          - cell "2" [ref=f3e953]
+                        - row [ref=f3e954]:
+                          - cell "Wheelchairs:" [ref=f3e955]
+                          - cell "0" [ref=f3e956]
+                        - row [ref=f3e957]:
+                          - cell "Earliest Time:" [ref=f3e958]
+                          - cell "09:00" [ref=f3e959]
+                        - row [ref=f3e960]:
+                          - cell "Latest Time:" [ref=f3e961]
+                          - cell "14:00" [ref=f3e962]
+                        - row [ref=f3e963]:
+                          - cell "Scheduling Requests:" [ref=f3e964]
+                          - cell [ref=f3e965]
+                        - row [ref=f3e966]:
+                          - cell "Multi-Class Participants:" [ref=f3e967]
+                          - cell [ref=f3e968]
+                  - generic [ref=f3e970]:
+                    - 'heading "Group 2: Grade 5 Band" [level=4] [ref=f3e971]'
+                    - table [ref=f3e972]:
+                      - rowgroup [ref=f3e973]:
+                        - row [ref=f3e974]:
+                          - cell "Size:" [ref=f3e975]
+                          - cell "15" [ref=f3e976]
+                        - row [ref=f3e977]:
+                          - cell "Chaperones:" [ref=f3e978]
+                          - cell "1" [ref=f3e979]
+                        - row [ref=f3e980]:
+                          - cell "Wheelchairs:" [ref=f3e981]
+                          - cell "0" [ref=f3e982]
+                        - row [ref=f3e983]:
+                          - cell "Earliest Time:" [ref=f3e984]
+                          - cell "10:00" [ref=f3e985]
+                        - row [ref=f3e986]:
+                          - cell "Latest Time:" [ref=f3e987]
+                          - cell "15:00" [ref=f3e988]
+                        - row [ref=f3e989]:
+                          - cell "Scheduling Requests:" [ref=f3e990]
+                          - cell [ref=f3e991]
+                        - row [ref=f3e992]:
+                          - cell "Multi-Class Participants:" [ref=f3e993]
+                          - cell [ref=f3e994]
+            - heading "Registered Classes" [level=3] [ref=f3e995]
+            - generic [ref=f3e997]:
+              - generic [ref=f3e998]:
+                - generic [ref=f3e999]:
+                  - 'heading "Festival Class Number: 8192" [level=4] [ref=f3e1000]'
+                  - heading "Grade 4 Choir" [level=5] [ref=f3e1003]
+                - generic [ref=f3e1004]:
+                  - generic [ref=f3e1005]: "Class: SCHOOL CHOIR"
+                  - generic [ref=f3e1006]: "Category: OWN CHOICE"
+                  - generic [ref=f3e1007]: "Level: GRADES 4-6"
+              - generic [ref=f3e1009]:
+                - generic [ref=f3e1010]:
+                  - heading "Selection 1" [level=5] [ref=f3e1011]
+                  - table [ref=f3e1012]:
+                    - rowgroup [ref=f3e1013]:
+                      - row [ref=f3e1014]:
+                        - cell "Title:" [ref=f3e1015]
+                        - cell "O Canada" [ref=f3e1016]
+                      - row [ref=f3e1017]:
+                        - cell "Composer:" [ref=f3e1018]
+                        - cell "Calixa Lavallee" [ref=f3e1019]
+                      - row [ref=f3e1020]:
+                        - cell "Duration:" [ref=f3e1021]
+                        - cell "02:30" [ref=f3e1022]
+                - generic [ref=f3e1023]:
+                  - heading "Selection 2" [level=5] [ref=f3e1024]
+                  - table [ref=f3e1025]:
+                    - rowgroup [ref=f3e1026]:
+                      - row [ref=f3e1027]:
+                        - cell "Title:" [ref=f3e1028]
+                        - cell "This Land Is Your Land" [ref=f3e1029]
+                      - row [ref=f3e1030]:
+                        - cell "Composer:" [ref=f3e1031]
+                        - cell "Woody Guthrie" [ref=f3e1032]
+                      - row [ref=f3e1033]:
+                        - cell "Duration:" [ref=f3e1034]
+                        - cell "03:00" [ref=f3e1035]
+            - generic [ref=f3e1037]:
+              - generic [ref=f3e1038]:
+                - generic [ref=f3e1039]:
+                  - 'heading "Festival Class Number: 8341" [level=4] [ref=f3e1040]'
+                  - heading "Grade 5 Band" [level=5] [ref=f3e1043]
+                - generic [ref=f3e1044]:
+                  - generic [ref=f3e1045]: "Class: SCHOOL GUITAR GROUP"
+                  - generic [ref=f3e1046]: "Category: OWN CHOICE"
+                  - generic [ref=f3e1047]: "Level: GRADES 4-6"
+              - generic [ref=f3e1049]:
+                - generic [ref=f3e1050]:
+                  - heading "Selection 1" [level=5] [ref=f3e1051]
+                  - table [ref=f3e1052]:
+                    - rowgroup [ref=f3e1053]:
+                      - row [ref=f3e1054]:
+                        - cell "Title:" [ref=f3e1055]
+                        - cell "Romanza" [ref=f3e1056]
+                      - row [ref=f3e1057]:
+                        - cell "Composer:" [ref=f3e1058]
+                        - cell "Anonymous" [ref=f3e1059]
+                      - row [ref=f3e1060]:
+                        - cell "Duration:" [ref=f3e1061]
+                        - cell "02:00" [ref=f3e1062]
+                - generic [ref=f3e1063]:
+                  - heading "Selection 2" [level=5] [ref=f3e1064]
+                  - table [ref=f3e1065]:
+                    - rowgroup [ref=f3e1066]:
+                      - row [ref=f3e1067]:
+                        - cell "Title:" [ref=f3e1068]
+                        - cell "Malaguena" [ref=f3e1069]
+                      - row [ref=f3e1070]:
+                        - cell "Composer:" [ref=f3e1071]
+                        - cell "Lecuona" [ref=f3e1072]
+                      - row [ref=f3e1073]:
+                        - cell "Duration:" [ref=f3e1074]
+                        - cell "02:45" [ref=f3e1075]
+          - generic [ref=f3e1076]:
+            - button "Prepare to Submit" [ref=f3e1077]
+            - button "Print this page" [ref=f3e1078]
+        - button "Previous" [ref=f3e313]
+    - contentinfo [ref=f3e182]:
+      - generic [ref=f3e184]:
+        - generic [ref=f3e185]: Winnipeg Music Festival
+        - generic [ref=f3e186]:
+          - text: "2-88 St. Anne's Rd.Winnipeg, MB R2M 2Y7Phone: (204) 947-0184Email:"
+          - link "admin@winnipegmusicfestival.org" [ref=f3e187] [cursor=pointer]:
+            - /url: mailto:admin@winnipegmusicfestival.org
+      - generic [ref=f3e188]:
+        - generic [ref=f3e189]: Created by
+        - link "Diatonic Web Design and Development" [ref=f3e190] [cursor=pointer]:
+          - /url: https://www.diatonic.io
+  - generic [ref=f3e191]:
+    - button "Toggle Nuxt DevTools" [ref=f3e192] [cursor=pointer]
+    - generic "Page load time" [ref=f3e196]:
+      - generic [ref=f3e197]: "86"
+      - generic [ref=f3e198]: ms
+    - button "Toggle Component Inspector" [ref=f3e200] [cursor=pointer]

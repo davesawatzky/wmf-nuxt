@@ -8,7 +8,6 @@ import {
   useStorage,
   useSwipe,
 } from '@vueuse/core'
-import { useToast } from 'vue-toastification'
 import * as yup from 'yup'
 import { useAppStore } from '~/stores/appStore'
 import { useRegistration } from '~/stores/useRegistration'
@@ -46,7 +45,7 @@ const appStore = useAppStore()
 const performerType = toRef(appStore.performerType)
 const breakpoints = useBreakpoints(breakpointsTailwind)
 const mobile = breakpoints.smaller('sm')
-const toast = useToast()
+const {handleError} = useErrorHandler()
 
 const currentTab = useStorage('stepperTab', '', sessionStorage, {
   mergeDefaults: true,
@@ -167,10 +166,15 @@ async function fieldStatus(stat: string, fieldName: string) {
       }
     }
     else {
-      console.error('Could not update field in registration: ', fieldName)
-      toast.error(
-        'Could not update field.  Please exit and reload Registration',
-      )
+      handleError( new Error( `Failed to update field: ${ fieldName }` ), {
+        context: {
+          updateField: `Failed to update field: ${ fieldName }`
+        },
+        operation: `Updating field: ${ fieldName }`, 
+        level: 'error',
+        toastSeverity: 'error',
+        userMessage: `Failed to update field: ${ fieldName }. Please exit and reload Registration`
+      })
     }
   }
   else if (stat === 'invalid') {
@@ -181,14 +185,16 @@ async function fieldStatus(stat: string, fieldName: string) {
       status[fieldName] = StatusEnum.removed
     }
     else {
-      console.error(
-        'Could not remove invalid field in registration: ',
-        fieldName,
-      )
-      toast.error(
-        'Could not remove invalid field. Please exit and reload Registration',
-      )
-    }
+      handleError( new Error( `Failed to remove invalid field: ${ fieldName }` ), {
+        context: {
+          removeField: `Failed to remove invalid field: ${ fieldName }`
+        },
+        operation: `Removing invalid field: ${ fieldName }`,
+        level: 'error',
+        toastSeverity: 'error',
+        userMessage: `Failed to remove invalid field: ${ fieldName }. Please exit and reload Registration`
+      })
+      }
   }
   else if (stat === 'removed') {
     status[fieldName] = StatusEnum.pending
@@ -198,10 +204,15 @@ async function fieldStatus(stat: string, fieldName: string) {
       status[fieldName] = StatusEnum.removed
     }
     else {
-      console.error('Could not remove field in registration: ', fieldName)
-      toast.error(
-        'Could not remove field.  Please exit and reload Registration',
-      )
+      handleError( new Error( `Failed to remove field: ${ fieldName }` ), {
+        context: {
+          removeField: `Failed to remove field: ${ fieldName }`
+        },
+        operation: `Removing field: ${ fieldName }`,
+        level: 'error',
+        toastSeverity: 'error',
+        userMessage: `Failed to remove field: ${ fieldName }. Please exit and reload Registration`
+      })
     }
   }
 }

@@ -3,6 +3,7 @@ import * as yup from 'yup'
 
 const email = ref('')
 const appStore = useAppStore()
+const {handleError } = useErrorHandler()
 
 const { load: sendVerification, onResult: onSendResult, onError } = useLazyQuery(
   gql`
@@ -25,7 +26,13 @@ onSendResult(async (result) => {
 })
 
 onError((error) => {
-  console.error('Error sending email verification:', error)
+  handleError( error, {
+    context: {email: 'send email verification link'},
+    operation: 'PasswordChangeEmailVerification',
+    level: 'error',
+    toastSeverity: 'error',
+    userMessage: 'An error occurred while sending the email verification link.'
+  })
 })
 
 const { handleSubmit } = useForm({

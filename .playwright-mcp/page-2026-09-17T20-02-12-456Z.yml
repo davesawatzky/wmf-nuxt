@@ -1,0 +1,71 @@
+- generic [active] [ref=f12e1]:
+  - generic [ref=f12e15]:
+    - banner [ref=f12e16]:
+      - generic [ref=f12e18]:
+        - generic [ref=f12e19]:
+          - img "Winnipeg Music Festival Logo" [ref=f12e21]
+          - generic [ref=f12e22]: WinnipegMusicFestival
+        - menubar [ref=f12e23]:
+          - menuitem "Registrations" [ref=f12e24]:
+            - button "Registrations" [ref=f12e27] [cursor=pointer]
+          - menuitem "Account" [ref=f12e29]:
+            - button "Account" [ref=f12e32] [cursor=pointer]
+    - generic [ref=f12e253]:
+      - generic [ref=f12e254]:
+        - generic [ref=f12e255]: Registration Label
+        - textbox "Registration Label" [ref=f12e260]:
+          - /placeholder: Enter a unique label
+          - text: Registration Form
+      - generic [ref=f12e262]:
+        - generic [ref=f12e264]:
+          - generic [ref=f12e265]:
+            - button "1 5" [ref=f12e266]:
+              - text: "1"
+              - generic [ref=f12e267]: "5"
+            - generic [ref=f12e269]: Community
+          - generic [ref=f12e270]:
+            - button "2 1" [ref=f12e271]:
+              - text: "2"
+              - generic [ref=f12e272]: "1"
+            - generic [ref=f12e274]: Contact
+          - generic [ref=f12e275]:
+            - button "3 7" [ref=f12e276]:
+              - text: "3"
+              - generic [ref=f12e277]: "7"
+            - generic [ref=f12e279]: Groups
+          - generic [ref=f12e280]:
+            - button "4 5" [ref=f12e281]:
+              - text: "4"
+              - generic [ref=f12e282]: "5"
+            - generic [ref=f12e284]: Community Classes
+          - generic [ref=f12e285]:
+            - button "5" [ref=f12e286]
+            - generic [ref=f12e287]: Summary
+        - generic [ref=f12e348]:
+          - heading "Community Conductor Information" [level=2] [ref=f12e349]
+          - generic [ref=f12e351]:
+            - generic [ref=f12e352]: Select a conductor from the list
+            - generic [ref=f12e354]:
+              - combobox [ref=f12e355]
+              - button [ref=f12e356] [cursor=pointer]
+              - status: No results found
+        - generic [ref=f12e345]:
+          - button "Previous" [ref=f12e359]
+          - button "Next" [ref=f12e346]
+    - contentinfo [ref=f12e230]:
+      - generic [ref=f12e232]:
+        - generic [ref=f12e233]: Winnipeg Music Festival
+        - generic [ref=f12e234]:
+          - text: "2-88 St. Anne's Rd.Winnipeg, MB R2M 2Y7Phone: (204) 947-0184Email:"
+          - link "admin@winnipegmusicfestival.org" [ref=f12e235] [cursor=pointer]:
+            - /url: mailto:admin@winnipegmusicfestival.org
+      - generic [ref=f12e236]:
+        - generic [ref=f12e237]: Created by
+        - link "Diatonic Web Design and Development" [ref=f12e238] [cursor=pointer]:
+          - /url: https://www.diatonic.io
+  - generic [ref=f12e239]:
+    - button "Toggle Nuxt DevTools" [ref=f12e240] [cursor=pointer]
+    - generic "Page load time" [ref=f12e244]:
+      - generic [ref=f12e245]: "79"
+      - generic [ref=f12e246]: ms
+    - button "Toggle Component Inspector" [ref=f12e248] [cursor=pointer]

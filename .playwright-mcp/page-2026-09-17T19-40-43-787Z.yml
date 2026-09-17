@@ -1,0 +1,71 @@
+- generic [active] [ref=f14e1]:
+  - generic [ref=f14e15]:
+    - banner [ref=f14e16]:
+      - generic [ref=f14e18]:
+        - generic [ref=f14e19]:
+          - img "Winnipeg Music Festival Logo" [ref=f14e21]
+          - generic [ref=f14e22]: WinnipegMusicFestival
+        - menubar [ref=f14e78]:
+          - menuitem "Registrations" [ref=f14e79]:
+            - button "Registrations" [ref=f14e82] [cursor=pointer]
+          - menuitem "Account" [ref=f14e84]:
+            - button "Account" [ref=f14e87] [cursor=pointer]
+    - generic [ref=f14e89]:
+      - heading "Winnipeg Music Festival" [level=1] [ref=f14e90]
+      - heading "Registration Forms" [level=2] [ref=f14e91]
+      - generic [ref=f14e92]:
+        - generic [ref=f14e93]:
+          - generic [ref=f14e94]:
+            - heading "Submitted and In-Process Applications" [level=3] [ref=f14e95]
+            - table [ref=f14e96]:
+              - rowgroup [ref=f14e97]:
+                - row [ref=f14e98]:
+                  - columnheader "View" [ref=f14e99]
+                  - columnheader "ID" [ref=f14e100]
+                  - columnheader "Label" [ref=f14e101]
+                  - columnheader "Created" [ref=f14e102]
+                  - columnheader "Type" [ref=f14e103]
+                  - columnheader "Status" [ref=f14e104]
+                  - columnheader "Total" [ref=f14e105]
+                  - 'columnheader "Conf. #" [ref=f14e106]'
+                  - columnheader "Del" [ref=f14e107]
+              - rowgroup
+          - generic [ref=f14e108]:
+            - heading "Registering for the Winnipeg Music Festival" [level=3] [ref=f14e109]
+            - list [ref=f14e110]:
+              - listitem [ref=f14e111]: Begin registration by creating an account (account can be for an individual; a teacher for all their individual students, or for all their choirs; a parent for their family etc.)
+              - listitem [ref=f14e112]: Only one teacher/one discipline allowed per form. Performers wanting to register in multiple disciplines and/or with multiple teachers require separate forms.
+              - listitem [ref=f14e113]: Applications can be saved and completed/edited later before submission. Once submitted, applications can no longer be edited.
+              - listitem [ref=f14e114]: You can view submitted entries by clicking on the 'eye' link to the left of the table.
+              - listitem [ref=f14e115]: A copy can be printed for your records.
+          - heading "Start A New Registration Form" [level=3] [ref=f14e116]
+        - generic [ref=f14e117]:
+          - generic [ref=f14e118] [cursor=pointer]:
+            - img "New Solo Registration" [ref=f14e121]
+            - generic [ref=f14e122]: Solo
+          - generic [ref=f14e123] [cursor=pointer]:
+            - img "New Group Registration" [ref=f14e126]
+            - generic [ref=f14e127]: Group
+          - generic [ref=f14e128] [cursor=pointer]:
+            - img "New School Registration" [ref=f14e131]
+            - generic [ref=f14e132]: School
+          - generic [ref=f14e133] [cursor=pointer]:
+            - img "New Community Registration" [ref=f14e136]
+            - generic [ref=f14e137]: Community
+    - contentinfo [ref=f14e29]:
+      - generic [ref=f14e31]:
+        - generic [ref=f14e32]: Winnipeg Music Festival
+        - generic [ref=f14e33]:
+          - text: "2-88 St. Anne's Rd.Winnipeg, MB R2M 2Y7Phone: (204) 947-0184Email:"
+          - link "admin@winnipegmusicfestival.org" [ref=f14e34] [cursor=pointer]:
+            - /url: mailto:admin@winnipegmusicfestival.org
+      - generic [ref=f14e35]:
+        - generic [ref=f14e36]: Created by
+        - link "Diatonic Web Design and Development" [ref=f14e37] [cursor=pointer]:
+          - /url: https://www.diatonic.io
+  - generic [ref=f14e38]:
+    - button "Toggle Nuxt DevTools" [ref=f14e39] [cursor=pointer]
+    - generic "Page load time" [ref=f14e43]:
+      - generic [ref=f14e44]: "303"
+      - generic [ref=f14e45]: ms
+    - button "Toggle Component Inspector" [ref=f14e47] [cursor=pointer]

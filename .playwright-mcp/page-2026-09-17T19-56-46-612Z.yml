@@ -1,0 +1,113 @@
+- generic [ref=f3e1]:
+  - generic [ref=f3e15]:
+    - banner [ref=f3e16]:
+      - generic [ref=f3e18]:
+        - generic [ref=f3e19]:
+          - img "Winnipeg Music Festival Logo" [ref=f3e21]
+          - generic [ref=f3e22]: WinnipegMusicFestival
+        - menubar [ref=f3e23]:
+          - menuitem "Registrations" [ref=f3e24]:
+            - button "Registrations" [ref=f3e27] [cursor=pointer]
+          - menuitem "Account" [ref=f3e29]:
+            - button "Account" [ref=f3e32] [cursor=pointer]
+    - generic [ref=f3e205]:
+      - generic [ref=f3e206]:
+        - generic [ref=f3e207]: Registration Label
+        - textbox "Registration Label" [ref=f3e212]:
+          - /placeholder: Enter a unique label
+          - text: Registration Form
+      - generic [ref=f3e214]:
+        - generic [ref=f3e216]:
+          - generic [ref=f3e217]:
+            - button "1" [ref=f3e300]
+            - generic [ref=f3e221]: School
+          - generic [ref=f3e222]:
+            - button "2" [ref=f3e352]
+            - generic [ref=f3e226]: Teacher
+          - generic [ref=f3e227]:
+            - button "3 2" [ref=f3e430]:
+              - text: "3"
+              - generic [ref=f3e229]: "2"
+            - generic [ref=f3e231]: Groups
+          - generic [ref=f3e232]:
+            - button "4 5" [ref=f3e233]:
+              - text: "4"
+              - generic [ref=f3e234]: "5"
+            - generic [ref=f3e236]: School Classes
+          - generic [ref=f3e237]:
+            - button "5" [ref=f3e238]
+            - generic [ref=f3e239]: Summary
+        - generic [ref=f3e357]:
+          - heading "School Group Information" [level=2] [ref=f3e358]
+          - generic [ref=f3e359]:
+            - generic [ref=f3e360]:
+              - 'heading "School Group #1" [level=4] [ref=f3e361]'
+              - generic [ref=f3e362]:
+                - generic [ref=f3e363]:
+                  - generic [ref=f3e364]:
+                    - generic [ref=f3e365]:
+                      - generic [ref=f3e366]: Group Name
+                      - textbox "Group Name" [ref=f3e369]:
+                        - /placeholder: ""
+                        - text: Grade 4 Choir
+                    - generic [ref=f3e371]:
+                      - generic [ref=f3e372]: Earliest time your group can perform
+                      - textbox "Earliest time your group can perform" [ref=f3e375]:
+                        - /placeholder: ""
+                        - text: 09:00
+                    - generic [ref=f3e377]:
+                      - generic [ref=f3e378]: Latest time your group can perform
+                      - textbox "Latest time your group can perform" [ref=f3e381]:
+                        - /placeholder: ""
+                        - text: 14:00
+                  - generic [ref=f3e383]:
+                    - generic [ref=f3e385]:
+                      - generic [ref=f3e386]: Number of performers
+                      - spinbutton "Number of performers" [ref=f3e389]: "20"
+                    - generic [ref=f3e392]:
+                      - generic [ref=f3e393]: Number of chaperones
+                      - spinbutton "Number of chaperones" [ref=f3e396]: "2"
+                    - generic [ref=f3e399]:
+                      - generic [ref=f3e400]: Number of wheelchairs
+                      - spinbutton "Number of wheelchairs" [active] [invalid] [ref=f3e403]: "0"
+                      - generic [ref=f3e404]: Required
+                    - generic [ref=f3e405]: "Total Number: 22"
+                  - generic [ref=f3e407]:
+                    - combobox [invalid] [ref=f3e408]:
+                      - option "Yes" [selected]
+                      - option "No"
+                    - generic [ref=f3e409]: Required
+                  - generic [ref=f3e410]: I give permission to use photographs of this participant in Winnipeg Music Festival newsletters, funding requests, archival purposes, marketing and social media.
+                - generic [ref=f3e411]:
+                  - generic [ref=f3e412]:
+                    - generic [ref=f3e413]: Scheduling Requests
+                    - textbox "Scheduling Requests" [ref=f3e416]
+                  - paragraph [ref=f3e418]:
+                    - text: List any date/time when you are unavailable for performance, including school in-service days, using
+                    - strong [ref=f3e419]: calendar dates
+                    - text: ", not school cycle days, between February 23 and March 20, 2026."
+                  - generic [ref=f3e420]:
+                    - generic [ref=f3e421]: Performers participating in other classes.
+                    - textbox "Performers participating in other classes." [ref=f3e424]
+                  - paragraph [ref=f3e426]: "If there are any students in your group participating in other festival classes, list the students' names so that we can do our best to avoid scheduling conflicts:"
+            - button "Add Another School Group" [ref=f3e428]
+        - generic [ref=f3e297]:
+          - button "Previous" [ref=f3e313]
+          - button "Next" [ref=f3e298]
+    - contentinfo [ref=f3e182]:
+      - generic [ref=f3e184]:
+        - generic [ref=f3e185]: Winnipeg Music Festival
+        - generic [ref=f3e186]:
+          - text: "2-88 St. Anne's Rd.Winnipeg, MB R2M 2Y7Phone: (204) 947-0184Email:"
+          - link "admin@winnipegmusicfestival.org" [ref=f3e187] [cursor=pointer]:
+            - /url: mailto:admin@winnipegmusicfestival.org
+      - generic [ref=f3e188]:
+        - generic [ref=f3e189]: Created by
+        - link "Diatonic Web Design and Development" [ref=f3e190] [cursor=pointer]:
+          - /url: https://www.diatonic.io
+  - generic [ref=f3e191]:
+    - button "Toggle Nuxt DevTools" [ref=f3e192] [cursor=pointer]
+    - generic "Page load time" [ref=f3e196]:
+      - generic [ref=f3e197]: "86"
+      - generic [ref=f3e198]: ms
+    - button "Toggle Component Inspector" [ref=f3e200] [cursor=pointer]

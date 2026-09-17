@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { SchoolGroup, SchoolGroupInput } from '~/graphql/gql/graphql'
-import { useToast } from 'vue-toastification'
 import * as yup from 'yup'
 import { useSchoolGroup } from '~/stores/useSchoolGroup'
 
@@ -16,7 +15,7 @@ const emits = defineEmits<{
 
 const schoolGroupStore = useSchoolGroup()
 const fieldConfigStore = useFieldConfig()
-const toast = useToast()
+const { handleError } = useErrorHandler()
 
 const schoolGroup = computed({
   get: () => props.modelValue,
@@ -62,60 +61,55 @@ const totalParticipants = computed<number>(() => {
   )
 })
 
+const FIELD_STATUS_MESSAGES: Record<string, { error: string, userMessage: string }> = {
+  valid: {
+    error: 'Could not update school group field',
+    userMessage: 'Could not update field.  Please exit and reload Registration',
+  },
+  invalid: {
+    error: 'Could not remove invalid school group field',
+    userMessage: 'Could not remove invalid field. Please exit and reload Registration',
+  },
+  removed: {
+    error: 'Could not remove school group field',
+    userMessage: 'Could not remove field.  Please exit and reload Registration',
+  },
+}
+
 async function fieldStatus(stat: string, fieldName: string) {
   await nextTick()
+  const messages = FIELD_STATUS_MESSAGES[stat]
+  if (!messages) return
+
+  status[fieldName] = StatusEnum.pending
+  const result = await schoolGroupStore.updateSchoolGroup(
+    props.schoolGroupId,
+    fieldName,
+  )
+  status[fieldName] = StatusEnum.null
+
+  if (result !== 'complete') {
+    handleError(new Error(messages.error), {
+      context: {
+        schoolGroupId: props.schoolGroupId,
+        schoolGroupIndex: props.schoolGroupIndex,
+        fieldName: fieldName,
+      },
+      operation: 'fieldStatus in SchoolGroup',
+      level: 'error',
+      toastSeverity: 'error',
+      userMessage: messages.userMessage,
+    })
+    return
+  }
+
   if (stat === 'valid') {
-    status[fieldName] = StatusEnum.pending
-    const result = await schoolGroupStore.updateSchoolGroup(
-      props.schoolGroupId,
-      fieldName,
-    )
-    status[fieldName] = StatusEnum.null
-    if (result === 'complete') {
-      if (props.modelValue[fieldName as keyof SchoolGroupInput] !== null) {
-        status[fieldName] = StatusEnum.saved
-      }
-    }
-    else {
-      console.error('Could not update school group field:', fieldName)
-      toast.error(
-        'Could not update field.  Please exit and reload Registration',
-      )
+    if (props.modelValue[fieldName as keyof SchoolGroupInput] !== null) {
+      status[fieldName] = StatusEnum.saved
     }
   }
-  else if (stat === 'invalid') {
-    status[fieldName] = StatusEnum.pending
-    const result = await schoolGroupStore.updateSchoolGroup(
-      props.schoolGroupId,
-      fieldName,
-    )
-    status[fieldName] = StatusEnum.null
-    if (result === 'complete') {
-      status[fieldName] = StatusEnum.removed
-    }
-    else {
-      console.error('Could not remove invalid school group field:', fieldName)
-      toast.error(
-        'Could not remove invalid field. Please exit and reload Registration',
-      )
-    }
-  }
-  else if (stat === 'removed') {
-    status[fieldName] = StatusEnum.pending
-    const result = await schoolGroupStore.updateSchoolGroup(
-      props.schoolGroupId,
-      fieldName,
-    )
-    status[fieldName] = StatusEnum.null
-    if (result === 'complete') {
-      status[fieldName] = StatusEnum.removed
-    }
-    else {
-      console.error('Could not remove school group field:', fieldName)
-      toast.error(
-        'Could not remove field.  Please exit and reload Registration',
-      )
-    }
+  else {
+    status[fieldName] = StatusEnum.removed
   }
 }
 

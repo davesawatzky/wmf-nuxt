@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import type { ContactInfo } from '#imports'
 import type { Performer } from '~/graphql/gql/graphql'
-import { useToast } from 'vue-toastification'
 import * as yup from 'yup'
 import { provinces, StatusEnum } from '#imports'
 import { InstrumentsDocument } from '~/graphql/gql/graphql'
@@ -26,6 +25,7 @@ const emits = defineEmits<{
 const fieldConfigStore = useFieldConfig()
 const performerStore = usePerformers()
 const toast = useToast()
+const { handleError } = useErrorHandler()
 
 const contact = computed({
   get: () => props.modelValue,
@@ -41,9 +41,13 @@ const { result: instrumentQuery, onError: instrumentsError } = useQuery(
   }),
 )
 const instruments = computed(() => instrumentQuery.value?.instruments ?? [])
-instrumentsError((error) => {
-  console.error('Error loading instruments: ', error)
-  toast.error('Error loading instruments')
+instrumentsError( ( error ) => {
+  handleError(error, {
+    operation: 'loadInstruments',
+    level: 'error',
+    toastSeverity: 'error',
+    userMessage: 'There was an error loading instruments. Please try again later.',
+  })
 })
 
 const status = reactive<Status>({
@@ -89,10 +93,16 @@ async function fieldStatus(stat: string, fieldName: string) {
       }
     }
     else {
-      console.error('Could not update field:', fieldName)
-      toast.error(
-        'Could not update field.  Please exit and reload Registration',
-      )
+      handleError(new Error('Could not update field'), {
+        context: {
+          fieldName,
+          performerId: props.performerId,
+        },
+        operation: 'fieldStatus in PerformerInfo',
+        level: 'error',
+        toastSeverity: 'error',
+        userMessage: 'Could not update field.  Please exit and reload Registration',
+      })
     }
   }
   else if (stat === 'invalid') {
@@ -106,10 +116,16 @@ async function fieldStatus(stat: string, fieldName: string) {
       status[fieldName] = StatusEnum.removed
     }
     else {
-      console.error('Could not remove invalid field:', fieldName)
-      toast.error(
-        'Could not remove invalid field. Please exit and reload Registration',
-      )
+      handleError(new Error('Could not remove invalid field'), {
+        context: {
+          fieldName,
+          performerId: props.performerId,
+        },
+        operation: 'fieldStatus in PerformerInfo',
+        level: 'error',
+        toastSeverity: 'error',
+        userMessage: 'Could not remove invalid field. Please exit and reload Registration',
+      })
     }
   }
   else if (stat === 'removed') {
@@ -123,10 +139,16 @@ async function fieldStatus(stat: string, fieldName: string) {
       status[fieldName] = StatusEnum.removed
     }
     else {
-      console.error('Could not remove field:', fieldName)
-      toast.error(
-        'Could not remove field.  Please exit and reload Registration',
-      )
+      handleError(new Error('Could not remove field'), {
+        context: {
+          fieldName,
+          performerId: props.performerId,
+        },
+        operation: 'fieldStatus in PerformerInfo',
+        level: 'error',
+        toastSeverity: 'error',
+        userMessage: 'Could not remove field.  Please exit and reload Registration',
+      })
     }
   }
 }

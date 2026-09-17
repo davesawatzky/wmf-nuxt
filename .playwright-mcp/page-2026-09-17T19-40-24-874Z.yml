@@ -1,0 +1,96 @@
+- generic [active] [ref=f11e1]:
+  - navigation [ref=f11e2]:
+    - generic [ref=f11e3]:
+      - link [ref=f11e6] [cursor=pointer]:
+        - /url: "#"
+        - img "MailHog" [ref=f11e7]
+        - text: MailHog
+      - generic [ref=f11e8]:
+        - search [ref=f11e9]:
+          - generic [ref=f11e10]:
+            - generic: 
+            - textbox "Search" [ref=f11e11]
+        - list [ref=f11e12]:
+          - listitem [ref=f11e13]:
+            - link [ref=f11e14] [cursor=pointer]:
+              - /url: https://github.com/mailhog/MailHog
+              - img "GitHub" [ref=f11e15]
+              - text: GitHub
+  - generic [ref=f11e17]:
+    - generic [ref=f11e18]:
+      - list [ref=f11e19]:
+        - listitem [ref=f11e20]:
+          - link " Connected" [ref=f11e21] [cursor=pointer]:
+            - /url: "#"
+            - generic [ref=f11e22]: 
+            - text: Connected
+        - listitem [ref=f11e23]:
+          - link "Inbox (1)" [ref=f11e24] [cursor=pointer]:
+            - /url: "#"
+        - listitem [ref=f11e25]:
+          - link " Delete all messages" [ref=f11e26] [cursor=pointer]:
+            - /url: "#"
+            - generic [ref=f11e27]: 
+            - text: Delete all messages
+      - generic [ref=f11e28]:
+        - heading "Jim" [level=3] [ref=f11e29]
+        - paragraph [ref=f11e30]:
+          - text: Jim is a chaos monkey.
+          - link "Find out more at GitHub" [ref=f11e31] [cursor=pointer]:
+            - /url: https://github.com/mailhog/MailHog/blob/master/docs/JIM.md
+          - text: .
+        - link "Enable Jim" [ref=f11e33] [cursor=pointer]:
+          - /url: "#"
+    - generic [ref=f11e34]:
+      - generic [ref=f11e53]:
+        - button "" [ref=f11e54] [cursor=pointer]
+        - button "" [ref=f11e56] [cursor=pointer]
+        - link "" [ref=f11e58] [cursor=pointer]:
+          - /url: api/v1/messages/pakTE4b2Eo0zGMKaPIVtzb4gtu0ZCLdZpXOKBg0JjT0=@mailhog.example/download
+        - button "" [ref=f11e60] [cursor=pointer]
+      - generic [ref=f11e62]:
+        - generic [ref=f11e63]:
+          - table [ref=f11e65]:
+            - rowgroup [ref=f11e66]:
+              - row [ref=f11e67]:
+                - rowheader "From" [ref=f11e68]
+                - cell "test@server.com" [ref=f11e69]
+              - row [ref=f11e70]:
+                - rowheader "Subject" [ref=f11e71]
+                - cell [ref=f11e72]:
+                  - strong [ref=f11e73]: WMF account verification
+              - row [ref=f11e74]:
+                - rowheader "To" [ref=f11e75]
+                - cell "e2e.regcreate.20260917194010@test.com" [ref=f11e76]
+          - button "Show headers " [ref=f11e78] [cursor=pointer]:
+            - text: Show headers
+            - generic [ref=f11e79]: 
+        - generic [ref=f11e80]:
+          - list [ref=f11e81]:
+            - listitem [ref=f11e82]:
+              - link "HTML" [ref=f11e83]:
+                - /url: "#preview-html"
+            - listitem [ref=f11e84]:
+              - link "Plain text" [ref=f11e85] [cursor=pointer]:
+                - /url: "#preview-plain"
+            - listitem [ref=f11e86]:
+              - link "Source" [ref=f11e87] [cursor=pointer]:
+                - /url: "#preview-source"
+          - iframe [ref=f11e89]:
+            - generic [ref=f13e2]:
+              - generic [ref=f13e6]:
+                - link [ref=f13e9] [cursor=pointer]:
+                  - /url: https://www.winnipegmusicfestival.org
+                  - img "Winnipeg Music Festival Banner" [ref=f13e10]
+                - generic [ref=f13e12]:
+                  - generic [ref=f13e14]: New Account Verification
+                  - generic [ref=f13e15]: Hi RegCreate Tester,
+                  - generic [ref=f13e16]: Please verify your account by click the button below. This will open a new webpage which will show your account verification status.
+                  - link "Verify Account" [ref=f13e18] [cursor=pointer]:
+                    - /url: http://localhost:3001/emailconfirmation?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImUyZS5yZWdjcmVhdGUuMjAyNjA5MTcxOTQwMTBAdGVzdC5jb20iLCJpYXQiOjE3ODk2NzQwMTIsImV4cCI6MTc4OTY5NTYxMn0.yixVTRPsU9vnHArACqAyVRvwG0i-oMAeP5ccpyW5YJ0
+                - generic [ref=f13e20]:
+                  - generic [ref=f13e21]: "If a web browser does not open, or the button does not appear to work, then click on the following link:"
+                  - generic [ref=f13e22]: http://localhost:3001/emailconfirmation?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImUyZS5yZWdjcmVhdGUuMjAyNjA5MTcxOTQwMTBAdGVzdC5jb20iLCJpYXQiOjE3ODk2NzQwMTIsImV4cCI6MTc4OTY5NTYxMn0.yixVTRPsU9vnHArACqAyVRvwG0i-oMAeP5ccpyW5YJ0
+              - generic [ref=f13e26]:
+                - generic [ref=f13e27]: "Winnipeg Music Festival 2-88 St. Anne's Rd. Winnipeg, MB R2M 2Y7 Phone: (204) 947-0184 Email: wmf@mts.net"
+                - generic [ref=f13e28]: © Winnipeg Music Festival, All Rights Reserved.

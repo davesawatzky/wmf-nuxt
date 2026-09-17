@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useToast } from 'vue-toastification'
 import * as yup from 'yup'
 import YupPassword from 'yup-password'
 
@@ -10,6 +9,7 @@ const password2 = ref<string>('')
 const passwordChanged = ref(false)
 const status1 = ref<string>('')
 const changeError = ref('')
+const {handleError} = useErrorHandler()
 const toast = useToast()
 
 const route = useRoute()
@@ -70,19 +70,28 @@ const {
   }),
 )
 onPasswordChangeError((error) => {
-  console.error('Password change error: ', error)
-  toast.error(
-    'There was an error changing your password. Please try again later.',
-  )
-})
+  handleError(error, {
+    context: {password: 'change password'},
+    operation: 'PasswordChange',
+    level: 'error',
+    toastSeverity: 'error',
+    userMessage: 'There was an error changing your password. Please try again later.',
+  })
+} )
+
 onPasswordChangeDone(async (result) => {
   if (result.data?.passwordChange.passwordChanged) {
     passwordChanged.value = true
   }
   else if (result.data?.passwordChange.userErrors) {
     changeError.value = result.data?.passwordChange.userErrors[0].message
-    console.error(changeError.value)
-    toast.error(changeError.value)
+    handleError(new Error(changeError.value), {
+      context: {password: 'change password'},
+      operation: 'PasswordChange',
+      level: 'error',
+      toastSeverity: 'error',
+      userMessage: 'There was an error changing your password. Please try again later.',
+    })
   }
 })
 </script>

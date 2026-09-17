@@ -9,7 +9,6 @@ import type {
   RegisteredClassInput,
   Subdiscipline,
 } from '~/graphql/gql/graphql'
-import { useToast } from 'vue-toastification'
 import * as yup from 'yup'
 import {
   CategoriesDocument,
@@ -41,6 +40,7 @@ const classSelection = ref<Partial<FestivalClass>>({}) // Used for Festival Clas
 const loadInfoFirstRun = ref(true) // Flag to keep track of when to load extra information.
 const fieldConfigStore = useFieldConfig()
 const toast = useToast()
+const {handleError } = useErrorHandler()
 
 /**
    * Registration first gets loaded form the 'Registration' page
@@ -139,9 +139,14 @@ const {
 const disciplineQuery = computed((): DisciplinesByTypeQuery | undefined => {
   return disciplineResult.value
 })
-onErrorDisciplines((error) => {
-  console.error('Error loading disciplines: ', error)
-  toast.error('Error loading disciplines')
+onErrorDisciplines( ( error ) => {
+  handleError(error, {
+    context: {discipline: 'load disciplines'},
+    operation: 'DisciplinesByType',
+    level: 'error',
+    toastSeverity: 'error',
+    userMessage: 'There was an error loading disciplines. Please try again later.',
+  })
 })
 
 /**
@@ -255,13 +260,14 @@ const {
   }),
   { errorPolicy: 'all' },
 )
-errorSubdisciplines((error) => {
-  console.error('Error loading subdisciplines:', error, {
-    operation: 'loadSubdisciplines',
-    disciplineId: chosenDiscipline.value?.id,
-    performerType: appStore.performerType,
+errorSubdisciplines( ( error ) => {
+  handleError(error, {
+    context: {discipline: 'load subdisciplines'},
+    operation: 'SubdisciplinesByType',
+    level: 'error',
+    toastSeverity: 'error',
+    userMessage: 'There was an error loading subdisciplines. Please try again later.',
   })
-  toast.error('Error loading subdisciplines')
 })
 const subdisciplines = computed(() => {
   return subdisc.value?.subdisciplines ?? []
@@ -289,11 +295,16 @@ const {
   { errorPolicy: 'all' },
 )
 errorLevel((error) => {
-  console.error('Error loading levels:', error, {
-    operation: 'loadLevels',
-    subdisciplineId: chosenSubdiscipline.value?.id,
+  handleError(error, {
+    context: {
+      subdiscipline: 'load levels',
+      subdisciplineId: chosenSubdiscipline.value?.id
+    },
+    operation: 'LevelsDocument',
+    level: 'error',
+    toastSeverity: 'error',
+    userMessage: 'There was an error loading levels. Please try again later.',
   })
-  toast.error('Error loading levels')
 })
 const levels = computed(() => gradeLevels.value?.levels ?? [])
 // chosenGradeLevel is the grade/level chosen from the template
@@ -319,13 +330,18 @@ const {
   }),
   { errorPolicy: 'all' },
 )
-errorCategories((error) => {
-  console.error('Error loading categories:', error, {
+errorCategories( ( error ) => {
+  handleError(error, {
+    context: {
+      subdiscipline: 'load categories',
+      subdisciplineId: chosenSubdiscipline.value?.id,
+      levelId: chosenGradeLevel.value?.id,
+    },
     operation: 'loadCategories',
-    subdisciplineId: chosenSubdiscipline.value?.id,
-    levelId: chosenGradeLevel.value?.id,
+    level: 'error',
+    toastSeverity: 'error',
+    userMessage: 'There was an error loading categories. Please try again later.',
   })
-  toast.error('Error loading categories')
 })
 const categories = computed(() => cat.value?.categories ?? [])
 // chosenCategory is the category chosen from the template
@@ -420,14 +436,19 @@ onClassSearchResult((result) => {
   loadInfoFirstRun.value = false
   appStore.dataLoading = false
 })
-errorClass((error) => {
-  console.error('Error loading class information:', error, {
-    operation: 'loadClassInformation',
-    subdisciplineId: chosenSubdiscipline.value?.id,
-    levelId: chosenGradeLevel.value?.id,
-    categoryId: chosenCategory.value?.id,
+errorClass( ( error ) => {
+  handleError(error, {
+    context: {
+      subdiscipline: 'load class information',
+      subdisciplineId: chosenSubdiscipline.value?.id,
+      levelId: chosenGradeLevel.value?.id,
+      categoryId: chosenCategory.value?.id,
+    },
+    operation: 'FestivalClassSearchDocument',
+    level: 'error',
+    toastSeverity: 'error',
+    userMessage: 'There was an error loading class information. Please try again later.',
   })
-  toast.error('Error loading class information')
 })
 
 const notes = computed(() => {
@@ -469,14 +490,18 @@ watch(
         }
       }
     }
-    catch (error) {
-      console.error('Error in discipline watcher:', error, {
+    catch ( error ) {
+      handleError(error, {
+        context: {
+          classId: props.classId,
+          newDiscipline,
+          oldDiscipline
+        },
         operation: 'disciplineWatch',
-        classId: props.classId,
-        newDiscipline,
-        oldDiscipline,
+        level: 'error',
+        toastSeverity: 'error',
+        userMessage: 'There was an error updating the discipline. Please try again later.',
       })
-      toast.error('Error updating discipline')
       status.discipline = StatusEnum.null
     }
   },
@@ -502,14 +527,18 @@ watch(
         }
       }
     }
-    catch (error) {
-      console.error('Error in subdiscipline watcher:', error, {
+    catch ( error ) {
+      handleError(error, {
+        context: {
+          classId: props.classId,
+          newSubdiscipline,
+          oldSubdiscipline
+        },
         operation: 'subdisciplineWatch',
-        classId: props.classId,
-        newSubdiscipline,
-        oldSubdiscipline,
+        level: 'error',
+        toastSeverity: 'error',
+        userMessage: 'There was an error updating the subdiscipline. Please try again later.',
       })
-      toast.error('Error updating subdiscipline')
       status.subdiscipline = StatusEnum.null
     }
   },
@@ -538,14 +567,19 @@ watch(
         }
       }
     }
-    catch (error) {
-      console.error('Error in level watcher:', error, {
+    catch ( error ) {
+      handleError(error, {
+        context: {
+          level: 'levelWatch',
+          classId: props.classId,
+          newLevel,
+          oldLevel
+        },
         operation: 'levelWatch',
-        classId: props.classId,
-        newLevel,
-        oldLevel,
+        level: 'error',
+        toastSeverity: 'error',
+        userMessage: 'There was an error updating the level. Please try again later.',
       })
-      toast.error('Error updating level')
       status.level = StatusEnum.null
     }
   },
@@ -574,14 +608,19 @@ watch(
         }
       }
     }
-    catch (error) {
-      console.error('Error in category watcher:', error, {
+    catch ( error ) {
+      handleError(error, {
+        context: {
+          category: 'categoryWatch',
+          classId: props.classId,
+          newCategory,
+          oldCategory
+        },
         operation: 'categoryWatch',
-        classId: props.classId,
-        newCategory,
-        oldCategory,
+        level: 'error',
+        toastSeverity: 'error',
+        userMessage: 'There was an error updating the category. Please try again later.',
       })
-      toast.error('Error updating category')
       status.category = StatusEnum.null
     }
   },
@@ -654,13 +693,17 @@ watch(
 
         await classesStore
           .deleteSelection(props.classId, lastSelection.id)
-          .catch((error) => {
-            console.error('Failed to delete selection:', error, {
+          .catch( ( error ) => {
+            handleError(error, {
+              context: {
+                classId: props.classId,
+                selectionId: lastSelection.id,
+              },
               operation: 'updateNumberOfSelections',
-              classId: props.classId,
-              selectionId: lastSelection.id,
+              level: 'error',
+              toastSeverity: 'error',
+              userMessage: 'There was an error updating number of selections. Please try again later.',
             })
-            toast.error('Error updating number of selections')
           })
         currentCount -= 1
       }

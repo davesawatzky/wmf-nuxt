@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import type { User } from '~/graphql/gql/graphql'
-import { useToast } from 'vue-toastification'
-import * as yup from 'yup'
+  import * as yup from 'yup'
 import { provinces } from '#imports'
 import { MyUserDocument } from '~/graphql/gql/graphql'
 import { useUser } from '~/stores/useUser'
@@ -13,7 +12,7 @@ definePageMeta({
 
 const userStore = useUser()
 const teacherView = computed(() => userStore.user.privateTeacher)
-const toast = useToast()
+const { handleError } = useErrorHandler()
 
 /**
    * Load User details
@@ -34,9 +33,14 @@ onUserResult(async (result) => {
     await userStore.updateUser('isActive')
   }
 })
-userError((error) => {
-  console.error('Error loading user details: ', error)
-  toast.error('Error loading user details')
+userError( ( error ) => {
+  handleError( error, {
+    context: {page: 'UserInformation'},
+    level: 'error',
+    toastSeverity: 'error',
+    userMessage: 'Error loading user details',
+    operation: 'loadUserDetails',
+  })
 })
 
 userStore.user.isActive = true
@@ -58,51 +62,51 @@ const status = reactive<Status>({
   phone: userStore.user.phone ? StatusEnum.saved : StatusEnum.null,
 })
 
+const FIELD_STATUS_MESSAGES: Record<string, { error: string, userMessage: string }> = {
+  valid: {
+    error: 'Error updating user field',
+    userMessage: 'Could not update field.  Please exit and reload Registration',
+  },
+  invalid: {
+    error: 'Error removing invalid user field',
+    userMessage: 'Could not remove invalid field. Please exit and reload Registration',
+  },
+  removed: {
+    error: 'Error removing user field',
+    userMessage: 'Could not remove field.  Please exit and reload Registration',
+  },
+}
+
 async function fieldStatus(stat: string, fieldName: string) {
   await nextTick()
+  const messages = FIELD_STATUS_MESSAGES[stat]
+  if (!messages) return
+
+  status[fieldName] = StatusEnum.pending
+  const result = await userStore.updateUser(fieldName)
+  status[fieldName] = StatusEnum.null
+
+  if (result !== 'complete') {
+    handleError(new Error(`${messages.error} ${fieldName}`), {
+      context: {
+        page: 'UserInformation',
+        fieldName: fieldName,
+      },
+      operation: 'fieldStatus in UserInformation',
+      level: 'error',
+      toastSeverity: 'error',
+      userMessage: messages.userMessage,
+    })
+    return
+  }
+
   if (stat === 'valid') {
-    status[fieldName] = StatusEnum.pending
-    const result = await userStore.updateUser(fieldName)
-    status[fieldName] = StatusEnum.null
-    if (result === 'complete') {
-      if (userStore.user[fieldName as keyof User] !== null) {
-        status[fieldName] = StatusEnum.saved
-      }
-    }
-    else {
-      console.error(`Error updating user field ${fieldName}`)
-      toast.error(
-        'Could not update field.  Please exit and reload Registration',
-      )
+    if (userStore.user[fieldName as keyof User] !== null) {
+      status[fieldName] = StatusEnum.saved
     }
   }
-  else if (stat === 'invalid') {
-    status[fieldName] = StatusEnum.pending
-    const result = await userStore.updateUser(fieldName)
-    status[fieldName] = StatusEnum.null
-    if (result === 'complete') {
-      status[fieldName] = StatusEnum.removed
-    }
-    else {
-      console.error(`Error removing invalid user field ${fieldName}`)
-      toast.error(
-        'Could not remove invalid field. Please exit and reload Registration',
-      )
-    }
-  }
-  else if (stat === 'removed') {
-    status[fieldName] = StatusEnum.pending
-    const result = await userStore.updateUser(fieldName)
-    status[fieldName] = StatusEnum.null
-    if (result === 'complete') {
-      status[fieldName] = StatusEnum.removed
-    }
-    else {
-      console.error(`Error removing user field ${fieldName}`)
-      toast.error(
-        'Could not remove field.  Please exit and reload Registration',
-      )
-    }
+  else {
+    status[fieldName] = StatusEnum.removed
   }
 }
 

@@ -10,14 +10,18 @@ export default defineEventHandler(async (payload) => {
   const confirmation = body.registration.confirmation
   const html = await renderSubmissionEmail(body)
 
+  const smtpPort = Number(config.sendingSmtpPort)
   const transporter = nodemailer.createTransport({
     host: config.sendingEmailServer,
-    port: Number(config.sendingSmtpPort),
-    secure: true,
-    auth: {
-      user: config.emailServerUserAccount,
-      pass: config.sendingEmailPassword,
-    },
+    port: smtpPort,
+    // Port 465 requires implicit TLS; other ports (e.g. MailHog's 1025) do not.
+    secure: smtpPort === 465,
+    auth: config.emailServerUserAccount
+      ? {
+          user: config.emailServerUserAccount,
+          pass: config.sendingEmailPassword,
+        }
+      : undefined,
   })
 
   const options = {

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { RegisteredClass } from '~/graphql/gql/graphql'
-import { useToast } from 'vue-toastification'
 import * as yup from 'yup'
 import { PerformerType } from '~/graphql/gql/graphql'
 import { useAppStore } from '~/stores/appStore'
@@ -15,6 +14,7 @@ const schoolGroupStore = useSchoolGroup()
 const communityGroupStore = useCommunityGroup()
 const appStore = useAppStore()
 const toast = useToast()
+const { handleError } = useErrorHandler()
 
 const status = reactive<Status[]>([])
 onMounted(() => {
@@ -29,31 +29,46 @@ onMounted(() => {
 })
 
 async function addClass() {
-  await classesStore
-    .createClass(registrationStore.registrationId)
-    .catch((error) => {
-      console.error('Could not add class: ', error)
-      toast.error('Could not add class. Please try again.')
-    })
-  if (appStore.performerType === PerformerType.SCHOOL)
-    status.push({ schoolGroupID: StatusEnum.null })
-  if (appStore.performerType === PerformerType.COMMUNITY)
-    status.push({ communityGroupID: StatusEnum.null })
-  validate()
+  try{
+    await classesStore.createClass(registrationStore.registrationId)
+    if (appStore.performerType === PerformerType.SCHOOL)
+      status.push({ schoolGroupID: StatusEnum.null })
+    if (appStore.performerType === PerformerType.COMMUNITY)
+      status.push({ communityGroupID: StatusEnum.null })
+    validate()
+  } catch ( error ) {
+    handleError( error, {
+      context: {
+        registrationId: registrationStore.registrationId,
+      },
+      operation: 'addClass in FormTypeClasses',
+      level: 'error',
+      toastSeverity: 'error',
+      userMessage: 'An error occurred while adding a class. Please try again.',
+    } )
+  }
 }
 
-async function removeClass(classId: number) {
-  const classIndex = await classesStore
-    .deleteClass(classId)
-    .catch((error) => {
-      console.error('Could not remove class: ', error)
-      toast.error('Could not remove class. Please try again.')
-    })
-  if (classIndex) {
-    if (appStore.performerType === PerformerType.SCHOOL)
-      status.splice(classIndex, 1)
-    if (appStore.performerType === PerformerType.COMMUNITY)
-      status.splice(classIndex, 1)
+async function removeClass( classId: number ) {
+  try {
+    const classIndex = await classesStore
+      .deleteClass(classId)
+    if (classIndex) {
+      if (appStore.performerType === PerformerType.SCHOOL)
+        status.splice(classIndex, 1)
+      if (appStore.performerType === PerformerType.COMMUNITY)
+        status.splice(classIndex, 1)
+    }
+  } catch ( error ) {
+    handleError( error, {
+      context: {
+        classId: classId,
+      },
+      operation: 'removeClass in FormTypeClasses',
+      level: 'error',
+      toastSeverity: 'error',
+      userMessage: 'An error occurred while removing a class. Please try again.',
+    } )
   }
 }
 
@@ -110,9 +125,18 @@ async function fieldStatus(
     }
   }
   else {
-    status[classIndex]![fieldName] = StatusEnum.null
-    console.error('Could not update class field:', fieldName)
-    toast.error('Something went wrong. Please exit and reload Registration')
+    status[ classIndex ]![ fieldName ] = StatusEnum.null
+    handleError( new Error('Could not update class field'), {
+      context: {
+        fieldName: fieldName,
+        classId: classId,
+        classIndex: classIndex,
+      },
+      operation: 'fieldStatus in FormTypeClasses',
+      level: 'error',
+      toastSeverity: 'error',
+      userMessage: 'An error occurred while updating a class field. Please try again.',
+    } )
   }
 }
 

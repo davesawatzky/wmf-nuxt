@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { EmailPayload } from '~/utils/types'
 import { DateTime } from 'luxon'
-import { useToast } from 'vue-toastification'
 
 // import type { LocationQueryValue } from '#vue-router'
 const performerStore = usePerformers()
@@ -40,7 +39,8 @@ const lateFee = toValue(registrationStore.lateRegistrationFee())
 const userFirstName = toValue(userStore.user.firstName)
 const userLastName = toValue(userStore.user.lastName)
 const userEmail = toValue(userStore.user.email)
-const dataSending = ref(false)
+const dataSending = ref( false )
+const {handleError} = useErrorHandler()
 
 const emailWaiting = ref(true)
 
@@ -70,21 +70,16 @@ definePageMeta({
   middleware: ['user'], // Apply only to user pages
 })
 
-onBeforeRouteLeave(async (to, from) => {
-  // Prevent navigating back to payment page
+onBeforeRouteLeave(async (to) => {
+  // Prevent navigating (back) to the payment/confirm-payment pages from this page
   if (
-    from.path.includes('/Submission/ConfirmPayment')
-    || from.path.includes('/Submission/result')
-  ) {
-    return await navigateTo('/Registrations')
-  }
-  else if (
     to.path.includes('/Submission/ConfirmPayment')
     || to.path.includes('/Submission/payment')
   ) {
     return await navigateTo('/Registrations')
   }
 })
+
 
 async function checkPaymentIntent() {
   paymentIntentStatus.value = route.query.redirect_status
@@ -98,19 +93,17 @@ async function checkPaymentIntent() {
       console.log(
         'Payment Processing.  We\'ll update you when payment is received.',
       )
-      toast.info(
-        'Payment Processing.  We\'ll update you when payment is received.',
-      )
+      toast.add({ severity: 'info', summary: 'Info', detail: 'Payment Processing.  We\'ll update you when payment is received.' })
       break
     case 'requires_payment_method':
       registrationStore.registration.transactionInfo = 'failed'
       console.error('Payment failed.  Please try another payment method.')
-      toast.error('Payment failed.  Please try another payment method.')
+      toast.add({ severity: 'error', summary: 'Error', detail: 'Payment failed.  Please try another payment method.' })
       break
     case 'failed':
       registrationStore.registration.transactionInfo = 'failed'
       console.error('Payment failed.  Please try another payment method.')
-      toast.error('Payment failed.  Please try another payment method.')
+      toast.add({ severity: 'error', summary: 'Error', detail: 'Payment failed.  Please try another payment method.' })
       break
   }
 }
@@ -157,11 +150,13 @@ async function onSuccess() {
   catch (error) {
     dataSending.value = false
     emailWaiting.value = false
-    console.error('Error sending registration email: ', error)
-    toast.error(
-      'Error sending registration email. Please contact WMF office.',
-      { timeout: false, closeOnClick: true },
-    )
+    handleError( error, {
+      operation: 'successful registration load',
+      context: {registration: 'Error sending email'},
+      level: 'error',
+      toastSeverity: 'error',
+      userMessage: 'Error sending registration email.'
+    } )
   }
 }
 </script>

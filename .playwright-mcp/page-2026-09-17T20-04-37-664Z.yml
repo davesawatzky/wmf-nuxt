@@ -1,0 +1,141 @@
+- generic [active] [ref=f15e1]:
+  - generic [ref=f15e15]:
+    - banner [ref=f15e16]:
+      - generic [ref=f15e18]:
+        - generic [ref=f15e19]:
+          - img "Winnipeg Music Festival Logo" [ref=f15e21]
+          - generic [ref=f15e22]: WinnipegMusicFestival
+        - menubar [ref=f15e23]:
+          - menuitem "Registrations" [ref=f15e24]:
+            - button "Registrations" [ref=f15e27] [cursor=pointer]
+          - menuitem "Account" [ref=f15e29]:
+            - button "Account" [ref=f15e32] [cursor=pointer]
+    - generic [ref=f15e269]:
+      - generic [ref=f15e270]:
+        - generic [ref=f15e271]: Registration Label
+        - textbox "Registration Label" [ref=f15e276]:
+          - /placeholder: Enter a unique label
+          - text: Registration Form
+      - generic [ref=f15e278]:
+        - generic [ref=f15e280]:
+          - generic [ref=f15e281]:
+            - button "1" [ref=f15e433]
+            - generic [ref=f15e285]: Performer
+          - generic [ref=f15e286]:
+            - button "2" [ref=f15e485]
+            - generic [ref=f15e290]: Teacher
+          - generic [ref=f15e291]:
+            - button "3" [ref=f15e748]
+            - generic [ref=f15e295]: Solo Classes
+          - generic [ref=f15e296]:
+            - button "4" [ref=f15e297]
+            - generic [ref=f15e298]: Summary
+        - generic [ref=f15e495]:
+          - heading "Class Information" [level=2] [ref=f15e496]
+          - generic [ref=f15e497]:
+            - generic [ref=f15e498]:
+              - heading "Class 1" [level=3] [ref=f15e499]
+              - generic [ref=f15e500]:
+                - generic [ref=f15e501]:
+                  - generic [ref=f15e503]:
+                    - generic [ref=f15e504]: Discipline
+                    - combobox [ref=f15e507]:
+                      - option "PIANO" [selected]
+                      - option "MOZART CLASS"
+                  - generic [ref=f15e510]:
+                    - generic [ref=f15e511]: Subdiscipline
+                    - combobox "Subdiscipline" [ref=f15e514]:
+                      - option "PIANO SOLO" [selected]
+                  - generic [ref=f15e517]:
+                    - generic [ref=f15e518]: Grade/Level
+                    - combobox "Grade/Level" [ref=f15e521]:
+                      - option "BEGINNER"
+                      - option "GRADE/LEVEL 1"
+                      - option "6 YEARS AND UNDER"
+                      - option "7 AND 8 YEARS"
+                      - option "GRADE/LEVEL 2"
+                      - option "GRADE/LEVEL 3"
+                      - option "9 AND 10 YEARS"
+                      - option "GRADE/LEVEL 4"
+                      - option "GRADE/LEVEL 5" [selected]
+                      - option "GRADE/LEVEL 6"
+                      - option "GRADE/LEVEL 7"
+                      - option "GRADE/LEVEL 8"
+                      - option "GRADE/LEVEL 9"
+                      - option "GRADE/LEVEL 10"
+                      - option "HONOURS"
+                      - option "DIPLOMA"
+                      - option "ADULT - BEGINNER"
+                      - option "ADULT"
+                      - option "OPEN"
+                  - generic [ref=f15e524]:
+                    - generic [ref=f15e525]: Category
+                    - combobox "Category" [ref=f15e528]:
+                      - option "20TH/21ST CENTURY COMPOSERS"
+                      - option "BAROQUE COMPOSERS"
+                      - option "CANADIAN COMPOSERS"
+                      - option "CLASSICAL COMPOSERS"
+                      - option "OWN CHOICE" [selected]
+                      - option "POPULAR/CONTEMPORARY"
+                      - option "RECITAL GROUP"
+                      - option "ROMANTIC COMPOSERS"
+                      - option "SONATA"
+                - generic [ref=f15e558]:
+                  - paragraph [ref=f15e560]: CLASS 2265 - PIANO SOLO - GRADE/LEVEL 5 - OWN CHOICE
+                  - generic [ref=f15e564]:
+                    - heading "Notes" [level=4] [ref=f15e565]
+                    - generic [ref=f15e566]:
+                      - heading "Trophy Eligibility" [level=4] [ref=f15e567]
+                      - generic [ref=f15e568]:
+                        - heading "Lieutenant Governor's Trophy:" [level=6] [ref=f15e569]
+                        - paragraph [ref=f15e570]: Award for the most outstanding performance, solo or group, during the current year's festival. This trophy is presented at the Gala Concert.
+                    - generic [ref=f15e571]:
+                      - heading "Class" [level=4] [ref=f15e572]
+                      - paragraph [ref=f15e573]: One selection, own choice. Time limit 6 minutes.
+                  - generic [ref=f15e574]:
+                    - heading "Selection 1" [level=3] [ref=f15e575]
+                    - generic [ref=f15e576]:
+                      - generic [ref=f15e578]:
+                        - generic [ref=f15e579]: Title (including Opus number if applicable)
+                        - textbox "Title (including Opus number if applicable)" [ref=f15e582]:
+                          - /placeholder: ""
+                          - text: Fur Elise
+                      - generic [ref=f15e585]:
+                        - generic [ref=f15e586]: Composer
+                        - textbox "Composer" [ref=f15e589]:
+                          - /placeholder: ""
+                          - text: Beethoven
+                      - generic [ref=f15e592]:
+                        - generic [ref=f15e593]: Title of Larger Work (if applicable)
+                        - textbox "Title of Larger Work (if applicable)" [ref=f15e596]:
+                          - /placeholder: ""
+                      - generic [ref=f15e599]:
+                        - generic [ref=f15e600]: Movement (if applicable)
+                        - textbox "Movement (if applicable)" [ref=f15e603]:
+                          - /placeholder: ""
+                      - generic [ref=f15e606]:
+                        - generic [ref=f15e607]: Duration
+                        - textbox "Duration" [ref=f15e610]:
+                          - /placeholder: mm:ss
+                          - text: 03:00
+            - button "Add Another Class" [ref=f15e750]
+        - generic [ref=f15e401]:
+          - button "Previous" [ref=f15e446]
+          - button "Next" [ref=f15e402]
+    - contentinfo [ref=f15e246]:
+      - generic [ref=f15e248]:
+        - generic [ref=f15e249]: Winnipeg Music Festival
+        - generic [ref=f15e250]:
+          - text: "2-88 St. Anne's Rd.Winnipeg, MB R2M 2Y7Phone: (204) 947-0184Email:"
+          - link "admin@winnipegmusicfestival.org" [ref=f15e251] [cursor=pointer]:
+            - /url: mailto:admin@winnipegmusicfestival.org
+      - generic [ref=f15e252]:
+        - generic [ref=f15e253]: Created by
+        - link "Diatonic Web Design and Development" [ref=f15e254] [cursor=pointer]:
+          - /url: https://www.diatonic.io
+  - generic [ref=f15e255]:
+    - button "Toggle Nuxt DevTools" [ref=f15e256] [cursor=pointer]
+    - generic "Page load time" [ref=f15e260]:
+      - generic [ref=f15e261]: "112"
+      - generic [ref=f15e262]: ms
+    - button "Toggle Component Inspector" [ref=f15e264] [cursor=pointer]

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { Selection, SelectionInput } from '~/graphql/gql/graphql'
-import { useToast } from 'vue-toastification'
 import * as yup from 'yup'
 import { useClasses } from '~/stores/useClasses'
 
@@ -16,8 +15,7 @@ const emits = defineEmits<{
   'update:modelValue': [value: SelectionInput]
 }>()
 
-const toast = useToast()
-
+const {handleError} = useErrorHandler()
 const classesStore = useClasses()
 const fieldConfigStore = useFieldConfig()
 
@@ -36,63 +34,58 @@ const status = reactive<Status>({
   duration: props.modelValue.duration ? StatusEnum.saved : StatusEnum.null,
 })
 
+const FIELD_STATUS_MESSAGES: Record<string, { error: string, userMessage: string }> = {
+  valid: {
+    error: 'Could not update selection field',
+    userMessage: 'Could not update field.  Please exit and reload Registration',
+  },
+  invalid: {
+    error: 'Could not remove invalid selection field',
+    userMessage: 'Could not remove invalid field. Please exit and reload Registration',
+  },
+  removed: {
+    error: 'Could not remove selection field',
+    userMessage: 'Could not remove field.  Please exit and reload Registration',
+  },
+}
+
 async function fieldStatus(stat: string, fieldName: string) {
   await nextTick()
+  const messages = FIELD_STATUS_MESSAGES[stat]
+  if (!messages) return
+
+  status[fieldName] = StatusEnum.pending
+  const result = await classesStore.updateSelection(
+    props.classId,
+    props.selectionId,
+    fieldName,
+  )
+  status[fieldName] = StatusEnum.null
+
+  if (result !== 'complete') {
+    handleError(new Error(messages.error), {
+      context: {
+        classId: props.classId,
+        classIndex: props.classIndex,
+        selectionId: props.selectionId,
+        selectionIndex: props.selectionIndex,
+        fieldName: fieldName,
+      },
+      operation: 'fieldStatus in FormWorksSelection',
+      level: 'error',
+      toastSeverity: 'error',
+      userMessage: messages.userMessage,
+    })
+    return
+  }
+
   if (stat === 'valid') {
-    status[fieldName] = StatusEnum.pending
-    const result = await classesStore.updateSelection(
-      props.classId,
-      props.selectionId,
-      fieldName,
-    )
-    status[fieldName] = StatusEnum.null
-    if (result === 'complete') {
-      if (work.value[fieldName as keyof SelectionInput] !== null) {
-        status[fieldName] = StatusEnum.saved
-      }
-    }
-    else {
-      console.error('Could not update selection field:', fieldName)
-      toast.error(
-        'Could not update field.  Please exit and reload Registration',
-      )
+    if (work.value[fieldName as keyof SelectionInput] !== null) {
+      status[fieldName] = StatusEnum.saved
     }
   }
-  else if (stat === 'invalid') {
-    status[fieldName] = StatusEnum.pending
-    const result = await classesStore.updateSelection(
-      props.classId,
-      props.selectionId,
-      fieldName,
-    )
-    status[fieldName] = StatusEnum.null
-    if (result === 'complete') {
-      status[fieldName] = StatusEnum.removed
-    }
-    else {
-      console.error('Could not remove invalid selection field:', fieldName)
-      toast.error(
-        'Could not remove invalid field. Please exit and reload Registration',
-      )
-    }
-  }
-  else if (stat === 'removed') {
-    status[fieldName] = StatusEnum.pending
-    const result = await classesStore.updateSelection(
-      props.classId,
-      props.selectionId,
-      fieldName,
-    )
-    status[fieldName] = StatusEnum.null
-    if (result === 'complete') {
-      status[fieldName] = StatusEnum.removed
-    }
-    else {
-      console.error('Could not remove selection field:', fieldName)
-      toast.error(
-        'Could not remove field.  Please exit and reload Registration',
-      )
-    }
+  else {
+    status[fieldName] = StatusEnum.removed
   }
 }
 

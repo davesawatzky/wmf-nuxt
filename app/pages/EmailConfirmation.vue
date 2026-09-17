@@ -6,7 +6,9 @@ const config = useRuntimeConfig()
 const tokenParam = route.query.token
 const tokenBody = { token: tokenParam }
 const tokenResponse = ref()
-const tokenError = ref(false)
+const tokenError = ref( false )
+const { handleError } = useErrorHandler()
+
 async function confirmation() {
   try {
     tokenResponse.value = await $fetch(config.public.emailConfirmation, {
@@ -21,10 +23,16 @@ async function confirmation() {
   }
   catch (error) {
     tokenError.value = true
-    console.error('Email confirmation error: ', error)
+    handleError( error, {
+      operation: 'email confirmation',
+      context: {token: tokenParam},
+      level: 'error',
+      toastSeverity: 'error',
+      userMessage: 'Failed to confirm email.'
+    } )
   }
 }
-confirmation()
+await confirmation()
 
 const confirmed = computed(() => {
   console.log('Token Response: ', tokenResponse.value)

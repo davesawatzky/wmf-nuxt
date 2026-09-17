@@ -1,0 +1,110 @@
+- generic [active] [ref=f9e1]:
+  - generic [ref=f9e15]:
+    - banner [ref=f9e16]:
+      - generic [ref=f9e18]:
+        - generic [ref=f9e19]:
+          - img "Winnipeg Music Festival Logo" [ref=f9e21]
+          - generic [ref=f9e22]: WinnipegMusicFestival
+        - menubar [ref=f9e23]:
+          - menuitem "Registrations" [ref=f9e24]:
+            - button "Registrations" [ref=f9e27] [cursor=pointer]
+          - menuitem "Account" [ref=f9e29]:
+            - button "Account" [ref=f9e32] [cursor=pointer]
+    - generic [ref=f9e237]:
+      - generic [ref=f9e238]:
+        - generic [ref=f9e239]: Registration Label
+        - textbox "Registration Label" [ref=f9e244]:
+          - /placeholder: Enter a unique label
+          - text: Registration Form
+      - generic [ref=f9e246]:
+        - generic [ref=f9e248]:
+          - generic [ref=f9e249]:
+            - button "1 5" [ref=f9e250]:
+              - text: "1"
+              - generic [ref=f9e251]: "5"
+            - generic [ref=f9e253]: Community
+          - generic [ref=f9e254]:
+            - button "2 1" [ref=f9e255]:
+              - text: "2"
+              - generic [ref=f9e256]: "1"
+            - generic [ref=f9e258]: Contact
+          - generic [ref=f9e259]:
+            - button "3 7" [ref=f9e260]:
+              - text: "3"
+              - generic [ref=f9e261]: "7"
+            - generic [ref=f9e263]: Groups
+          - generic [ref=f9e264]:
+            - button "4 5" [ref=f9e265]:
+              - text: "4"
+              - generic [ref=f9e266]: "5"
+            - generic [ref=f9e268]: Community Classes
+          - generic [ref=f9e269]:
+            - button "5" [ref=f9e270]
+            - generic [ref=f9e271]: Summary
+        - generic [ref=f9e273]:
+          - heading "Community Information" [level=2] [ref=f9e274]
+          - generic [ref=f9e275]:
+            - generic [ref=f9e277]:
+              - generic [ref=f9e278]: Community Name
+              - textbox "Community Name" [invalid] [ref=f9e281]:
+                - /placeholder: ""
+              - generic [ref=f9e282]: Required
+            - generic [ref=f9e284]:
+              - generic [ref=f9e285]: Mailing Address
+              - textbox "Mailing Address" [invalid] [ref=f9e288]:
+                - /placeholder: ""
+              - generic [ref=f9e289]: address is a required field
+            - generic [ref=f9e291]:
+              - generic [ref=f9e292]: City/Town
+              - textbox "City/Town" [ref=f9e297]:
+                - /placeholder: ""
+                - text: Winnipeg
+            - generic [ref=f9e300]:
+              - generic [ref=f9e301]: Province
+              - combobox "Province" [ref=f9e306]:
+                - option "BC"
+                - option "AB"
+                - option "SK"
+                - option "MB" [selected]
+                - option "ON"
+                - option "QC"
+                - option "NB"
+                - option "NS"
+                - option "PEI"
+                - option "NL"
+                - option "YT"
+                - option "NWT"
+                - option "NVT"
+            - generic [ref=f9e309]:
+              - generic [ref=f9e310]: Postal Code
+              - textbox "Postal Code" [invalid] [ref=f9e313]:
+                - /placeholder: A0A 0A0
+              - generic [ref=f9e314]: Required
+            - generic [ref=f9e316]:
+              - generic [ref=f9e317]: Phone Number
+              - textbox "Phone Number" [invalid] [ref=f9e320]:
+                - /placeholder: (___) ___-____
+              - generic [ref=f9e321]: Required
+            - generic [ref=f9e323]:
+              - generic [ref=f9e324]: Email Address
+              - textbox "Email Address" [invalid] [ref=f9e327]:
+                - /placeholder: example@email.com
+              - generic [ref=f9e328]: Required
+        - button "Next" [ref=f9e330]
+    - contentinfo [ref=f9e214]:
+      - generic [ref=f9e216]:
+        - generic [ref=f9e217]: Winnipeg Music Festival
+        - generic [ref=f9e218]:
+          - text: "2-88 St. Anne's Rd.Winnipeg, MB R2M 2Y7Phone: (204) 947-0184Email:"
+          - link "admin@winnipegmusicfestival.org" [ref=f9e219] [cursor=pointer]:
+            - /url: mailto:admin@winnipegmusicfestival.org
+      - generic [ref=f9e220]:
+        - generic [ref=f9e221]: Created by
+        - link "Diatonic Web Design and Development" [ref=f9e222] [cursor=pointer]:
+          - /url: https://www.diatonic.io
+  - generic [ref=f9e223]:
+    - button "Toggle Nuxt DevTools" [ref=f9e224] [cursor=pointer]
+    - generic "Page load time" [ref=f9e228]:
+      - generic [ref=f9e229]: "95"
+      - generic [ref=f9e230]: ms
+    - button "Toggle Component Inspector" [ref=f9e232] [cursor=pointer]

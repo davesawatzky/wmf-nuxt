@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { Group } from '~/graphql/gql/graphql'
-import { useToast } from 'vue-toastification'
 import * as yup from 'yup'
 import { useGroup } from '~/stores/useGroup'
 
@@ -12,7 +11,7 @@ const previousGroupType = ref('')
 const cancelGroupChange = ref(false)
 const changeGroupType = ref('')
 const fieldConfigStore = useFieldConfig()
-const toast = useToast()
+const { handleError } = useErrorHandler()
 
 watch(
   () => groupStore.group.groupType,
@@ -94,61 +93,50 @@ const status = reactive<Status>({
   groupType: groupStore.group.groupType ? StatusEnum.saved : StatusEnum.null,
 })
 
-// async function fieldStatus(stat: string, fieldName: string) {
-//   await nextTick()
-//   status[fieldName] = StatusEnum.pending
-//   if (stat === 'saved') {
-//     status[fieldName] = StatusEnum.saved
-//     await groupStore.updateGroup(fieldName)
-//   } else if (stat === 'remove') status[fieldName] = StatusEnum.removed
-//   else status[fieldName] = StatusEnum.null
-// }
+const FIELD_STATUS_MESSAGES: Record<string, { error: string, userMessage: string }> = {
+  valid: {
+    error: 'Could not update group field',
+    userMessage: 'Could not update field.  Please exit and reload Registration',
+  },
+  invalid: {
+    error: 'Could not remove invalid group field',
+    userMessage: 'Could not remove invalid field. Please exit and reload Registration',
+  },
+  removed: {
+    error: 'Could not remove group field',
+    userMessage: 'Could not remove field.  Please exit and reload Registration',
+  },
+}
 
 async function fieldStatus(stat: string, fieldName: string) {
   await nextTick()
+  const messages = FIELD_STATUS_MESSAGES[stat]
+  if (!messages) return
+
+  status[fieldName] = StatusEnum.pending
+  const result = await groupStore.updateGroup(fieldName)
+  status[fieldName] = StatusEnum.null
+
+  if (result !== 'complete') {
+    handleError(new Error(messages.error), {
+      context: {
+        fieldName: fieldName,
+      },
+      operation: 'fieldStatus in GroupInfo',
+      level: 'error',
+      toastSeverity: 'error',
+      userMessage: messages.userMessage,
+    })
+    return
+  }
+
   if (stat === 'valid') {
-    status[fieldName] = StatusEnum.pending
-    const result = await groupStore.updateGroup(fieldName)
-    status[fieldName] = StatusEnum.null
-    if (result === 'complete') {
-      if (groupStore.group[fieldName as keyof Group] !== null) {
-        status[fieldName] = StatusEnum.saved
-      }
-    }
-    else {
-      console.error('Could not update community field:', fieldName)
-      toast.error(
-        'Could not update field.  Please exit and reload Registration',
-      )
+    if (groupStore.group[fieldName as keyof Group] !== null) {
+      status[fieldName] = StatusEnum.saved
     }
   }
-  else if (stat === 'invalid') {
-    status[fieldName] = StatusEnum.pending
-    const result = await groupStore.updateGroup(fieldName)
-    status[fieldName] = StatusEnum.null
-    if (result === 'complete') {
-      status[fieldName] = StatusEnum.removed
-    }
-    else {
-      console.error('Could not remove invalid group field:', fieldName)
-      toast.error(
-        'Could not remove invalid field. Please exit and reload Registration',
-      )
-    }
-  }
-  else if (stat === 'removed') {
-    status[fieldName] = StatusEnum.pending
-    const result = await groupStore.updateGroup(fieldName)
-    status[fieldName] = StatusEnum.null
-    if (result === 'complete') {
-      status[fieldName] = StatusEnum.removed
-    }
-    else {
-      console.error('Could not remove group field:', fieldName)
-      toast.error(
-        'Could not remove field.  Please exit and reload Registration',
-      )
-    }
+  else {
+    status[fieldName] = StatusEnum.removed
   }
 }
 

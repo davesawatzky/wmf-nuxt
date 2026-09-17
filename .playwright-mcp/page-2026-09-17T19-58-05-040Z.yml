@@ -1,0 +1,217 @@
+- generic [active] [ref=f3e1]:
+  - generic [ref=f3e15]:
+    - banner [ref=f3e16]:
+      - generic [ref=f3e18]:
+        - generic [ref=f3e19]:
+          - img "Winnipeg Music Festival Logo" [ref=f3e21]
+          - generic [ref=f3e22]: WinnipegMusicFestival
+        - menubar [ref=f3e23]:
+          - menuitem "Registrations" [ref=f3e24]:
+            - button "Registrations" [ref=f3e27] [cursor=pointer]
+          - menuitem "Account" [ref=f3e29]:
+            - button "Account" [ref=f3e32] [cursor=pointer]
+    - generic [ref=f3e205]:
+      - generic [ref=f3e206]:
+        - generic [ref=f3e207]: Registration Label
+        - textbox "Registration Label" [ref=f3e212]:
+          - /placeholder: Enter a unique label
+          - text: Registration Form
+      - generic [ref=f3e214]:
+        - generic [ref=f3e216]:
+          - generic [ref=f3e217]:
+            - button "1" [ref=f3e300]
+            - generic [ref=f3e221]: School
+          - generic [ref=f3e222]:
+            - button "2" [ref=f3e352]
+            - generic [ref=f3e226]: Teacher
+          - generic [ref=f3e227]:
+            - button "3" [ref=f3e531]
+            - generic [ref=f3e231]: Groups
+          - generic [ref=f3e232]:
+            - button "4 5" [ref=f3e700]:
+              - text: "4"
+              - generic [ref=f3e608]: "5"
+            - generic [ref=f3e236]: School Classes
+          - generic [ref=f3e237]:
+            - button "5" [ref=f3e238]
+            - generic [ref=f3e239]: Summary
+        - generic [ref=f3e533]:
+          - heading "Class Information" [level=2] [ref=f3e534]
+          - generic [ref=f3e535]:
+            - generic [ref=f3e536]:
+              - heading "Class 1" [level=3] [ref=f3e537]
+              - generic [ref=f3e539]:
+                - generic [ref=f3e540]: Select a School Group
+                - combobox "Select a School Group" [ref=f3e543]:
+                  - option "Grade 4 Choir" [selected]
+                  - option "Grade 5 Band"
+              - generic [ref=f3e545]:
+                - generic [ref=f3e546]:
+                  - generic [ref=f3e548]:
+                    - generic [ref=f3e549]: Discipline
+                    - combobox [ref=f3e552]:
+                      - option "CHORAL" [selected]
+                      - option "GUITAR"
+                      - option "HANDBELLS"
+                      - option "ORFF"
+                      - option "RECORDER"
+                      - option "STRINGS"
+                      - option "UKELELE"
+                      - option "VOCAL"
+                  - generic [ref=f3e555]:
+                    - generic [ref=f3e556]: Subdiscipline
+                    - combobox "Subdiscipline" [ref=f3e559]:
+                      - option "CLASSROOM CHOIR"
+                      - option "SCHOOL CHOIR" [selected]
+                  - generic [ref=f3e562]:
+                    - generic [ref=f3e563]: Grade/Level
+                    - combobox "Grade/Level" [ref=f3e566]:
+                      - option "KINDERGARTEN-GRADE 3"
+                      - option "KINDERGARTEN-GRADE 6"
+                      - option "GRADES 4-6" [selected]
+                      - option "GRADES 5-8"
+                      - option "GRADES 7-9"
+                      - option "GRADES 9-12"
+                      - option "ANY OTHER GRADE COMBINATION"
+                  - generic [ref=f3e569]:
+                    - generic [ref=f3e570]: Category
+                    - combobox "Category" [ref=f3e573]:
+                      - option "CANADIAN COMPOSERS"
+                      - option "FOLK SONG"
+                      - option "MUSICAL THEATRE/OPERETTA/GILBERT & SULLIVAN EXCERPTS"
+                      - option "OWN CHOICE" [selected]
+                      - option "POPULAR/CONTEMPORARY"
+                      - option "SACRED"
+                      - option "SONGS WITH MOVEMENT"
+                      - option "WITH TEST PIECE"
+                - generic [ref=f3e599]:
+                  - paragraph [ref=f3e601]: CLASS 8192 - SCHOOL CHOIR - GRADES 4-6 - OWN CHOICE
+                  - generic [ref=f3e602]:
+                    - heading "Notes" [level=4] [ref=f3e603]
+                    - generic [ref=f3e610]:
+                      - heading "Trophy Eligibility" [level=4] [ref=f3e611]
+                      - generic [ref=f3e612]:
+                        - heading "Annie Pullar Trophy:" [level=6] [ref=f3e613]
+                        - paragraph [ref=f3e614]: Award for the most outstanding performance by a School Choir, Kindergarten to Grade 6, of a selection by a Canadian composer, as selected by the adjudicator. Upon request, this trophy will be presented at a school assembly or concert.
+                      - generic [ref=f3e615]:
+                        - heading "Helen Derksen Memorial Shield:" [level=6] [ref=f3e616]
+                        - paragraph [ref=f3e617]: Award for the most outstanding performance by a School Choir of a Sacred selection, as selected by the adjudicator. Upon request, this trophy will be presented at a school assembly or concert.
+                      - generic [ref=f3e618]:
+                        - heading "Anne Tate Memorial Trophy:" [level=6] [ref=f3e619]
+                        - paragraph [ref=f3e620]: Award for the most outstanding performance by a School Choir, Grades 4 to 6, in class 8192, as selected by the adjudicator. Upon request, this trophy will be presented at a school assembly or concert.
+                    - generic [ref=f3e604]:
+                      - heading "Subdiscipline" [level=4] [ref=f3e605]
+                      - paragraph [ref=f3e606]: A group of 13 or more singers. A School Choir may be composed of one grade or a combination of grades. In Choir Classes, it is not necessary to include students representing every grade specified in the class description. School choirs that contain grade combinations other than those specified classes in the syllabus should enter the ANY OTHER GRADE COMBINATION class. A chord or pitch may be given on the piano for unaccompanied music. No recorded music permitted.
+                    - generic [ref=f3e621]:
+                      - heading "Class" [level=4] [ref=f3e622]
+                      - paragraph [ref=f3e623]: Two contrasting selections, own choice, any number of parts.
+                  - generic [ref=f3e624]:
+                    - heading "Selection 1" [level=3] [ref=f3e625]
+                    - generic [ref=f3e626]:
+                      - generic [ref=f3e628]:
+                        - generic [ref=f3e629]: Title (including Opus number if applicable)
+                        - textbox "Title (including Opus number if applicable)" [ref=f3e632]:
+                          - /placeholder: ""
+                          - text: O Canada
+                      - generic [ref=f3e635]:
+                        - generic [ref=f3e636]: Composer
+                        - textbox "Composer" [ref=f3e639]:
+                          - /placeholder: ""
+                          - text: Calixa Lavallee
+                      - generic [ref=f3e642]:
+                        - generic [ref=f3e643]: Title of Larger Work (if applicable)
+                        - textbox "Title of Larger Work (if applicable)" [ref=f3e646]:
+                          - /placeholder: ""
+                      - generic [ref=f3e649]:
+                        - generic [ref=f3e650]: Movement (if applicable)
+                        - textbox "Movement (if applicable)" [ref=f3e653]:
+                          - /placeholder: ""
+                      - generic [ref=f3e656]:
+                        - generic [ref=f3e657]: Duration
+                        - textbox "Duration" [ref=f3e660]:
+                          - /placeholder: mm:ss
+                          - text: 02:30
+                  - generic [ref=f3e662]:
+                    - heading "Selection 2" [level=3] [ref=f3e663]
+                    - generic [ref=f3e664]:
+                      - generic [ref=f3e666]:
+                        - generic [ref=f3e667]: Title (including Opus number if applicable)
+                        - textbox "Title (including Opus number if applicable)" [ref=f3e670]:
+                          - /placeholder: ""
+                          - text: This Land Is Your Land
+                      - generic [ref=f3e673]:
+                        - generic [ref=f3e674]: Composer
+                        - textbox "Composer" [ref=f3e677]:
+                          - /placeholder: ""
+                          - text: Woody Guthrie
+                      - generic [ref=f3e680]:
+                        - generic [ref=f3e681]: Title of Larger Work (if applicable)
+                        - textbox "Title of Larger Work (if applicable)" [ref=f3e684]:
+                          - /placeholder: ""
+                      - generic [ref=f3e687]:
+                        - generic [ref=f3e688]: Movement (if applicable)
+                        - textbox "Movement (if applicable)" [ref=f3e691]:
+                          - /placeholder: ""
+                      - generic [ref=f3e694]:
+                        - generic [ref=f3e695]: Duration
+                        - textbox "Duration" [ref=f3e698]:
+                          - /placeholder: mm:ss
+                          - text: 03:00
+            - button "Remove This Class" [ref=f3e713]
+          - generic [ref=f3e714]:
+            - generic [ref=f3e715]:
+              - heading "Class 2" [level=3] [ref=f3e716]
+              - generic [ref=f3e718]:
+                - generic [ref=f3e719]: Select a School Group
+                - combobox "Select a School Group" [invalid] [ref=f3e722]:
+                  - option "Grade 4 Choir"
+                  - option "Grade 5 Band"
+                - generic [ref=f3e723]: Required
+              - generic [ref=f3e725]:
+                - generic [ref=f3e727]:
+                  - generic [ref=f3e728]: Discipline
+                  - combobox [invalid] [ref=f3e731]:
+                    - option "CHORAL"
+                    - option "GUITAR"
+                    - option "HANDBELLS"
+                    - option "ORFF"
+                    - option "RECORDER"
+                    - option "STRINGS"
+                    - option "UKELELE"
+                    - option "VOCAL"
+                  - generic [ref=f3e732]: Required
+                - generic [ref=f3e734]:
+                  - generic [ref=f3e735]: Subdiscipline
+                  - combobox "Subdiscipline" [disabled] [invalid] [ref=f3e738]
+                  - generic [ref=f3e739]: Required
+                - generic [ref=f3e741]:
+                  - generic [ref=f3e742]: Grade/Level
+                  - combobox "Grade/Level" [disabled] [invalid] [ref=f3e745]
+                  - generic [ref=f3e746]: Required
+                - generic [ref=f3e748]:
+                  - generic [ref=f3e749]: Category
+                  - combobox "Category" [disabled] [invalid] [ref=f3e752]
+                  - generic [ref=f3e753]: Required
+            - generic [ref=f3e754]:
+              - button "Add Another Class" [ref=f3e755]
+              - button "Remove This Class" [ref=f3e756]
+        - generic [ref=f3e297]:
+          - button "Previous" [ref=f3e313]
+          - button "Next" [ref=f3e298]
+    - contentinfo [ref=f3e182]:
+      - generic [ref=f3e184]:
+        - generic [ref=f3e185]: Winnipeg Music Festival
+        - generic [ref=f3e186]:
+          - text: "2-88 St. Anne's Rd.Winnipeg, MB R2M 2Y7Phone: (204) 947-0184Email:"
+          - link "admin@winnipegmusicfestival.org" [ref=f3e187] [cursor=pointer]:
+            - /url: mailto:admin@winnipegmusicfestival.org
+      - generic [ref=f3e188]:
+        - generic [ref=f3e189]: Created by
+        - link "Diatonic Web Design and Development" [ref=f3e190] [cursor=pointer]:
+          - /url: https://www.diatonic.io
+  - generic [ref=f3e191]:
+    - button "Toggle Nuxt DevTools" [ref=f3e192] [cursor=pointer]
+    - generic "Page load time" [ref=f3e196]:
+      - generic [ref=f3e197]: "86"
+      - generic [ref=f3e198]: ms
+    - button "Toggle Component Inspector" [ref=f3e200] [cursor=pointer]

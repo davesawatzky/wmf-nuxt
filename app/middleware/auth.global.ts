@@ -1,7 +1,7 @@
-import { useToast } from 'vue-toastification'
-
 export default defineNuxtRouteMiddleware(async (to) => {
   const toast = useToast()
+  const authStore = useAuthStore()
+  const { handleError } = useErrorHandler()
   const { load: loadTokenCheck, refetch: refetchTokenCheck } = useLazyQuery(gql`
     query TokenCheck {
       tokenCheck {
@@ -44,7 +44,13 @@ export default defineNuxtRouteMiddleware(async (to) => {
 
     if (result?.tokenCheck?.userErrors?.length) {
       console.warn('Auth validation errors:', result.tokenCheck.userErrors)
-      toast.error('Authentication required. Please login.')
+      toast.add({
+        severity: 'error',
+        summary: 'Authentication Required',
+        detail: 'Authentication required. Please login.',
+        life: 3000
+      })
+      
       return navigateTo('/login', { replace: true })
     }
 
@@ -52,39 +58,37 @@ export default defineNuxtRouteMiddleware(async (to) => {
 
     if (!userData) {
       console.warn('No user data found, redirecting to login')
-      toast.error('Authentication required. Please login.')
+      toast.add({
+        severity: 'error',
+        summary: 'Authentication Required',
+        detail: 'Authentication required. Please login.',
+        life: 3000
+      })
       return navigateTo('/login', { replace: true })
     }
 
-    const authStore = useAuthStore()
     authStore.setUser(userData)
-
     const hasAccess = authStore.canAccessRoute(to.path, userData.roles)
 
     if (!hasAccess) {
       console.warn('User lacks permission for route:', to.path)
-      toast.error('You do not have permission to access this page')
+      toast.add({
+        severity: 'error',
+        summary: 'Access Denied',
+        detail: 'You do not have permission to access this page',
+        life: 3000
+      })
       return navigateTo('/login', { replace: true })
     }
   }
   catch (error) {
-    // Network errors or GraphQL connection failures
-    if (error && typeof error === 'object') {
-      const hasNetworkError = 'networkError' in error
-      const hasGraphQLErrors = 'graphQLErrors' in error
-
-      if (hasNetworkError || hasGraphQLErrors) {
-        // Backend unavailable - redirect to login with error message
-        console.error('Network or GraphQL error during auth check:', error)
-        toast.error('Unable to verify authentication. Please login again.')
-        return navigateTo('/login', { replace: true })
-      }
-    }
-
-    // Unexpected errors - still redirect to login instead of throwing
-    // This prevents users from being stuck on error pages
-    console.error('Unexpected error during auth check:', error)
-    toast.error('An authentication error occurred')
+    handleError( error, {
+      toastSeverity: 'error',
+      level: 'error',
+      userMessage: 'An unexpected error occurred during authentication check.',
+      operation: 'TokenCheck',
+      context: { route: to.path }
+    })
     return navigateTo('/login', { replace: true })
   }
 })

@@ -1,0 +1,130 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e15]:
+    - banner [ref=e16]:
+      - generic [ref=e18]:
+        - generic [ref=e19]:
+          - img "Winnipeg Music Festival Logo" [ref=e21]
+          - generic [ref=e22]: WinnipegMusicFestival
+        - menubar [ref=e74]:
+          - menuitem "Registrations" [ref=e75]:
+            - button "Registrations" [ref=e78] [cursor=pointer]
+          - menuitem "Account" [ref=e80]:
+            - button "Account" [ref=e83] [cursor=pointer]
+    - generic [ref=e199]:
+      - generic [ref=e200]:
+        - generic [ref=e201]: Registration Label
+        - textbox "Registration Label" [ref=e206]:
+          - /placeholder: Enter a unique label
+          - text: Registration Form
+      - generic [ref=e208]:
+        - generic [ref=e210]:
+          - generic [ref=e211]:
+            - button "1" [ref=e380]
+            - generic [ref=e215]: Performer
+          - generic [ref=e216]:
+            - button "2" [ref=e419]
+            - generic [ref=e220]: Teacher
+          - generic [ref=e221]:
+            - button "3" [ref=e544]
+            - generic [ref=e225]: Solo Classes
+          - generic [ref=e226]:
+            - button "4" [ref=e227]
+            - generic [ref=e228]: Summary
+        - generic [ref=e548]:
+          - generic [ref=e549]:
+            - heading "Registration Summary" [level=2] [ref=e550]
+            - table [ref=e552]:
+              - rowgroup [ref=e553]:
+                - row [ref=e554]:
+                  - columnheader "Class Number" [ref=e555]
+                  - columnheader "Class Name" [ref=e556]
+                  - columnheader "Level" [ref=e557]
+                  - columnheader "Category" [ref=e558]
+                  - columnheader "Price" [ref=e559]
+              - rowgroup [ref=e560]:
+                - row [ref=e561]:
+                  - cell "2215" [ref=e562]
+                  - cell "PIANO SOLO" [ref=e563]
+                  - cell "GRADE/LEVEL 4" [ref=e564]
+                  - cell "OWN CHOICE" [ref=e565]
+                  - cell "$30.00" [ref=e566]
+                - row [ref=e567]:
+                  - cell [ref=e568]
+                  - cell [ref=e569]
+                  - cell [ref=e570]
+                  - cell "Total:" [ref=e571]
+                  - cell "$30.00" [ref=e572]
+            - generic [ref=e573]:
+              - heading "Performer(s)" [level=3] [ref=e574]
+              - generic [ref=e576]:
+                - generic [ref=e577]:
+                  - heading [level=4] [ref=e579]:
+                    - heading "Solo Performer" [level=4] [ref=e580]
+                  - generic [ref=e581]:
+                    - generic [ref=e582]: "Phone: (204) 999-8888"
+                    - generic [ref=e583]: "Email: solo.performer@test.com"
+                - table [ref=e586]:
+                  - rowgroup [ref=e587]:
+                    - row [ref=e588]:
+                      - cell "Age:" [ref=e589]
+                      - cell "15" [ref=e590]
+                      - cell "Instrument:" [ref=e591]
+                      - cell "Piano" [ref=e592]
+                    - row [ref=e593]:
+                      - cell "Mailing Address:" [ref=e594]
+                      - cell "123 Test St" [ref=e595]
+                    - row [ref=e596]:
+                      - cell [ref=e597]
+                      - cell "Winnipeg, MB" [ref=e598]
+                    - row [ref=e599]:
+                      - cell [ref=e600]
+                      - cell "R2M 2Y7" [ref=e601]
+            - generic [ref=e602]:
+              - heading "Teacher" [level=3] [ref=e603]
+              - generic [ref=e604]:
+                - heading "Jane Smith" [level=4] [ref=e606]
+                - generic [ref=e607]:
+                  - generic [ref=e608]: "Phone: (204) 555-1234"
+                  - generic [ref=e609]: "Email: jane.smith@test.com"
+            - heading "Registered Classes" [level=3] [ref=e610]
+            - generic [ref=e612]:
+              - generic [ref=e613]:
+                - 'heading "Festival Class Number: 2215" [level=4] [ref=e615]'
+                - generic [ref=e617]:
+                  - generic [ref=e618]: "Class: PIANO SOLO"
+                  - generic [ref=e619]: "Category: OWN CHOICE"
+                  - generic [ref=e620]: "Level: GRADE/LEVEL 4"
+              - generic [ref=e623]:
+                - heading "Selection 1" [level=5] [ref=e624]
+                - table [ref=e625]:
+                  - rowgroup [ref=e626]:
+                    - row [ref=e627]:
+                      - cell "Title:" [ref=e628]
+                      - cell "Sonata in C" [ref=e629]
+                    - row [ref=e630]:
+                      - cell "Composer:" [ref=e631]
+                      - cell "Mozart" [ref=e632]
+                    - row [ref=e633]:
+                      - cell "Duration:" [ref=e634]
+                      - cell "03:30" [ref=e635]
+          - generic [ref=e636]:
+            - button "Prepare to Submit" [ref=e637]
+            - button "Print this page" [ref=e638]
+        - button "Previous" [ref=e358]
+    - contentinfo [ref=e51]:
+      - generic [ref=e53]:
+        - generic [ref=e54]: Winnipeg Music Festival
+        - generic [ref=e55]:
+          - text: "2-88 St. Anne's Rd.Winnipeg, MB R2M 2Y7Phone: (204) 947-0184Email:"
+          - link "admin@winnipegmusicfestival.org" [ref=e56] [cursor=pointer]:
+            - /url: mailto:admin@winnipegmusicfestival.org
+      - generic [ref=e57]:
+        - generic [ref=e58]: Created by
+        - link "Diatonic Web Design and Development" [ref=e59] [cursor=pointer]:
+          - /url: https://www.diatonic.io
+  - generic [ref=e60]:
+    - button "Toggle Nuxt DevTools" [ref=e61] [cursor=pointer]
+    - generic "Page load time" [ref=e65]:
+      - generic [ref=e66]: "679"
+      - generic [ref=e67]: ms
+    - button "Toggle Component Inspector" [ref=e69] [cursor=pointer]

@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import type { Registration, RegistrationInput } from '~/graphql/gql/graphql'
 import { DateTime } from 'luxon'
-import { useToast } from 'vue-toastification'
 import {
   MyUserDocument,
   PerformerType,
@@ -31,6 +30,7 @@ const communityGroupStore = useCommunityGroup()
 const classesStore = useClasses()
 const userStore = useUser()
 const fieldConfigStore = useFieldConfig()
+const { handleError } = useErrorHandler()
 
 const registrationId = ref(0)
 
@@ -63,12 +63,16 @@ const { onResult: onUserResult, onError: onUserError } = useQuery(
 onUserResult((result) => {
   userStore.addToStore(result.data.myUser)
 })
-onUserError((error) => {
-  console.error('Error loading user details:', error, {
-    operation: 'useQuery MyUserDocument',
-    userId: userStore.user.id,
+onUserError( ( error ) => {
+  handleError( error, {
+    context: {
+      userId: userStore.user.id
+    },
+    operation: `Loading user details`,
+    level: 'error',
+    toastSeverity: 'error',
+    userMessage: `Error loading user details. Returning to login page.`
   })
-  toast.error('Error loading user details. Returningn to login page.')
   navigateTo('/login')
 })
 
@@ -98,9 +102,16 @@ onMounted(async () => {
   fieldConfigStore.$reset()
   await refetchRegistrations()
 })
-onRegistrationsError((error) => {
-  console.error('Error loading registrations:', error)
-  toast.error('Error loading registrations. Please try again.')
+onRegistrationsError( ( error ) => {
+  handleError( error, {
+    context: {
+      registrations: `Failed to load registrations`
+    },
+    operation: `Loading registrations`,
+    level: 'error',
+    toastSeverity: 'error',
+    userMessage: `Error loading registrations. Please try again.`
+  })
 })
 
 const registrations = computed(
@@ -132,7 +143,7 @@ async function loadRegistration(
         performerType,
         availableIds: registrations.value.map(r => r.id),
       })
-      toast.error('Registration not found')
+      toast.add({ severity: 'error', summary: 'Error', detail: 'Registration not found' })
       return
     }
 
@@ -180,15 +191,22 @@ async function loadRegistration(
     }
     // teacherErrors automatically computed - no manual setting needed
     await classesStore.loadClasses(registrationId)
-    appStore.dataLoading = false
     await navigateTo('/form')
   }
-  catch (error) {
-    console.error('Error loading registration:', error, {
-      operation: 'loadRegistration',
-      registrationId,
+  catch ( error ) {
+    handleError( error, {
+      context: {
+        registration: `Failed to load registration`,
+        registrationId,
+        performerType
+      },
+      operation: `Loading registration`,
+      level: 'error',
+      toastSeverity: 'error',
+      userMessage: `Error loading registration. Please try again.`
     })
-    toast.error('Error loading registration. Please try again.')
+  } finally {
+    appStore.dataLoading = false
   }
 }
 
@@ -198,74 +216,89 @@ async function loadRegistration(
    * @param performerType SOLO, GROUP, SCHOOL or COMMUNITY
    * @param label A given label for the registration form
    */
-async function newRegistration(performerType: PerformerType, label?: string) {
-  await fieldConfigStore.loadRequiredFields()
-  teacherStore.chosenTeacher = null
-  if (!label || label.length === 0)
-    label = 'Registration Form'
+async function newRegistration( performerType: PerformerType, label?: string ) {
+  try {
+    await fieldConfigStore.loadRequiredFields()
+    teacherStore.chosenTeacher = null
+    if ( !label || label.length === 0 )
+      label = 'Registration Form'
 
-  await registrationStore.createRegistration(performerType, label)
-  registrationId.value = registrationStore.registrationId
-  appStore.$patch({
-    editExisting: false,
-    performerType,
-    registrationExists: true,
-  })
+    await registrationStore.createRegistration( performerType, label )
+    registrationId.value = registrationStore.registrationId
+    appStore.$patch( {
+      editExisting: false,
+      performerType,
+      registrationExists: true,
+    } )
 
-  switch (performerType) {
-    case 'SOLO':
-      appStore.performerType = PerformerType.SOLO
-      appStore.dataLoading = true
-      await performerStore.createPerformer(registrationId.value)
-      performerStore.findInitialPerformerErrors()
-      await teacherStore.loadAllTeachers('privateTeacher')
-      break
-    case 'GROUP':
-      appStore.performerType = PerformerType.GROUP
-      appStore.dataLoading = true
-      await groupStore.createGroup(registrationId.value)
-      groupStore.findInitialGroupErrors()
-      // require at least 2 performers for groups
-      await performerStore.createPerformer(registrationId.value)
-      await performerStore.createPerformer(registrationId.value)
-      performerStore.findInitialPerformerErrors()
-      await teacherStore.loadAllTeachers('privateTeacher')
-      break
-    case 'SCHOOL':
-      appStore.performerType = PerformerType.SCHOOL
-      appStore.dataLoading = true
-      if (userStore.user.schoolTeacher) {
-        teacherStore.teacher.id = userStore.user.id
-        registrationStore.registration.teacherID = userStore.user.id
-        await registrationStore.updateRegistration('teacherID')
-        teacherStore.teacher.firstName = userStore.user.firstName
-        teacherStore.teacher.lastName = userStore.user.lastName
-        teacherStore.teacher.email = userStore.user.email
-        teacherStore.teacher.phone = userStore.user.phone
-      }
-      await schoolStore.createSchool(registrationId.value)
-      schoolStore.findInitialSchoolErrors()
-      await schoolGroupStore.createSchoolGroup(schoolStore.school.id!)
-      schoolGroupStore.findInitialSchoolGroupErrors()
-      await teacherStore.loadAllTeachers('schoolTeacher')
-      break
-    case 'COMMUNITY':
-      appStore.performerType = PerformerType.COMMUNITY
-      appStore.dataLoading = true
-      await communityStore.createCommunity(registrationId.value)
-      communityStore.findInitialCommunityErrors()
-      await communityGroupStore.createCommunityGroup(
-        communityStore.community.id!,
-      )
-      communityGroupStore.findInitialCommunityGroupErrors()
-      await teacherStore.loadAllTeachers('schoolTeacher')
+    switch ( performerType ) {
+      case 'SOLO':
+        appStore.performerType = PerformerType.SOLO
+        appStore.dataLoading = true
+        await performerStore.createPerformer( registrationId.value )
+        performerStore.findInitialPerformerErrors()
+        await teacherStore.loadAllTeachers( 'privateTeacher' )
+        break
+      case 'GROUP':
+        appStore.performerType = PerformerType.GROUP
+        appStore.dataLoading = true
+        await groupStore.createGroup( registrationId.value )
+        groupStore.findInitialGroupErrors()
+        // require at least 2 performers for groups
+        await performerStore.createPerformer( registrationId.value )
+        await performerStore.createPerformer( registrationId.value )
+        performerStore.findInitialPerformerErrors()
+        await teacherStore.loadAllTeachers( 'privateTeacher' )
+        break
+      case 'SCHOOL':
+        appStore.performerType = PerformerType.SCHOOL
+        appStore.dataLoading = true
+        if ( userStore.user.schoolTeacher ) {
+          teacherStore.teacher.id = userStore.user.id
+          registrationStore.registration.teacherID = userStore.user.id
+          await registrationStore.updateRegistration( 'teacherID' )
+          teacherStore.teacher.firstName = userStore.user.firstName
+          teacherStore.teacher.lastName = userStore.user.lastName
+          teacherStore.teacher.email = userStore.user.email
+          teacherStore.teacher.phone = userStore.user.phone
+        }
+        await schoolStore.createSchool( registrationId.value )
+        schoolStore.findInitialSchoolErrors()
+        await schoolGroupStore.createSchoolGroup( schoolStore.school.id! )
+        schoolGroupStore.findInitialSchoolGroupErrors()
+        await teacherStore.loadAllTeachers( 'schoolTeacher' )
+        break
+      case 'COMMUNITY':
+        appStore.performerType = PerformerType.COMMUNITY
+        appStore.dataLoading = true
+        await communityStore.createCommunity( registrationId.value )
+        communityStore.findInitialCommunityErrors()
+        await communityGroupStore.createCommunityGroup(
+          communityStore.community.id!,
+        )
+        communityGroupStore.findInitialCommunityGroupErrors()
+        await teacherStore.loadAllTeachers( 'schoolTeacher' )
+    }
+    // teacherErrors = 1 automatically when no teacher selected (teacher.id is null/2)
+    await classesStore.createClass( registrationId.value )
+    classesStore.findInitialClassErrors()
+    await navigateTo( '/form' )
+  } catch ( error ) {
+    handleError( error, {
+      context: {
+        registration: `Failed to create new registration`,
+        performerType: performerType,
+      },
+      operation: `Creating new registration`,
+      level: 'error',
+      toastSeverity: 'error',
+      userMessage: `Error creating new registration. Please try again.`
+    } )
+  } finally {
+    appStore.dataLoading = false
   }
-  // teacherErrors = 1 automatically when no teacher selected (teacher.id is null/2)
-  await classesStore.createClass(registrationId.value)
-  classesStore.findInitialClassErrors()
-  appStore.dataLoading = false
-  await navigateTo('/form')
 }
+
 
 async function deleteRegistration(regId: number) {
   appStore.dataLoading = true

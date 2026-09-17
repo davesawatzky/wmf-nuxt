@@ -3,6 +3,7 @@ import '@stripe/stripe-js'
 </script>
 
 <template>
+  <PVToast class="not-sm:w-[90%] not-sm:mx-auto" />
   <nuxt-layout>
     <nuxt-page />
   </nuxt-layout>

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useToast } from 'vue-toastification'
 import * as yup from 'yup'
 import YupPassword from 'yup-password'
 import {
@@ -32,6 +31,7 @@ const user = ref({
 })
 const userStore = useUser()
 const toast = useToast()
+const {handleError } = useErrorHandler()
 
 function setIsOpen(value: boolean) {
   isOpen.value = value
@@ -176,8 +176,7 @@ doneSignin(async (result) => {
   }
 })
 signinError((error) => {
-  toast.error('Incorrect email or password.')
-  console.error(error)
+  toast.add({ severity: 'error', summary: 'Error', detail: 'Incorrect email or password.' })
   setTimeout(resetFields, 4000)
 })
 
@@ -191,7 +190,7 @@ async function signup() {
     if (teacherExistCheck.value) {
       await userStore.loadHasPassword(teacherExistCheck.value.id)
       if (userStore.checkPassword) {
-        toast.error('User already exists')
+        toast.add({ severity: 'error', summary: 'Error', detail: 'User already exists' })
         return null
       }
       else if (!userStore.checkPassword) {
@@ -228,8 +227,16 @@ async function doesTeacherExistLoad() {
     = (await loadDoesTeacherExist()) || (await doesTeacherExistRefetch())
   return result
 }
-onDoesTeacherExistError((error) => {
-  console.error('Error searching for teacher: ', error)
+onDoesTeacherExistError( ( error ) => {
+  handleError( error, {
+    context: {
+      checkUser: `Failed to check if teacher exists`
+    },
+    operation: `Checking if teacher exists`,
+    level: 'error',
+    toastSeverity: 'error',
+    userMessage: `Failed to check if teacher exists. Please try again.`
+  })
 })
 
 const teacherExistCheck = computed(
@@ -260,13 +267,20 @@ const signupAccount = handleSubmit((values) => {
   })
 })
 doneSignup(async () => {
-  toast.success('Check EMAIL for account verification link')
+  toast.add({ severity: 'success', summary: 'Success', detail: 'Check EMAIL for account verification link' })
   isRegister.value = false
   resetFields()
 })
 registerError((error) => {
-  toast.error('Error signing up for account')
-  console.error('Error signing up for account: ', error)
+  handleError( error, {
+    context: {
+      signup: `Failed to sign up for account`
+    },
+    operation: `Signing up for account`,
+    level: 'error',
+    toastSeverity: 'error',
+    userMessage: `Error signing up account. Please try again.`
+  })
   setTimeout(resetFields, 4000)
 })
 
@@ -289,8 +303,16 @@ async function resendVerificationEmail() {
     accountNotConfirmed.value = false
     resetFields()
   }
-  catch (error) {
-    console.error('Error sending verification email: ', error)
+  catch ( error ) {
+    handleError( error, {
+      context: {
+        resendVerification: `Failed to resend verification email`
+      },
+      operation: `Resending verification email`,
+      level: 'error',
+      toastSeverity: 'error',
+      userMessage: `Failed to resend verification email. Please try again.`
+    })
   }
 }
 
@@ -304,13 +326,27 @@ async function resendPasswordEmail() {
       body: {
         email: user.value.email,
       },
+    } )
+    toast.add({
+      severity: 'success',
+      summary: 'Password Reset Successful',
+      detail: 'Password reset email sent successfully.'
     })
+  }
+  catch (error) {
+    handleError( error, {
+      context: {
+        resendPassword: `Failed to resend password reset email`
+      },
+      operation: `Resending password reset email`,
+      level: 'error',
+      toastSeverity: 'error',
+      userMessage: `Failed to resend password reset email. Please try again.`
+    })
+  } finally {
     isOpen.value = false
     passwordChangePending.value = false
     resetFields()
-  }
-  catch (error) {
-    console.error('Error re-send password verification email: ', error)
   }
 }
 

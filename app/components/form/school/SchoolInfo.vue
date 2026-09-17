@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import type { School } from '~/graphql/gql/graphql'
-import { useToast } from 'vue-toastification'
 import * as yup from 'yup'
 import { provinces, StatusEnum } from '#imports'
 import { useSchool } from '~/stores/useSchool'
@@ -8,7 +7,7 @@ import 'yup-phone-lite'
 
 const schoolStore = useSchool()
 const fieldConfigStore = useFieldConfig()
-const toast = useToast()
+const { handleError } = useErrorHandler()
 
 const status = reactive<Status>({
   name: schoolStore.school.name ? StatusEnum.saved : StatusEnum.null,
@@ -49,51 +48,50 @@ const validationSchema = toTypedSchema(
   }),
 )
 
+const FIELD_STATUS_MESSAGES: Record<string, { error: string, userMessage: string }> = {
+  valid: {
+    error: 'Could not update school field',
+    userMessage: 'Could not update field.  Please exit and reload Registration',
+  },
+  invalid: {
+    error: 'Could not remove invalid school field',
+    userMessage: 'Could not remove invalid field. Please exit and reload Registration',
+  },
+  removed: {
+    error: 'Could not remove school field',
+    userMessage: 'Could not remove field.  Please exit and reload Registration',
+  },
+}
+
 async function fieldStatus(stat: string, fieldName: string) {
   await nextTick()
+  const messages = FIELD_STATUS_MESSAGES[stat]
+  if (!messages) return
+
+  status[fieldName] = StatusEnum.pending
+  const result = await schoolStore.updateSchool(fieldName)
+  status[fieldName] = StatusEnum.null
+
+  if (result !== 'complete') {
+    handleError(new Error(messages.error), {
+      context: {
+        fieldName: fieldName,
+      },
+      operation: 'fieldStatus in SchoolInfo',
+      level: 'error',
+      toastSeverity: 'error',
+      userMessage: messages.userMessage,
+    })
+    return
+  }
+
   if (stat === 'valid') {
-    status[fieldName] = StatusEnum.pending
-    const result = await schoolStore.updateSchool(fieldName)
-    status[fieldName] = StatusEnum.null
-    if (result === 'complete') {
-      if (schoolStore.school[fieldName as keyof School] !== null) {
-        status[fieldName] = StatusEnum.saved
-      }
-    }
-    else {
-      console.error('Could not update school field:', fieldName)
-      toast.error(
-        'Could not update field.  Please exit and reload Registration',
-      )
+    if (schoolStore.school[fieldName as keyof School] !== null) {
+      status[fieldName] = StatusEnum.saved
     }
   }
-  else if (stat === 'invalid') {
-    status[fieldName] = StatusEnum.pending
-    const result = await schoolStore.updateSchool(fieldName)
-    status[fieldName] = StatusEnum.null
-    if (result === 'complete') {
-      status[fieldName] = StatusEnum.removed
-    }
-    else {
-      console.error('Could not remove invalid school field:', fieldName)
-      toast.error(
-        'Could not remove invalid field. Please exit and reload Registration',
-      )
-    }
-  }
-  else if (stat === 'removed') {
-    status[fieldName] = StatusEnum.pending
-    const result = await schoolStore.updateSchool(fieldName)
-    status[fieldName] = StatusEnum.null
-    if (result === 'complete') {
-      status[fieldName] = StatusEnum.removed
-    }
-    else {
-      console.error('Could not remove school field:', fieldName)
-      toast.error(
-        'Could not remove field.  Please exit and reload Registration',
-      )
-    }
+  else {
+    status[fieldName] = StatusEnum.removed
   }
 }
 

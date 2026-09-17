@@ -13,7 +13,7 @@
   "prettier.requireConfig": true,
   "prettier.semi": false,
   "html.format.preserveNewLines": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.defaultFormatter": "dbaeumer.vscode-eslint",
   "editor.formatOnSave": true,
   "javascript.format.insertSpaceAfterConstructor": true,
   "typescript.format.insertSpaceAfterConstructor": true,

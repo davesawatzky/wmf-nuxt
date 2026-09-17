@@ -1,0 +1,67 @@
+- generic [active] [ref=f11e1]:
+  - navigation [ref=f11e2]:
+    - generic [ref=f11e3]:
+      - link [ref=f11e6] [cursor=pointer]:
+        - /url: "#"
+        - img "MailHog" [ref=f11e7]
+        - text: MailHog
+      - generic [ref=f11e8]:
+        - search [ref=f11e9]:
+          - generic [ref=f11e10]:
+            - generic: 
+            - textbox "Search" [ref=f11e11]
+        - list [ref=f11e12]:
+          - listitem [ref=f11e13]:
+            - link [ref=f11e14] [cursor=pointer]:
+              - /url: https://github.com/mailhog/MailHog
+              - img "GitHub" [ref=f11e15]
+              - text: GitHub
+  - generic [ref=f11e17]:
+    - generic [ref=f11e18]:
+      - list [ref=f11e19]:
+        - listitem [ref=f11e20]:
+          - link " Connected" [ref=f11e21] [cursor=pointer]:
+            - /url: "#"
+            - generic [ref=f11e22]: 
+            - text: Connected
+        - listitem [ref=f11e23]:
+          - link "Inbox (1)" [ref=f11e24] [cursor=pointer]:
+            - /url: "#"
+        - listitem [ref=f11e25]:
+          - link " Delete all messages" [ref=f11e26] [cursor=pointer]:
+            - /url: "#"
+            - generic [ref=f11e27]: 
+            - text: Delete all messages
+      - generic [ref=f11e28]:
+        - heading "Jim" [level=3] [ref=f11e29]
+        - paragraph [ref=f11e30]:
+          - text: Jim is a chaos monkey.
+          - link "Find out more at GitHub" [ref=f11e31] [cursor=pointer]:
+            - /url: https://github.com/mailhog/MailHog/blob/master/docs/JIM.md
+          - text: .
+        - link "Enable Jim" [ref=f11e33] [cursor=pointer]:
+          - /url: "#"
+    - generic [ref=f11e34]:
+      - generic [ref=f11e35]:
+        - button "" [ref=f11e36] [cursor=pointer]
+        - generic [ref=f11e38]:
+          - generic [ref=f11e39]:
+            - combobox [ref=f11e40]:
+              - option "10"
+              - option "25"
+              - option "50" [selected]
+              - option "75"
+              - option "100"
+            - strong [ref=f11e41]: 1-1
+            - text: of
+            - strong [ref=f11e42]: "1"
+          - button ""
+          - button ""
+      - generic [ref=f11e44] [cursor=pointer]:
+        - generic [ref=f11e45]:
+          - text: test@server.com
+          - generic [ref=f11e46]: e2e.regcreate.20260917194010@test.com
+        - generic [ref=f11e48]: WMF account verification
+        - generic [ref=f11e50]:
+          - generic [ref=f11e51]: a few seconds ago
+          - generic [ref=f11e52]: 26.45 kB

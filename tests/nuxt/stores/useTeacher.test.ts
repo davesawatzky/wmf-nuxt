@@ -1,7 +1,7 @@
 import { createPinia, setActivePinia } from 'pinia'
-import { expect } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { useTeacher } from '~/stores/useTeacher'
-import { testFullTeacher, testPartialTeacher } from '../utils/testData'
+import { testFullTeacher, testPartialTeacher } from '../../../app/utils/testData'
 
 let teacherStore: any
 
@@ -18,7 +18,7 @@ describe('teacher Store', () => {
     })
     it('also accepts a particial teacher', () => {
       teacherStore.addToStore(testPartialTeacher)
-      expect(teacherStore.teacher.lastName).toBe('')
+      expect(teacherStore.teacher.lastName).toBeNull()
     })
     it('adds the id as a number', () => {
       teacherStore.addToStore(testFullTeacher)
@@ -34,7 +34,9 @@ describe('teacher Store', () => {
   it('resets the teacher ref to empty', () => {
     teacherStore.addToStore(testFullTeacher)
     teacherStore.$resetTeacher()
-    expect(teacherStore.teacher).is.empty
+    expect(teacherStore.teacher.id).toBe(0)
+    expect(teacherStore.teacher.firstName).toBeNull()
+    expect(teacherStore.teacher.lastName).toBeNull()
   })
 
   it('gets the full name of the teacher', () => {

@@ -1,0 +1,176 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e15]:
+    - banner [ref=e16]:
+      - generic [ref=e18]:
+        - generic [ref=e19]:
+          - img "Winnipeg Music Festival Logo" [ref=e21]
+          - generic [ref=e22]: WinnipegMusicFestival
+        - menubar [ref=e74]:
+          - menuitem "Registrations" [ref=e75]:
+            - button "Registrations" [ref=e78] [cursor=pointer]
+          - menuitem "Account" [ref=e80]:
+            - button "Account" [ref=e83] [cursor=pointer]
+    - generic [ref=e215]:
+      - generic [ref=e216]:
+        - generic [ref=e217]: Registration Label
+        - textbox "Registration Label" [ref=e222]:
+          - /placeholder: Enter a unique label
+          - text: Registration Form
+      - generic [ref=e224]:
+        - generic [ref=e226]:
+          - generic [ref=e227]:
+            - button "1" [ref=e289]
+            - generic [ref=e231]: Group
+          - generic [ref=e232]:
+            - button "2" [ref=e890]
+            - generic [ref=e236]: Performers
+          - generic [ref=e237]:
+            - button "3" [ref=e748]
+            - generic [ref=e241]: Teacher
+          - generic [ref=e242]:
+            - button "4" [ref=e875]
+            - generic [ref=e246]: Group Classes
+          - generic [ref=e247]:
+            - button "5" [ref=e248]
+            - generic [ref=e249]: Summary
+        - generic [ref=e883]:
+          - generic [ref=e892]:
+            - heading "Registration Summary" [level=2] [ref=e893]
+            - table [ref=e895]:
+              - rowgroup [ref=e896]:
+                - row [ref=e897]:
+                  - columnheader "Class Number" [ref=e898]
+                  - columnheader "Class Name" [ref=e899]
+                  - columnheader "Level" [ref=e900]
+                  - columnheader "Category" [ref=e901]
+                  - columnheader "Price" [ref=e902]
+              - rowgroup [ref=e903]:
+                - row [ref=e904]:
+                  - cell "3273" [ref=e905]
+                  - cell "STRING DUET" [ref=e906]
+                  - cell "GRADES/LEVELS 3-4" [ref=e907]
+                  - cell "OWN CHOICE" [ref=e908]
+                  - cell "$40.00" [ref=e909]
+                - row [ref=e910]:
+                  - cell [ref=e911]
+                  - cell [ref=e912]
+                  - cell [ref=e913]
+                  - cell "Total:" [ref=e914]
+                  - cell "$40.00" [ref=e915]
+            - generic [ref=e916]:
+              - heading "Group Information" [level=3] [ref=e917]
+              - generic [ref=e918]:
+                - heading [level=4] [ref=e921]:
+                  - heading "Test Ensemble" [level=4] [ref=e922]
+                - table [ref=e925]:
+                  - rowgroup [ref=e926]:
+                    - row [ref=e927]:
+                      - cell "Type of Group:" [ref=e928]
+                      - cell "instrumental" [ref=e929]
+                    - row [ref=e930]:
+                      - cell "Number of Performers:" [ref=e931]
+                      - cell "2" [ref=e932]
+                    - row [ref=e933]:
+                      - cell "Average age:" [ref=e934]
+                      - cell "17" [ref=e935]
+            - generic [ref=e936]:
+              - heading "Performer(s)" [level=3] [ref=e937]
+              - generic [ref=e939]:
+                - generic [ref=e940]:
+                  - heading [level=4] [ref=e942]:
+                    - heading "Alice Anderson" [level=4] [ref=e943]
+                  - generic [ref=e944]:
+                    - generic [ref=e945]: "Phone: (204) 555-1111"
+                    - generic [ref=e946]: "Email: alice.anderson@test.com"
+                - table [ref=e949]:
+                  - rowgroup [ref=e950]:
+                    - row [ref=e951]:
+                      - cell "Age:" [ref=e952]
+                      - cell "16" [ref=e953]
+                      - cell "Instrument:" [ref=e954]
+                      - cell "Violin" [ref=e955]
+                    - row [ref=e956]:
+                      - cell "Mailing Address:" [ref=e957]
+                      - cell "100 Main St" [ref=e958]
+                      - cell "Grade Level:" [ref=e959]
+                      - cell "Grade 4" [ref=e960]
+                    - row [ref=e961]:
+                      - cell [ref=e962]
+                      - cell "Winnipeg, MB" [ref=e963]
+                    - row [ref=e964]:
+                      - cell [ref=e965]
+                      - cell "R2M 2Y7" [ref=e966]
+              - generic [ref=e968]:
+                - generic [ref=e969]:
+                  - heading [level=4] [ref=e971]:
+                    - heading "Ben Baker" [level=4] [ref=e972]
+                  - generic [ref=e973]:
+                    - generic [ref=e974]: "Phone: (204) 555-2222"
+                    - generic [ref=e975]: "Email: ben.baker@test.com"
+                - table [ref=e978]:
+                  - rowgroup [ref=e979]:
+                    - row [ref=e980]:
+                      - cell "Age:" [ref=e981]
+                      - cell "17" [ref=e982]
+                      - cell "Instrument:" [ref=e983]
+                      - cell "Violin" [ref=e984]
+                    - row [ref=e985]:
+                      - cell "Mailing Address:" [ref=e986]
+                      - cell "200 Elm St" [ref=e987]
+                      - cell "Grade Level:" [ref=e988]
+                      - cell "Grade 5" [ref=e989]
+                    - row [ref=e990]:
+                      - cell [ref=e991]
+                      - cell "Winnipeg, MB" [ref=e992]
+                    - row [ref=e993]:
+                      - cell [ref=e994]
+                      - cell "R3T 5V6" [ref=e995]
+            - generic [ref=e996]:
+              - heading "Teacher" [level=3] [ref=e997]
+              - generic [ref=e998]:
+                - heading "Jane Smith" [level=4] [ref=e1000]
+                - generic [ref=e1001]:
+                  - generic [ref=e1002]: "Phone: (204) 555-1234"
+                  - generic [ref=e1003]: "Email: jane.smith@test.com"
+            - heading "Registered Classes" [level=3] [ref=e1004]
+            - generic [ref=e1006]:
+              - generic [ref=e1007]:
+                - 'heading "Festival Class Number: 3273" [level=4] [ref=e1009]'
+                - generic [ref=e1011]:
+                  - generic [ref=e1012]: "Class: STRING DUET"
+                  - generic [ref=e1013]: "Category: OWN CHOICE"
+                  - generic [ref=e1014]: "Level: GRADES/LEVELS 3-4"
+              - generic [ref=e1017]:
+                - heading "Selection 1" [level=5] [ref=e1018]
+                - table [ref=e1019]:
+                  - rowgroup [ref=e1020]:
+                    - row [ref=e1021]:
+                      - cell "Title:" [ref=e1022]
+                      - cell "Duo in G" [ref=e1023]
+                    - row [ref=e1024]:
+                      - cell "Composer:" [ref=e1025]
+                      - cell "Vivaldi" [ref=e1026]
+                    - row [ref=e1027]:
+                      - cell "Duration:" [ref=e1028]
+                      - cell "04:15" [ref=e1029]
+          - generic [ref=e888]:
+            - button "Prepare to Submit" [ref=e889]
+            - button "Print this page" [ref=e1030]
+        - button "Previous" [ref=e516]
+    - contentinfo [ref=e51]:
+      - generic [ref=e53]:
+        - generic [ref=e54]: Winnipeg Music Festival
+        - generic [ref=e55]:
+          - text: "2-88 St. Anne's Rd.Winnipeg, MB R2M 2Y7Phone: (204) 947-0184Email:"
+          - link "admin@winnipegmusicfestival.org" [ref=e56] [cursor=pointer]:
+            - /url: mailto:admin@winnipegmusicfestival.org
+      - generic [ref=e57]:
+        - generic [ref=e58]: Created by
+        - link "Diatonic Web Design and Development" [ref=e59] [cursor=pointer]:
+          - /url: https://www.diatonic.io
+  - generic [ref=e60]:
+    - button "Toggle Nuxt DevTools" [ref=e61] [cursor=pointer]
+    - generic "Page load time" [ref=e65]:
+      - generic [ref=e66]: "656"
+      - generic [ref=e67]: ms
+    - button "Toggle Component Inspector" [ref=e69] [cursor=pointer]
