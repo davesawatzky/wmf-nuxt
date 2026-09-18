@@ -2,7 +2,7 @@ import { mount } from '@vue/test-utils'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { ref } from 'vue'
 import BaseInput from '../../../app/components/base/BaseInput.vue'
-import { StatusEnum } from '../../../app/utils/types'
+import {StatusEnum} from '../../../app/utils/types'
 
 // Mock UniqueID utility
 vi.mock('../../../app/utils/UniqueID', () => ({
